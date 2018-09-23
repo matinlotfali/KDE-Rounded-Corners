@@ -1,0 +1,31 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "therealestrob@gmail.com",
+                "Name": "Rob"
+            }
+        ],
+        "Category": "Appearance",
+        "Dependencies": [
+        ],
+        "Description": "An effect that shapes/rounds corners of windows.",
+        "EnabledByDefault": true,
+        "Icon": "",
+        "Id": "kwin4_effect_shapecorners",
+        "License": "GPL",
+        "Name": "ShapeCorners",
+        "ServiceTypes": [
+            "KWin/Effect"
+        ],
+        "Version": "git"
+    },
+    "org.kde.kwin.effect": {
+        "video": "",
+        "exclusiveGroup": "",
+        "enabledByDefaultMethod": true
+    },
+    "X-KDE-Ordering": "5",
+    "X-Plasma-API": "",
+    "X-Plasma-MainScript": ""
+}
