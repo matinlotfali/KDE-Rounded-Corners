@@ -233,7 +233,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
 //            || w->isModal()
             || data.quads.isTransformed()
             || (mask & PAINT_WINDOW_TRANSFORMED)
-            || !hasShadow(data.quads)
+//            || !hasShadow(data.quads)
             )
     {
         KWin::effects->paintWindow(w, mask, region, data);
