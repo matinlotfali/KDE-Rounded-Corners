@@ -64,16 +64,25 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(0)
 //        qDebug() << "shader valid: " << m_shader->isValid();
         if (m_shader->isValid())
         {
+	    applyEffect = NULL;
             const int sampler = m_shader->uniformLocation("sampler");
             const int corner = m_shader->uniformLocation("corner");
             KWin::ShaderManager::instance()->pushShader(m_shader);
             m_shader->setUniform(corner, 1);
             m_shader->setUniform(sampler, 0);
             KWin::ShaderManager::instance()->popShader();
+            connect(KWin::effects, &KWin::EffectsHandler::windowMaximizedStateChanged, this, &ShapeCornersEffect::windowMaximizedStateChanged);
         }
     }
     else
         deleteLater();
+}
+
+void ShapeCornersEffect::windowMaximizedStateChanged(KWin::EffectWindow *w, bool horizontal, bool vertical) {
+    if ((horizontal == true) && (vertical == true))
+        applyEffect = w;
+    else
+        applyEffect = NULL;
 }
 
 ShapeCornersEffect::~ShapeCornersEffect()
@@ -183,6 +192,7 @@ ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintDa
             || w->isPopupMenu()
 //            || w->isModal()
             || data.quads.isTransformed()
+	    || (w == applyEffect)
             )
     {
         KWin::effects->prePaintWindow(w, data, time);
@@ -234,11 +244,17 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
             || data.quads.isTransformed()
             || (mask & PAINT_WINDOW_TRANSFORMED)
 //            || !hasShadow(data.quads)
+	    || (w == applyEffect)
             )
     {
         KWin::effects->paintWindow(w, mask, region, data);
         return;
     }
+
+    /*if (w->windowClass().contains("gedit", Qt::CaseInsensitive))
+       setRoundness(50);
+    else
+       setRoundness(5);*/ // TODO: Expose this as a setting
 
     //map the corners
     const QRect geo(w->geometry());
