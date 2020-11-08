@@ -22,7 +22,7 @@ sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttools-devel qt5-qtt
 Arch based
 ```
 sudo pacman -S git cmake extra-cmake-modules base-devel
-yay qt5-tools
+yay -S qt5-tools
 ```
 
 # How to build:
