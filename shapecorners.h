@@ -41,7 +41,7 @@ public:
     void fillRegion(const QRegion &reg, const QColor &c);
 
     void reconfigure(ReconfigureFlags flags);
-#if KWIN_EFFECT_API_VERSION_MINOR > 200
+#if KWIN_EFFECT_API_VERSION_MINOR > 150
     void prePaintWindow(KWin::EffectWindow* w, KWin::WindowPrePaintData& data, std::chrono::milliseconds time);
 #else
     void prePaintWindow(KWin::EffectWindow* w, KWin::WindowPrePaintData& data, int time);
