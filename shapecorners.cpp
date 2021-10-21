@@ -206,7 +206,10 @@ ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintDa
             || !w->isPaintingEnabled()
 //            || KWin::effects->hasActiveFullScreenEffect()
             || w->isDesktop()
-            || data.quads.isTransformed())
+#if KWIN_EFFECT_API_VERSION_MINOR < 233
+           || data.quads.isTransformed()
+#endif
+            )
     {
         KWin::effects->prePaintWindow(w, data, time);
         return;
@@ -231,6 +234,7 @@ ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintDa
     KWin::effects->prePaintWindow(w, data, time);
 }
 
+#if KWIN_EFFECT_API_VERSION_MINOR < 233
 static bool hasShadow(KWin::WindowQuadList &qds)
 {
     for (int i = 0; i < qds.count(); ++i)
@@ -238,6 +242,7 @@ static bool hasShadow(KWin::WindowQuadList &qds)
             return true;
     return false;
 }
+#endif
 
 void
 ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region, KWin::WindowPaintData &data)
@@ -247,9 +252,12 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
             || !w->isPaintingEnabled()
 //            || KWin::effects->hasActiveFullScreenEffect()
             || w->isDesktop()
+#if KWIN_EFFECT_API_VERSION_MINOR < 233
             || data.quads.isTransformed()
+            || !hasShadow(data.quads)
+#endif
             || (mask & (PAINT_WINDOW_TRANSFORMED|PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS))
-            || !hasShadow(data.quads))
+            )
     {
         KWin::effects->paintWindow(w, mask, region, data);
         return;
@@ -265,24 +273,29 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
         QRect(geo.bottomLeft()-QPoint(0, m_size-1), m_corner)
     };
 
+#if KWIN_EFFECT_API_VERSION_MINOR < 233
     const KWin::WindowQuadList qds(data.quads);
     //paint the shadow
     data.quads = qds.select(KWin::WindowQuadShadow);
     KWin::effects->paintWindow(w, mask, region, data);
+#endif
 
     //copy the corner regions
-    KWin::GLTexture tex[NTex];
+    QList<KWin::GLTexture> tex;
     const QRect s(KWin::effects->virtualScreenGeometry());
     for (int i = 0; i < NTex; ++i)
     {
-        tex[i] = KWin::GLTexture(GL_RGBA8, rect[i].size());
-        tex[i].bind();
+        KWin::GLTexture t = KWin::GLTexture(GL_RGBA8, rect[i].size());
+        t.bind();
         glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, rect[i].x(), s.height() - rect[i].y() - rect[i].height(), rect[i].width(), rect[i].height());
-        tex[i].unbind();
+        t.unbind();
+        tex.append(t);
     }
 
     //paint the actual window
+#if KWIN_EFFECT_API_VERSION_MINOR < 233
     data.quads = qds.filterOut(KWin::WindowQuadShadow);
+#endif
     KWin::effects->paintWindow(w, mask, region, data);
 
     //'shape' the corners
@@ -305,7 +318,9 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
         m_tex[3-i]->unbind();
     }
     sm->popShader();
+#if KWIN_EFFECT_API_VERSION_MINOR < 233
     data.quads = qds;
+#endif
 #if 0
     if (data.brightness() == 1.0 && data.crossFadeProgress() == 1.0)
     {
