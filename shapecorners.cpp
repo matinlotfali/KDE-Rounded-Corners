@@ -198,7 +198,7 @@ ShapeCornersEffect::reconfigure(ReconfigureFlags flags)
     setRoundness(conf.readEntry("roundness", 5));
 }
 
-#if KWIN_EFFECT_API_VERSION_MINOR > 150
+#if KWIN_EFFECT_API_VERSION > 230
 void
 ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
 #else
@@ -211,7 +211,7 @@ ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintDa
             || !w->isPaintingEnabled()
 //            || KWin::effects->hasActiveFullScreenEffect()
             || w->isDesktop()
-#if KWIN_EFFECT_API_VERSION_MINOR < 233
+#if KWIN_EFFECT_API_VERSION < 233
            || data.quads.isTransformed()
 #endif
             )
@@ -239,7 +239,7 @@ ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintDa
     KWin::effects->prePaintWindow(w, data, time);
 }
 
-#if KWIN_EFFECT_API_VERSION_MINOR < 233
+#if KWIN_EFFECT_API_VERSION < 233
 static bool hasShadow(KWin::WindowQuadList &qds)
 {
     for (int i = 0; i < qds.count(); ++i)
@@ -257,7 +257,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
             || !w->isPaintingEnabled()
 //            || KWin::effects->hasActiveFullScreenEffect()
             || w->isDesktop()
-#if KWIN_EFFECT_API_VERSION_MINOR < 233
+#if KWIN_EFFECT_API_VERSION < 233
             || data.quads.isTransformed()
             || !hasShadow(data.quads)
 #endif
@@ -278,7 +278,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
         QRect(geo.bottomLeft()-QPoint(0, m_size-1), m_corner)
     };
 
-#if KWIN_EFFECT_API_VERSION_MINOR < 233
+#if KWIN_EFFECT_API_VERSION < 233
     const KWin::WindowQuadList qds(data.quads);
     //paint the shadow
     data.quads = qds.select(KWin::WindowQuadShadow);
@@ -298,7 +298,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     }
 
     //paint the actual window
-#if KWIN_EFFECT_API_VERSION_MINOR < 233
+#if KWIN_EFFECT_API_VERSION < 233
     data.quads = qds.filterOut(KWin::WindowQuadShadow);
 #endif
     KWin::effects->paintWindow(w, mask, region, data);
@@ -323,7 +323,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
         m_tex[3-i]->unbind();
     }
     sm->popShader();
-#if KWIN_EFFECT_API_VERSION_MINOR < 233
+#if KWIN_EFFECT_API_VERSION < 233
     data.quads = qds;
 #endif
 #if 0
