@@ -198,8 +198,13 @@ ShapeCornersEffect::reconfigure(ReconfigureFlags flags)
     setRoundness(conf.readEntry("roundness", 5));
 }
 
+#if KWIN_EFFECT_API_VERSION_MINOR > 200
 void
 ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
+#else
+void
+ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, int time)
+#endif
 {
     if (!m_shader->isValid()
             || !m_managed.contains(w)
