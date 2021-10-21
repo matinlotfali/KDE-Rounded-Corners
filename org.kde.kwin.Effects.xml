@@ -1,0 +1,43 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.kwin.Effects">
+    <property name="activeEffects" type="as" access="read"/>
+    <property name="loadedEffects" type="as" access="read"/>
+    <property name="listOfEffects" type="as" access="read"/>
+    <method name="reconfigureEffect">
+      <arg name="name" type="s" direction="in"/>
+    </method>
+    <method name="loadEffect">
+      <arg type="b" direction="out"/>
+      <arg name="name" type="s" direction="in"/>
+    </method>
+    <method name="toggleEffect">
+      <arg name="name" type="s" direction="in"/>
+    </method>
+    <method name="unloadEffect">
+      <arg name="name" type="s" direction="in"/>
+    </method>
+    <method name="isEffectLoaded">
+      <arg type="b" direction="out"/>
+      <arg name="name" type="s" direction="in"/>
+    </method>
+    <method name="isEffectSupported">
+      <arg type="b" direction="out"/>
+      <arg name="name" type="s" direction="in"/>
+    </method>
+    <method name="areEffectsSupported">
+      <arg type="ab" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QList&lt;bool&gt;"/>
+      <arg name="names" type="as" direction="in"/>
+    </method>
+    <method name="supportInformation">
+      <arg type="s" direction="out"/>
+      <arg name="name" type="s" direction="in"/>
+    </method>
+    <method name="debug">
+      <arg type="s" direction="out"/>
+      <arg name="name" type="s" direction="in"/>
+      <arg name="name" type="s" direction="in"/>
+    </method>
+  </interface>
+</node>

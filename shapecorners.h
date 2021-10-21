@@ -26,7 +26,7 @@ namespace KWin { class GLTexture; }
 
 class Q_DECL_EXPORT ShapeCornersEffect : public KWin::Effect
 {
-//    Q_OBJECT
+    Q_OBJECT
 public:
     ShapeCornersEffect();
     ~ShapeCornersEffect();
@@ -41,10 +41,12 @@ public:
     void fillRegion(const QRegion &reg, const QColor &c);
 
     void reconfigure(ReconfigureFlags flags);
-    void prePaintWindow(KWin::EffectWindow* w, KWin::WindowPrePaintData& data, int time);
+    void prePaintWindow(KWin::EffectWindow* w, KWin::WindowPrePaintData& data, std::chrono::milliseconds time);
     void paintWindow(KWin::EffectWindow* w, int mask, QRegion region, KWin::WindowPaintData& data);
-    void windowMaximizedStateChanged(KWin::EffectWindow *w, bool horizontal, bool vertical);
-    virtual int requestedEffectChainPosition() const { return 100; }
+    virtual int requestedEffectChainPosition() const { return 99; }
+
+protected Q_SLOTS:
+    void windowAdded(KWin::EffectWindow *window);
 
 private:
     enum { TopLeft = 0, TopRight, BottomRight, BottomLeft, NTex };
@@ -53,8 +55,8 @@ private:
     int m_size, m_rSize, m_alpha;
     QSize m_corner;
     QRegion m_updateRegion;
-    KWin::EffectWindow *applyEffect;
     KWin::GLShader *m_shader;
+    QList<KWin::EffectWindow *> m_managed;
 };
 
 #endif //SHAPECORNERS_H

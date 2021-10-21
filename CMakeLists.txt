@@ -80,12 +80,13 @@ if (NOT EFFECTS_H OR NOT KWIN_GLUTILS OR NOT KWIN_EFFECTS OR NOT OPENGL)
     message(FATAL_ERROR "cant continue")
 endif (NOT EFFECTS_H OR NOT KWIN_GLUTILS OR NOT KWIN_EFFECTS OR NOT OPENGL)
 
-add_library(${SHAPECORNERS} MODULE shapecorners.cpp)
+add_library(${SHAPECORNERS} MODULE shapecorners.cpp dbus.h)
 
 target_link_libraries(${SHAPECORNERS}
     PUBLIC
         Qt5::Core
         Qt5::Gui
+        Qt5::DBus
         ${KWIN_EFFECTS}
         ${KWIN_GLUTILS}
         epoxy
@@ -116,3 +117,24 @@ execute_process(COMMAND kf5-config --install data OUTPUT_VARIABLE DATAPATH OUTPU
 
 install(FILES shaders_140/shapecorners.frag DESTINATION ${DATAPATH}/kwin/shaders/1.40)
 install(FILES shaders_110/shapecorners.frag DESTINATION ${DATAPATH}/kwin/shaders/1.10)
+
+#config
+project(kwin4_shapecorners_config)
+set(kwin4_shapecorners_config_SOURCES shapecorners_config.cpp)
+ki18n_wrap_ui(kwin4_shapecorners_config_SOURCES shapecorners_config.ui)
+qt5_add_dbus_interface(kwin4_shapecorners_config_SOURCES org.kde.kwin.Effects.xml kwineffects_interface)
+add_library(kwin4_shapecorners_config MODULE ${kwin4_shapecorners_config_SOURCES})
+target_link_libraries(kwin4_shapecorners_config
+        PUBLIC
+            kwineffects
+            Qt5::Widgets
+        PRIVATE
+            KF5::ConfigWidgets
+            KF5::WindowSystem
+            KF5::I18n
+            KF5::GlobalAccel
+        )
+kcoreaddons_desktop_to_json(kwin4_shapecorners_config shapecorners_config.desktop)
+install(TARGETS kwin4_shapecorners_config DESTINATION ${MODULEPATH}/kwin/effects/configs)
+install(FILES shapecorners_config.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kwin)
+
