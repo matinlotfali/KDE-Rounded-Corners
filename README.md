@@ -25,6 +25,11 @@ sudo pacman -S git cmake extra-cmake-modules base-devel
 yay -S qt5-tools
 ```
 
+OpenSUSE based
+```
+sudo zypper install git cmake gcc-c++ extra-cmake-modules libqt5-qttools-devel libqt5-qtx11extras-devel kconfigwidgets-devel kcrash-devel kguiaddons-devel kglobalaccel-devel kio-devel ki18n-devel knotifications-devel kinit-devel kwin5-devel libQt5Gui-devel libQt5OpenGL-devel libepoxy-devel
+```
+
 # How to build:
 ```
 git clone https://github.com/alex47/KDE-Rounded-Corners
