@@ -70,6 +70,7 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(0)
 //        qDebug() << "shader valid: " << m_shader->isValid();
         if (m_shader->isValid())
         {
+            applyEffect = NULL;
             const int sampler = m_shader->uniformLocation("sampler");
             const int corner = m_shader->uniformLocation("corner");
             KWin::ShaderManager::instance()->pushShader(m_shader);
@@ -81,6 +82,7 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(0)
                     windowAdded(win);
             connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
             connect(KWin::effects, &KWin::EffectsHandler::windowClosed, this, [this](){m_managed.removeOne(static_cast<KWin::EffectWindow *>(sender()));});
+            connect(KWin::effects, &KWin::EffectsHandler::windowMaximizedStateChanged, this, &ShapeCornersEffect::windowMaximizedStateChanged);
         }
         else
             qDebug() << "ShapeCorners: no valid shaders found! ShapeCorners will not work.";
@@ -90,6 +92,13 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(0)
         qDebug() << "ShapeCorners: no shaders found! Exiting...";
         deleteLater();
     }
+}
+
+void ShapeCornersEffect::windowMaximizedStateChanged(KWin::EffectWindow *w, bool horizontal, bool vertical) {
+    if ((horizontal == true) && (vertical == true))
+        applyEffect = w;
+    else
+        applyEffect = NULL;
 }
 
 ShapeCornersEffect::~ShapeCornersEffect()
@@ -211,6 +220,7 @@ ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintDa
             || !w->isPaintingEnabled()
 //            || KWin::effects->hasActiveFullScreenEffect()
             || w->isDesktop()
+            || (w == applyEffect)
 #if KWIN_EFFECT_API_VERSION < 233
            || data.quads.isTransformed()
 #endif
@@ -257,6 +267,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
             || !w->isPaintingEnabled()
 //            || KWin::effects->hasActiveFullScreenEffect()
             || w->isDesktop()
+            || (w == applyEffect)
 #if KWIN_EFFECT_API_VERSION < 233
             || data.quads.isTransformed()
             || !hasShadow(data.quads)
