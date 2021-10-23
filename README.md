@@ -1,3 +1,16 @@
+# WARNING
+**This repository is deprecated.**
+
+**Development has been taken over by: https://github.com/matinlotfali/KDE-Rounded-Corners**
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
+
+
 # KDE-Rounded-Corners
 
 This is a fork of https://sourceforge.net/projects/shapecorners/
