@@ -1,6 +1,6 @@
 # KDE-Rounded-Corners
 
-This is a fork of https://sourceforge.net/projects/shapecorners/
+This is a fork of https://sourceforge.net/projects/shapecorners/ with additional contributions in https://github.com/alex47/KDE-Rounded-Corners
 
 When you disable window borders in System Settings --> Application Style --> Window Decorations --> Border size: No Borders you get sharp bottom window corners.
 
@@ -32,7 +32,7 @@ sudo zypper install git cmake gcc-c++ extra-cmake-modules libqt5-qttools-devel l
 
 # How to build:
 ```
-git clone https://github.com/alex47/KDE-Rounded-Corners
+git clone https://github.com/matinlotfali/KDE-Rounded-Corners
 
 cd KDE-Rounded-Corners; mkdir qt5build; cd qt5build; cmake ../ -DCMAKE_INSTALL_PREFIX=/usr -DQT5BUILD=ON && make && sudo make install && (kwin_x11 --replace &)
 ```
