@@ -225,7 +225,7 @@ ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintDa
         KWin::effects->prePaintWindow(w, data, time);
         return;
     }
-    const QRect geo(w->geometry());
+    const QRect geo(w->frameGeometry());
     const QRect rect[NTex] =
     {
         QRect(geo.topLeft(), m_corner),
@@ -277,7 +277,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     }
 
     //map the corners
-    const QRect geo(w->geometry());
+    const QRect geo(w->frameGeometry());
     const QRect rect[NTex] =
     {
         QRect(geo.topLeft(), m_corner),
@@ -380,7 +380,7 @@ ShapeCornersEffect::fillRegion(const QRegion &reg, const QColor &c)
     vbo->setUseColor(true);
     vbo->setColor(c);
     QVector<float> verts;
-    foreach (const QRect & r, reg.rects())
+    for (const QRect & r: reg)
     {
         verts << r.x() + r.width() << r.y();
         verts << r.x() << r.y();
