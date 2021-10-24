@@ -81,7 +81,6 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
                     windowAdded(win);
             connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
             connect(KWin::effects, &KWin::EffectsHandler::windowClosed, this, [this](){m_managed.removeOne(dynamic_cast<KWin::EffectWindow *>(sender()));});
-            connect(KWin::effects, &KWin::EffectsHandler::windowMaximizedStateChanged, this, &ShapeCornersEffect::windowMaximizedStateChanged);
         }
         else
             qDebug() << "ShapeCorners: no valid shaders found! ShapeCorners will not work.";

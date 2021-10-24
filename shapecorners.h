@@ -47,7 +47,6 @@ public:
     void prePaintWindow(KWin::EffectWindow* w, KWin::WindowPrePaintData& data, int time);
 #endif
     void paintWindow(KWin::EffectWindow* w, int mask, QRegion region, KWin::WindowPaintData& data);
-    void windowMaximizedStateChanged(KWin::EffectWindow *w, bool horizontal, bool vertical);
     virtual int requestedEffectChainPosition() const { return 99; }
 
 protected Q_SLOTS:
