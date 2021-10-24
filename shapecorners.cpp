@@ -395,7 +395,7 @@ bool ShapeCornersEffect::supported()
 }
 
 bool ShapeCornersEffect::isMaximized(KWin::EffectWindow *w) {
-    auto screenGeometry = KWin::effects->screens().at(w->screen())->geometry();
+    auto screenGeometry = KWin::effects->findScreen(w->screen())->geometry();
     return (w->x() == screenGeometry.x() && w->width() == screenGeometry.width()) ||
             (w->y() == screenGeometry.y() && w->height() == screenGeometry.height());
 }
