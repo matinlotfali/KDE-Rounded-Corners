@@ -33,12 +33,12 @@ public:
 
     static bool supported();
     static bool enabledByDefault();
+    static bool isMaximized(KWin::EffectWindow *w);
+    static void fillRegion(const QRegion &reg, const QColor &c);
 
     void setRoundness(const int r);
     void genMasks();
     void genRect();
-
-    void fillRegion(const QRegion &reg, const QColor &c);
 
     void reconfigure(ReconfigureFlags flags);
 #if KWIN_EFFECT_API_VERSION > 230
@@ -60,7 +60,6 @@ private:
     int m_size, m_rSize, m_alpha;
     QSize m_corner;
     QRegion m_updateRegion;
-    KWin::EffectWindow *applyEffect;
     KWin::GLShader *m_shader;
     QList<KWin::EffectWindow *> m_managed;
 };

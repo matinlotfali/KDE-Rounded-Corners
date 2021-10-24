@@ -70,7 +70,6 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
 //        qDebug() << "shader valid: " << m_shader->isValid();
         if (m_shader->isValid())
         {
-            applyEffect = NULL;
             const int sampler = m_shader->uniformLocation("sampler");
             const int corner = m_shader->uniformLocation("corner");
             KWin::ShaderManager::instance()->pushShader(m_shader);
@@ -92,13 +91,6 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
         qDebug() << "ShapeCorners: no shaders found! Exiting...";
         deleteLater();
     }
-}
-
-void ShapeCornersEffect::windowMaximizedStateChanged(KWin::EffectWindow *w, bool horizontal, bool vertical) {
-    if ((horizontal == true) && (vertical == true))
-        applyEffect = w;
-    else
-        applyEffect = NULL;
 }
 
 ShapeCornersEffect::~ShapeCornersEffect()
@@ -216,7 +208,6 @@ ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintDa
 //            || KWin::effects->hasActiveFullScreenEffect()
             || w->isDesktop()
             || isMaximized(w)
-            || (w == applyEffect)
 #if KWIN_EFFECT_API_VERSION < 233
            || data.quads.isTransformed()
 #endif
@@ -264,7 +255,6 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
 //            || KWin::effects->hasActiveFullScreenEffect()
             || w->isDesktop()
             || isMaximized(w)
-            || (w == applyEffect)
 #if KWIN_EFFECT_API_VERSION < 233
             || data.quads.isTransformed()
             || !hasShadow(data.quads)
@@ -402,6 +392,12 @@ ShapeCornersEffect::enabledByDefault()
 bool ShapeCornersEffect::supported()
 {
     return KWin::effects->isOpenGLCompositing() && KWin::GLRenderTarget::supported();
+}
+
+bool ShapeCornersEffect::isMaximized(KWin::EffectWindow *w) {
+    auto screenGeometry = KWin::effects->screens().at(w->screen())->geometry();
+    return (w->x() == screenGeometry.x() && w->width() == screenGeometry.width()) ||
+            (w->y() == screenGeometry.y() && w->height() == screenGeometry.height());
 }
 
 #include "shapecorners.moc"
