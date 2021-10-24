@@ -215,7 +215,7 @@ ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintDa
             || !w->isPaintingEnabled()
 //            || KWin::effects->hasActiveFullScreenEffect()
             || w->isDesktop()
-            || w->windowClass().contains("lattedock", Qt::CaseInsensitive)
+            || isMaximized(w)
             || (w == applyEffect)
 #if KWIN_EFFECT_API_VERSION < 233
            || data.quads.isTransformed()
@@ -263,7 +263,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
             || !w->isPaintingEnabled()
 //            || KWin::effects->hasActiveFullScreenEffect()
             || w->isDesktop()
-            || w->windowClass().contains("lattedock", Qt::CaseInsensitive)
+            || isMaximized(w)
             || (w == applyEffect)
 #if KWIN_EFFECT_API_VERSION < 233
             || data.quads.isTransformed()
