@@ -38,14 +38,14 @@ KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(  ShapeCornersFactory,
                                         return ShapeCornersEffect::enabledByDefault();)
 
 
-ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(0)
+ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
 {
     new KWin::EffectAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/ShapeCorners", this);
     for (int i = 0; i < NTex; ++i)
     {
-        m_tex[i] = 0;
-        m_rect[i] = 0;
+        m_tex[i] = nullptr;
+        m_rect[i] = nullptr;
     }
     reconfigure(ReconfigureAll);
 
@@ -81,7 +81,7 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(0)
                 if (KWin::EffectWindow *win = KWin::effects->findWindow(KWindowSystem::windows().at(i)))
                     windowAdded(win);
             connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
-            connect(KWin::effects, &KWin::EffectsHandler::windowClosed, this, [this](){m_managed.removeOne(static_cast<KWin::EffectWindow *>(sender()));});
+            connect(KWin::effects, &KWin::EffectsHandler::windowClosed, this, [this](){m_managed.removeOne(dynamic_cast<KWin::EffectWindow *>(sender()));});
             connect(KWin::effects, &KWin::EffectsHandler::windowMaximizedStateChanged, this, &ShapeCornersEffect::windowMaximizedStateChanged);
         }
         else
@@ -103,14 +103,11 @@ void ShapeCornersEffect::windowMaximizedStateChanged(KWin::EffectWindow *w, bool
 
 ShapeCornersEffect::~ShapeCornersEffect()
 {
-    if (m_shader)
-        delete m_shader;
+    delete m_shader;
     for (int i = 0; i < NTex; ++i)
     {
-        if (m_tex[i])
-            delete m_tex[i];
-        if (m_rect[i])
-            delete m_rect[i];
+        delete m_tex[i];
+        delete m_rect[i];
     }
 }
 
@@ -133,8 +130,7 @@ void
 ShapeCornersEffect::genMasks()
 {
     for (int i = 0; i < NTex; ++i)
-        if (m_tex[i])
-            delete m_tex[i];
+        delete m_tex[i];
 
     QImage img(m_size*2, m_size*2, QImage::Format_ARGB32_Premultiplied);
     img.fill(Qt::transparent);
@@ -157,8 +153,7 @@ void
 ShapeCornersEffect::genRect()
 {
     for (int i = 0; i < NTex; ++i)
-        if (m_rect[i])
-            delete m_rect[i];
+        delete m_rect[i];
 
     m_rSize = m_size+1;
     QImage img(m_rSize*2, m_rSize*2, QImage::Format_ARGB32_Premultiplied);
@@ -394,7 +389,7 @@ ShapeCornersEffect::fillRegion(const QRegion &reg, const QColor &c)
         verts << r.x() + r.width() << r.y() + r.height();
         verts << r.x() + r.width() << r.y();
     }
-    vbo->setData(verts.count() / 2, 2, verts.data(), NULL);
+    vbo->setData(verts.count() / 2, 2, verts.data(), nullptr);
     vbo->render(GL_TRIANGLES);
 }
 
