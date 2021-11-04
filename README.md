@@ -48,3 +48,11 @@ It should be now activated.
 For better results turn off the border size in:
 
 System Settings --> Application Style --> Window Decoration
+
+# Settings
+
+You can change corner radius, or disable the effect in:
+
+System Settings --> Workspace Behavior --> Desktop Effects --> ShapeCorners
+
+To fully uninstall, simply run the command `sudo make uninstall` inside `qt5build` directory
