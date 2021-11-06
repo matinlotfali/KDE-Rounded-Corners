@@ -70,7 +70,7 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
 //        qDebug() << "shader valid: " << m_shader->isValid();
         if (m_shader->isValid())
         {
-            applyEffect = NULL;
+            applyEffect = nullptr;
             const int sampler = m_shader->uniformLocation("sampler");
             const int corner = m_shader->uniformLocation("corner");
             KWin::ShaderManager::instance()->pushShader(m_shader);
@@ -95,10 +95,10 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
 }
 
 void ShapeCornersEffect::windowMaximizedStateChanged(KWin::EffectWindow *w, bool horizontal, bool vertical) {
-    if ((horizontal == true) && (vertical == true))
+    if (horizontal && vertical)
         applyEffect = w;
     else
-        applyEffect = NULL;
+        applyEffect = nullptr;
 }
 
 ShapeCornersEffect::~ShapeCornersEffect()
