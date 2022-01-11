@@ -26,7 +26,7 @@ sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttools-devel qt5-qtt
 
 Arch based - by [hexa-one](https://github.com/hexa-one)
 ```
-sudo pacman -S git cmake extra-cmake-modules base-devel
+sudo pacman -S git cmake extra-cmake-modules base-devel kinit
 yay -S qt5-tools
 ```
 
