@@ -31,8 +31,7 @@
 #include <KConfigGroup>
 #include <QtDBus/QDBusConnection>
 
-KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(  ShapeCornersFactory,
-                                        ShapeCornersEffect,
+KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(  ShapeCornersEffect,
                                         "shapecorners.json",
                                         return ShapeCornersEffect::supported();,
                                         return ShapeCornersEffect::enabledByDefault();)
