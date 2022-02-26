@@ -31,11 +31,18 @@
 #include <KConfigGroup>
 #include <QtDBus/QDBusConnection>
 
+#if KWIN_EFFECT_API_VERSION < 233
 KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(  ShapeCornersFactory,
                                         ShapeCornersEffect,
                                         "shapecorners.json",
                                         return ShapeCornersEffect::supported();,
                                         return ShapeCornersEffect::enabledByDefault();)
+#else
+KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(  ShapeCornersEffect,
+                                        "shapecorners.json",
+                                        return ShapeCornersEffect::supported();,
+                                        return ShapeCornersEffect::enabledByDefault();)
+#endif
 
 
 ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
