@@ -77,7 +77,6 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
 //        qDebug() << "shader valid: " << m_shader->isValid();
         if (m_shader->isValid())
         {
-            applyEffect = nullptr;
             const int sampler = m_shader->uniformLocation("sampler");
             const int corner = m_shader->uniformLocation("corner");
             KWin::ShaderManager::instance()->pushShader(m_shader);
@@ -89,7 +88,6 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
                     windowAdded(win);
             connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
             connect(KWin::effects, &KWin::EffectsHandler::windowClosed, this, [this](){m_managed.removeOne(dynamic_cast<KWin::EffectWindow *>(sender()));});
-            connect(KWin::effects, &KWin::EffectsHandler::windowMaximizedStateChanged, this, &ShapeCornersEffect::windowMaximizedStateChanged);
         }
         else
             qDebug() << "ShapeCorners: no valid shaders found! ShapeCorners will not work.";
@@ -99,13 +97,6 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
         qDebug() << "ShapeCorners: no shaders found! Exiting...";
         deleteLater();
     }
-}
-
-void ShapeCornersEffect::windowMaximizedStateChanged(KWin::EffectWindow *w, bool horizontal, bool vertical) {
-    if (horizontal && vertical)
-        applyEffect = w;
-    else
-        applyEffect = nullptr;
 }
 
 ShapeCornersEffect::~ShapeCornersEffect()
@@ -222,7 +213,7 @@ ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintDa
             || !w->isPaintingEnabled()
 //            || KWin::effects->hasActiveFullScreenEffect()
             || w->isDesktop()
-            || (w == applyEffect)
+            || isMaximized(w)
 #if KWIN_EFFECT_API_VERSION < 233
            || data.quads.isTransformed()
 #endif
@@ -269,7 +260,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
             || !w->isPaintingEnabled()
 //            || KWin::effects->hasActiveFullScreenEffect()
             || w->isDesktop()
-            || (w == applyEffect)
+            || isMaximized(w)
 #if KWIN_EFFECT_API_VERSION < 233
             || data.quads.isTransformed()
             || !hasShadow(data.quads)
@@ -407,6 +398,16 @@ ShapeCornersEffect::enabledByDefault()
 bool ShapeCornersEffect::supported()
 {
     return KWin::effects->isOpenGLCompositing() && KWin::GLRenderTarget::supported();
+}
+
+bool ShapeCornersEffect::isMaximized(KWin::EffectWindow *w) {
+#if KWIN_EFFECT_API_VERSION < 233
+    return w->isFullScreen();
+#else
+    auto screenGeometry = KWin::effects->findScreen(w->screen()->name())->geometry();
+    return (w->x() == screenGeometry.x() && w->width() == screenGeometry.width()) ||
+            (w->y() == screenGeometry.y() && w->height() == screenGeometry.height());
+#endif
 }
 
 #include "shapecorners.moc"

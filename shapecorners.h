@@ -33,12 +33,12 @@ public:
 
     static bool supported();
     static bool enabledByDefault();
+    static bool isMaximized(KWin::EffectWindow *w);
+    static void fillRegion(const QRegion &reg, const QColor &c);
 
     void setRoundness(int r);
     void genMasks();
     void genRect();
-
-    static void fillRegion(const QRegion &reg, const QColor &c);
 
     void reconfigure(ReconfigureFlags flags) override;
 #if KWIN_EFFECT_API_VERSION > 231
@@ -47,7 +47,6 @@ public:
     void prePaintWindow(KWin::EffectWindow* w, KWin::WindowPrePaintData& data, int time) override;
 #endif
     void paintWindow(KWin::EffectWindow* w, int mask, QRegion region, KWin::WindowPaintData& data) override;
-    void windowMaximizedStateChanged(KWin::EffectWindow *w, bool horizontal, bool vertical);
     int requestedEffectChainPosition() const override { return 99; }
 
 protected Q_SLOTS:
@@ -59,7 +58,7 @@ private:
     KWin::GLTexture *m_rect[NTex];
     int m_size, m_rSize, m_alpha;
     QSize m_corner;
-    KWin::EffectWindow *applyEffect;
+    QRegion m_updateRegion;
     KWin::GLShader *m_shader;
     QList<KWin::EffectWindow *> m_managed;
 };
