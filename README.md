@@ -1,17 +1,22 @@
 # KDE-Rounded-Corners
 
-This is a fork of https://sourceforge.net/projects/shapecorners/ with additional contributions in https://github.com/alex47/KDE-Rounded-Corners
-
-When you disable window borders in System Settings --> Application Style --> Window Decorations --> Border size: No Borders you get sharp bottom window corners.
+This is a fork of [shapecorners](https://sourceforge.net/projects/shapecorners/) with some additional contributions in [Alex47's project](https://github.com/alex47/KDE-Rounded-Corners)
 
 This effect rounds the corners of your windows.
 
+When you disable window borders in System Settings --> Application Style --> Window Decorations --> Border size: No Borders you get sharp bottom window corners.
+
+#### Tested on:
+- Kubuntu 20.04
+- Debian 11
+- KDE Neon 5.24
 
 ![After](https://raw.githubusercontent.com/alex47/KDE-Rounded-Corners/master/screenshots/after.PNG)
 
 # Contributions:
 
-- Disable effect when window gets maximized - by [ciampolo](https://github.com/ciampolo)
+- Compatible with KWin 5.23 and 5.24 - by [matinlotfali](https://github.com/matinlotfali)
+- Disable effect when window gets maximized - by [matinlotfali](https://github.com/matinlotfali)
 - Added Latte Dock to ignore list - by [gikari](https://github.com/gikari)
 
 # Dependencies:
