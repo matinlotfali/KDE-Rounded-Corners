@@ -46,10 +46,11 @@ public:
 };
 
 ShapeCornersConfig::ShapeCornersConfig(QWidget* parent, const QVariantList& args)
-    : KCModule(KAboutData::pluginData(QStringLiteral("kwin4_effect_shapecorners")), parent, args)
+    : KCModule(parent, args)
     , d(new Private(this))
 {
-    QVBoxLayout* layout = new QVBoxLayout(this);
+    setAboutData(new KAboutData("ShapeCorners","ShapeCorners", "git"));
+    auto* layout = new QVBoxLayout(this);
     layout->addWidget(d->ui = new ConfigDialog(this));
     setLayout(layout);
 }

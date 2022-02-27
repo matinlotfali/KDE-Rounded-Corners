@@ -31,11 +31,18 @@
 #include <KConfigGroup>
 #include <QtDBus/QDBusConnection>
 
+#if KWIN_EFFECT_API_VERSION < 233
 KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(  ShapeCornersFactory,
                                         ShapeCornersEffect,
                                         "shapecorners.json",
                                         return ShapeCornersEffect::supported();,
                                         return ShapeCornersEffect::enabledByDefault();)
+#else
+KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(  ShapeCornersEffect,
+                                        "shapecorners.json",
+                                        return ShapeCornersEffect::supported();,
+                                        return ShapeCornersEffect::enabledByDefault();)
+#endif
 
 
 ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
@@ -193,7 +200,7 @@ ShapeCornersEffect::reconfigure(ReconfigureFlags flags)
     setRoundness(conf.readEntry("roundness", 5));
 }
 
-#if KWIN_EFFECT_API_VERSION > 230
+#if KWIN_EFFECT_API_VERSION > 231
 void
 ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
 #else
@@ -258,7 +265,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
             || data.quads.isTransformed()
             || !hasShadow(data.quads)
 #endif
-            || (mask & (PAINT_WINDOW_TRANSFORMED|PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS))
+            || (mask & (PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS))
             )
     {
         KWin::effects->paintWindow(w, mask, region, data);
@@ -394,7 +401,7 @@ bool ShapeCornersEffect::supported()
 }
 
 bool ShapeCornersEffect::isMaximized(KWin::EffectWindow *w) {
-    auto screenGeometry = KWin::effects->findScreen(w->screen())->geometry();
+    auto screenGeometry = KWin::effects->findScreen(w->screen()->name())->geometry();
     return (w->x() == screenGeometry.x() && w->width() == screenGeometry.width()) ||
             (w->y() == screenGeometry.y() && w->height() == screenGeometry.height());
 }

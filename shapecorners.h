@@ -29,25 +29,25 @@ class Q_DECL_EXPORT ShapeCornersEffect : public KWin::Effect
     Q_OBJECT
 public:
     ShapeCornersEffect();
-    ~ShapeCornersEffect();
+    ~ShapeCornersEffect() override;
 
     static bool supported();
     static bool enabledByDefault();
     static bool isMaximized(KWin::EffectWindow *w);
     static void fillRegion(const QRegion &reg, const QColor &c);
 
-    void setRoundness(const int r);
+    void setRoundness(int r);
     void genMasks();
     void genRect();
 
-    void reconfigure(ReconfigureFlags flags);
-#if KWIN_EFFECT_API_VERSION > 230
-    void prePaintWindow(KWin::EffectWindow* w, KWin::WindowPrePaintData& data, std::chrono::milliseconds time);
+    void reconfigure(ReconfigureFlags flags) override;
+#if KWIN_EFFECT_API_VERSION > 231
+    void prePaintWindow(KWin::EffectWindow* w, KWin::WindowPrePaintData& data, std::chrono::milliseconds time) override;
 #else
-    void prePaintWindow(KWin::EffectWindow* w, KWin::WindowPrePaintData& data, int time);
+    void prePaintWindow(KWin::EffectWindow* w, KWin::WindowPrePaintData& data, int time) override;
 #endif
-    void paintWindow(KWin::EffectWindow* w, int mask, QRegion region, KWin::WindowPaintData& data);
-    virtual int requestedEffectChainPosition() const { return 99; }
+    void paintWindow(KWin::EffectWindow* w, int mask, QRegion region, KWin::WindowPaintData& data) override;
+    int requestedEffectChainPosition() const override { return 99; }
 
 protected Q_SLOTS:
     void windowAdded(KWin::EffectWindow *window);
