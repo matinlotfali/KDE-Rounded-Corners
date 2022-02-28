@@ -2,7 +2,7 @@ name: CMake
 
 on:
   push:
-    branches: [ master, latest-shapecorners-code, kwin_5.23 ]
+    branches: [ master, latest-shapecorners-code, kwin_5.23, kwin_5.24 ]
   pull_request:
     branches: [ master ]
 

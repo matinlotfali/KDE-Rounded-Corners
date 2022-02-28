@@ -138,3 +138,15 @@ kcoreaddons_desktop_to_json(kwin4_shapecorners_config shapecorners_config.deskto
 install(TARGETS kwin4_shapecorners_config DESTINATION ${MODULEPATH}/kwin/effects/configs)
 install(FILES shapecorners_config.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kwin)
 
+# these are cache variables, so they could be overwritten with -D,
+set(CPACK_PACKAGE_NAME kwin4-effect-shapecorners
+    CACHE STRING kwin4-effect-shapecorners
+)
+set(CPACK_DEBIAN_FILE_NAME "kwin4-effect-shapecorners-kubuntu2004-amd64.deb")
+set(CPACK_PACKAGE_CONTACT "matinlotfali@gmail.com")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Matin Lotfaliei")
+
+# autogenerate dependency information
+set (CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+
+include(CPack)
