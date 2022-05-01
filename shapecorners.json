@@ -27,5 +27,6 @@
     },
     "X-KDE-Ordering": "5",
     "X-Plasma-API": "",
-    "X-Plasma-MainScript": ""
+    "X-Plasma-MainScript": "",
+    "X-KDE-ConfigModule": "kwin4_shapecorners_config"
 }
