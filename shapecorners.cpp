@@ -210,11 +210,12 @@ ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintDa
 {
     if (!m_shader->isValid()
             || !m_managed.contains(w)
-            || !w->isPaintingEnabled()
 //            || KWin::effects->hasActiveFullScreenEffect()
             || w->isDesktop()
             || isMaximized(w)
-#if KWIN_EFFECT_API_VERSION < 233
+#if KWIN_EFFECT_API_VERSION < 234
+            || !w->isPaintingEnabled()
+#elif KWIN_EFFECT_API_VERSION < 233
            || data.quads.isTransformed()
 #endif
             )
@@ -233,12 +234,16 @@ ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintDa
     for (int i = 0; i < NTex; ++i)
     {
         data.paint += rect[i];
+#if KWIN_EFFECT_API_VERSION < 234
         data.clip -= rect[i];
+#endif
     }
     QRegion outerRect(QRegion(geo.adjusted(-1, -1, 1, 1))-geo);
     outerRect += QRegion(geo.x()+m_size, geo.y(), geo.width()-m_size*2, 1);
     data.paint += outerRect;
+#if KWIN_EFFECT_API_VERSION < 234
     data.clip -=outerRect;
+#endif
     KWin::effects->prePaintWindow(w, data, time);
 }
 
@@ -257,11 +262,12 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
 {
     if (!m_shader->isValid()
             || !m_managed.contains(w)
-            || !w->isPaintingEnabled()
 //            || KWin::effects->hasActiveFullScreenEffect()
             || w->isDesktop()
             || isMaximized(w)
-#if KWIN_EFFECT_API_VERSION < 233
+#if KWIN_EFFECT_API_VERSION < 234
+            || !w->isPaintingEnabled()
+#elif KWIN_EFFECT_API_VERSION < 233
             || data.quads.isTransformed()
             || !hasShadow(data.quads)
 #endif
@@ -397,16 +403,20 @@ ShapeCornersEffect::enabledByDefault()
 
 bool ShapeCornersEffect::supported()
 {
+#if KWIN_EFFECT_API_VERSION < 234
     return KWin::effects->isOpenGLCompositing() && KWin::GLRenderTarget::supported();
+#else
+    return KWin::effects->isOpenGLCompositing();
+#endif
 }
 
 bool ShapeCornersEffect::isMaximized(KWin::EffectWindow *w) {
-#if KWIN_EFFECT_API_VERSION < 233
-    return w->isFullScreen();
-#else
+#if KWIN_EFFECT_API_VERSION == 233
     auto screenGeometry = KWin::effects->findScreen(w->screen()->name())->geometry();
     return (w->x() == screenGeometry.x() && w->width() == screenGeometry.width()) ||
             (w->y() == screenGeometry.y() && w->height() == screenGeometry.height());
+#else
+    return w->isFullScreen();
 #endif
 }
 

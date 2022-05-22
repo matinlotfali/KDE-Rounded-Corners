@@ -10,6 +10,7 @@ When you disable window borders in System Settings --> Application Style --> Win
 - Kubuntu 20.04 (amd64 deb package available in [releases](https://github.com/matinlotfali/KDE-Rounded-Corners/releases))
 - Debian 11 (amd64 deb package available in [releases](https://github.com/matinlotfali/KDE-Rounded-Corners/releases))
 - KDE Neon 5.24
+- KDE Neon 5.25
 
 ![After](https://raw.githubusercontent.com/alex47/KDE-Rounded-Corners/master/screenshots/after.PNG)
 
