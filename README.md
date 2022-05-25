@@ -47,7 +47,7 @@ sudo zypper install git cmake gcc-c++ extra-cmake-modules libqt5-qttools-devel l
 ```
 **Void** - by [lay-by](https://github.com/lay-by)
 ```
-xbps-install git cmake make kinit qt5-tools qt5-tools-devel extra-cmake-modules qt5-x11extras-devel kinit-devel gettext gettext-devel kwin-devel
+xbps-install git cmake make kinit qt5-tools-devel extra-cmake-modules qt5-x11extras-devel kinit-devel gettext-devel kwin-devel
 ```
 Then get the source code and compile:
 ```
