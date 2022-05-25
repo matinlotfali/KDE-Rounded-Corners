@@ -45,6 +45,10 @@ sudo pamac build kde-rounded-corners
 ```
 sudo zypper install git cmake gcc-c++ extra-cmake-modules libqt5-qttools-devel libqt5-qtx11extras-devel kconfigwidgets-devel kcrash-devel kguiaddons-devel kglobalaccel-devel kio-devel ki18n-devel knotifications-devel kinit-devel kwin5-devel libQt5Gui-devel libQt5OpenGL-devel libepoxy-devel
 ```
+**Void** - by [lay-by](https://github.com/lay-by)
+```
+xbps-install git cmake make kinit qt5-tools qt5-tools-devel extra-cmake-modules qt5-x11extras-devel kinit-devel gettext gettext-devel kwin-devel
+```
 Then get the source code and compile:
 ```
 git clone https://github.com/matinlotfali/KDE-Rounded-Corners
@@ -52,7 +56,7 @@ cd KDE-Rounded-Corners
 mkdir qt5build
 cd qt5build
 cmake ../ -DCMAKE_INSTALL_PREFIX=/usr -DQT5BUILD=ON
-make
+make -j4
 sudo make install
 ```
 
