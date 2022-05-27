@@ -56,7 +56,7 @@ cd KDE-Rounded-Corners
 mkdir qt5build
 cd qt5build
 cmake ../ -DCMAKE_INSTALL_PREFIX=/usr -DQT5BUILD=ON
-make -j4
+make -j$(grep -c '^processor' /proc/cpuinfo)
 sudo make install
 ```
 
