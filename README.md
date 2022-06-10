@@ -1,10 +1,10 @@
 # KDE-Rounded-Corners
 
-This is a fork of [shapecorners](https://sourceforge.net/projects/shapecorners/) with some additional contributions in [Alex47's project](https://github.com/alex47/KDE-Rounded-Corners)
+This effect rounds the corners of your windows. Window borders should be turned off for the effect to work. [How?](#settings)
 
-This effect rounds the corners of your windows.
+This is a fork of [shapecorners](https://sourceforge.net/projects/shapecorners/) with some additional contributions in [Alex47's project](https://github.com/alex47/KDE-Rounded-Corners).
 
-When you disable window borders in System Settings --> Application Style --> Window Decorations --> Border size: No Borders you get sharp bottom window corners.
+Wish me be more active on this? Motivate me with [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate/?business=WYGJ6T4J23P2L&no_recurring=0&currency_code=CAD)
 
 #### Tested on:
 - Kubuntu 20.04 (amd64 deb package available in [releases](https://github.com/matinlotfali/KDE-Rounded-Corners/releases))
@@ -61,14 +61,14 @@ You can now logout and log back in or run the command below to have it activated
 kwin_x11 --replace &
 ```
 
-For better results turn off the border size in:
-
-System Settings --> Application Style --> Window Decoration
-
 # Settings
+
+You need to turn off the border size in:
+
+> System Settings --> Application Style --> Window Decoration
 
 You can change corner radius, or disable the effect in:
 
-System Settings --> Workspace Behavior --> Desktop Effects --> ShapeCorners
+> System Settings --> Workspace Behavior --> Desktop Effects --> ShapeCorners
 
 To fully uninstall, simply run the command `sudo make uninstall` inside `qt5build` directory
