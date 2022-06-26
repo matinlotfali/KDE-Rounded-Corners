@@ -24,11 +24,8 @@ jobs:
 
     - name: Add the KDE Neon repository
       run: |
-        sudo apt-add-repository http://archive.neon.kde.org/user
         sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E6D4736255751E5D
-      
-    - name: Refresh Ubuntu Packages
-      run: sudo apt update
+        sudo apt-add-repository http://archive.neon.kde.org/user
 
     - name: Refresh KDE Neon Packages
       run: sudo apt -y dist-upgrade
