@@ -22,11 +22,9 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v3
       
-    - name: Check out Cache
-      uses: actions/cache@v3
-      with:
-        path: dependencies
-        key: ${{ runner.os }}-dependencies
+    - name: Cache APT Packages
+      uses: awalsh128/cache-apt-pkgs-action@v1.0.2
+
 
     - name: Refresh Ubuntu Packages
       run: sudo apt update
@@ -51,11 +49,8 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v3
       
-    - name: Check out Cache
-      uses: actions/cache@v3
-      with:
-        path: dependencies
-        key: ${{ runner.os }}-dependencies
+    - name: Cache APT Packages
+      uses: awalsh128/cache-apt-pkgs-action@v1.0.2
 
     - name: Refresh Ubuntu Packages
       run: sudo apt update
