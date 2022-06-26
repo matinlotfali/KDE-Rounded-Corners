@@ -12,6 +12,7 @@ This is a fork of [shapecorners](https://sourceforge.net/projects/shapecorners/)
 - ![KDE Neon (Stable)](https://img.shields.io/github/workflow/status/matinlotfali/KDE-Rounded-Corners/KDE%20Neon%20(Stable)?label=KDE%20Neon%20%28Stable%29&logo=kde&logoColor=white)
 - ![KDE Neon (Unstable)](https://img.shields.io/github/workflow/status/matinlotfali/KDE-Rounded-Corners/KDE%20Neon%20(Unstable)?label=KDE%20Neon%20%28Unstable%29&logo=kde&logoColor=white)
 - ![Debian 11 Bullseye](https://img.shields.io/github/workflow/status/matinlotfali/KDE-Rounded-Corners/Debian?label=Debian%2011%20Bullseye&logo=debian) [![Release Binary](https://img.shields.io/github/downloads/matinlotfali/KDE-Rounded-Corners/latest/kwin4-effect-shapecorners-debian11-amd64.deb?label=release%20binary)](https://github.com/matinlotfali/KDE-Rounded-Corners/releases/download/v0.1.1/kwin4-effect-shapecorners-kubuntu2004-amd64.deb)
+- [![Arch](https://img.shields.io/github/workflow/status/matinlotfali/KDE-Rounded-Corners/Debian?label=Arch%20Linux&logo=archlinux&logoColor=white) ![](https://img.shields.io/aur/maintainer/kde-rounded-corners?label=AUR%20Maintainer) ![](https://img.shields.io/aur/votes/kde-rounded-corners?label=AUR%20Votes)](https://aur.archlinux.org/packages/kde-rounded-corners)
 
 ![After](https://raw.githubusercontent.com/alex47/KDE-Rounded-Corners/master/screenshots/after.PNG)
 
@@ -39,6 +40,7 @@ sudo pacman -S git cmake extra-cmake-modules base-devel kinit
 yay -S qt5-tools
 ```
 or AUR package by [Shaurya-Kalia](https://github.com/Shaurya-Kalia)
+
 ```
 sudo pamac build kde-rounded-corners
 ```
