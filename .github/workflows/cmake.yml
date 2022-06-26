@@ -24,13 +24,9 @@ jobs:
       
     - name: Cache APT Packages
       uses: awalsh128/cache-apt-pkgs-action@v1.0.2
-
-
-    - name: Refresh Ubuntu Packages
-      run: sudo apt update
-
-    - name: Install Dependencies
-      run: sudo apt install -y gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5crash-dev libkf5globalaccel-dev libkf5kio-dev libkf5notifications-dev kinit-dev kwin-dev
+      with:
+        packages: gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5crash-dev libkf5globalaccel-dev libkf5kio-dev libkf5notifications-dev kinit-dev kwin-dev
+        refresh: true
     
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -51,12 +47,9 @@ jobs:
       
     - name: Cache APT Packages
       uses: awalsh128/cache-apt-pkgs-action@v1.0.2
-
-    - name: Refresh Ubuntu Packages
-      run: sudo apt update
-
-    - name: Install Dependencies
-      run: sudo apt install -y gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5crash-dev libkf5globalaccel-dev libkf5kio-dev libkf5notifications-dev kinit-dev kwin-dev
+      with:
+        packages: gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5crash-dev libkf5globalaccel-dev libkf5kio-dev libkf5notifications-dev kinit-dev kwin-dev
+        refresh: true
     
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
