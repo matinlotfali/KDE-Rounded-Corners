@@ -24,9 +24,8 @@ jobs:
 
     - name: Add the KDE Neon repository
       run: |
-        wget -qO - 'https://archive.neon.kde.org/public.key' | sudo apt-key add -
-        echo "deb http://archive.neon.kde.org/user/ focal main" | sudo tee -a /etc/apt/sources.list.d/neon.list
-        echo "deb-src http://archive.neon.kde.org/user/ focal main" | sudo tee -a /etc/apt/sources.list.d/neon.list
+        echo "deb [signed-by=https://archive.neon.kde.org/public.key] http://archive.neon.kde.org/user/ focal main" | sudo tee -a /etc/apt/sources.list.d/neon.list
+        echo "deb-src [signed-by=https://archive.neon.kde.org/public.key] http://archive.neon.kde.org/user/ focal main" | sudo tee -a /etc/apt/sources.list.d/neon.list
         echo "Package: base-files" | sudo tee -a /etc/apt/preferences.d/99block-neon
         echo "Pin: origin archive.neon.kde.org" | sudo tee -a /etc/apt/preferences.d/99block-neon
         echo "Pin-Priority: 1100" | sudo tee -a /etc/apt/preferences.d/99block-neon
