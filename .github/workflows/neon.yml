@@ -24,15 +24,14 @@ jobs:
 
     - name: Add the KDE Neon repository
       run: |
-        echo "deb [signed-by=https://archive.neon.kde.org/public.key] http://archive.neon.kde.org/user/ focal main" | sudo tee -a /etc/apt/sources.list.d/neon.list
-        echo "deb-src [signed-by=https://archive.neon.kde.org/public.key] http://archive.neon.kde.org/user/ focal main" | sudo tee -a /etc/apt/sources.list.d/neon.list
-        echo "Package: base-files" | sudo tee -a /etc/apt/preferences.d/99block-neon
-        echo "Pin: origin archive.neon.kde.org" | sudo tee -a /etc/apt/preferences.d/99block-neon
-        echo "Pin-Priority: 1100" | sudo tee -a /etc/apt/preferences.d/99block-neon
-      shell: bash
+        sudo apt-add-repository http://archive.neon.kde.org/user
+        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E6D4736255751E5D
       
     - name: Refresh Ubuntu Packages
       run: sudo apt update
+
+    - name: Refresh KDE Neon Packages
+      run: sudo apt -y dist-upgrade
 
     - name: Install Dependencies
       run: sudo apt install -y gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5crash-dev libkf5globalaccel-dev libkf5kio-dev libkf5notifications-dev kinit-dev kwin-dev
