@@ -4,13 +4,14 @@ This effect rounds the corners of your windows. Window borders should be turned 
 
 This is a fork of [shapecorners](https://sourceforge.net/projects/shapecorners/) with some additional contributions in [Alex47's project](https://github.com/alex47/KDE-Rounded-Corners).
 
-Wish me be more active on this? Motivate me with [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate/?business=WYGJ6T4J23P2L&no_recurring=0&currency_code=CAD)
+[![Donate](https://img.shields.io/badge/Wish%20me%20be%20more%20active%20on%20this%3F%20Motivate%20me%20with-Paypal-blue)](https://www.paypal.com/donate/?business=WYGJ6T4J23P2L&no_recurring=0&currency_code=CAD)
 
 #### Tested on:
-- Kubuntu 20.04 (amd64 deb package available in [releases](https://github.com/matinlotfali/KDE-Rounded-Corners/releases))
-- Debian 11 (amd64 deb package available in [releases](https://github.com/matinlotfali/KDE-Rounded-Corners/releases))
-- KDE Neon 5.24
-- KDE Neon 5.25
+- ![Kubuntu 22.04 Jammy](https://img.shields.io/github/workflow/status/matinlotfali/KDE-Rounded-Corners/Kubuntu%2022.04?label=Kubuntu%2022.04%20Jammy&logo=kubuntu)
+- ![Kubuntu 20.04 Focal](https://img.shields.io/github/workflow/status/matinlotfali/KDE-Rounded-Corners/Kubuntu%2020.04?label=Kubuntu%2020.04%20Focal&logo=kubuntu) [![Release Binary](https://img.shields.io/github/downloads/matinlotfali/KDE-Rounded-Corners/latest/kwin4-effect-shapecorners-kubuntu2004-amd64.deb?label=release%20binary)](https://github.com/matinlotfali/KDE-Rounded-Corners/releases/download/v0.1.1/kwin4-effect-shapecorners-kubuntu2004-amd64.deb)
+- ![KDE Neon (Stable)](https://img.shields.io/github/workflow/status/matinlotfali/KDE-Rounded-Corners/KDE%20Neon%20(Stable)?label=KDE%20Neon%20%28Stable%29&logo=kde&logoColor=white)
+- ![KDE Neon (Unstable)](https://img.shields.io/github/workflow/status/matinlotfali/KDE-Rounded-Corners/KDE%20Neon%20(Unstable)?label=KDE%20Neon%20%28Unstable%29&logo=kde&logoColor=white)
+- ![Debian 11 Bullseye](https://img.shields.io/github/workflow/status/matinlotfali/KDE-Rounded-Corners/Debian?label=Debian%2011%20Bullseye&logo=debian) [![Release Binary](https://img.shields.io/github/downloads/matinlotfali/KDE-Rounded-Corners/latest/kwin4-effect-shapecorners-debian11-amd64.deb?label=release%20binary)](https://github.com/matinlotfali/KDE-Rounded-Corners/releases/download/v0.1.1/kwin4-effect-shapecorners-kubuntu2004-amd64.deb)
 
 ![After](https://raw.githubusercontent.com/alex47/KDE-Rounded-Corners/master/screenshots/after.PNG)
 
