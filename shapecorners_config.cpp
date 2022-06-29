@@ -16,7 +16,7 @@
 #include <KAboutData>
 
 K_PLUGIN_FACTORY_WITH_JSON(ShapeCornersConfigFactory,
-                           "shapecorners_config.json",
+                           "shapecorners.json",
                            registerPlugin<ShapeCornersConfig>();)
 
 

@@ -137,11 +137,12 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
 {
     if (!m_shader->isValid()
             || !m_managed.contains(w)
-            || !w->isPaintingEnabled()
 //            || KWin::effects->hasActiveFullScreenEffect()
             || w->isDesktop()
             || isMaximized(w)
-#if KWIN_EFFECT_API_VERSION < 233
+#if KWIN_EFFECT_API_VERSION < 234
+            || !w->isPaintingEnabled()
+#elif KWIN_EFFECT_API_VERSION < 233
             || data.quads.isTransformed()
             || !hasShadow(data.quads)
 #endif
@@ -203,16 +204,20 @@ ShapeCornersEffect::enabledByDefault()
 
 bool ShapeCornersEffect::supported()
 {
+#if KWIN_EFFECT_API_VERSION < 234
     return KWin::effects->isOpenGLCompositing() && KWin::GLRenderTarget::supported();
+#else
+    return KWin::effects->isOpenGLCompositing();
+#endif
 }
 
 bool ShapeCornersEffect::isMaximized(KWin::EffectWindow *w) {
-#if KWIN_EFFECT_API_VERSION < 233
-    return w->isFullScreen();
-#else
+#if KWIN_EFFECT_API_VERSION >= 233
     auto screenGeometry = KWin::effects->findScreen(w->screen()->name())->geometry();
     return (w->x() == screenGeometry.x() && w->width() == screenGeometry.width()) ||
             (w->y() == screenGeometry.y() && w->height() == screenGeometry.height());
+#else
+    return w->isFullScreen();
 #endif
 }
 
