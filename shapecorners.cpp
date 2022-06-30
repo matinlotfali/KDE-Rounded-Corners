@@ -61,36 +61,26 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
         shadersDir = QStringLiteral("kwin/shaders/1.40/");
 
     const QString fragmentshader = QStandardPaths::locate(QStandardPaths::GenericDataLocation, shadersDir + QStringLiteral("shapecorners.frag"));
-//    m_shader = KWin::ShaderManager::instance()->loadFragmentShader(KWin::ShaderManager::GenericShader, fragmentshader);
-    QFile file(fragmentshader);
-    if (file.open(QFile::ReadOnly))
+    auto shader = KWin::ShaderManager::instance()->generateShaderFromFile(KWin::ShaderTrait::MapTexture, QString(), fragmentshader);
+#if KWIN_EFFECT_API_VERSION >= 235
+    m_shader = shader
+#else
+    m_shader.reset(shader);
+#endif
+//  qDebug() << frag;
+//  qDebug() << "shader valid: " << m_shader->isValid();
+    if (m_shader->isValid())
     {
-        QByteArray frag = file.readAll();
-        m_shader = KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, QByteArray(), frag);
-        file.close();
-//        qDebug() << frag;
-//        qDebug() << "shader valid: " << m_shader->isValid();
-        if (m_shader->isValid())
-        {
-            for (int i = 0; i < KWindowSystem::windows().count(); ++i)
-                if (KWin::EffectWindow *win = KWin::effects->findWindow(KWindowSystem::windows().at(i)))
-                    windowAdded(win);
-            connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
-            connect(KWin::effects, &KWin::EffectsHandler::windowClosed, this, [this](){m_managed.removeOne(dynamic_cast<KWin::EffectWindow *>(sender()));});
-        }
-        else
-            qDebug() << "ShapeCorners: no valid shaders found! ShapeCorners will not work.";
+        for (int i = 0; i < KWindowSystem::windows().count(); ++i)
+            if (KWin::EffectWindow *win = KWin::effects->findWindow(KWindowSystem::windows().at(i)))
+                windowAdded(win);
+        connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
+        connect(KWin::effects, &KWin::EffectsHandler::windowClosed, this, [this](){m_managed.removeOne(dynamic_cast<KWin::EffectWindow *>(sender()));});
     }
-    else
-    {
-        qDebug() << "ShapeCorners: no shaders found! Exiting...";
+    else {
+        qDebug() << "ShapeCorners: no valid shaders found! ShapeCorners will not work.";
         deleteLater();
     }
-}
-
-ShapeCornersEffect::~ShapeCornersEffect()
-{
-    delete m_shader;
 }
 
 void
@@ -179,7 +169,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     const int radiusLocation = m_shader->uniformLocation("radius");
     const int windowSizeLocation = m_shader->uniformLocation("windowSize");
     KWin::ShaderManager *sm = KWin::ShaderManager::instance();
-    sm->pushShader(m_shader);
+    sm->pushShader(m_shader.get());
     QMatrix4x4 mvp = data.screenProjectionMatrix();
     mvp.translate(w->x(), w->y());
     m_shader->setUniform(mvpMatrixLocation, mvp);

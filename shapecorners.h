@@ -21,6 +21,7 @@
 #define SHAPECORNERS_H
 
 #include <kwineffects.h>
+#include <memory>
 
 namespace KWin { class GLTexture; }
 
@@ -29,7 +30,6 @@ class Q_DECL_EXPORT ShapeCornersEffect : public KWin::Effect
     Q_OBJECT
 public:
     ShapeCornersEffect();
-    ~ShapeCornersEffect() override;
 
     static bool supported();
     static bool enabledByDefault();
@@ -46,7 +46,7 @@ protected Q_SLOTS:
 
 private:
     int m_size;
-    KWin::GLShader *m_shader;
+    std::unique_ptr<KWin::GLShader> m_shader;
     QList<KWin::EffectWindow *> m_managed;
 };
 
