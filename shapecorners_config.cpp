@@ -15,9 +15,7 @@
 #include <KPluginFactory>
 #include <KAboutData>
 
-K_PLUGIN_FACTORY_WITH_JSON(ShapeCornersConfigFactory,
-                           "shapecorners.json",
-                           registerPlugin<ShapeCornersConfig>();)
+K_PLUGIN_CLASS_WITH_JSON(ShapeCornersConfig, "shapecorners.json")
 
 
 class ConfigDialog : public QWidget , public Ui::Form
