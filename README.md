@@ -21,6 +21,7 @@ This is a fork of [shapecorners](https://sourceforge.net/projects/shapecorners/)
 - Compatible with KWin 5.23 and 5.24 - by [matinlotfali](https://github.com/matinlotfali)
 - Disable effect when window gets maximized - by [matinlotfali](https://github.com/matinlotfali)
 - Added Latte Dock to ignore list - by [gikari](https://github.com/gikari)
+- Cleanups for the plugin logic - by [alex1701c](https://github.com/alex1701c)
 
 # How to build from source code:
 
