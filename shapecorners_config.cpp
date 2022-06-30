@@ -15,8 +15,12 @@
 #include <KPluginFactory>
 #include <KAboutData>
 
+#include "kcoreaddons_version.h"
+#if KCOREADDONS_VERSION >= QT_VERSION_CHECK(5, 90, 0)
 K_PLUGIN_CLASS(ShapeCornersConfig)
-
+#else
+K_PLUGIN_FACTORY(ShapeCornersConfigFactory, registerPlugin<ShapeCornersConfig>();)
+#endif
 
 class ConfigDialog : public QWidget , public Ui::Form
 {
