@@ -22,7 +22,6 @@
 #include <QPainter>
 #include <QImage>
 #include <QFile>
-#include <QTextStream>
 #include <QStandardPaths>
 #include <kwinglplatform.h>
 #include <kwinglutils.h>
@@ -45,7 +44,7 @@ KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(  ShapeCornersEffect,
 #endif
 
 
-ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
+ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect()
 {
     new KWin::EffectAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/ShapeCorners", this);
@@ -82,6 +81,8 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
         deleteLater();
     }
 }
+
+ShapeCornersEffect::~ShapeCornersEffect() = default;
 
 void
 ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
@@ -129,7 +130,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
             || !m_managed.contains(w)
 //            || KWin::effects->hasActiveFullScreenEffect()
             || w->isDesktop()
-            || isMaximized(w)
+            || isMaximized(*w)
 #if KWIN_EFFECT_API_VERSION < 234
             || !w->isPaintingEnabled()
 #elif KWIN_EFFECT_API_VERSION < 233
@@ -201,13 +202,13 @@ bool ShapeCornersEffect::supported()
 #endif
 }
 
-bool ShapeCornersEffect::isMaximized(KWin::EffectWindow *w) {
+bool ShapeCornersEffect::isMaximized(const KWin::EffectWindow& w) {
 #if KWIN_EFFECT_API_VERSION >= 233
-    auto screenGeometry = KWin::effects->findScreen(w->screen()->name())->geometry();
-    return (w->x() == screenGeometry.x() && w->width() == screenGeometry.width()) ||
-            (w->y() == screenGeometry.y() && w->height() == screenGeometry.height());
+    auto screenGeometry = KWin::effects->findScreen(w.screen()->name())->geometry();
+    return (w.x() == screenGeometry.x() && w.width() == screenGeometry.width()) ||
+            (w.y() == screenGeometry.y() && w.height() == screenGeometry.height());
 #else
-    return w->isFullScreen();
+    return w.isFullScreen();
 #endif
 }
 

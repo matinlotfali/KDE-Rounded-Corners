@@ -23,17 +23,16 @@
 #include <kwineffects.h>
 #include <memory>
 
-namespace KWin { class GLTexture; }
-
 class Q_DECL_EXPORT ShapeCornersEffect : public KWin::Effect
 {
     Q_OBJECT
 public:
     ShapeCornersEffect();
+    ~ShapeCornersEffect() override;
 
     static bool supported();
     static bool enabledByDefault();
-    static bool isMaximized(KWin::EffectWindow *w);
+    static bool isMaximized(const KWin::EffectWindow& w);
 
     void setRoundness(int r);
 
@@ -42,12 +41,12 @@ public:
     int requestedEffectChainPosition() const override { return 99; }
 
 protected Q_SLOTS:
-    void windowAdded(KWin::EffectWindow *window);
+    void windowAdded(KWin::EffectWindow* window);
 
 private:
     int m_size;
     std::unique_ptr<KWin::GLShader> m_shader;
-    QList<KWin::EffectWindow *> m_managed;
+    QList<const KWin::EffectWindow*> m_managed;
 };
 
 #endif //SHAPECORNERS_H
