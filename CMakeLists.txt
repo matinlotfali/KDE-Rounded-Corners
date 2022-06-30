@@ -38,15 +38,8 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
     Config
     ConfigWidgets
     CoreAddons
-    Crash
     GlobalAccel
     I18n
-    KIO
-    Service
-    Init
-    Notifications
-    Service
-    WidgetsAddons
     WindowSystem
     GuiAddons
 )
@@ -111,8 +104,6 @@ else (XCB_FOUND)
     endif (X11_FOUND)
 endif (XCB_FOUND)
 
-#kcoreaddons_desktop_to_json(${SHAPECORNERS} shapecorners.desktop)
-
 install(TARGETS ${SHAPECORNERS} DESTINATION ${MODULEPATH}/kwin/effects/plugins)
 # execute_process(COMMAND kf5-config --install services OUTPUT_VARIABLE SERVICEPATH OUTPUT_STRIP_TRAILING_WHITESPACE)
 #install(FILES shapecorners.desktop DESTINATION ${SERVICEPATH}/kwin)
@@ -138,9 +129,7 @@ target_link_libraries(kwin4_shapecorners_config
             KF5::I18n
             KF5::GlobalAccel
         )
-kcoreaddons_desktop_to_json(kwin4_shapecorners_config shapecorners_config.desktop)
 install(TARGETS kwin4_shapecorners_config DESTINATION ${MODULEPATH}/kwin/effects/configs)
-install(FILES shapecorners_config.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kwin)
 
 # these are cache variables, so they could be overwritten with -D,
 set(CPACK_PACKAGE_NAME kwin4-effect-shapecorners

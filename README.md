@@ -21,6 +21,7 @@ This is a fork of [shapecorners](https://sourceforge.net/projects/shapecorners/)
 - Compatible with KWin 5.23 and 5.24 - by [matinlotfali](https://github.com/matinlotfali)
 - Disable effect when window gets maximized - by [matinlotfali](https://github.com/matinlotfali)
 - Added Latte Dock to ignore list - by [gikari](https://github.com/gikari)
+- Cleanups for the plugin logic, remove unneeded dependencies from CMakeLists.txt file - by [alex1701c](https://github.com/alex1701c)
 
 # How to build from source code:
 
@@ -28,15 +29,15 @@ You need to install development packages for your distrobution first:
 
 **Debian based (Ubuntu, Kubuntu, KDE Neon)** - by [alex47](https://github.com/alex47):
 ```
-sudo apt install git cmake g++ gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5crash-dev libkf5globalaccel-dev libkf5kio-dev libkf5notifications-dev kinit-dev kwin-dev 
+sudo apt install git cmake g++ gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5globalaccel-dev libkf5notifications-dev kwin-dev 
 ```
 **Fedora** - by [matinlotfali](https://github.com/matinlotfali)
 ```
-sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttools-devel qt5-qttools-static qt5-qtx11extras-devel kf5-kconfigwidgets-devel kf5-kcrash-devel kf5-kguiaddons-devel kf5-kglobalaccel-devel kf5-kio-devel kf5-ki18n-devel kf5-knotifications-devel kf5-kinit-devel kwin-devel qt5-qtbase-devel libepoxy-devel
+sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttools-devel qt5-qttools-static qt5-qtx11extras-devel kf5-kconfigwidgets-devel kf5-kcrash-devel kf5-kguiaddons-devel kf5-kglobalaccel-devel kf5-kio-devel kf5-ki18n-devel kwin-devel qt5-qtbase-devel libepoxy-devel
 ```
 **Arch** - by [hexa-one](https://github.com/hexa-one)
 ```
-sudo pacman -S git cmake extra-cmake-modules base-devel kinit
+sudo pacman -S git cmake extra-cmake-modules base-devel
 yay -S qt5-tools
 ```
 or AUR package by [Shaurya-Kalia](https://github.com/Shaurya-Kalia)
@@ -46,11 +47,11 @@ sudo pamac build kde-rounded-corners
 ```
 **OpenSUSE** - by [mathiasgredal](https://github.com/mathiasgredal)
 ```
-sudo zypper install git cmake gcc-c++ extra-cmake-modules libqt5-qttools-devel libqt5-qtx11extras-devel kconfigwidgets-devel kcrash-devel kguiaddons-devel kglobalaccel-devel kio-devel ki18n-devel knotifications-devel kinit-devel kwin5-devel libQt5Gui-devel libQt5OpenGL-devel libepoxy-devel
+sudo zypper install git cmake gcc-c++ extra-cmake-modules libqt5-qttools-devel libqt5-qtx11extras-devel kconfigwidgets-devel kguiaddons-devel kglobalaccel-devel ki18n-devel knotifications-devel kwin5-devel libQt5Gui-devel libQt5OpenGL-devel libepoxy-devel
 ```
 **Void** - by [lay-by](https://github.com/lay-by)
 ```
-xbps-install git cmake make kinit qt5-tools-devel extra-cmake-modules qt5-x11extras-devel kinit-devel gettext-devel kwin-devel
+xbps-install git cmake make qt5-tools-devel extra-cmake-modules qt5-x11extras-devel gettext-devel kwin-devel
 ```
 Then get the source code and compile:
 ```
