@@ -71,7 +71,12 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
     if (file.open(QFile::ReadOnly))
     {
         QByteArray frag = file.readAll();
-        m_shader = KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, QByteArray(), frag);
+        auto shader = KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, QByteArray(), frag);
+#if KWIN_EFFECT_API_VERSION >= 235
+        m_shader = shader
+#else
+        m_shader.reset(shader);
+#endif
         file.close();
 //        qDebug() << frag;
 //        qDebug() << "shader valid: " << m_shader->isValid();
@@ -79,7 +84,7 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
         {
             const int sampler = m_shader->uniformLocation("sampler");
             const int corner = m_shader->uniformLocation("corner");
-            KWin::ShaderManager::instance()->pushShader(m_shader);
+            KWin::ShaderManager::instance()->pushShader(m_shader.get());
             m_shader->setUniform(corner, 1);
             m_shader->setUniform(sampler, 0);
             KWin::ShaderManager::instance()->popShader();
@@ -101,7 +106,6 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
 
 ShapeCornersEffect::~ShapeCornersEffect()
 {
-    delete m_shader;
     for (int i = 0; i < NTex; ++i)
     {
         delete m_tex[i];
@@ -318,7 +322,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     const int mvpMatrixLocation = m_shader->uniformLocation("modelViewProjectionMatrix");
     KWin::ShaderManager *sm = KWin::ShaderManager::instance();
-    sm->pushShader(m_shader);
+    sm->pushShader(m_shader.get());
     for (int i = 0; i < NTex; ++i)
     {
         QMatrix4x4 mvp = data.screenProjectionMatrix();

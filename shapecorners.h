@@ -21,6 +21,7 @@
 #define SHAPECORNERS_H
 
 #include <kwineffects.h>
+#include <memory>
 
 namespace KWin { class GLTexture; }
 
@@ -59,7 +60,7 @@ private:
     int m_size, m_rSize, m_alpha;
     QSize m_corner;
     QRegion m_updateRegion;
-    KWin::GLShader *m_shader;
+    std::unique_ptr<KWin::GLShader> m_shader;
     QList<KWin::EffectWindow *> m_managed;
 };
 
