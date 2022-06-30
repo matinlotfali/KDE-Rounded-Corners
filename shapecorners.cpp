@@ -60,11 +60,24 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect()
         shadersDir = QStringLiteral("kwin/shaders/1.40/");
 
     const QString fragmentshader = QStandardPaths::locate(QStandardPaths::GenericDataLocation, shadersDir + QStringLiteral("shapecorners.frag"));
+#if KWIN_EFFECT_API_VERSION < 233
+    QFile file(fragmentshader);
+    if (!file.open(QFile::ReadOnly))
+    {
+        qDebug() << "ShapeCorners: no shaders found! Exiting...";
+        deleteLater();
+        return;
+    }
+    QByteArray frag = file.readAll();
+    file.close();
+    m_shader.reset(KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, QByteArray(), frag));
+#else
     auto shader = KWin::ShaderManager::instance()->generateShaderFromFile(KWin::ShaderTrait::MapTexture, QString(), fragmentshader);
 #if KWIN_EFFECT_API_VERSION >= 235
     m_shader = shader
 #else
     m_shader.reset(shader);
+#endif
 #endif
 //  qDebug() << frag;
 //  qDebug() << "shader valid: " << m_shader->isValid();
