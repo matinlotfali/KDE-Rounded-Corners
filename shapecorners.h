@@ -59,7 +59,11 @@ private:
     int m_size, m_rSize, m_alpha;
     QSize m_corner;
     QRegion m_updateRegion;
+#if KWIN_EFFECT_API_VERSION >= 235
+    std::unique_ptr<KWin::GLShader> m_shader;
+#else
     KWin::GLShader *m_shader;
+#endif
     QList<KWin::EffectWindow *> m_managed;
 };
 
