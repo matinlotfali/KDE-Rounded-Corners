@@ -21,6 +21,7 @@
 #define SHAPECORNERS_H
 
 #include <kwineffects.h>
+#include <memory>
 
 namespace KWin { class GLTexture; }
 
