@@ -28,7 +28,7 @@
 #include <kwindowsystem.h>
 #include <QMatrix4x4>
 #include <KConfigGroup>
-#include <QtDBus/QDBusConnection>
+#include <QDBusConnection>
 
 #if KWIN_EFFECT_API_VERSION < 233
 KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(  ShapeCornersFactory,
@@ -68,6 +68,7 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect()
         deleteLater();
         return;
     }
+
     QByteArray frag = file.readAll();
     file.close();
     m_shader.reset(KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, QByteArray(), frag));

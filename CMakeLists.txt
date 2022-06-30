@@ -7,6 +7,10 @@ project(${SHAPECORNERS})
 set(QT_MIN_VERSION "5.4.0")
 set(KF5_MIN_VERSION "5.9.0")
 
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose Release or Debug" FORCE)
+endif()
+
 find_package(ECM REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 
@@ -34,15 +38,8 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
     Config
     ConfigWidgets
     CoreAddons
-    Crash
     GlobalAccel
     I18n
-    KIO
-    Service
-    Init
-    Notifications
-    Service
-    WidgetsAddons
     WindowSystem
     GuiAddons
 )
@@ -107,8 +104,6 @@ else (XCB_FOUND)
     endif (X11_FOUND)
 endif (XCB_FOUND)
 
-#kcoreaddons_desktop_to_json(${SHAPECORNERS} shapecorners.desktop)
-
 install(TARGETS ${SHAPECORNERS} DESTINATION ${MODULEPATH}/kwin/effects/plugins)
 # execute_process(COMMAND kf5-config --install services OUTPUT_VARIABLE SERVICEPATH OUTPUT_STRIP_TRAILING_WHITESPACE)
 #install(FILES shapecorners.desktop DESTINATION ${SERVICEPATH}/kwin)
@@ -134,15 +129,13 @@ target_link_libraries(kwin4_shapecorners_config
             KF5::I18n
             KF5::GlobalAccel
         )
-kcoreaddons_desktop_to_json(kwin4_shapecorners_config shapecorners_config.desktop)
 install(TARGETS kwin4_shapecorners_config DESTINATION ${MODULEPATH}/kwin/effects/configs)
-install(FILES shapecorners_config.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kwin)
 
 # these are cache variables, so they could be overwritten with -D,
 set(CPACK_PACKAGE_NAME kwin4-effect-shapecorners
     CACHE STRING kwin4-effect-shapecorners
 )
-set(CPACK_DEBIAN_FILE_NAME "kwin4-effect-shapecorners-kubuntu2004-amd64.deb")
+set(CPACK_DEBIAN_FILE_NAME "kwin4-effect-shapecorners-kubuntu2204-amd64.deb")
 set(CPACK_PACKAGE_CONTACT "matinlotfali@gmail.com")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Matin Lotfaliei")
 
@@ -150,3 +143,5 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Matin Lotfaliei")
 set (CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 
 include(CPack)
+
+# To generate deb files, install 'dpkg-dev' package and then run 'cpack -G DEB'
