@@ -7,6 +7,10 @@ project(${SHAPECORNERS})
 set(QT_MIN_VERSION "5.4.0")
 set(KF5_MIN_VERSION "5.9.0")
 
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose Release or Debug" FORCE)
+endif()
+
 find_package(ECM REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 
@@ -142,7 +146,7 @@ install(FILES shapecorners_config.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kw
 set(CPACK_PACKAGE_NAME kwin4-effect-shapecorners
     CACHE STRING kwin4-effect-shapecorners
 )
-set(CPACK_DEBIAN_FILE_NAME "kwin4-effect-shapecorners-kubuntu2004-amd64.deb")
+set(CPACK_DEBIAN_FILE_NAME "kwin4-effect-shapecorners-kubuntu2204-amd64.deb")
 set(CPACK_PACKAGE_CONTACT "matinlotfali@gmail.com")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Matin Lotfaliei")
 
@@ -150,3 +154,5 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Matin Lotfaliei")
 set (CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 
 include(CPack)
+
+# To generate deb files, install 'dpkg-dev' package and then run 'cpack -G DEB'
