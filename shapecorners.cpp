@@ -30,14 +30,20 @@
 #include <KConfigGroup>
 #include <QDBusConnection>
 
-#if KWIN_EFFECT_API_VERSION < 233
-KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(  ShapeCornersFactory,
-                                        ShapeCornersEffect,
+
+// KWIN_EFFECT_API_VERSION == 232 is in Kubuntu 20.04
+// KWIN_EFFECT_API_VERSION == 233 is in Kubuntu 22.04
+// KWIN_EFFECT_API_VERSION == 234 is in KDE Neon Stable
+// KWIN_EFFECT_API_VERSION == 235 is in KDE Neon Unstable ??
+
+#if KWIN_EFFECT_API_VERSION >= 233
+KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(  ShapeCornersEffect,
                                         "shapecorners.json",
                                         return ShapeCornersEffect::supported();,
                                         return ShapeCornersEffect::enabledByDefault();)
 #else
-KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(  ShapeCornersEffect,
+KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(  ShapeCornersFactory,
+                                        ShapeCornersEffect,
                                         "shapecorners.json",
                                         return ShapeCornersEffect::supported();,
                                         return ShapeCornersEffect::enabledByDefault();)
@@ -51,16 +57,11 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect()
     reconfigure(ReconfigureAll);
 
     QString shadersDir(QStringLiteral("kwin/shaders/1.10/"));
-#ifdef KWIN_HAVE_OPENGLES
-    const qint64 coreVersionNumber = kVersionNumber(3, 0);
-#else
     const qint64 version = KWin::kVersionNumber(1, 40);
-#endif
     if (KWin::GLPlatform::instance()->glslVersion() >= version)
         shadersDir = QStringLiteral("kwin/shaders/1.40/");
 
     const QString fragmentshader = QStandardPaths::locate(QStandardPaths::GenericDataLocation, shadersDir + QStringLiteral("shapecorners.frag"));
-#if KWIN_EFFECT_API_VERSION < 233
     QFile file(fragmentshader);
     if (!file.open(QFile::ReadOnly))
     {
@@ -68,32 +69,31 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect()
         deleteLater();
         return;
     }
-
     QByteArray frag = file.readAll();
     file.close();
-    m_shader.reset(KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, QByteArray(), frag));
-#else
-    auto shader = KWin::ShaderManager::instance()->generateShaderFromFile(KWin::ShaderTrait::MapTexture, QString(), fragmentshader);
+
+    // tried using generateShaderFromFile(KWin::ShaderTrait::MapTexture, QString(), fragmentshader) but
+    // it looks for shapecorners_core.frag for some weird reason.
+    auto shader = KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, QByteArray(), frag);
 #if KWIN_EFFECT_API_VERSION >= 235
     m_shader = shader
 #else
     m_shader.reset(shader);
 #endif
-#endif
-//  qDebug() << frag;
-//  qDebug() << "shader valid: " << m_shader->isValid();
-    if (m_shader->isValid())
+    //  qDebug() << frag;
+    //  qDebug() << "shader valid: " << m_shader->isValid();
+    if (!m_shader->isValid())
     {
-        for (int i = 0; i < KWindowSystem::windows().count(); ++i)
-            if (KWin::EffectWindow *win = KWin::effects->findWindow(KWindowSystem::windows().at(i)))
-                windowAdded(win);
-        connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
-        connect(KWin::effects, &KWin::EffectsHandler::windowClosed, this, [this](){m_managed.removeOne(dynamic_cast<KWin::EffectWindow *>(sender()));});
-    }
-    else {
         qDebug() << "ShapeCorners: no valid shaders found! ShapeCorners will not work.";
         deleteLater();
+        return;
     }
+
+    for (auto id: KWindowSystem::windows())
+        if (auto win = KWin::effects->findWindow(id))
+            windowAdded(win);
+    connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
+    connect(KWin::effects, &KWin::EffectsHandler::windowClosed, this, [this](){m_managed.removeOne(dynamic_cast<KWin::EffectWindow *>(sender()));});
 }
 
 ShapeCornersEffect::~ShapeCornersEffect() = default;
@@ -209,10 +209,10 @@ ShapeCornersEffect::enabledByDefault()
 
 bool ShapeCornersEffect::supported()
 {
-#if KWIN_EFFECT_API_VERSION < 234
-    return KWin::effects->isOpenGLCompositing() && KWin::GLRenderTarget::supported();
-#else
+#if KWIN_EFFECT_API_VERSION >= 234
     return KWin::effects->isOpenGLCompositing();
+#else
+    return KWin::effects->isOpenGLCompositing() && KWin::GLRenderTarget::supported();
 #endif
 }
 
