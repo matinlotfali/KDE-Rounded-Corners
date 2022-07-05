@@ -4,8 +4,6 @@ This effect rounds the corners of your windows. Window borders should be turned 
 
 This is a fork of [shapecorners](https://sourceforge.net/projects/shapecorners/) with some additional contributions in [Alex47's project](https://github.com/alex47/KDE-Rounded-Corners).
 
-[![Donate](https://img.shields.io/badge/Wish%20me%20be%20more%20active%20on%20this%3F%20Motivate%20me%20with-Paypal-blue)](https://www.paypal.com/donate/?business=WYGJ6T4J23P2L&no_recurring=0&currency_code=CAD)
-
 #### Tested on:
 - ![Kubuntu 22.04 Jammy](https://img.shields.io/github/workflow/status/matinlotfali/KDE-Rounded-Corners/Kubuntu%2022.04?label=Kubuntu%2022.04%20Jammy&logo=kubuntu) [![Deb Binary](https://img.shields.io/github/downloads/matinlotfali/KDE-Rounded-Corners/latest/kwin4-effect-shapecorners-kubuntu2204-amd64.deb?label=Download%20deb)](https://github.com/matinlotfali/KDE-Rounded-Corners/releases/download/v0.1.1_kubuntu_22.04/kwin4-effect-shapecorners-kubuntu2204-amd64.deb)
 - ![Kubuntu 20.04 Focal](https://img.shields.io/github/workflow/status/matinlotfali/KDE-Rounded-Corners/Kubuntu%2020.04?label=Kubuntu%2020.04%20Focal&logo=kubuntu) [![Deb Binary](https://img.shields.io/github/downloads/matinlotfali/KDE-Rounded-Corners/v0.1.1/kwin4-effect-shapecorners-kubuntu2004-amd64.deb?label=Download%20deb)](https://github.com/matinlotfali/KDE-Rounded-Corners/releases/download/v0.1.1/kwin4-effect-shapecorners-kubuntu2004-amd64.deb)
