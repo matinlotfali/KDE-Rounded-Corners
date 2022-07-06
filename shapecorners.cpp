@@ -76,7 +76,7 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect()
     // it looks for shapecorners_core.frag for some weird reason.
     auto shader = KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, QByteArray(), frag);
 #if KWIN_EFFECT_API_VERSION >= 235
-    m_shader = shader
+        m_shader = std::move(shader);
 #else
     m_shader.reset(shader);
 #endif
