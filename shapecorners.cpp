@@ -73,7 +73,7 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
         QByteArray frag = file.readAll();
         auto shader = KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, QByteArray(), frag);
 #if KWIN_EFFECT_API_VERSION >= 235
-        m_shader = std::move(shader)
+        m_shader = std::move(shader);
 #else
         m_shader.reset(shader);
 #endif
