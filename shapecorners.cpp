@@ -227,13 +227,13 @@ ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintDa
         KWin::effects->prePaintWindow(w, data, time);
         return;
     }
-    const QRect geo(w->frameGeometry());
+    const auto& geo = w->frameGeometry();
     const QRect rect[NTex] =
     {
-        QRect(geo.topLeft(), m_corner),
-        QRect(geo.topRight()-QPoint(m_size-1, 0), m_corner),
-        QRect(geo.bottomRight()-QPoint(m_size-1, m_size-1), m_corner),
-        QRect(geo.bottomLeft()-QPoint(0, m_size-1), m_corner)
+        QRect(geo.topLeft().x(), geo.topLeft().y(), m_size, m_size),
+        QRect(geo.topRight().x()-m_size+1, geo.topRight().y(), m_size, m_size),
+        QRect(geo.bottomRight().x()-m_size+1, geo.bottomRight().y()-m_size+1, m_size, m_size),
+        QRect(geo.bottomLeft().x(), geo.bottomLeft().y()-m_size+1, m_size, m_size)
     };
     for (int i = 0; i < NTex; ++i)
     {
@@ -242,8 +242,8 @@ ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintDa
         data.clip -= rect[i];
 #endif
     }
-    QRegion outerRect(QRegion(geo.adjusted(-1, -1, 1, 1))-geo);
-    outerRect += QRegion(geo.x()+m_size, geo.y(), geo.width()-m_size*2, 1);
+    QRegion outerRect (geo.x()+m_size-1, geo.y()-1,
+                       geo.width()-m_size*2+1, geo.height()-m_size*2+1, QRegion::Ellipse);
     data.paint += outerRect;
 #if KWIN_EFFECT_API_VERSION < 234
     data.clip -=outerRect;
@@ -283,13 +283,13 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     }
 
     //map the corners
-    const QRect geo(w->frameGeometry());
+    const auto& geo = w->frameGeometry();
     const QRect rect[NTex] =
     {
-        QRect(geo.topLeft(), m_corner),
-        QRect(geo.topRight()-QPoint(m_size-1, 0), m_corner),
-        QRect(geo.bottomRight()-QPoint(m_size-1, m_size-1), m_corner),
-        QRect(geo.bottomLeft()-QPoint(0, m_size-1), m_corner)
+        QRect(geo.topLeft().x(), geo.topLeft().y(), m_size, m_size),
+        QRect(geo.topRight().x()-m_size+1, geo.topRight().y(), m_size, m_size),
+        QRect(geo.bottomRight().x()-m_size+1, geo.bottomRight().y()-m_size+1, m_size, m_size),
+        QRect(geo.bottomLeft().x(), geo.bottomLeft().y()-m_size+1, m_size, m_size)
     };
 
 #if KWIN_EFFECT_API_VERSION < 233
