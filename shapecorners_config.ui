@@ -40,6 +40,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QCheckBox" name="drawShadow">
+       <property name="text">
+        <string>Draw a fake shadow at corners</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
