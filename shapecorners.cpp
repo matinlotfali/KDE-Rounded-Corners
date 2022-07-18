@@ -22,7 +22,6 @@
 #include <QPainter>
 #include <QImage>
 #include <QFile>
-#include <QTextStream>
 #include <QStandardPaths>
 #include <kwinglplatform.h>
 #include <kwinglutils.h>
@@ -105,6 +104,7 @@ void
 ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
 {
     if (m_managed.contains(w)
+            || w->isDesktop()
             || w->windowType() == NET::WindowType::OnScreenDisplay
             || w->windowType() == NET::WindowType::Dock)
         return;
@@ -144,7 +144,6 @@ ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintDa
     if (!m_shader->isValid()
             || !m_managed.contains(w)
 //            || KWin::effects->hasActiveFullScreenEffect()
-            || w->isDesktop()
             || isMaximized(w)
 #if KWIN_EFFECT_API_VERSION < 234
             || !w->isPaintingEnabled()
@@ -196,7 +195,6 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     if (!m_shader->isValid()
             || !m_managed.contains(w)
 //            || KWin::effects->hasActiveFullScreenEffect()
-            || w->isDesktop()
             || isMaximized(w)
 #if KWIN_EFFECT_API_VERSION < 234
             || !w->isPaintingEnabled()
@@ -257,7 +255,11 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     sm->pushShader(m_shader.get());
     {
         m_shader->setUniform(windowActiveLocation, KWin::effects->activeWindow() == w);
+#if KWIN_EFFECT_API_VERSION >= 234
+        m_shader->setUniform(drawShadowLocation, m_drawShadow && KWin::effects->activeWindow() == w);
+#else
         m_shader->setUniform(drawShadowLocation, m_drawShadow);
+#endif
         for (int i = 0; i < NTex; ++i) {
             QMatrix4x4 mvp = data.screenProjectionMatrix();
             mvp.translate(rect[i].x(), rect[i].y());
@@ -273,12 +275,6 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     data.quads = qds;
 #endif
     glDisable(GL_BLEND);
-}
-
-bool
-ShapeCornersEffect::enabledByDefault()
-{
-    return supported();
 }
 
 bool ShapeCornersEffect::supported()

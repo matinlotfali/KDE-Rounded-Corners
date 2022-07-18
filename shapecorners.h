@@ -33,7 +33,7 @@ public:
     ~ShapeCornersEffect() override;
 
     static bool supported();
-    static bool enabledByDefault();
+    static bool enabledByDefault() { return supported(); }
     static bool isMaximized(KWin::EffectWindow *w);
 
     void setRoundness(int r);
