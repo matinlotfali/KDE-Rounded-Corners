@@ -33,7 +33,7 @@ public:
     ~ShapeCornersEffect() override;
 
     static bool supported();
-    static bool enabledByDefault();
+    static bool enabledByDefault() { return supported(); }
     static bool isMaximized(KWin::EffectWindow *w);
 
     void setRoundness(int r);
@@ -54,9 +54,12 @@ private:
     enum { TopLeft = 0, TopRight, BottomRight, BottomLeft, NTex };
     int m_size;
     bool m_drawShadow;
-    QRegion m_updateRegion;
-    std::unique_ptr<KWin::GLShader> m_shader;
     QList<KWin::EffectWindow *> m_managed;
+
+    std::unique_ptr<KWin::GLShader> m_shader;
+    int m_shader_cornerIndex = 0;
+    int m_shader_windowActive = 0;
+    int m_shader_drawShadow = 0;
 };
 
 #endif //SHAPECORNERS_H

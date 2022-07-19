@@ -22,7 +22,6 @@
 #include <QPainter>
 #include <QImage>
 #include <QFile>
-#include <QTextStream>
 #include <QStandardPaths>
 #include <kwinglplatform.h>
 #include <kwinglutils.h>
@@ -77,12 +76,10 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
 //        qDebug() << "shader valid: " << m_shader->isValid();
         if (m_shader->isValid())
         {
-            const int sampler = m_shader->uniformLocation("sampler");
-            const int corner = m_shader->uniformLocation("corner");
-            KWin::ShaderManager::instance()->pushShader(m_shader.get());
-            m_shader->setUniform(corner, 1);
-            m_shader->setUniform(sampler, 0);
-            KWin::ShaderManager::instance()->popShader();
+            m_shader_cornerIndex = m_shader->uniformLocation("cornerIndex");
+            m_shader_windowActive = m_shader->uniformLocation("windowActive");
+            m_shader_drawShadow = m_shader->uniformLocation("drawShadow");
+
             for (int i = 0; i < KWindowSystem::windows().count(); ++i)
                 if (KWin::EffectWindow *win = KWin::effects->findWindow(KWindowSystem::windows().at(i)))
                     windowAdded(win);
@@ -105,6 +102,7 @@ void
 ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
 {
     if (m_managed.contains(w)
+            || w->isDesktop()
             || w->windowType() == NET::WindowType::OnScreenDisplay
             || w->windowType() == NET::WindowType::Dock)
         return;
@@ -144,7 +142,6 @@ ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintDa
     if (!m_shader->isValid()
             || !m_managed.contains(w)
 //            || KWin::effects->hasActiveFullScreenEffect()
-            || w->isDesktop()
             || isMaximized(w)
 #if KWIN_EFFECT_API_VERSION < 234
             || !w->isPaintingEnabled()
@@ -196,7 +193,6 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     if (!m_shader->isValid()
             || !m_managed.contains(w)
 //            || KWin::effects->hasActiveFullScreenEffect()
-            || w->isDesktop()
             || isMaximized(w)
 #if KWIN_EFFECT_API_VERSION < 234
             || !w->isPaintingEnabled()
@@ -247,24 +243,21 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     KWin::effects->paintWindow(w, mask, region, data);
 
     //'shape' the corners
+    glEnable(GL_SCISSOR_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    const int mvpMatrixLocation = m_shader->uniformLocation("modelViewProjectionMatrix");
-    const int cornerIndexLocation = m_shader->uniformLocation("cornerIndex");
-    const int windowActiveLocation = m_shader->uniformLocation("windowActive");
-    const int drawShadowLocation = m_shader->uniformLocation("drawShadow");
     KWin::ShaderManager *sm = KWin::ShaderManager::instance();
     sm->pushShader(m_shader.get());
     {
-        m_shader->setUniform(windowActiveLocation, KWin::effects->activeWindow() == w);
-        m_shader->setUniform(drawShadowLocation, m_drawShadow);
+        m_shader->setUniform(m_shader_windowActive, KWin::effects->activeWindow() == w);
+        m_shader->setUniform(m_shader_drawShadow, m_drawShadow);
         for (int i = 0; i < NTex; ++i) {
             QMatrix4x4 mvp = data.screenProjectionMatrix();
             mvp.translate(rect[i].x(), rect[i].y());
-            m_shader->setUniform(mvpMatrixLocation, mvp);
-            m_shader->setUniform(cornerIndexLocation, i);
+            m_shader->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
+            m_shader->setUniform(m_shader_cornerIndex, i);
             tex[i].bind();
-            tex[i].render(region, rect[i]);
+            tex[i].render(region & rect[i], rect[i], true);
             tex[i].unbind();
         }
     }
@@ -273,12 +266,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     data.quads = qds;
 #endif
     glDisable(GL_BLEND);
-}
-
-bool
-ShapeCornersEffect::enabledByDefault()
-{
-    return supported();
+    glDisable(GL_SCISSOR_TEST);
 }
 
 bool ShapeCornersEffect::supported()
