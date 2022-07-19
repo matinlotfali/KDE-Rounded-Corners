@@ -22,7 +22,6 @@
 #include <QPainter>
 #include <QImage>
 #include <QFile>
-#include <QTextStream>
 #include <QStandardPaths>
 #include <kwinglplatform.h>
 #include <kwinglutils.h>
@@ -49,11 +48,6 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
 {
     new KWin::EffectAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/ShapeCorners", this);
-    for (int i = 0; i < NTex; ++i)
-    {
-        m_tex[i] = nullptr;
-        m_rect[i] = nullptr;
-    }
     reconfigure(ReconfigureAll);
 
     QString shadersDir(QStringLiteral("kwin/shaders/1.10/"));
@@ -82,12 +76,10 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
 //        qDebug() << "shader valid: " << m_shader->isValid();
         if (m_shader->isValid())
         {
-            const int sampler = m_shader->uniformLocation("sampler");
-            const int corner = m_shader->uniformLocation("corner");
-            KWin::ShaderManager::instance()->pushShader(m_shader.get());
-            m_shader->setUniform(corner, 1);
-            m_shader->setUniform(sampler, 0);
-            KWin::ShaderManager::instance()->popShader();
+            m_shader_cornerIndex = m_shader->uniformLocation("cornerIndex");
+            m_shader_windowActive = m_shader->uniformLocation("windowActive");
+            m_shader_shadowColor = m_shader->uniformLocation("shadowColor");
+
             for (int i = 0; i < KWindowSystem::windows().count(); ++i)
                 if (KWin::EffectWindow *win = KWin::effects->findWindow(KWindowSystem::windows().at(i)))
                     windowAdded(win);
@@ -104,104 +96,39 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
     }
 }
 
-ShapeCornersEffect::~ShapeCornersEffect()
-{
-    for (int i = 0; i < NTex; ++i)
-    {
-        delete m_tex[i];
-        delete m_rect[i];
-    }
-}
+ShapeCornersEffect::~ShapeCornersEffect() = default;
 
 void
 ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
 {
     if (m_managed.contains(w)
+            || w->isDesktop()
             || w->windowType() == NET::WindowType::OnScreenDisplay
             || w->windowType() == NET::WindowType::Dock)
         return;
 //    qDebug() << w->windowRole() << w->windowType() << w->windowClass();
-    if (!w->hasDecoration() && (w->windowClass().contains("plasma", Qt::CaseInsensitive)
-            || w->windowClass().contains("krunner", Qt::CaseInsensitive)
-            || w->windowClass().contains("latte-dock", Qt::CaseInsensitive)))
+//    if (!w->hasDecoration() && (w->windowClass().contains("plasma", Qt::CaseInsensitive)
+//            || w->windowClass().contains("krunner", Qt::CaseInsensitive)
+//            || w->windowClass().contains("latte-dock", Qt::CaseInsensitive)))
+//        return;
+    if (!w->hasDecoration())
         return;
     m_managed << w;
 }
 
 void
-ShapeCornersEffect::genMasks()
-{
-    for (int i = 0; i < NTex; ++i)
-        delete m_tex[i];
-
-    QImage img(m_size*2, m_size*2, QImage::Format_ARGB32_Premultiplied);
-    img.fill(Qt::transparent);
-    QPainter p(&img);
-    p.fillRect(img.rect(), Qt::black);
-    p.setCompositionMode(QPainter::CompositionMode_DestinationOut);
-    p.setPen(Qt::NoPen);
-    p.setBrush(Qt::black);
-    p.setRenderHint(QPainter::Antialiasing);
-    p.drawEllipse(img.rect());
-    p.end();
-
-    m_tex[TopLeft] = new KWin::GLTexture(img.copy(0, 0, m_size, m_size));
-    m_tex[TopRight] = new KWin::GLTexture(img.copy(m_size, 0, m_size, m_size));
-    m_tex[BottomRight] = new KWin::GLTexture(img.copy(m_size, m_size, m_size, m_size));
-    m_tex[BottomLeft] = new KWin::GLTexture(img.copy(0, m_size, m_size, m_size));
-}
-
-void
-ShapeCornersEffect::genRect()
-{
-    for (int i = 0; i < NTex; ++i)
-        delete m_rect[i];
-
-    m_rSize = m_size+1;
-    QImage img(m_rSize*2, m_rSize*2, QImage::Format_ARGB32_Premultiplied);
-    img.fill(Qt::transparent);
-    QPainter p(&img);
-    QRect r(img.rect());
-    p.setPen(Qt::NoPen);
-    p.setBrush(QColor(0, 0, 0, m_alpha));
-    p.setRenderHint(QPainter::Antialiasing);
-    p.drawEllipse(r);
-    p.setCompositionMode(QPainter::CompositionMode_DestinationOut);
-    p.setBrush(Qt::black);
-    r.adjust(1, 1, -1, -1);
-    p.drawEllipse(r);
-    p.setCompositionMode(QPainter::CompositionMode_SourceOver);
-    p.setBrush(QColor(255, 255, 255, 63));
-    p.drawEllipse(r);
-    p.setCompositionMode(QPainter::CompositionMode_DestinationOut);
-    p.setBrush(Qt::black);
-    r.adjust(0, 1, 0, 0);
-    p.drawEllipse(r);
-    p.end();
-
-    m_rect[TopLeft] = new KWin::GLTexture(img.copy(0, 0, m_rSize, m_rSize));
-    m_rect[TopRight] = new KWin::GLTexture(img.copy(m_rSize, 0, m_rSize, m_rSize));
-    m_rect[BottomRight] = new KWin::GLTexture(img.copy(m_rSize, m_rSize, m_rSize, m_rSize));
-    m_rect[BottomLeft] = new KWin::GLTexture(img.copy(0, m_rSize, m_rSize, m_rSize));
-}
-
-void
 ShapeCornersEffect::setRoundness(const int r)
 {
-    m_alpha = 0xff;
     m_size = r;
-    m_corner = QSize(m_size, m_size);
-    genMasks();
-    genRect();
 }
 
 void
 ShapeCornersEffect::reconfigure(ReconfigureFlags flags)
 {
     Q_UNUSED(flags)
-    m_alpha = 63;
     KConfigGroup conf = KSharedConfig::openConfig("shapecorners.conf")->group("General");
     setRoundness(conf.readEntry("roundness", 5));
+    m_shadowColor = conf.readEntry("shadowColor", QColor(Qt::black));
 }
 
 #if KWIN_EFFECT_API_VERSION > 231
@@ -215,7 +142,6 @@ ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintDa
     if (!m_shader->isValid()
             || !m_managed.contains(w)
 //            || KWin::effects->hasActiveFullScreenEffect()
-            || w->isDesktop()
             || isMaximized(w)
 #if KWIN_EFFECT_API_VERSION < 234
             || !w->isPaintingEnabled()
@@ -267,7 +193,6 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     if (!m_shader->isValid()
             || !m_managed.contains(w)
 //            || KWin::effects->hasActiveFullScreenEffect()
-            || w->isDesktop()
             || isMaximized(w)
 #if KWIN_EFFECT_API_VERSION < 234
             || !w->isPaintingEnabled()
@@ -318,91 +243,29 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     KWin::effects->paintWindow(w, mask, region, data);
 
     //'shape' the corners
+    glEnable(GL_SCISSOR_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    const int mvpMatrixLocation = m_shader->uniformLocation("modelViewProjectionMatrix");
-    KWin::ShaderManager *sm = KWin::ShaderManager::instance();
-    sm->pushShader(m_shader.get());
-    for (int i = 0; i < NTex; ++i)
     {
-        QMatrix4x4 mvp = data.screenProjectionMatrix();
-        mvp.translate(rect[i].x(), rect[i].y());
-        m_shader->setUniform(mvpMatrixLocation, mvp);
-        glActiveTexture(GL_TEXTURE1);
-        m_tex[3-i]->bind();
-        glActiveTexture(GL_TEXTURE0);
-        tex[i].bind();
-        tex[i].render(region, rect[i]);
-        tex[i].unbind();
-        m_tex[3-i]->unbind();
+        KWin::ShaderBinder binder(m_shader.get());
+        m_shader->setUniform(m_shader_windowActive, KWin::effects->activeWindow() == w);
+        m_shader->setUniform(m_shader_shadowColor, m_shadowColor);
+        for (int i = 0; i < NTex; ++i) {
+            QMatrix4x4 mvp = data.screenProjectionMatrix();
+            mvp.translate(rect[i].x(), rect[i].y());
+            m_shader->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
+            m_shader->setUniform(m_shader_cornerIndex, i);
+            tex[i].bind();
+            tex[i].render(region & rect[i], rect[i], true);
+            tex[i].unbind();
+        }
     }
-    sm->popShader();
+
 #if KWIN_EFFECT_API_VERSION < 233
     data.quads = qds;
 #endif
-#if 0
-    if (data.brightness() == 1.0 && data.crossFadeProgress() == 1.0)
-    {
-        const QRect rrect[NTex] =
-        {
-            rect[0].adjusted(-1, -1, 0, 0),
-            rect[1].adjusted(0, -1, 1, 0),
-            rect[2].adjusted(0, 0, 1, 1),
-            rect[3].adjusted(-1, 0, 0, 1)
-        };
-        const float o(data.opacity());
-        KWin::GLShader *shader = KWin::ShaderManager::instance()->pushShader(KWin::ShaderTrait::MapTexture|KWin::ShaderTrait::UniformColor|KWin::ShaderTrait::Modulate);
-        shader->setUniform(KWin::GLShader::ModulationConstant, QVector4D(o, o, o, o));
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        for (int i = 0; i < NTex; ++i)
-        {
-            QMatrix4x4 modelViewProjection;
-            modelViewProjection.ortho(0, s.width(), s.height(), 0, 0, 65535);
-            modelViewProjection.translate(rrect[i].x(), rrect[i].y());
-            shader->setUniform("modelViewProjectionMatrix", modelViewProjection);
-            m_rect[i]->bind();
-            m_rect[i]->render(region, rrect[i]);
-            m_rect[i]->unbind();
-        }
-//        KWin::ShaderManager::instance()->popShader();
-//        shader = KWin::ShaderManager::instance()->pushShader(KWin::ShaderTrait::UniformColor);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        QRegion reg = QRegion(geo.adjusted(-1, -1, 1, 1)) - geo;
-        for (int i = 0; i < 4; ++i)
-            reg -= rrect[i];
-        fillRegion(reg, QColor(0, 0, 0, m_alpha*data.opacity()));
-        fillRegion(QRegion(geo.x()+m_size, geo.y(), geo.width()-m_size*2, 1), QColor(255, 255, 255, m_alpha*data.opacity()));
-        KWin::ShaderManager::instance()->popShader();
-    }
-#endif
     glDisable(GL_BLEND);
-}
-
-void
-ShapeCornersEffect::fillRegion(const QRegion &reg, const QColor &c)
-{
-    KWin::GLVertexBuffer *vbo = KWin::GLVertexBuffer::streamingBuffer();
-    vbo->reset();
-    vbo->setUseColor(true);
-    vbo->setColor(c);
-    QVector<float> verts;
-    for (const QRect & r: reg)
-    {
-        verts << r.x() + r.width() << r.y();
-        verts << r.x() << r.y();
-        verts << r.x() << r.y() + r.height();
-        verts << r.x() << r.y() + r.height();
-        verts << r.x() + r.width() << r.y() + r.height();
-        verts << r.x() + r.width() << r.y();
-    }
-    vbo->setData(verts.count() / 2, 2, verts.data(), nullptr);
-    vbo->render(GL_TRIANGLES);
-}
-
-bool
-ShapeCornersEffect::enabledByDefault()
-{
-    return supported();
+    glDisable(GL_SCISSOR_TEST);
 }
 
 bool ShapeCornersEffect::supported()

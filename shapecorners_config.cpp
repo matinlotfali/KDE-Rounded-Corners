@@ -38,12 +38,14 @@ public:
         : q(config)
         , roundness("roundness")
         , dsp("dsp")
+        , shadowColor("shadowColor")
         , defaultRoundness(5)
         , defaultShadows(false)
+        , defaultShadowColor(QColor(Qt::black))
     {}
     ShapeCornersConfig *q;
-    QString roundness, dsp;
-    QVariant defaultRoundness, defaultShadows;
+    QString roundness, dsp, shadowColor;
+    QVariant defaultRoundness, defaultShadows, defaultShadowColor;
     ConfigDialog *ui;
 };
 
@@ -69,6 +71,10 @@ ShapeCornersConfig::load()
     KConfigGroup conf = KSharedConfig::openConfig("shapecorners.conf")->group("General");
     d->ui->roundness->setValue(conf.readEntry(d->roundness, d->defaultRoundness).toInt());
     d->ui->dsp->setChecked(conf.readEntry(d->dsp, d->defaultShadows).toBool());
+    QColor shadowColor = conf.readEntry(d->shadowColor, d->defaultShadowColor).value<QColor>();
+    d->ui->drawShadowEnabled->setChecked(shadowColor.alpha() > 0);
+    shadowColor.setAlpha(255);
+    d->ui->shadowColor->setColor(shadowColor);
     emit changed(false);
 }
 
@@ -79,6 +85,9 @@ ShapeCornersConfig::save()
     KConfigGroup conf = KSharedConfig::openConfig("shapecorners.conf")->group("General");
     conf.writeEntry(d->roundness, d->ui->roundness->value());
     conf.writeEntry(d->dsp, d->ui->dsp->isChecked());
+    auto shadowColor = d->ui->shadowColor->color();
+    shadowColor.setAlpha(d->ui->drawShadowEnabled->isChecked()? 255: 0);
+    conf.writeEntry(d->shadowColor, shadowColor);
     conf.sync();
     emit changed(false);
     OrgKdeKwinEffectsInterface interface(QStringLiteral("org.kde.KWin"),
@@ -93,6 +102,8 @@ ShapeCornersConfig::defaults()
     KCModule::defaults();
     d->ui->roundness->setValue(d->defaultRoundness.toInt());
     d->ui->dsp->setChecked(d->defaultShadows.toBool());
+    d->ui->shadowColor->setColor(d->defaultShadowColor.value<QColor>());
+    d->ui->drawShadowEnabled->setChecked(d->defaultShadowColor.value<QColor>().alpha() > 0);
     emit changed(true);
 }
 
