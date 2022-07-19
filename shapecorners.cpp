@@ -79,6 +79,8 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
             m_shader_cornerIndex = m_shader->uniformLocation("cornerIndex");
             m_shader_windowActive = m_shader->uniformLocation("windowActive");
             m_shader_shadowColor = m_shader->uniformLocation("shadowColor");
+            m_shader_radius = m_shader->uniformLocation("radius");
+            m_shader_outlineColor = m_shader->uniformLocation("outlineColor");
 
             for (int i = 0; i < KWindowSystem::windows().count(); ++i)
                 if (KWin::EffectWindow *win = KWin::effects->findWindow(KWindowSystem::windows().at(i)))
@@ -129,6 +131,7 @@ ShapeCornersEffect::reconfigure(ReconfigureFlags flags)
     KConfigGroup conf = KSharedConfig::openConfig("shapecorners.conf")->group("General");
     setRoundness(conf.readEntry("roundness", 5));
     m_shadowColor = conf.readEntry("shadowColor", QColor(Qt::black));
+    m_outlineColor = conf.readEntry("outlineColor", QColor(Qt::black));
 }
 
 #if KWIN_EFFECT_API_VERSION > 231
@@ -250,6 +253,8 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
         KWin::ShaderBinder binder(m_shader.get());
         m_shader->setUniform(m_shader_windowActive, KWin::effects->activeWindow() == w);
         m_shader->setUniform(m_shader_shadowColor, m_shadowColor);
+        m_shader->setUniform(m_shader_radius, m_size);
+        m_shader->setUniform(m_shader_outlineColor, m_outlineColor);
         for (int i = 0; i < NTex; ++i) {
             QMatrix4x4 mvp = data.screenProjectionMatrix();
             mvp.translate(rect[i].x(), rect[i].y());
@@ -259,6 +264,29 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
             tex[i].render(region & rect[i], rect[i], true);
             tex[i].unbind();
         }
+    }
+
+    if (m_outlineColor.alpha() > 0) {
+        glLineWidth(1);
+        KWin::GLVertexBuffer *vbo = KWin::GLVertexBuffer::streamingBuffer();
+        vbo->reset();
+        vbo->setUseColor(true);
+        vbo->setColor(m_outlineColor);
+        KWin::ShaderBinder binder(KWin::ShaderTrait::UniformColor);
+        QMatrix4x4 mvp = data.screenProjectionMatrix();
+        binder.shader()->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
+        QVector<float> verts{
+                (float) (w->x() + 1), (float) (w->y() + m_size),
+                (float) (w->x() + 1), (float) (w->y() + w->height() - m_size),
+                (float) (w->x() + m_size), (float) (w->y() + 1),
+                (float) (w->x() + w->width() - m_size), (float) (w->y() + 1),
+                (float) (w->x() + w->width()), (float) (w->y() + m_size),
+                (float) (w->x() + w->width()), (float) (w->y() + w->height() - m_size),
+                (float) (w->x() + m_size), (float) (w->y() + w->height()),
+                (float) (w->x() + w->width() - m_size), (float) (w->y() + w->height())
+        };
+        vbo->setData(2 * 4, 2, verts.data(), nullptr);
+        vbo->render(region & w->frameGeometry(), GL_LINES, true);
     }
 
 #if KWIN_EFFECT_API_VERSION < 233

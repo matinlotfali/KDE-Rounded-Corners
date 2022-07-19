@@ -53,13 +53,15 @@ protected Q_SLOTS:
 private:
     enum { TopLeft = 0, TopRight, BottomRight, BottomLeft, NTex };
     int m_size;
-    QColor m_shadowColor;
+    QColor m_shadowColor, m_outlineColor;
     QList<KWin::EffectWindow *> m_managed;
 
     std::unique_ptr<KWin::GLShader> m_shader;
     int m_shader_cornerIndex = 0;
     int m_shader_windowActive = 0;
     int m_shader_shadowColor = 0;
+    int m_shader_radius = 0;
+    int m_shader_outlineColor = 0;
 };
 
 #endif //SHAPECORNERS_H

@@ -1,9 +1,11 @@
 #version 140
 
 uniform sampler2D sampler;
+uniform int radius;
 uniform int cornerIndex;
 uniform bool windowActive;
 uniform vec4 shadowColor;
+uniform vec4 outlineColor;
 
 in vec2 texcoord0;
 out vec4 fragColor;
@@ -38,8 +40,10 @@ vec4 shadowCorner(float distance_from_center, vec4 backColor, bool isTopCorner) 
 
 vec4 shapeCorner(vec2 texcoord0, vec4 backColor, vec2 center, bool isTopCorner) {
     float distance_from_center = distance(texcoord0, center);
-    if(distance_from_center < 1)
+    if(distance_from_center < 1 - 1.0f/radius)
         backColor.a = 0;
+    else if(distance_from_center < 1)
+        backColor = outlineColor;
     else {
         if(shadowColor.a > 0)
             backColor = shadowCorner(distance_from_center, backColor, isTopCorner);

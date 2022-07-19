@@ -39,13 +39,15 @@ public:
         , roundness("roundness")
         , dsp("dsp")
         , shadowColor("shadowColor")
+        , outlineColor("outlineColor")
         , defaultRoundness(5)
         , defaultShadows(false)
         , defaultShadowColor(QColor(Qt::black))
+        , defaultOutlineColor(QColor(Qt::black))
     {}
     ShapeCornersConfig *q;
-    QString roundness, dsp, shadowColor;
-    QVariant defaultRoundness, defaultShadows, defaultShadowColor;
+    QString roundness, dsp, shadowColor, outlineColor;
+    QVariant defaultRoundness, defaultShadows, defaultShadowColor, defaultOutlineColor;
     ConfigDialog *ui;
 };
 
@@ -75,6 +77,9 @@ ShapeCornersConfig::load()
     d->ui->drawShadowEnabled->setChecked(shadowColor.alpha() > 0);
     shadowColor.setAlpha(255);
     d->ui->shadowColor->setColor(shadowColor);
+    QColor outlineColor = conf.readEntry(d->outlineColor, d->defaultOutlineColor).value<QColor>();
+    d->ui->drawOutlineEnabled->setChecked(outlineColor.alpha() > 0);
+    d->ui->outlineColor->setColor(outlineColor);
     emit changed(false);
 }
 
@@ -88,6 +93,10 @@ ShapeCornersConfig::save()
     auto shadowColor = d->ui->shadowColor->color();
     shadowColor.setAlpha(d->ui->drawShadowEnabled->isChecked()? 255: 0);
     conf.writeEntry(d->shadowColor, shadowColor);
+    auto outlineColor = d->ui->outlineColor->color();
+    if(!d->ui->drawOutlineEnabled->isChecked())
+        outlineColor.setAlpha(0);
+    conf.writeEntry(d->outlineColor, outlineColor);
     conf.sync();
     emit changed(false);
     OrgKdeKwinEffectsInterface interface(QStringLiteral("org.kde.KWin"),
@@ -104,6 +113,8 @@ ShapeCornersConfig::defaults()
     d->ui->dsp->setChecked(d->defaultShadows.toBool());
     d->ui->shadowColor->setColor(d->defaultShadowColor.value<QColor>());
     d->ui->drawShadowEnabled->setChecked(d->defaultShadowColor.value<QColor>().alpha() > 0);
+    d->ui->outlineColor->setColor(d->defaultOutlineColor.value<QColor>());
+    d->ui->drawOutlineEnabled->setChecked(d->defaultOutlineColor.value<QColor>().alpha() > 0);
     emit changed(true);
 }
 
