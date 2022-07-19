@@ -243,6 +243,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     KWin::effects->paintWindow(w, mask, region, data);
 
     //'shape' the corners
+    glEnable(GL_SCISSOR_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     KWin::ShaderManager *sm = KWin::ShaderManager::instance();
@@ -250,22 +251,22 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     {
         m_shader->setUniform(m_shader_windowActive, KWin::effects->activeWindow() == w);
         m_shader->setUniform(m_shader_drawShadow, m_drawShadow);
-        for (int i = 0; i < NTex; ++i)
-            if(!(region & rect[i]).isEmpty()) {
-                QMatrix4x4 mvp = data.screenProjectionMatrix();
-                mvp.translate(rect[i].x(), rect[i].y());
-                m_shader->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
-                m_shader->setUniform(m_shader_cornerIndex, i);
-                tex[i].bind();
-                tex[i].render(region, rect[i]);
-                tex[i].unbind();
-            }
+        for (int i = 0; i < NTex; ++i) {
+            QMatrix4x4 mvp = data.screenProjectionMatrix();
+            mvp.translate(rect[i].x(), rect[i].y());
+            m_shader->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
+            m_shader->setUniform(m_shader_cornerIndex, i);
+            tex[i].bind();
+            tex[i].render(region & rect[i], rect[i], true);
+            tex[i].unbind();
+        }
     }
     sm->popShader();
 #if KWIN_EFFECT_API_VERSION < 233
     data.quads = qds;
 #endif
     glDisable(GL_BLEND);
+    glDisable(GL_SCISSOR_TEST);
 }
 
 bool ShapeCornersEffect::supported()
