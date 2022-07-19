@@ -78,7 +78,7 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
         {
             m_shader_cornerIndex = m_shader->uniformLocation("cornerIndex");
             m_shader_windowActive = m_shader->uniformLocation("windowActive");
-            m_shader_drawShadow = m_shader->uniformLocation("drawShadow");
+            m_shader_shadowColor = m_shader->uniformLocation("shadowColor");
 
             for (int i = 0; i < KWindowSystem::windows().count(); ++i)
                 if (KWin::EffectWindow *win = KWin::effects->findWindow(KWindowSystem::windows().at(i)))
@@ -128,7 +128,7 @@ ShapeCornersEffect::reconfigure(ReconfigureFlags flags)
     Q_UNUSED(flags)
     KConfigGroup conf = KSharedConfig::openConfig("shapecorners.conf")->group("General");
     setRoundness(conf.readEntry("roundness", 5));
-    m_drawShadow = conf.readEntry("drawShadow", true);
+    m_shadowColor = conf.readEntry("shadowColor", QColor(Qt::black));
 }
 
 #if KWIN_EFFECT_API_VERSION > 231
@@ -246,11 +246,10 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     glEnable(GL_SCISSOR_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    KWin::ShaderManager *sm = KWin::ShaderManager::instance();
-    sm->pushShader(m_shader.get());
     {
+        KWin::ShaderBinder binder(m_shader.get());
         m_shader->setUniform(m_shader_windowActive, KWin::effects->activeWindow() == w);
-        m_shader->setUniform(m_shader_drawShadow, m_drawShadow);
+        m_shader->setUniform(m_shader_shadowColor, m_shadowColor);
         for (int i = 0; i < NTex; ++i) {
             QMatrix4x4 mvp = data.screenProjectionMatrix();
             mvp.translate(rect[i].x(), rect[i].y());
@@ -261,7 +260,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
             tex[i].unbind();
         }
     }
-    sm->popShader();
+
 #if KWIN_EFFECT_API_VERSION < 233
     data.quads = qds;
 #endif

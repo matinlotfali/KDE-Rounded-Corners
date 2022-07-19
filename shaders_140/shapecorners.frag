@@ -3,7 +3,7 @@
 uniform sampler2D sampler;
 uniform int cornerIndex;
 uniform bool windowActive;
-uniform bool drawShadow;
+uniform vec4 shadowColor;
 
 in vec2 texcoord0;
 out vec4 fragColor;
@@ -17,21 +17,21 @@ vec4 shadowCorner(float distance_from_center, vec4 backColor, bool isTopCorner) 
     if (windowActive) {
         if (isTopCorner) {
             float percent = (distance_from_center + 0.15) / (sqrt(2)+0.2);
-            return goTowards(vec4(0, 0, 0, 1), backColor, percent);
+            return goTowards(shadowColor, backColor, percent);
         }
         else {
             float percent = (distance_from_center - 0.25) / (sqrt(2)+0.1);
-            return goTowards(vec4(0, 0, 0, 1), backColor, percent);
+            return goTowards(shadowColor, backColor, percent);
         }
     }
     else {
         if (isTopCorner) {
             float percent = (distance_from_center + 0.55) / (sqrt(2)+0.5);
-            return goTowards(vec4(0, 0, 0, 1), backColor, percent);
+            return goTowards(shadowColor, backColor, percent);
         }
         else {
             float percent = (distance_from_center) / (sqrt(2)+0.1);
-            return goTowards(vec4(0, 0, 0, 1), backColor, percent);
+            return goTowards(shadowColor, backColor, percent);
         }
     }
 }
@@ -41,7 +41,7 @@ vec4 shapeCorner(vec2 texcoord0, vec4 backColor, vec2 center, bool isTopCorner) 
     if(distance_from_center < 1)
         backColor.a = 0;
     else {
-        if(drawShadow)
+        if(shadowColor.a > 0)
             backColor = shadowCorner(distance_from_center, backColor, isTopCorner);
         else
             backColor.a = 1;
