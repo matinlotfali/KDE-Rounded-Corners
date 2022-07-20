@@ -1,8 +1,8 @@
 # KDE-Rounded-Corners
 
-This effect rounds the corners of your windows. Window borders should be turned off for the effect to work. [How?](#settings)
+This effect rounds the corners of your windows and adds an outline around them without affecting the performance of the KDE Plasma desktop. Window borders should be turned off for the effect to work. [How?](#settings)
 
-This is a fork of [shapecorners](https://sourceforge.net/projects/shapecorners/) with some additional contributions in [Alex47's project](https://github.com/alex47/KDE-Rounded-Corners).
+This effect started as a fork of [shapecorners](https://sourceforge.net/projects/shapecorners/) with some additional contributions in [Alex47's project](https://github.com/alex47/KDE-Rounded-Corners), then I optimized and reimplemented the effect with shaders.
 
 #### Tested on:
 - ![Kubuntu 22.04 Jammy](https://img.shields.io/github/workflow/status/matinlotfali/KDE-Rounded-Corners/Kubuntu%2022.04?label=Kubuntu%2022.04%20Jammy&logo=kubuntu) [![Deb Binary](https://img.shields.io/github/downloads/matinlotfali/KDE-Rounded-Corners/latest/kwin4-effect-shapecorners-kubuntu2204-amd64.deb?label=Download%20deb)](https://github.com/matinlotfali/KDE-Rounded-Corners/releases/download/v0.1.1_kubuntu_22.04/kwin4-effect-shapecorners-kubuntu2204-amd64.deb)
@@ -12,13 +12,13 @@ This is a fork of [shapecorners](https://sourceforge.net/projects/shapecorners/)
 - ![Debian 11 Bullseye](https://img.shields.io/github/workflow/status/matinlotfali/KDE-Rounded-Corners/Debian?label=Debian%2011%20Bullseye&logo=debian) [![Deb Binary](https://img.shields.io/github/downloads/matinlotfali/KDE-Rounded-Corners/v0.1.1/kwin4-effect-shapecorners-debian11-amd64.deb?label=Download%20deb)](https://github.com/matinlotfali/KDE-Rounded-Corners/releases/download/v0.1.1/kwin4-effect-shapecorners-kubuntu2004-amd64.deb)
 - [![Arch](https://img.shields.io/github/workflow/status/matinlotfali/KDE-Rounded-Corners/Debian?label=Arch%20Linux&logo=archlinux&logoColor=white) ![](https://img.shields.io/aur/maintainer/kde-rounded-corners?label=AUR%20Maintainer) ![](https://img.shields.io/aur/votes/kde-rounded-corners?label=AUR%20Votes)](https://aur.archlinux.org/packages/kde-rounded-corners)
 
-![After](https://raw.githubusercontent.com/alex47/KDE-Rounded-Corners/master/screenshots/after.PNG)
+![After](https://raw.githubusercontent.com/matinlotfali/KDE-Rounded-Corners/master/screenshots/outlines.PNG)
 
 # Contributions:
 
+- Reimplementation with shaders to include shadows at corners and an outline - by [matinlotfali](https://github.com/matinlotfali)
 - Compatiblity with KWin from versions 5.23 to 5.26 - by [matinlotfali](https://github.com/matinlotfali)
 - Disable effect when window gets maximized - by [matinlotfali](https://github.com/matinlotfali)
-- Added Latte Dock to ignore list - by [gikari](https://github.com/gikari)
 - Cleanups for the plugin logic, remove unneeded dependencies from CMakeLists.txt file - by [alex1701c](https://github.com/alex1701c)
 
 # How to build from source code:
