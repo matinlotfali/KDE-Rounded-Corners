@@ -286,7 +286,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
                 (float) (w->x() + w->width() - m_size), (float) (w->y() + w->height())
         };
         vbo->setData(2 * 4, 2, verts.data(), nullptr);
-        vbo->render(region & w->frameGeometry(), GL_LINES, true);
+        vbo->render(region, GL_LINES, true);
     }
 
 #if KWIN_EFFECT_API_VERSION < 233
