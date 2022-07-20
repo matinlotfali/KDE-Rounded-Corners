@@ -109,11 +109,9 @@ ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
             || w->windowType() == NET::WindowType::Dock)
         return;
 //    qDebug() << w->windowRole() << w->windowType() << w->windowClass();
-//    if (!w->hasDecoration() && (w->windowClass().contains("plasma", Qt::CaseInsensitive)
-//            || w->windowClass().contains("krunner", Qt::CaseInsensitive)
-//            || w->windowClass().contains("latte-dock", Qt::CaseInsensitive)))
-//        return;
-    if (!w->hasDecoration())
+    if (!w->hasDecoration() && (w->windowClass().contains("plasma", Qt::CaseInsensitive)
+            || w->windowClass().contains("krunner", Qt::CaseInsensitive)
+            || w->windowClass().contains("latte-dock", Qt::CaseInsensitive)))
         return;
     m_managed << w;
 }
