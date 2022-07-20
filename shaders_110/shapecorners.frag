@@ -39,22 +39,22 @@ vec4 shadowCorner(float distance_from_center, vec4 backColor, bool isTopCorner) 
 
 vec4 shapeCorner(vec2 texcoord0, vec4 backColor, vec2 center, bool isTopCorner) {
     float distance_from_center = distance(texcoord0, center);
-    if(distance_from_center < 1 - 1.0f/radius)
-        backColor.a = 0;
-    else if(distance_from_center < 1)
+    if(distance_from_center < (1.0 - 1.0/float(radius)))
+        backColor.a = 0.0;
+    else if(distance_from_center < 1.0)
         backColor = outlineColor;
     else {
-        if(shadowColor.a > 0)
+        if(shadowColor.a > 0.0)
             backColor = shadowCorner(distance_from_center, backColor, isTopCorner);
         else
-            backColor.a = 1;
+            backColor.a = 1.0;
     }
     return backColor;
 }
 
 void main()
 {
-    vec4 tex = texture(sampler, texcoord0);
+    vec4 tex = texture2D(sampler, texcoord0);
     if(cornerIndex == 0)
         tex = shapeCorner(texcoord0, tex, vec2(1, 0), true);
     else if(cornerIndex == 1)
@@ -63,5 +63,5 @@ void main()
         tex = shapeCorner(texcoord0, tex, vec2(0, 1), false);
     else if(cornerIndex == 3)
         tex = shapeCorner(texcoord0, tex, vec2(1, 1), false);
-    fragColor = tex;
+    gl_FragColor = tex;
 }
