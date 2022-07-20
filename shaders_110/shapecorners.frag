@@ -17,21 +17,21 @@ vec4 goTowards(vec4 fromColor, vec4 toColor, float percent) {
 vec4 shadowCorner(float distance_from_center, vec4 backColor, bool isTopCorner) {
     if (windowActive) {
         if (isTopCorner) {
-            float percent = (distance_from_center + 0.15) / (sqrt(2)+0.2);
+            float percent = (distance_from_center + 0.15) / (sqrt(2.0)+0.2);
             return goTowards(shadowColor, backColor, percent);
         }
         else {
-            float percent = (distance_from_center - 0.25) / (sqrt(2)+0.1);
+            float percent = (distance_from_center - 0.25) / (sqrt(2.0)+0.1);
             return goTowards(shadowColor, backColor, percent);
         }
     }
     else {
         if (isTopCorner) {
-            float percent = (distance_from_center + 0.55) / (sqrt(2)+0.5);
+            float percent = (distance_from_center + 0.55) / (sqrt(2.0)+0.5);
             return goTowards(shadowColor, backColor, percent);
         }
         else {
-            float percent = (distance_from_center) / (sqrt(2)+0.1);
+            float percent = (distance_from_center) / (sqrt(2.0)+0.1);
             return goTowards(shadowColor, backColor, percent);
         }
     }
