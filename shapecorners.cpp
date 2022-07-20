@@ -278,8 +278,13 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
         QVector<float> verts{
                 (float) (w->x() + 1), (float) (w->y() + m_size),
                 (float) (w->x() + 1), (float) (w->y() + w->height() - m_size),
+#if KWIN_EFFECT_API_VERSION >= 234
                 (float) (w->x() + m_size), (float) (w->y() + 1),
                 (float) (w->x() + w->width() - m_size), (float) (w->y() + 1),
+#else
+                (float) (w->x() + m_size), (float)w->y(),
+                (float) (w->x() + w->width() - m_size), (float)w->y(),
+#endif
                 (float) (w->x() + w->width()), (float) (w->y() + m_size),
                 (float) (w->x() + w->width()), (float) (w->y() + w->height() - m_size),
                 (float) (w->x() + m_size), (float) (w->y() + w->height()),
