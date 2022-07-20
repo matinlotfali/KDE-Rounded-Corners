@@ -105,6 +105,10 @@ ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
 {
     if (m_managed.contains(w)
             || w->isDesktop()
+            || w->isPopupMenu()
+            || w->isDropdownMenu()
+            || w->isTooltip()
+            || w->isMenu()
             || w->windowType() == NET::WindowType::OnScreenDisplay
             || w->windowType() == NET::WindowType::Dock)
         return;
