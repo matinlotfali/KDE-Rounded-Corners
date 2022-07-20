@@ -29,7 +29,7 @@ jobs:
       run: sudo apt update
 
     - name: Install Dependencies
-      uses: awalsh128/cache-apt-pkgs-action@master
+      uses: awalsh128/cache-apt-pkgs-action@staging
       with:
           packages: gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5globalaccel-dev libkf5notifications-dev kwin-dev
           version: 22.04
