@@ -45,7 +45,7 @@ public:
     void prePaintWindow(KWin::EffectWindow* w, KWin::WindowPrePaintData& data, int time) override;
 #endif
     void paintWindow(KWin::EffectWindow* w, int mask, QRegion region, KWin::WindowPaintData& data) override;
-    int requestedEffectChainPosition() const override { return 99; }
+    int requestedEffectChainPosition() const override { return 70; }
 
 protected Q_SLOTS:
     void windowAdded(KWin::EffectWindow *window);
