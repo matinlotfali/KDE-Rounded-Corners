@@ -12,7 +12,7 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 - ![Debian 11 Bullseye](https://img.shields.io/github/workflow/status/matinlotfali/KDE-Rounded-Corners/Debian?label=Debian%2011%20Bullseye&logo=debian) [![Deb Binary](https://img.shields.io/github/downloads/matinlotfali/KDE-Rounded-Corners/v0.1.1/kwin4-effect-shapecorners-debian11-amd64.deb?label=Download%20deb)](https://github.com/matinlotfali/KDE-Rounded-Corners/releases/download/v0.1.1/kwin4-effect-shapecorners-kubuntu2004-amd64.deb)
 - [![Arch](https://img.shields.io/github/workflow/status/matinlotfali/KDE-Rounded-Corners/Debian?label=Arch%20Linux&logo=archlinux&logoColor=white) ![](https://img.shields.io/aur/maintainer/kde-rounded-corners?label=AUR%20Maintainer) ![](https://img.shields.io/aur/votes/kde-rounded-corners?label=AUR%20Votes)](https://aur.archlinux.org/packages/kde-rounded-corners)
 
-![After](https://raw.githubusercontent.com/matinlotfali/KDE-Rounded-Corners/master/screenshots/outlines.PNG)
+![After](https://raw.githubusercontent.com/matinlotfali/KDE-Rounded-Corners/master/screenshots/outlines.png)
 
 # Contributions:
 
