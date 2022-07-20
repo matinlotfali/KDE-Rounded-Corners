@@ -1,16 +1,3 @@
-# WARNING
-**This repository is deprecated.**
-
-**Development has been taken over by: https://github.com/matinlotfali/KDE-Rounded-Corners**
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-
-
-
 # KDE-Rounded-Corners
 
 This effect rounds the corners of your windows and adds an outline around them without affecting the performance of the KDE Plasma desktop. Window borders should be turned off for the effect to work. [How?](#settings)
