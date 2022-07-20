@@ -22,11 +22,12 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v3
       
-    - name: Refresh Ubuntu Packages
-      run: sudo apt update
-
     - name: Install Dependencies
-      run: sudo apt install -y gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5crash-dev libkf5globalaccel-dev libkf5kio-dev libkf5notifications-dev kinit-dev kwin-dev
+      uses: awalsh128/cache-apt-pkgs-action@v1
+      with:
+          packages: gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5crash-dev libkf5globalaccel-dev libkf5kio-dev libkf5notifications-dev kinit-dev kwin-dev
+          version: 1.0
+          refresh: true
     
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
