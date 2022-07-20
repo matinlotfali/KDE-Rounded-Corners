@@ -34,7 +34,7 @@ jobs:
       uses: awalsh128/cache-apt-pkgs-action@v1
       with:
           packages: gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5globalaccel-dev libkf5notifications-dev kwin-dev
-          version: 1.0
+          version: 5.0
           refresh: true
     
     - name: Configure CMake
