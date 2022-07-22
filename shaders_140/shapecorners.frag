@@ -6,6 +6,7 @@ uniform int cornerIndex;
 uniform bool windowActive;
 uniform vec4 shadowColor;
 uniform vec4 outlineColor;
+uniform float outlineThickness;
 
 in vec2 texcoord0;
 out vec4 fragColor;
@@ -40,7 +41,7 @@ vec4 shadowCorner(float distance_from_center, vec4 backColor, bool isTopCorner) 
 
 vec4 shapeCorner(vec2 texcoord0, vec4 backColor, vec2 center, bool isTopCorner) {
     float distance_from_center = distance(texcoord0, center);
-    if(distance_from_center < 1 - 1.0f/radius)
+    if(distance_from_center < 1 - outlineThickness/radius)
         backColor.a = 0;
     else if(distance_from_center < 1)
         backColor = outlineColor;

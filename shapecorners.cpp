@@ -30,19 +30,6 @@
 #include <KConfigGroup>
 #include <QDBusConnection>
 
-#if KWIN_EFFECT_API_VERSION < 233
-KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(  ShapeCornersFactory,
-                                        ShapeCornersEffect,
-                                        "shapecorners.json",
-                                        return ShapeCornersEffect::supported();,
-                                        return ShapeCornersEffect::enabledByDefault();)
-#else
-KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(  ShapeCornersEffect,
-                                        "shapecorners.json",
-                                        return ShapeCornersEffect::supported();,
-                                        return ShapeCornersEffect::enabledByDefault();)
-#endif
-
 
 ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
 {
@@ -81,6 +68,7 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
             m_shader_shadowColor = m_shader->uniformLocation("shadowColor");
             m_shader_radius = m_shader->uniformLocation("radius");
             m_shader_outlineColor = m_shader->uniformLocation("outlineColor");
+            m_shader_outlineThickness = m_shader->uniformLocation("outlineThickness");
 
             for (int i = 0; i < KWindowSystem::windows().count(); ++i)
                 if (KWin::EffectWindow *win = KWin::effects->findWindow(KWindowSystem::windows().at(i)))
@@ -134,6 +122,7 @@ ShapeCornersEffect::reconfigure(ReconfigureFlags flags)
     setRoundness(conf.readEntry("roundness", 5));
     m_shadowColor = conf.readEntry("shadowColor", QColor(Qt::black));
     m_outlineColor = conf.readEntry("outlineColor", QColor(Qt::black));
+    m_outlineThickness = conf.readEntry("outlineThickness", 1.0f);
 }
 
 #if KWIN_EFFECT_API_VERSION > 231
@@ -257,6 +246,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
         m_shader->setUniform(m_shader_shadowColor, m_shadowColor);
         m_shader->setUniform(m_shader_radius, m_size);
         m_shader->setUniform(m_shader_outlineColor, m_outlineColor);
+        m_shader->setUniform(m_shader_outlineThickness, m_outlineThickness);
         for (int i = 0; i < NTex; ++i) {
             QMatrix4x4 mvp = data.screenProjectionMatrix();
             mvp.translate(rect[i].x(), rect[i].y());
@@ -269,7 +259,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     }
 
     if (m_outlineColor.alpha() > 0) {
-        glLineWidth(1);
+        glLineWidth(m_outlineThickness);
         KWin::GLVertexBuffer *vbo = KWin::GLVertexBuffer::streamingBuffer();
         vbo->reset();
         vbo->setUseColor(true);
@@ -278,19 +268,19 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
         QMatrix4x4 mvp = data.screenProjectionMatrix();
         binder.shader()->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
         QVector<float> verts{
-                (float) (w->x() + 1), (float) (w->y() + m_size),
-                (float) (w->x() + 1), (float) (w->y() + w->height() - m_size),
+                (float) (w->x()) + m_outlineThickness/2 - 1, (float) (w->y() + m_size),
+                (float) (w->x()) + m_outlineThickness/2 - 1, (float) (w->y() + w->height() - m_size),
 #if KWIN_EFFECT_API_VERSION >= 234
-                (float) (w->x() + m_size), (float) (w->y() + 1),
-                (float) (w->x() + w->width() - m_size), (float) (w->y() + 1),
+                (float) (w->x() + m_size), (float)w->y() + m_outlineThickness/2 - 1,
+                (float) (w->x() + w->width() - m_size), (float)w->y() + m_outlineThickness/2 - 1,
 #else
-                (float) (w->x() + m_size), (float)w->y(),
-                (float) (w->x() + w->width() - m_size), (float)w->y(),
+                (float) (w->x() + m_size), (float)w->y() + m_outlineThickness/2,
+                (float) (w->x() + w->width() - m_size), (float)w->y() + m_outlineThickness/2,
 #endif
-                (float) (w->x() + w->width()), (float) (w->y() + m_size),
-                (float) (w->x() + w->width()), (float) (w->y() + w->height() - m_size),
-                (float) (w->x() + m_size), (float) (w->y() + w->height()),
-                (float) (w->x() + w->width() - m_size), (float) (w->y() + w->height())
+                (float) (w->x() + w->width()) - m_outlineThickness/2 + 1, (float) (w->y() + m_size),
+                (float) (w->x() + w->width())- m_outlineThickness/2 + 1, (float) (w->y() + w->height() - m_size),
+                (float) (w->x() + m_size), (float) (w->y() + w->height()) - m_outlineThickness/2 + 1,
+                (float) (w->x() + w->width() - m_size), (float) (w->y() + w->height()) - m_outlineThickness/2 + 1
         };
         vbo->setData(2 * 4, 2, verts.data(), nullptr);
         vbo->render(region, GL_LINES, true);
@@ -321,5 +311,3 @@ bool ShapeCornersEffect::isMaximized(KWin::EffectWindow *w) {
     return w->isFullScreen();
 #endif
 }
-
-#include "shapecorners.moc"

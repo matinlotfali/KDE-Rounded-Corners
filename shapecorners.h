@@ -53,6 +53,7 @@ protected Q_SLOTS:
 private:
     enum { TopLeft = 0, TopRight, BottomRight, BottomLeft, NTex };
     int m_size;
+    float m_outlineThickness;
     QColor m_shadowColor, m_outlineColor;
     QList<KWin::EffectWindow *> m_managed;
 
@@ -62,6 +63,7 @@ private:
     int m_shader_shadowColor = 0;
     int m_shader_radius = 0;
     int m_shader_outlineColor = 0;
+    int m_shader_outlineThickness = 0;
 };
 
 #endif //SHAPECORNERS_H

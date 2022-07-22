@@ -40,14 +40,18 @@ public:
         , dsp("dsp")
         , shadowColor("shadowColor")
         , outlineColor("outlineColor")
+        , outlineThickness("outlineThickness")
         , defaultRoundness(5)
         , defaultShadows(false)
         , defaultShadowColor(QColor(Qt::black))
         , defaultOutlineColor(QColor(Qt::black))
+        , defaultOutlineThickness(1.0f)
     {}
     ShapeCornersConfig *q;
-    QString roundness, dsp, shadowColor, outlineColor;
-    QVariant defaultRoundness, defaultShadows, defaultShadowColor, defaultOutlineColor;
+    QString roundness, dsp, shadowColor,
+            outlineColor, outlineThickness;
+    QVariant defaultRoundness, defaultShadows, defaultShadowColor,
+            defaultOutlineColor, defaultOutlineThickness;
     ConfigDialog *ui;
 };
 
@@ -80,6 +84,7 @@ ShapeCornersConfig::load()
     QColor outlineColor = conf.readEntry(d->outlineColor, d->defaultOutlineColor).value<QColor>();
     d->ui->drawOutlineEnabled->setChecked(outlineColor.alpha() > 0);
     d->ui->outlineColor->setColor(outlineColor);
+    d->ui->outlineThickness->setValue(conf.readEntry(d->outlineThickness, d->defaultOutlineThickness).toFloat());
     emit changed(false);
 }
 
@@ -97,6 +102,7 @@ ShapeCornersConfig::save()
     if(!d->ui->drawOutlineEnabled->isChecked())
         outlineColor.setAlpha(0);
     conf.writeEntry(d->outlineColor, outlineColor);
+    conf.writeEntry(d->outlineThickness, d->ui->outlineThickness->value());
     conf.sync();
     emit changed(false);
     OrgKdeKwinEffectsInterface interface(QStringLiteral("org.kde.KWin"),
@@ -115,6 +121,7 @@ ShapeCornersConfig::defaults()
     d->ui->drawShadowEnabled->setChecked(d->defaultShadowColor.value<QColor>().alpha() > 0);
     d->ui->outlineColor->setColor(d->defaultOutlineColor.value<QColor>());
     d->ui->drawOutlineEnabled->setChecked(d->defaultOutlineColor.value<QColor>().alpha() > 0);
+    d->ui->outlineThickness->setValue(d->defaultOutlineThickness.toFloat());
     emit changed(true);
 }
 
