@@ -1,6 +1,6 @@
 # KDE-Rounded-Corners
 
-This effect rounds the corners of your windows and adds an outline around them without affecting the performance of the KDE Plasma desktop. Window borders should be turned off for the effect to work. [How?](#settings)
+This effect rounds the corners of your windows and adds an outline around them without much affecting the performance of the KDE Plasma desktop (see [#49](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/49) and [#50](https://github.com/matinlotfali/KDE-Rounded-Corners/issues/50)). Window borders should be turned off for the effect to work. [How?](#settings)
 
 This effect started as a fork of [shapecorners](https://sourceforge.net/projects/shapecorners/) with some additional contributions in [Alex47's project](https://github.com/alex47/KDE-Rounded-Corners), then I optimized and reimplemented the effect with shaders.
 
@@ -16,6 +16,7 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 
 # Contributions:
 
+- Optimize the effect to render once instead of 5 times - by [matinlotfali](https://github.com/matinlotfali) - see [#49](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/49)
 - Reimplementation with shaders to include shadows at corners and an outline - by [matinlotfali](https://github.com/matinlotfali)
 - Compatiblity with KWin from versions 5.23 to 5.26 - by [matinlotfali](https://github.com/matinlotfali)
 - Disable effect when window gets maximized - by [matinlotfali](https://github.com/matinlotfali)
