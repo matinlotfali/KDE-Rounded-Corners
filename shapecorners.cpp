@@ -21,7 +21,6 @@
 #include "shapecorners.h"
 #include <QPainter>
 #include <QImage>
-#include <QMatrix4x4>
 #include <QDBusConnection>
 #include <kwindowsystem.h>
 #include <kwingltexture.h>
@@ -97,7 +96,12 @@ ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintDa
         return;
     }
 
-    const auto& geo = w->frameGeometry();
+#if KWIN_EFFECT_API_VERSION <= 235
+    const QRect& geo = w->frameGeometry();
+#else
+    const QRectF& geoF = w->frameGeometry();
+    const QRect geo ((int)geo.left(), (int)geo.top(), (int)geo.width(), (int)geo.height());
+#endif
     data.paint += geo;
 #if KWIN_EFFECT_API_VERSION < 234
     data.clip -= geo;
@@ -149,7 +153,12 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
 #endif
 
     //copy the background
-    const auto& geo = w->frameGeometry();
+#if KWIN_EFFECT_API_VERSION <= 235
+    const QRect& geo = w->frameGeometry();
+#else
+    const QRectF& geoF = w->frameGeometry();
+    const QRect geo ((int)geo.left(), (int)geo.top(), (int)geo.width(), (int)geo.height());
+#endif
     const auto& s = KWin::effects->virtualScreenGeometry();
     KWin::GLTexture back (GL_RGBA8, geo.size());
     back.bind();
