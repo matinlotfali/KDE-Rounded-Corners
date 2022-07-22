@@ -96,7 +96,7 @@ ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintDa
         return;
     }
 
-#if KWIN_EFFECT_API_VERSION <= 235
+#if KWIN_EFFECT_API_VERSION < 235
     const QRect& geo = w->frameGeometry();
 #else
     const QRectF& geoF = w->frameGeometry();
@@ -153,7 +153,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
 #endif
 
     //copy the background
-#if KWIN_EFFECT_API_VERSION <= 235
+#if KWIN_EFFECT_API_VERSION < 235
     const QRect& geo = w->frameGeometry();
 #else
     const QRectF& geoF = w->frameGeometry();
