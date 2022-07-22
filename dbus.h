@@ -3,7 +3,6 @@
 
 #include <QtDBus/QDBusAbstractAdaptor>
 #include "shapecorners.h"
-#include <KConfigGroup>
 
 namespace KWin
 {
@@ -21,12 +20,12 @@ public:
 public slots:
     Q_NOREPLY void setRoundness(int r)
     {
-        KConfigGroup conf = KSharedConfig::openConfig("shapecorners.conf")->group("General");
-        if (conf.readEntry("dsp", false))
-        {
-            conf.writeEntry("roundness", r);
-            conf.sync();
-            m_effect->setRoundness(r);
+        ConfigModel config;
+        config.Load();
+        if(config.m_dsp) {
+            config.m_size = r;
+            config.Save();
+            m_effect->setConfig(config);
         }
     }
     Q_NOREPLY void configure() { m_effect->reconfigure(KWin::Effect::ReconfigureAll); }

@@ -21,9 +21,7 @@
 #define SHAPECORNERS_H
 
 #include <kwineffects.h>
-#include <memory>
-
-namespace KWin { class GLTexture; }
+#include "ShaderManager.h"
 
 class Q_DECL_EXPORT ShapeCornersEffect : public KWin::Effect
 {
@@ -36,7 +34,7 @@ public:
     static bool enabledByDefault() { return supported(); }
     static bool isMaximized(KWin::EffectWindow *w);
 
-    void setRoundness(int r);
+    void setConfig(const ConfigModel& config) { m_config = config; }
 
     void reconfigure(ReconfigureFlags flags) override;
 #if KWIN_EFFECT_API_VERSION > 231
@@ -51,19 +49,9 @@ protected Q_SLOTS:
     void windowAdded(KWin::EffectWindow *window);
 
 private:
-    enum { TopLeft = 0, TopRight, BottomRight, BottomLeft, NTex };
-    int m_size;
-    float m_outlineThickness;
-    QColor m_shadowColor, m_outlineColor;
     QList<KWin::EffectWindow *> m_managed;
-
-    std::unique_ptr<KWin::GLShader> m_shader;
-    int m_shader_cornerIndex = 0;
-    int m_shader_windowActive = 0;
-    int m_shader_shadowColor = 0;
-    int m_shader_radius = 0;
-    int m_shader_outlineColor = 0;
-    int m_shader_outlineThickness = 0;
+    ShaderManager m_shaderManager;
+    ConfigModel m_config;
 };
 
 #endif //SHAPECORNERS_H
