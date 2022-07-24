@@ -65,7 +65,7 @@ void ShaderManager::Bind(QMatrix4x4 mvp, const QRect& geo, bool windowActive, co
     m_shader->setUniform(m_shader_windowActive, windowActive);
     m_shader->setUniform(m_shader_shadowColor, config.m_shadowColor);
     m_shader->setUniform(m_shader_radius, config.m_size);
-    m_shader->setUniform(m_shader_outlineColor, config.m_outlineColor);
+    m_shader->setUniform(m_shader_outlineColor, windowActive ? config.m_outlineColor : config.m_inactiveOutlineColor);
     m_shader->setUniform(m_shader_outlineThickness, config.m_outlineThickness);
 }
 

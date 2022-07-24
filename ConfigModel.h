@@ -16,7 +16,8 @@ public:
     float  m_size,
            m_outlineThickness;
     QColor m_shadowColor,
-           m_outlineColor;
+           m_outlineColor,
+	   m_inactiveOutlineColor;
     bool   m_dsp;
 };
 
