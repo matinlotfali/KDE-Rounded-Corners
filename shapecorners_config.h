@@ -1,5 +1,6 @@
  
 #include <kcmodule.h>
+#include <ConfigModel.h>
 
 class ShapeCornersConfig : public KCModule
 {
@@ -13,6 +14,7 @@ public slots:
     void defaults() override;
 
 private:
+    ConfigModel m_config;
     class Private;
     Private * const d;
     friend class Private;

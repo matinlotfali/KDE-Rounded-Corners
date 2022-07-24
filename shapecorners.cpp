@@ -21,81 +21,27 @@
 #include "shapecorners.h"
 #include <QPainter>
 #include <QImage>
-#include <QFile>
-#include <QStandardPaths>
-#include <kwinglplatform.h>
-#include <kwinglutils.h>
-#include <kwindowsystem.h>
-#include <QMatrix4x4>
-#include <KConfigGroup>
 #include <QDBusConnection>
-
-#if KWIN_EFFECT_API_VERSION < 233
-KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(  ShapeCornersFactory,
-                                        ShapeCornersEffect,
-                                        "shapecorners.json",
-                                        return ShapeCornersEffect::supported();,
-                                        return ShapeCornersEffect::enabledByDefault();)
-#else
-KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(  ShapeCornersEffect,
-                                        "shapecorners.json",
-                                        return ShapeCornersEffect::supported();,
-                                        return ShapeCornersEffect::enabledByDefault();)
-#endif
+#include <kwindowsystem.h>
+#include <kwingltexture.h>
 
 
-ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect(), m_shader(nullptr)
+ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect()
 {
     new KWin::EffectAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/ShapeCorners", this);
-    reconfigure(ReconfigureAll);
 
-    QString shadersDir(QStringLiteral("kwin/shaders/1.10/"));
-#ifdef KWIN_HAVE_OPENGLES
-    const qint64 coreVersionNumber = kVersionNumber(3, 0);
-#else
-    const qint64 version = KWin::kVersionNumber(1, 40);
-#endif
-    if (KWin::GLPlatform::instance()->glslVersion() >= version)
-        shadersDir = QStringLiteral("kwin/shaders/1.40/");
-
-    const QString fragmentshader = QStandardPaths::locate(QStandardPaths::GenericDataLocation, shadersDir + QStringLiteral("shapecorners.frag"));
-//    m_shader = KWin::ShaderManager::instance()->loadFragmentShader(KWin::ShaderManager::GenericShader, fragmentshader);
-    QFile file(fragmentshader);
-    if (file.open(QFile::ReadOnly))
-    {
-        QByteArray frag = file.readAll();
-        auto shader = KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, QByteArray(), frag);
-#if KWIN_EFFECT_API_VERSION >= 235
-        m_shader = std::move(shader);
-#else
-        m_shader.reset(shader);
-#endif
-        file.close();
-//        qDebug() << frag;
-//        qDebug() << "shader valid: " << m_shader->isValid();
-        if (m_shader->isValid())
-        {
-            m_shader_cornerIndex = m_shader->uniformLocation("cornerIndex");
-            m_shader_windowActive = m_shader->uniformLocation("windowActive");
-            m_shader_shadowColor = m_shader->uniformLocation("shadowColor");
-            m_shader_radius = m_shader->uniformLocation("radius");
-            m_shader_outlineColor = m_shader->uniformLocation("outlineColor");
-
-            for (int i = 0; i < KWindowSystem::windows().count(); ++i)
-                if (KWin::EffectWindow *win = KWin::effects->findWindow(KWindowSystem::windows().at(i)))
-                    windowAdded(win);
-            connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
-            connect(KWin::effects, &KWin::EffectsHandler::windowClosed, this, [this](){m_managed.removeOne(dynamic_cast<KWin::EffectWindow *>(sender()));});
-        }
-        else
-            qDebug() << "ShapeCorners: no valid shaders found! ShapeCorners will not work.";
+    if(m_shaderManager.IsValid()) {
+        for (int i = 0; i < KWindowSystem::windows().count(); ++i)
+            if (KWin::EffectWindow *win = KWin::effects->findWindow(KWindowSystem::windows().at(i)))
+                windowAdded(win);
+        connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
+        connect(KWin::effects, &KWin::EffectsHandler::windowClosed, this, [this](){ m_managed.removeOne(dynamic_cast<KWin::EffectWindow *>(sender())); });
     }
     else
-    {
-        qDebug() << "ShapeCorners: no shaders found! Exiting...";
         deleteLater();
-    }
+
+    reconfigure(ReconfigureAll);
 }
 
 ShapeCornersEffect::~ShapeCornersEffect() = default;
@@ -121,19 +67,10 @@ ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
 }
 
 void
-ShapeCornersEffect::setRoundness(const int r)
-{
-    m_size = r;
-}
-
-void
 ShapeCornersEffect::reconfigure(ReconfigureFlags flags)
 {
     Q_UNUSED(flags)
-    KConfigGroup conf = KSharedConfig::openConfig("shapecorners.conf")->group("General");
-    setRoundness(conf.readEntry("roundness", 5));
-    m_shadowColor = conf.readEntry("shadowColor", QColor(Qt::black));
-    m_outlineColor = conf.readEntry("outlineColor", QColor(Qt::black));
+    m_config.Load();
 }
 
 #if KWIN_EFFECT_API_VERSION > 231
@@ -144,7 +81,7 @@ void
 ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, int time)
 #endif
 {
-    if (!m_shader->isValid()
+    if (!m_shaderManager.IsValid()
             || !m_managed.contains(w)
 //            || KWin::effects->hasActiveFullScreenEffect()
             || isMaximized(w)
@@ -158,23 +95,19 @@ ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintDa
         KWin::effects->prePaintWindow(w, data, time);
         return;
     }
-    const auto& geo = w->frameGeometry();
-    const QRect rect[NTex] =
-    {
-        QRect(geo.topLeft().x(), geo.topLeft().y(), m_size, m_size),
-        QRect(geo.topRight().x()-m_size+1, geo.topRight().y(), m_size, m_size),
-        QRect(geo.bottomRight().x()-m_size+1, geo.bottomRight().y()-m_size+1, m_size, m_size),
-        QRect(geo.bottomLeft().x(), geo.bottomLeft().y()-m_size+1, m_size, m_size)
-    };
-    for (int i = 0; i < NTex; ++i)
-    {
-        data.paint += rect[i];
-#if KWIN_EFFECT_API_VERSION < 234
-        data.clip -= rect[i];
+
+#if KWIN_EFFECT_API_VERSION < 235
+    const QRect& geo = w->frameGeometry();
+#else
+    const QRectF& geoF = w->frameGeometry();
+    const QRect geo ((int)geo.left(), (int)geo.top(), (int)geo.width(), (int)geo.height());
 #endif
-    }
-    QRegion outerRect (geo.x()+m_size-1, geo.y()-1,
-                       geo.width()-m_size*2+1, geo.height()-m_size*2+1, QRegion::Ellipse);
+    data.paint += geo;
+#if KWIN_EFFECT_API_VERSION < 234
+    data.clip -= geo;
+#endif
+    QRegion outerRect (geo.x()+m_config.m_size-1, geo.y()-1,
+                       geo.width()-m_config.m_size*2+1, geo.height()-m_config.m_size*2+1, QRegion::Ellipse);
     data.paint += outerRect;
 #if KWIN_EFFECT_API_VERSION < 234
     data.clip -=outerRect;
@@ -195,7 +128,7 @@ static bool hasShadow(KWin::WindowQuadList &qds)
 void
 ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region, KWin::WindowPaintData &data)
 {
-    if (!m_shader->isValid()
+    if (!m_shaderManager.IsValid()
             || !m_managed.contains(w)
 //            || KWin::effects->hasActiveFullScreenEffect()
             || isMaximized(w)
@@ -212,16 +145,6 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
         return;
     }
 
-    //map the corners
-    const auto& geo = w->frameGeometry();
-    const QRect rect[NTex] =
-    {
-        QRect(geo.topLeft().x(), geo.topLeft().y(), m_size, m_size),
-        QRect(geo.topRight().x()-m_size+1, geo.topRight().y(), m_size, m_size),
-        QRect(geo.bottomRight().x()-m_size+1, geo.bottomRight().y()-m_size+1, m_size, m_size),
-        QRect(geo.bottomLeft().x(), geo.bottomLeft().y()-m_size+1, m_size, m_size)
-    };
-
 #if KWIN_EFFECT_API_VERSION < 233
     const KWin::WindowQuadList qds(data.quads);
     //paint the shadow
@@ -229,17 +152,18 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     KWin::effects->paintWindow(w, mask, region, data);
 #endif
 
-    //copy the corner regions
-    QList<KWin::GLTexture> tex;
-    const QRect s(KWin::effects->virtualScreenGeometry());
-    for (int i = 0; i < NTex; ++i)
-    {
-        KWin::GLTexture t = KWin::GLTexture(GL_RGBA8, rect[i].size());
-        t.bind();
-        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, rect[i].x(), s.height() - rect[i].y() - rect[i].height(), rect[i].width(), rect[i].height());
-        t.unbind();
-        tex.append(t);
-    }
+    //copy the background
+#if KWIN_EFFECT_API_VERSION < 235
+    const QRect& geo = w->frameGeometry();
+#else
+    const QRectF& geoF = w->frameGeometry();
+    const QRect geo ((int)geo.left(), (int)geo.top(), (int)geo.width(), (int)geo.height());
+#endif
+    const auto& s = KWin::effects->virtualScreenGeometry();
+    KWin::GLTexture back (GL_RGBA8, geo.size());
+    back.bind();
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, geo.x(), s.height() - geo.y() - geo.height(), geo.width(), geo.height());
+    back.unbind();
 
     //paint the actual window
 #if KWIN_EFFECT_API_VERSION < 233
@@ -252,55 +176,18 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     {
-        KWin::ShaderBinder binder(m_shader.get());
-        m_shader->setUniform(m_shader_windowActive, KWin::effects->activeWindow() == w);
-        m_shader->setUniform(m_shader_shadowColor, m_shadowColor);
-        m_shader->setUniform(m_shader_radius, m_size);
-        m_shader->setUniform(m_shader_outlineColor, m_outlineColor);
-        for (int i = 0; i < NTex; ++i) {
-            QMatrix4x4 mvp = data.screenProjectionMatrix();
-            mvp.translate(rect[i].x(), rect[i].y());
-            m_shader->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
-            m_shader->setUniform(m_shader_cornerIndex, i);
-            tex[i].bind();
-            tex[i].render(region & rect[i], rect[i], true);
-            tex[i].unbind();
-        }
+        m_shaderManager.Bind(data.screenProjectionMatrix(), geo, KWin::effects->activeWindow() == w, m_config);
+        back.bind();
+        back.render(region, geo, true);
+        back.unbind();
+        m_shaderManager.Unbind();
     }
-
-    if (m_outlineColor.alpha() > 0) {
-        glLineWidth(1);
-        KWin::GLVertexBuffer *vbo = KWin::GLVertexBuffer::streamingBuffer();
-        vbo->reset();
-        vbo->setUseColor(true);
-        vbo->setColor(m_outlineColor);
-        KWin::ShaderBinder binder(KWin::ShaderTrait::UniformColor);
-        QMatrix4x4 mvp = data.screenProjectionMatrix();
-        binder.shader()->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
-        QVector<float> verts{
-                (float) (w->x() + 1), (float) (w->y() + m_size),
-                (float) (w->x() + 1), (float) (w->y() + w->height() - m_size),
-#if KWIN_EFFECT_API_VERSION >= 234
-                (float) (w->x() + m_size), (float) (w->y() + 1),
-                (float) (w->x() + w->width() - m_size), (float) (w->y() + 1),
-#else
-                (float) (w->x() + m_size), (float)w->y(),
-                (float) (w->x() + w->width() - m_size), (float)w->y(),
-#endif
-                (float) (w->x() + w->width()), (float) (w->y() + m_size),
-                (float) (w->x() + w->width()), (float) (w->y() + w->height() - m_size),
-                (float) (w->x() + m_size), (float) (w->y() + w->height()),
-                (float) (w->x() + w->width() - m_size), (float) (w->y() + w->height())
-        };
-        vbo->setData(2 * 4, 2, verts.data(), nullptr);
-        vbo->render(region, GL_LINES, true);
-    }
+    glDisable(GL_BLEND);
+    glDisable(GL_SCISSOR_TEST);
 
 #if KWIN_EFFECT_API_VERSION < 233
     data.quads = qds;
 #endif
-    glDisable(GL_BLEND);
-    glDisable(GL_SCISSOR_TEST);
 }
 
 bool ShapeCornersEffect::supported()
@@ -321,5 +208,3 @@ bool ShapeCornersEffect::isMaximized(KWin::EffectWindow *w) {
     return w->isFullScreen();
 #endif
 }
-
-#include "shapecorners.moc"

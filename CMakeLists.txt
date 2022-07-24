@@ -77,7 +77,7 @@ if (NOT EFFECTS_H OR NOT KWIN_GLUTILS OR NOT KWIN_EFFECTS OR NOT OPENGL)
     message(FATAL_ERROR "cant continue")
 endif (NOT EFFECTS_H OR NOT KWIN_GLUTILS OR NOT KWIN_EFFECTS OR NOT OPENGL)
 
-add_library(${SHAPECORNERS} MODULE shapecorners.cpp dbus.h)
+add_library(${SHAPECORNERS} MODULE shapecorners.cpp main.cpp dbus.h shapecorners.h ShaderManager.cpp ShaderManager.h ConfigModel.h ConfigModel.cpp)
 
 target_link_libraries(${SHAPECORNERS}
     PUBLIC
@@ -115,7 +115,7 @@ install(FILES shaders_110/shapecorners.frag DESTINATION ${DATAPATH}/kwin/shaders
 
 #config
 project(kwin4_shapecorners_config)
-set(kwin4_shapecorners_config_SOURCES shapecorners_config.cpp)
+set(kwin4_shapecorners_config_SOURCES shapecorners_config.cpp shapecorners_config.h ConfigModel.cpp)
 ki18n_wrap_ui(kwin4_shapecorners_config_SOURCES shapecorners_config.ui)
 qt5_add_dbus_interface(kwin4_shapecorners_config_SOURCES org.kde.kwin.Effects.xml kwineffects_interface)
 add_library(kwin4_shapecorners_config MODULE ${kwin4_shapecorners_config_SOURCES})
