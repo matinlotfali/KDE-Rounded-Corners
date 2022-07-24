@@ -68,8 +68,10 @@ ShapeCornersConfig::load()
     shadowColor.setAlpha(255);
     d->ui->shadowColor->setColor(shadowColor);
     QColor outlineColor = m_config.m_outlineColor;
+    QColor inactiveOutlineColor = m_config.m_inactiveOutlineColor;
     d->ui->drawOutlineEnabled->setChecked(outlineColor.alpha() > 0);
     d->ui->outlineColor->setColor(outlineColor);
+    d->ui->inactiveOutlineColor->setColor(inactiveOutlineColor);
     d->ui->outlineThickness->setValue(m_config.m_outlineThickness);
     emit changed(false);
 }
@@ -83,8 +85,11 @@ ShapeCornersConfig::save()
     m_config.m_shadowColor = d->ui->shadowColor->color();
     m_config.m_shadowColor.setAlpha(d->ui->drawShadowEnabled->isChecked()? 255: 0);
     m_config.m_outlineColor = d->ui->outlineColor->color();
-    if(!d->ui->drawOutlineEnabled->isChecked())
+    m_config.m_inactiveOutlineColor = d->ui->inactiveOutlineColor->color();
+    if(!d->ui->drawOutlineEnabled->isChecked()){
         m_config.m_outlineColor.setAlpha(0);
+        m_config.m_inactiveOutlineColor.setAlpha(0);
+    }
     m_config.m_outlineThickness = d->ui->outlineThickness->value();
     m_config.Save();
 
@@ -107,8 +112,10 @@ ShapeCornersConfig::defaults()
     shadowColor.setAlpha(255);
     d->ui->shadowColor->setColor(shadowColor);
     QColor outlineColor = m_config.m_outlineColor;
+    QColor inactiveOutlineColor = m_config.m_inactiveOutlineColor;
     d->ui->drawOutlineEnabled->setChecked(outlineColor.alpha() > 0);
     d->ui->outlineColor->setColor(outlineColor);
+    d->ui->inactiveOutlineColor->setColor(inactiveOutlineColor);
     d->ui->outlineThickness->setValue(m_config.m_outlineThickness);
     emit changed(true);
 }
