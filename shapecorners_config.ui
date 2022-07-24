@@ -66,7 +66,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="outlineColorLabel">
             <property name="text">
-             <string>Outline Color</string>
+             <string>Active Window Outline Color</string>
             </property>
            </widget>
           </item>
@@ -106,7 +106,7 @@
           <item row="1" column="0">
            <widget class="QLabel" name="inactiveOutlineColorLabel">
             <property name="text">
-             <string>Inactive Outline Color</string>
+             <string>Inactive Window Outline Color</string>
             </property>
            </widget>
           </item>
