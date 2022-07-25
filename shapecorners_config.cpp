@@ -19,7 +19,9 @@
 #if KCOREADDONS_VERSION >= QT_VERSION_CHECK(5, 90, 0)
 K_PLUGIN_CLASS(ShapeCornersConfig)
 #else
-K_PLUGIN_FACTORY(ShapeCornersConfigFactory, registerPlugin<ShapeCornersConfig>();)
+K_PLUGIN_FACTORY_WITH_JSON(ShapeCornersConfigFactory,
+                           "shapecorners_config.json",
+                           registerPlugin<ShapeCornersConfig>();)
 #endif
 
 class ConfigDialog : public QWidget , public Ui::Form
