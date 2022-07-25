@@ -129,7 +129,9 @@ target_link_libraries(kwin4_shapecorners_config
             KF5::I18n
             KF5::GlobalAccel
         )
+kcoreaddons_desktop_to_json(kwin4_shapecorners_config shapecorners_config.desktop)
 install(TARGETS kwin4_shapecorners_config DESTINATION ${MODULEPATH}/kwin/effects/configs)
+install(FILES shapecorners_config.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kwin)
 
 # these are cache variables, so they could be overwritten with -D,
 set(CPACK_PACKAGE_NAME kwin4-effect-shapecorners

@@ -12,6 +12,9 @@
         "Id": "kwin4_effect_shapecorners",
         "License": "GPL",
         "Name": "ShapeCorners",
+        "ServiceTypes": [
+            "KWin/Effect"
+        ],
         "Version": "git"
     },
     "org.kde.kwin.effect": {
