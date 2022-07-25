@@ -57,15 +57,27 @@ bool ShaderManager::IsValid() const {
     return m_shader && m_shader->isValid();
 }
 
-void ShaderManager::Bind(QMatrix4x4 mvp, const QRect& geo, bool windowActive, const ConfigModel& config) const {
+void ShaderManager::Bind(
+    QMatrix4x4 mvp,
+    const QRect& geo,
+    bool windowActive,
+    double windowOpacity,
+    const ConfigModel& config
+) const {
+
+    auto shadowColor = config.m_shadowColor;
+    auto outlineColor = windowActive ? config.m_outlineColor : config.m_inactiveOutlineColor;
+    shadowColor.setAlphaF(shadowColor.alphaF() * windowOpacity);
+    outlineColor.setAlphaF(outlineColor.alphaF() * windowOpacity);
+
     m_manager->pushShader(m_shader.get());
     mvp.translate((float)geo.x(), (float)geo.y());
     m_shader->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
     m_shader->setUniform(m_shader_windowSize, QVector2D{(float)geo.width(), (float)geo.height()});
     m_shader->setUniform(m_shader_windowActive, windowActive);
-    m_shader->setUniform(m_shader_shadowColor, config.m_shadowColor);
+    m_shader->setUniform(m_shader_shadowColor, shadowColor);
     m_shader->setUniform(m_shader_radius, config.m_size);
-    m_shader->setUniform(m_shader_outlineColor, windowActive ? config.m_outlineColor : config.m_inactiveOutlineColor);
+    m_shader->setUniform(m_shader_outlineColor, outlineColor);
     m_shader->setUniform(m_shader_outlineThickness, config.m_outlineThickness);
 }
 

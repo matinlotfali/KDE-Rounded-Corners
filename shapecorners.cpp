@@ -32,8 +32,8 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect()
     QDBusConnection::sessionBus().registerObject("/ShapeCorners", this);
 
     if(m_shaderManager.IsValid()) {
-        for (int i = 0; i < KWindowSystem::windows().count(); ++i)
-            if (KWin::EffectWindow *win = KWin::effects->findWindow(KWindowSystem::windows().at(i)))
+        for (const auto& id: KWindowSystem::windows())
+            if (auto win = KWin::effects->findWindow(id))
                 windowAdded(win);
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
         connect(KWin::effects, &KWin::EffectsHandler::windowClosed, this, [this](){ m_managed.removeOne(dynamic_cast<KWin::EffectWindow *>(sender())); });
@@ -138,7 +138,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
             || data.quads.isTransformed()
             || !hasShadow(data.quads)
 #endif
-            || (mask & (PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS))
+            || (mask & (PAINT_WINDOW_TRANSFORMED))
             )
     {
         KWin::effects->paintWindow(w, mask, region, data);
@@ -176,7 +176,12 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     {
-        m_shaderManager.Bind(data.screenProjectionMatrix(), geo, KWin::effects->activeWindow() == w, m_config);
+        m_shaderManager.Bind(
+                data.screenProjectionMatrix(),
+                geo,
+                KWin::effects->activeWindow() == w,
+                w->opacity(),
+                m_config);
         back.bind();
         back.render(region, geo, true);
         back.unbind();

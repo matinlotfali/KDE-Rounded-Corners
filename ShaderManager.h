@@ -19,7 +19,13 @@ public:
     ShaderManager();
 
     bool IsValid() const;
-    void Bind(QMatrix4x4 mvp, const QRect& geo, bool windowActive, const ConfigModel& config) const;
+    void Bind(
+        QMatrix4x4 mvp,
+        const QRect& geo,
+        bool windowActive,
+        double windowOpacity,
+        const ConfigModel& config
+    ) const;
     void Unbind() const;
 
 private:
