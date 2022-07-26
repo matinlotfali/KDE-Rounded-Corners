@@ -64,7 +64,6 @@ ShapeCornersConfig::load()
     KCModule::load();
     m_config.Load();
     d->ui->roundness->setValue(m_config.m_size);
-    d->ui->dsp->setChecked(m_config.m_dsp);
     QColor shadowColor = m_config.m_shadowColor;
     d->ui->drawShadowEnabled->setChecked(shadowColor.alpha() > 0);
     shadowColor.setAlpha(255);
@@ -83,7 +82,6 @@ ShapeCornersConfig::save()
 {
     KCModule::save();
     m_config.m_size = d->ui->roundness->value();
-    m_config.m_dsp = d->ui->dsp->isChecked();
     m_config.m_shadowColor = d->ui->shadowColor->color();
     m_config.m_shadowColor.setAlpha(d->ui->drawShadowEnabled->isChecked()? 255: 0);
     m_config.m_outlineColor = d->ui->outlineColor->color();
@@ -108,7 +106,6 @@ ShapeCornersConfig::defaults()
     KCModule::defaults();
     ConfigModel defaultConfig;
     d->ui->roundness->setValue(m_config.m_size);
-    d->ui->dsp->setChecked(m_config.m_dsp);
     QColor shadowColor = m_config.m_shadowColor;
     d->ui->drawShadowEnabled->setChecked(shadowColor.alpha() > 0);
     shadowColor.setAlpha(255);

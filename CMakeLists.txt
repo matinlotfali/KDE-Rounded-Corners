@@ -77,7 +77,7 @@ if (NOT EFFECTS_H OR NOT KWIN_GLUTILS OR NOT KWIN_EFFECTS OR NOT OPENGL)
     message(FATAL_ERROR "cant continue")
 endif (NOT EFFECTS_H OR NOT KWIN_GLUTILS OR NOT KWIN_EFFECTS OR NOT OPENGL)
 
-add_library(${SHAPECORNERS} MODULE shapecorners.cpp main.cpp dbus.h shapecorners.h ShaderManager.cpp ShaderManager.h ConfigModel.h ConfigModel.cpp)
+add_library(${SHAPECORNERS} MODULE shapecorners.cpp main.cpp shapecorners.h ShaderManager.cpp ShaderManager.h ConfigModel.h ConfigModel.cpp)
 
 target_link_libraries(${SHAPECORNERS}
     PUBLIC

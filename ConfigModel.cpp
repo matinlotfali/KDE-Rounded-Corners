@@ -8,7 +8,6 @@
 
 const QString
     key_size = "roundness",
-    key_dsp = "dsp",
     key_shadowColor = "shadowColor",
     key_outlineColor = "outlineColor",
     key_inactiveOutlineColor = "inactiveOutlineColor",
@@ -19,8 +18,7 @@ ConfigModel::ConfigModel():
         m_outlineThickness(1),
         m_shadowColor(QColor(Qt::black)),
         m_outlineColor(QColor(Qt::black)),
-        m_inactiveOutlineColor(QColor(Qt::black)),
-        m_dsp(false)
+        m_inactiveOutlineColor(QColor(Qt::black))
 {
 }
 
@@ -31,13 +29,11 @@ void ConfigModel::Load() {
     m_outlineColor = conf.readEntry(key_outlineColor, m_outlineColor);
     m_inactiveOutlineColor = conf.readEntry(key_inactiveOutlineColor,m_inactiveOutlineColor);
     m_outlineThickness = conf.readEntry(key_outlineThickness, m_outlineThickness);
-    m_dsp = conf.readEntry(key_dsp, m_dsp);
 }
 
 void ConfigModel::Save() const {
     KConfigGroup conf = KSharedConfig::openConfig("shapecorners.conf")->group("General");
     conf.writeEntry(key_size, m_size);
-    conf.writeEntry(key_dsp, m_dsp);
     conf.writeEntry(key_shadowColor, m_shadowColor);
     conf.writeEntry(key_outlineColor, m_outlineColor);
     conf.writeEntry(key_inactiveOutlineColor,m_inactiveOutlineColor);

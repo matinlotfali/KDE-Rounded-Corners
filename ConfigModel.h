@@ -18,7 +18,6 @@ public:
     QColor m_shadowColor,
            m_outlineColor,
 	   m_inactiveOutlineColor;
-    bool   m_dsp;
 };
 
 #endif //KWIN4_SHAPECORNERS_CONFIG_CONFIGMODEL_H

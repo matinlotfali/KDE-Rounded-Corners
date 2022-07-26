@@ -17,20 +17,13 @@
  *   Boston, MA 02110-1301, USA.
  */
 
-#include "dbus.h"
 #include "shapecorners.h"
-#include <QPainter>
-#include <QImage>
-#include <QDBusConnection>
 #include <kwindowsystem.h>
 #include <kwingltexture.h>
 
 
 ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect()
 {
-    new KWin::EffectAdaptor(this);
-    QDBusConnection::sessionBus().registerObject("/ShapeCorners", this);
-
     if(m_shaderManager.IsValid()) {
         for (const auto& id: KWindowSystem::windows())
             if (auto win = KWin::effects->findWindow(id))
