@@ -77,7 +77,7 @@ static bool hasShadow(KWin::WindowQuadList &qds)
 #endif
 
 void
-ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region, KWin::WindowPaintData &data)
+ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion& region, KWin::WindowPaintData &data)
 {
     if (!m_shaderManager.IsValid()
             || !m_managed.contains(w)
@@ -92,7 +92,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
             || (mask & (PAINT_WINDOW_TRANSFORMED))
             )
     {
-        KWin::effects->paintWindow(w, mask, region, data);
+        KWin::effects->drawWindow(w, mask, region, data);
         return;
     }
 
@@ -110,7 +110,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     back.unbind();
 
     //paint the actual window
-    KWin::effects->paintWindow(w, mask, region, data);
+    KWin::effects->drawWindow(w, mask, region, data);
 
     //'shape' the corners
     glEnable(GL_SCISSOR_TEST);

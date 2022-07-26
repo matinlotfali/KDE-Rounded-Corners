@@ -35,7 +35,7 @@ public:
     static bool isMaximized(KWin::EffectWindow *w);
 
     void reconfigure(ReconfigureFlags flags) override;
-    void paintWindow(KWin::EffectWindow* w, int mask, QRegion region, KWin::WindowPaintData& data) override;
+    void drawWindow(KWin::EffectWindow* w, int mask, const QRegion& region, KWin::WindowPaintData& data) override;
     int requestedEffectChainPosition() const override { return 99; }
 
 protected Q_SLOTS:
