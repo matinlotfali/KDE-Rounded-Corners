@@ -20,16 +20,16 @@ public:
 
     bool IsValid() const;
     const std::unique_ptr<KWin::GLShader>& Bind(
-            const QRect& geo, bool windowActive, const ConfigModel& config) const;
+            bool windowActive, bool enableShadowCorner, const ConfigModel& config) const;
     const std::unique_ptr<KWin::GLShader>& Bind(
             QMatrix4x4 mvp,
-            const QRect& geo, bool windowActive, const ConfigModel& config) const;
+            const QRect& geo,
+            bool windowActive, bool enableShadowCorner, const ConfigModel& config) const;
     void Unbind() const;
 
 private:
     std::unique_ptr<KWin::GLShader> m_shader;
     KWin::ShaderManager* m_manager;
-    int m_shader_windowSize = 0;
     int m_shader_windowActive = 0;
     int m_shader_shadowColor = 0;
     int m_shader_radius = 0;

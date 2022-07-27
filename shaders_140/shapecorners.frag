@@ -3,7 +3,6 @@
 uniform sampler2D sampler;
 uniform sampler2D back;
 uniform float radius;
-uniform vec2 windowSize;
 uniform bool windowActive;
 uniform vec4 shadowColor;
 uniform vec4 outlineColor;
@@ -55,32 +54,55 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec4 backColor, vec2 center, bool isTopC
     }
 }
 
+bool isTitleBar(vec2 windowSize) {
+    return windowSize.y < 40;
+}
+
+bool isExtendedFrame(vec4 color) {
+    return color.a < 0.1;
+}
+
 void main(void)
 {
     vec4 tex = texture(sampler, texcoord0);
-    vec4 backColor = texture(back, vec2(texcoord0.x, -texcoord0.y));
+    vec4 backColor = texture(back, texcoord0 * vec2(1,-1));
+    vec2 windowSize = textureSize(sampler, 0);
+    vec2 backSize = textureSize(back, 0);
     vec2 coord0 = vec2(texcoord0.x*windowSize.x, texcoord0.y*windowSize.y);
-    if(coord0.x < radius) {
-        if(coord0.y < radius)
-            tex = shapeCorner(coord0, tex, backColor, vec2(radius, radius), false);
-        else if (coord0.y > windowSize.y - radius)
-            tex = shapeCorner(coord0, tex, backColor, vec2(radius, windowSize.y - radius), true);
-        else if (outlineColor.a > 0 && coord0.x < outlineThickness)
-            tex = outlineColor;
+
+
+    if(isTitleBar(windowSize)) {
+        windowSize.x = backSize.x;
+        coord0 += vec2(-1,-1);
+        backColor = texelFetch(back, ivec2(coord0.x*backSize.x, (windowSize.y - coord0.y)*backSize.y), 0);
     }
-    else if(coord0.x > windowSize.x - radius) {
-        if(coord0.y < radius)
-            tex = shapeCorner(coord0, tex, backColor, vec2(windowSize.x - radius, radius), false);
-        else if (coord0.y > windowSize.y - radius)
-            tex = shapeCorner(coord0, tex, backColor, vec2(windowSize.x - radius, windowSize.y - radius), true);
-        else if (outlineColor.a > 0 && coord0.x > windowSize.x - outlineThickness)
-            tex = outlineColor;
+
+    if(!isExtendedFrame(tex))
+    {
+
+        if (coord0.x < radius) {
+            if (coord0.y < radius)
+                tex = shapeCorner(coord0, tex, backColor, vec2(radius, radius), false);
+            else if (!isTitleBar(windowSize) && coord0.y > windowSize.y - radius)
+                tex = shapeCorner(coord0, tex, backColor, vec2(radius, windowSize.y - radius), true);
+            else if (outlineColor.a > 0 && coord0.x < outlineThickness)
+                tex = outlineColor;
+        }
+        else if (coord0.x > windowSize.x - radius) {
+            if (coord0.y < radius)
+                tex = shapeCorner(coord0, tex, backColor, vec2(windowSize.x - radius, radius), false);
+            else if (!isTitleBar(windowSize) && coord0.y > windowSize.y - radius)
+                tex = shapeCorner(coord0, tex, backColor, vec2(windowSize.x - radius, windowSize.y - radius), true);
+            else if (outlineColor.a > 0 && coord0.x > windowSize.x - outlineThickness)
+                tex = outlineColor;
+        }
+        else if (outlineColor.a > 0) {
+            if (coord0.y < outlineThickness)
+                tex = outlineColor;
+            else if (coord0.y > windowSize.y - outlineThickness)
+                tex = outlineColor;
+        }
     }
-    else if (outlineColor.a > 0) {
-        if (coord0.y < outlineThickness)
-            tex = outlineColor;
-        else if (coord0.y > windowSize.y - outlineThickness)
-            tex = outlineColor;
-    }
+
     fragColor = tex;
 }
