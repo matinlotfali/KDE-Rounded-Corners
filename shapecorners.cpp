@@ -31,7 +31,12 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect()
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
         connect(KWin::effects, &KWin::EffectsHandler::windowClosed, this, &ShapeCornersEffect::windowRemoved);
         connect(KWin::effects, &KWin::EffectsHandler::windowActivated, this,&ShapeCornersEffect::windowGetBackground);
+#if KWIN_EFFECT_API_VERSION > 231
         connect(KWin::effects, &KWin::EffectsHandler::windowFrameGeometryChanged, this,&ShapeCornersEffect::windowGetBackground);
+#else
+        connect(KWin::effects, &KWin::EffectsHandler::windowStepUserMovedResized, this,&ShapeCornersEffect::windowGetBackground);
+        connect(KWin::effects, &KWin::EffectsHandler::windowFinishUserMovedResized, this,&ShapeCornersEffect::windowGetBackground);
+#endif
     }
     m_config.Load();
 }
