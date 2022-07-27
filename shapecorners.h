@@ -41,9 +41,11 @@ public:
 
 protected Q_SLOTS:
     void windowAdded(KWin::EffectWindow *window);
+    void windowRemoved(KWin::EffectWindow *window);
+    void windowGetBackground(KWin::EffectWindow *window);
 
 private:
-    QList<KWin::EffectWindow *> m_managed;
+    QMap<KWin::EffectWindow*, QSharedPointer<KWin::GLTexture>> m_managed;
     ShaderManager m_shaderManager;
     ConfigModel m_config;
 };

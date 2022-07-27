@@ -29,11 +29,10 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect()
             if (auto win = KWin::effects->findWindow(id))
                 windowAdded(win);
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
-        connect(KWin::effects, &KWin::EffectsHandler::windowClosed, this, [this](){ m_managed.removeOne(dynamic_cast<KWin::EffectWindow *>(sender())); });
+        connect(KWin::effects, &KWin::EffectsHandler::windowClosed, this, &ShapeCornersEffect::windowRemoved);
+        connect(KWin::effects, &KWin::EffectsHandler::windowActivated, this,&ShapeCornersEffect::windowGetBackground);
+        connect(KWin::effects, &KWin::EffectsHandler::windowFrameGeometryChanged, this,&ShapeCornersEffect::windowGetBackground);
     }
-    else
-        deleteLater();
-
     m_config.Load();
 }
 
@@ -56,7 +55,12 @@ ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
             || w->windowClass().contains("krunner", Qt::CaseInsensitive)
             || w->windowClass().contains("latte-dock", Qt::CaseInsensitive)))
         return;
-    m_managed << w;
+    m_managed.insert(w, nullptr);
+}
+
+void ShapeCornersEffect::windowRemoved(KWin::EffectWindow *w)
+{
+    m_managed.remove(w);
 }
 
 void
@@ -95,26 +99,30 @@ ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion& r
     }
 
     //copy the background
+    if(!m_managed[w]) {
 #if KWIN_EFFECT_API_VERSION < 235
-    const QRect& geo = w->frameGeometry();
+        const QRect &geo = w->frameGeometry();
 #else
-    const QRectF& geoF = w->frameGeometry();
-    const QRect geo ((int)geo.left(), (int)geo.top(), (int)geo.width(), (int)geo.height());
+        const QRectF& geoF = w->frameGeometry();
+        const QRect geo ((int)geo.left(), (int)geo.top(), (int)geo.width(), (int)geo.height());
 #endif
-    const auto& s = KWin::effects->virtualScreenGeometry();
-    KWin::GLTexture back (GL_RGBA8, geo.size());
-    back.bind();
-    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, geo.x(), s.height() - geo.y() - geo.height(), geo.width(), geo.height());
-    back.unbind();
+        const auto &s = KWin::effects->virtualScreenGeometry();
+        m_managed[w].reset(new KWin::GLTexture(GL_RGBA8, geo.size()));
+        m_managed[w]->bind();
+        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
+                            geo.x(), s.height() - geo.y() - geo.height(),
+                            geo.width(), geo.height());
+        m_managed[w]->unbind();
+    }
 
     //'shape' the corners
     auto &shader = m_shaderManager.Bind(isWindowActive(w), w->hasDecoration(), m_config);
     data.shader = shader.get();
     glActiveTexture(GL_TEXTURE1);
-    back.bind();
+    m_managed[w]->bind();
     glActiveTexture(GL_TEXTURE0);
     KWin::effects->drawWindow(w, mask, region, data);
-    back.unbind();
+    m_managed[w]->unbind();
     m_shaderManager.Unbind();
 }
 
@@ -139,4 +147,9 @@ bool ShapeCornersEffect::isMaximized(KWin::EffectWindow *w) {
 
 bool ShapeCornersEffect::isWindowActive(KWin::EffectWindow *w) {
     return KWin::effects->activeWindow() == w;
+}
+
+void ShapeCornersEffect::windowGetBackground(KWin::EffectWindow *window) {
+    if(m_managed.contains(window))
+        m_managed[window].reset();
 }
