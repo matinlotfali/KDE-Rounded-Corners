@@ -1,6 +1,7 @@
 #version 140
 
 uniform sampler2D sampler;
+uniform sampler2D back;
 uniform float radius;
 uniform vec2 windowSize;
 uniform bool windowActive;
@@ -40,52 +41,46 @@ vec4 shadowCorner(float distance_from_center, vec4 backColor, bool isTopCorner) 
     }
 }
 
-vec4 shapeCorner(vec2 coord0, vec4 backColor, vec2 center, bool isTopCorner) {
+vec4 shapeCorner(vec2 coord0, vec4 tex, vec4 backColor, vec2 center, bool isTopCorner) {
     float distance_from_center = distance(coord0, center);
     if(distance_from_center < radius - outlineThickness)
-        backColor.a = 0;
-    else if(distance_from_center < radius)
-        backColor = outlineColor;
+        return tex;
+    else if(outlineColor.a > 0 && distance_from_center < radius)
+        return outlineColor;
     else {
         if(shadowColor.a > 0)
-            backColor = shadowCorner(distance_from_center, backColor, isTopCorner);
+            return shadowCorner(distance_from_center, backColor, isTopCorner);
         else
-            backColor.a = 1;
+            return backColor;
     }
-    return backColor;
 }
 
 void main(void)
 {
     vec4 tex = texture(sampler, texcoord0);
+    vec4 backColor = texture(back, vec2(texcoord0.x, -texcoord0.y));
     vec2 coord0 = vec2(texcoord0.x*windowSize.x, texcoord0.y*windowSize.y);
     if(coord0.x < radius) {
         if(coord0.y < radius)
-            tex = shapeCorner(coord0, tex, vec2(radius, radius), false);
+            tex = shapeCorner(coord0, tex, backColor, vec2(radius, radius), false);
         else if (coord0.y > windowSize.y - radius)
-            tex = shapeCorner(coord0, tex, vec2(radius, windowSize.y - radius), true);
-        else if (coord0.x < outlineThickness)
+            tex = shapeCorner(coord0, tex, backColor, vec2(radius, windowSize.y - radius), true);
+        else if (outlineColor.a > 0 && coord0.x < outlineThickness)
             tex = outlineColor;
-        else
-            tex.a = 0;
     }
     else if(coord0.x > windowSize.x - radius) {
         if(coord0.y < radius)
-            tex = shapeCorner(coord0, tex, vec2(windowSize.x - radius, radius), false);
+            tex = shapeCorner(coord0, tex, backColor, vec2(windowSize.x - radius, radius), false);
         else if (coord0.y > windowSize.y - radius)
-            tex = shapeCorner(coord0, tex, vec2(windowSize.x - radius, windowSize.y - radius), true);
-        else if (coord0.x > windowSize.x - outlineThickness)
+            tex = shapeCorner(coord0, tex, backColor, vec2(windowSize.x - radius, windowSize.y - radius), true);
+        else if (outlineColor.a > 0 && coord0.x > windowSize.x - outlineThickness)
             tex = outlineColor;
-        else
-            tex.a = 0;
     }
-    else {
+    else if (outlineColor.a > 0) {
         if (coord0.y < outlineThickness)
             tex = outlineColor;
         else if (coord0.y > windowSize.y - outlineThickness)
             tex = outlineColor;
-        else
-            tex.a = 0;
     }
     fragColor = tex;
 }

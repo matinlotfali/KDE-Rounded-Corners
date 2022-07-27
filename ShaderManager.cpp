@@ -43,6 +43,8 @@ ShaderManager::ShaderManager():
             m_shader_radius = m_shader->uniformLocation("radius");
             m_shader_outlineColor = m_shader->uniformLocation("outlineColor");
             m_shader_outlineThickness = m_shader->uniformLocation("outlineThickness");
+            m_shader_sampler = m_shader->uniformLocation("sampler");
+            m_shader_back = m_shader->uniformLocation("back");
         }
         else
             qDebug() << "ShapeCorners: no valid shaders found! ShapeCorners will not work.";
@@ -57,28 +59,36 @@ bool ShaderManager::IsValid() const {
     return m_shader && m_shader->isValid();
 }
 
-void ShaderManager::Bind(
-    QMatrix4x4 mvp,
+const std::unique_ptr<KWin::GLShader>&
+ShaderManager::Bind(
     const QRect& geo,
     bool windowActive,
-    double windowOpacity,
     const ConfigModel& config
 ) const {
-
-    auto shadowColor = config.m_shadowColor;
-    auto outlineColor = windowActive ? config.m_outlineColor : config.m_inactiveOutlineColor;
-    shadowColor.setAlphaF(shadowColor.alphaF() * windowOpacity);
-    outlineColor.setAlphaF(outlineColor.alphaF() * windowOpacity);
-
     m_manager->pushShader(m_shader.get());
-    mvp.translate((float)geo.x(), (float)geo.y());
-    m_shader->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
     m_shader->setUniform(m_shader_windowSize, QVector2D{(float)geo.width(), (float)geo.height()});
     m_shader->setUniform(m_shader_windowActive, windowActive);
-    m_shader->setUniform(m_shader_shadowColor, shadowColor);
+    m_shader->setUniform(m_shader_shadowColor, config.m_shadowColor);
     m_shader->setUniform(m_shader_radius, config.m_size);
-    m_shader->setUniform(m_shader_outlineColor, outlineColor);
+    m_shader->setUniform(m_shader_outlineColor, windowActive ? config.m_outlineColor : config.m_inactiveOutlineColor);
     m_shader->setUniform(m_shader_outlineThickness, config.m_outlineThickness);
+    m_shader->setUniform(m_shader_sampler, 0);
+    m_shader->setUniform(m_shader_back, 1);
+    return m_shader;
+}
+
+const std::unique_ptr<KWin::GLShader>&
+ShaderManager::Bind(
+        QMatrix4x4 mvp,
+        const QRect& geo,
+        bool windowActive,
+        const ConfigModel& config
+) const {
+    Bind(geo, windowActive, config);
+    mvp.translate((float)geo.x(), (float)geo.y());
+    m_shader->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
+    m_shader->setUniform(m_shader_outlineColor, QColor(Qt::transparent));
+    return m_shader;
 }
 
 void ShaderManager::Unbind() const {

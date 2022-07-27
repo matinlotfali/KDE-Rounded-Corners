@@ -19,13 +19,11 @@ public:
     ShaderManager();
 
     bool IsValid() const;
-    void Bind(
-        QMatrix4x4 mvp,
-        const QRect& geo,
-        bool windowActive,
-        double windowOpacity,
-        const ConfigModel& config
-    ) const;
+    const std::unique_ptr<KWin::GLShader>& Bind(
+            const QRect& geo, bool windowActive, const ConfigModel& config) const;
+    const std::unique_ptr<KWin::GLShader>& Bind(
+            QMatrix4x4 mvp,
+            const QRect& geo, bool windowActive, const ConfigModel& config) const;
     void Unbind() const;
 
 private:
@@ -37,6 +35,8 @@ private:
     int m_shader_radius = 0;
     int m_shader_outlineColor = 0;
     int m_shader_outlineThickness = 0;
+    int m_shader_sampler = 0;
+    int m_shader_back = 0;
 };
 
 

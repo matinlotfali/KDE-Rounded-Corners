@@ -81,7 +81,6 @@ ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion& r
 {
     if (!m_shaderManager.IsValid()
             || !m_managed.contains(w)
-//            || KWin::effects->hasActiveFullScreenEffect()
             || isMaximized(w)
 #if KWIN_EFFECT_API_VERSION < 234
             || !w->isPaintingEnabled()
@@ -89,7 +88,6 @@ ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion& r
             || data.quads.isTransformed()
             || !hasShadow(data.quads)
 #endif
-            || (mask & (PAINT_WINDOW_TRANSFORMED))
             )
     {
         KWin::effects->drawWindow(w, mask, region, data);
@@ -109,27 +107,15 @@ ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion& r
     glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, geo.x(), s.height() - geo.y() - geo.height(), geo.width(), geo.height());
     back.unbind();
 
-    //paint the actual window
-    KWin::effects->drawWindow(w, mask, region, data);
-
     //'shape' the corners
-    glEnable(GL_SCISSOR_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    {
-        m_shaderManager.Bind(
-                data.screenProjectionMatrix(),
-                geo,
-                KWin::effects->activeWindow() == w,
-                w->opacity(),
-                m_config);
-        back.bind();
-        back.render(region, geo, true);
-        back.unbind();
-        m_shaderManager.Unbind();
-    }
-    glDisable(GL_BLEND);
-    glDisable(GL_SCISSOR_TEST);
+    auto& shader = m_shaderManager.Bind(geo, isWindowActive(w), m_config);
+    data.shader = shader.get();
+    glActiveTexture(GL_TEXTURE1);
+    back.bind();
+    glActiveTexture(GL_TEXTURE0);
+    KWin::effects->drawWindow(w, mask, region, data);
+    back.unbind();
+    m_shaderManager.Unbind();
 }
 
 bool ShapeCornersEffect::supported()
@@ -149,4 +135,8 @@ bool ShapeCornersEffect::isMaximized(KWin::EffectWindow *w) {
 #else
     return w->isFullScreen();
 #endif
+}
+
+bool ShapeCornersEffect::isWindowActive(KWin::EffectWindow *w) {
+    return KWin::effects->activeWindow() == w;
 }
