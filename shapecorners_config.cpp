@@ -24,7 +24,7 @@ K_PLUGIN_FACTORY_WITH_JSON(ShapeCornersConfigFactory,
                            registerPlugin<ShapeCornersConfig>();)
 #endif
 
-class ConfigDialog : public QWidget , public Ui::Form
+class ShapeCornersConfig::ConfigDialog : public QWidget , public Ui::Form
 {
 public:
     explicit ConfigDialog(QWidget *parent) : QWidget(parent)
@@ -33,48 +33,34 @@ public:
 }
 };
 
-class ShapeCornersConfig::Private
-{
-public:
-    Private(ShapeCornersConfig *config)
-        : q(config)
-    {}
-    ShapeCornersConfig *q;
-    ConfigDialog *ui;
-};
-
 ShapeCornersConfig::ShapeCornersConfig(QWidget* parent, const QVariantList& args)
     : KCModule(parent, args)
-    , d(new Private(this))
+    , ui(new ConfigDialog(this))
 {
     setAboutData(new KAboutData("ShapeCorners","ShapeCorners", "git"));
     auto* layout = new QVBoxLayout(this);
-    layout->addWidget(d->ui = new ConfigDialog(this));
+    layout->addWidget(ui);
     setLayout(layout);
 }
 
-ShapeCornersConfig::~ShapeCornersConfig()
-{
-    delete d;
-}
+ShapeCornersConfig::~ShapeCornersConfig() = default;
 
 void
 ShapeCornersConfig::load()
 {
     KCModule::load();
     m_config.Load();
-    d->ui->roundness->setValue(m_config.m_size);
-    d->ui->dsp->setChecked(m_config.m_dsp);
+    ui->roundness->setValue(m_config.m_size);
     QColor shadowColor = m_config.m_shadowColor;
-    d->ui->drawShadowEnabled->setChecked(shadowColor.alpha() > 0);
+    ui->drawShadowEnabled->setChecked(shadowColor.alpha() > 0);
     shadowColor.setAlpha(255);
-    d->ui->shadowColor->setColor(shadowColor);
+    ui->shadowColor->setColor(shadowColor);
     QColor outlineColor = m_config.m_outlineColor;
     QColor inactiveOutlineColor = m_config.m_inactiveOutlineColor;
-    d->ui->drawOutlineEnabled->setChecked(outlineColor.alpha() > 0);
-    d->ui->outlineColor->setColor(outlineColor);
-    d->ui->inactiveOutlineColor->setColor(inactiveOutlineColor);
-    d->ui->outlineThickness->setValue(m_config.m_outlineThickness);
+    ui->drawOutlineEnabled->setChecked(outlineColor.alpha() > 0);
+    ui->outlineColor->setColor(outlineColor);
+    ui->inactiveOutlineColor->setColor(inactiveOutlineColor);
+    ui->outlineThickness->setValue(m_config.m_outlineThickness);
     emit changed(false);
 }
 
@@ -82,17 +68,16 @@ void
 ShapeCornersConfig::save()
 {
     KCModule::save();
-    m_config.m_size = d->ui->roundness->value();
-    m_config.m_dsp = d->ui->dsp->isChecked();
-    m_config.m_shadowColor = d->ui->shadowColor->color();
-    m_config.m_shadowColor.setAlpha(d->ui->drawShadowEnabled->isChecked()? 255: 0);
-    m_config.m_outlineColor = d->ui->outlineColor->color();
-    m_config.m_inactiveOutlineColor = d->ui->inactiveOutlineColor->color();
-    if(!d->ui->drawOutlineEnabled->isChecked()){
+    m_config.m_size = ui->roundness->value();
+    m_config.m_shadowColor = ui->shadowColor->color();
+    m_config.m_shadowColor.setAlpha(ui->drawShadowEnabled->isChecked()? 255: 0);
+    m_config.m_outlineColor = ui->outlineColor->color();
+    m_config.m_inactiveOutlineColor = ui->inactiveOutlineColor->color();
+    if(!ui->drawOutlineEnabled->isChecked()){
         m_config.m_outlineColor.setAlpha(0);
         m_config.m_inactiveOutlineColor.setAlpha(0);
     }
-    m_config.m_outlineThickness = d->ui->outlineThickness->value();
+    m_config.m_outlineThickness = ui->outlineThickness->value();
     m_config.Save();
 
     emit changed(false);
@@ -107,18 +92,17 @@ ShapeCornersConfig::defaults()
 {
     KCModule::defaults();
     ConfigModel defaultConfig;
-    d->ui->roundness->setValue(m_config.m_size);
-    d->ui->dsp->setChecked(m_config.m_dsp);
+    ui->roundness->setValue(m_config.m_size);
     QColor shadowColor = m_config.m_shadowColor;
-    d->ui->drawShadowEnabled->setChecked(shadowColor.alpha() > 0);
+    ui->drawShadowEnabled->setChecked(shadowColor.alpha() > 0);
     shadowColor.setAlpha(255);
-    d->ui->shadowColor->setColor(shadowColor);
+    ui->shadowColor->setColor(shadowColor);
     QColor outlineColor = m_config.m_outlineColor;
     QColor inactiveOutlineColor = m_config.m_inactiveOutlineColor;
-    d->ui->drawOutlineEnabled->setChecked(outlineColor.alpha() > 0);
-    d->ui->outlineColor->setColor(outlineColor);
-    d->ui->inactiveOutlineColor->setColor(inactiveOutlineColor);
-    d->ui->outlineThickness->setValue(m_config.m_outlineThickness);
+    ui->drawOutlineEnabled->setChecked(outlineColor.alpha() > 0);
+    ui->outlineColor->setColor(outlineColor);
+    ui->inactiveOutlineColor->setColor(inactiveOutlineColor);
+    ui->outlineThickness->setValue(m_config.m_outlineThickness);
     emit changed(true);
 }
 

@@ -15,7 +15,6 @@ public slots:
 
 private:
     ConfigModel m_config;
-    class Private;
-    Private * const d;
-    friend class Private;
+    class ConfigDialog;
+    ConfigDialog *ui;
 };

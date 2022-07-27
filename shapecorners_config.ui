@@ -40,13 +40,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="dsp">
-       <property name="text">
-        <string>Allow DSP (styleproject) to manage roundness</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QGroupBox" name="drawOutlineEnabled">
        <property name="title">
         <string>Outline</string>
