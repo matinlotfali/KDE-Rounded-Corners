@@ -57,11 +57,11 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec4 backColor, vec2 center, bool isTopC
 }
 
 bool isTitleBar(vec2 windowSize) {
-    return windowSize.y < 40.0;
+    return shadowColor.a > 0.0 && windowSize.y < 40.0;
 }
 
 bool isExtendedFrame(vec4 color) {
-    return color.a < 0.1;
+    return shadowColor.a > 0.0 && color.a < 0.1;
 }
 
 void main(void)
