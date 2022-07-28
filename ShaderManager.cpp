@@ -30,6 +30,7 @@ ShaderManager::ShaderManager():
         if (m_shader->isValid())
         {
             m_shader_windowActive = m_shader->uniformLocation("windowActive");
+            m_shader_windowHasDecoration = m_shader->uniformLocation("windowHasDecoration");
             m_shader_windowSize = m_shader->uniformLocation("windowSize");
             m_shader_shadowColor = m_shader->uniformLocation("shadowColor");
             m_shader_radius = m_shader->uniformLocation("radius");
@@ -52,11 +53,12 @@ bool ShaderManager::IsValid() const {
 }
 
 const std::unique_ptr<KWin::GLShader>&
-ShaderManager::Bind(const QSizeF& windowSize, bool windowActive, bool enableShadowCorner, const ConfigModel& config) const {
+ShaderManager::Bind(const QSizeF& windowSize, bool windowActive, bool windowHasDecoration, const ConfigModel& config) const {
     m_manager->pushShader(m_shader.get());
     m_shader->setUniform(m_shader_windowActive, windowActive);
     m_shader->setUniform(m_shader_windowSize, QVector2D(windowSize.width(), windowSize.height()));
-    m_shader->setUniform(m_shader_shadowColor, enableShadowCorner? config.m_shadowColor: QColor(Qt::transparent));
+    m_shader->setUniform(m_shader_windowHasDecoration, windowHasDecoration);
+    m_shader->setUniform(m_shader_shadowColor, config.m_shadowColor);
     m_shader->setUniform(m_shader_radius, config.m_size);
     m_shader->setUniform(m_shader_outlineColor, windowActive ? config.m_outlineColor : config.m_inactiveOutlineColor);
     m_shader->setUniform(m_shader_outlineThickness, config.m_outlineThickness);
@@ -70,10 +72,10 @@ ShaderManager::Bind(
         QMatrix4x4 mvp,
         const QRectF& geo,
         bool windowActive,
-        bool enableShadowCorner,
+        bool windowHasDecoration,
         const ConfigModel& config
 ) const {
-    Bind(geo.size(), windowActive, enableShadowCorner, config);
+    Bind(geo.size(), windowActive, windowHasDecoration, config);
     mvp.translate(geo.x(), geo.y());
     m_shader->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
     return m_shader;
