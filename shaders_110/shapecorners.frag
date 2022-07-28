@@ -4,6 +4,7 @@ uniform sampler2D sampler;
 uniform sampler2D back;
 uniform float radius;
 uniform bool windowActive;
+uniform vec2 windowSize;
 uniform vec4 shadowColor;
 uniform vec4 outlineColor;
 uniform float outlineThickness;
@@ -68,13 +69,11 @@ void main(void)
 {
     vec4 tex = texture2D(sampler, texcoord0);
     vec4 backColor = texture2D(back, texcoord0 * vec2(1.0,-1.0));
-    vec2 windowSize = vec2(1.0, 1.0);
-    vec2 backSize = vec2(1.0, 1.0);
+    vec2 backSize = windowSize;
     vec2 coord0 = vec2(texcoord0.x*windowSize.x, texcoord0.y*windowSize.y);
 
 
     if(isTitleBar(windowSize)) {
-        windowSize.x = backSize.x;
         coord0 += vec2(-1.0,-1.0);
         backColor = texture2D(back, vec2(coord0.x*backSize.x, (windowSize.y - coord0.y)*backSize.y));
     }

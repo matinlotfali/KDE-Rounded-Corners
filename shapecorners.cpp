@@ -121,7 +121,11 @@ ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion& r
     }
 
     //'shape' the corners
-    auto &shader = m_shaderManager.Bind(isWindowActive(w), w->hasDecoration(), m_config);
+    auto &shader = m_shaderManager.Bind(
+            m_managed[w]->size(),
+            isWindowActive(w),
+            w->hasDecoration(),
+            m_config);
     data.shader = shader.get();
     glActiveTexture(GL_TEXTURE1);
     m_managed[w]->bind();

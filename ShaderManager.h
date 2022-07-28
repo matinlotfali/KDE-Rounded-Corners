@@ -18,19 +18,20 @@ class ShaderManager {
 public:
     ShaderManager();
 
+    static bool IsLegacy();
     bool IsValid() const;
     const std::unique_ptr<KWin::GLShader>& Bind(
-            bool windowActive, bool enableShadowCorner, const ConfigModel& config) const;
+            const QSizeF& windowSize, bool windowActive, bool enableShadowCorner, const ConfigModel& config) const;
     const std::unique_ptr<KWin::GLShader>& Bind(
             QMatrix4x4 mvp,
-            const QRect& geo,
-            bool windowActive, bool enableShadowCorner, const ConfigModel& config) const;
+            const QRectF& geo, bool windowActive, bool enableShadowCorner, const ConfigModel& config) const;
     void Unbind() const;
 
 private:
     std::unique_ptr<KWin::GLShader> m_shader;
     KWin::ShaderManager* m_manager;
     int m_shader_windowActive = 0;
+    int m_shader_windowSize = 0;
     int m_shader_shadowColor = 0;
     int m_shader_radius = 0;
     int m_shader_outlineColor = 0;

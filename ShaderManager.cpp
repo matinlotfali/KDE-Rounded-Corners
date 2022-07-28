@@ -11,15 +11,7 @@
 ShaderManager::ShaderManager():
         m_manager(KWin::ShaderManager::instance())
 {
-    QString shadersDir(QStringLiteral("kwin/shaders/1.10/"));
-#ifdef KWIN_HAVE_OPENGLES
-    const qint64 coreVersionNumber = kVersionNumber(3, 0);
-#else
-    const qint64 version = KWin::kVersionNumber(1, 40);
-#endif
-    if (KWin::GLPlatform::instance()->glslVersion() >= version)
-        shadersDir = QStringLiteral("kwin/shaders/1.40/");
-
+    const QString shadersDir = IsLegacy()? "kwin/shaders/1.10/": "kwin/shaders/1.40/";
     const QString fragmentshader = QStandardPaths::locate(QStandardPaths::GenericDataLocation, shadersDir + QStringLiteral("shapecorners.frag"));
 //    m_shader = KWin::ShaderManager::instance()->loadFragmentShader(KWin::ShaderManager::GenericShader, fragmentshader);
     QFile file(fragmentshader);
@@ -38,6 +30,7 @@ ShaderManager::ShaderManager():
         if (m_shader->isValid())
         {
             m_shader_windowActive = m_shader->uniformLocation("windowActive");
+            m_shader_windowSize = m_shader->uniformLocation("windowSize");
             m_shader_shadowColor = m_shader->uniformLocation("shadowColor");
             m_shader_radius = m_shader->uniformLocation("radius");
             m_shader_outlineColor = m_shader->uniformLocation("outlineColor");
@@ -59,9 +52,10 @@ bool ShaderManager::IsValid() const {
 }
 
 const std::unique_ptr<KWin::GLShader>&
-ShaderManager::Bind(bool windowActive, bool enableShadowCorner, const ConfigModel& config) const {
+ShaderManager::Bind(const QSizeF& windowSize, bool windowActive, bool enableShadowCorner, const ConfigModel& config) const {
     m_manager->pushShader(m_shader.get());
     m_shader->setUniform(m_shader_windowActive, windowActive);
+    m_shader->setUniform(m_shader_windowSize, QVector2D(windowSize.width(), windowSize.height()));
     m_shader->setUniform(m_shader_shadowColor, enableShadowCorner? config.m_shadowColor: QColor(Qt::transparent));
     m_shader->setUniform(m_shader_radius, config.m_size);
     m_shader->setUniform(m_shader_outlineColor, windowActive ? config.m_outlineColor : config.m_inactiveOutlineColor);
@@ -74,17 +68,26 @@ ShaderManager::Bind(bool windowActive, bool enableShadowCorner, const ConfigMode
 const std::unique_ptr<KWin::GLShader>&
 ShaderManager::Bind(
         QMatrix4x4 mvp,
-        const QRect& geo,
+        const QRectF& geo,
         bool windowActive,
         bool enableShadowCorner,
         const ConfigModel& config
 ) const {
-    Bind(windowActive, enableShadowCorner, config);
-    mvp.translate((float)geo.x(), (float)geo.y());
+    Bind(geo.size(), windowActive, enableShadowCorner, config);
+    mvp.translate(geo.x(), geo.y());
     m_shader->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
     return m_shader;
 }
 
 void ShaderManager::Unbind() const {
     m_manager->popShader();
+}
+
+bool ShaderManager::IsLegacy() {
+#ifdef KWIN_HAVE_OPENGLES
+    const qint64 coreVersionNumber = kVersionNumber(3, 0);
+#else
+    const qint64 version = KWin::kVersionNumber(1, 40);
+#endif
+    return (KWin::GLPlatform::instance()->glslVersion() < version);
 }

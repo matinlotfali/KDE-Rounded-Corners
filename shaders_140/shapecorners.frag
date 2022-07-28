@@ -4,6 +4,7 @@ uniform sampler2D sampler;
 uniform sampler2D back;
 uniform float radius;
 uniform bool windowActive;
+uniform vec2 windowSize;
 uniform vec4 shadowColor;
 uniform vec4 outlineColor;
 uniform float outlineThickness;
