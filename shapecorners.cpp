@@ -29,11 +29,15 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect()
             if (auto win = KWin::effects->findWindow(id))
                 windowAdded(win);
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
-        connect(KWin::effects, &KWin::EffectsHandler::windowClosed, this, [this](){ m_managed.removeOne(dynamic_cast<KWin::EffectWindow *>(sender())); });
+        connect(KWin::effects, &KWin::EffectsHandler::windowClosed, this, &ShapeCornersEffect::windowRemoved);
+        connect(KWin::effects, &KWin::EffectsHandler::windowActivated, this,&ShapeCornersEffect::windowGetBackground);
+#if KWIN_EFFECT_API_VERSION > 231
+        connect(KWin::effects, &KWin::EffectsHandler::windowFrameGeometryChanged, this,&ShapeCornersEffect::windowGetBackground);
+#else
+        connect(KWin::effects, &KWin::EffectsHandler::windowStepUserMovedResized, this,&ShapeCornersEffect::windowGetBackground);
+        connect(KWin::effects, &KWin::EffectsHandler::windowFinishUserMovedResized, this,&ShapeCornersEffect::windowGetBackground);
+#endif
     }
-    else
-        deleteLater();
-
     m_config.Load();
 }
 
@@ -56,7 +60,12 @@ ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
             || w->windowClass().contains("krunner", Qt::CaseInsensitive)
             || w->windowClass().contains("latte-dock", Qt::CaseInsensitive)))
         return;
-    m_managed << w;
+    m_managed.insert(w, nullptr);
+}
+
+void ShapeCornersEffect::windowRemoved(KWin::EffectWindow *w)
+{
+    m_managed.remove(w);
 }
 
 void
@@ -81,7 +90,6 @@ ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion& r
 {
     if (!m_shaderManager.IsValid()
             || !m_managed.contains(w)
-//            || KWin::effects->hasActiveFullScreenEffect()
             || isMaximized(w)
 #if KWIN_EFFECT_API_VERSION < 234
             || !w->isPaintingEnabled()
@@ -89,7 +97,6 @@ ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion& r
             || data.quads.isTransformed()
             || !hasShadow(data.quads)
 #endif
-            || (mask & (PAINT_WINDOW_TRANSFORMED))
             )
     {
         KWin::effects->drawWindow(w, mask, region, data);
@@ -97,39 +104,35 @@ ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion& r
     }
 
     //copy the background
+    if(!m_managed[w]) {
 #if KWIN_EFFECT_API_VERSION < 235
-    const QRect& geo = w->frameGeometry();
+        const QRect &geo = w->frameGeometry();
 #else
-    const QRectF& geoF = w->frameGeometry();
-    const QRect geo ((int)geo.left(), (int)geo.top(), (int)geo.width(), (int)geo.height());
+        const QRectF& geoF = w->frameGeometry();
+        const QRect geo ((int)geo.left(), (int)geo.top(), (int)geo.width(), (int)geo.height());
 #endif
-    const auto& s = KWin::effects->virtualScreenGeometry();
-    KWin::GLTexture back (GL_RGBA8, geo.size());
-    back.bind();
-    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, geo.x(), s.height() - geo.y() - geo.height(), geo.width(), geo.height());
-    back.unbind();
-
-    //paint the actual window
-    KWin::effects->drawWindow(w, mask, region, data);
+        const auto &s = KWin::effects->virtualScreenGeometry();
+        m_managed[w].reset(new KWin::GLTexture(GL_RGBA8, geo.size()));
+        m_managed[w]->bind();
+        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
+                            geo.x(), s.height() - geo.y() - geo.height(),
+                            geo.width(), geo.height());
+        m_managed[w]->unbind();
+    }
 
     //'shape' the corners
-    glEnable(GL_SCISSOR_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    {
-        m_shaderManager.Bind(
-                data.screenProjectionMatrix(),
-                geo,
-                KWin::effects->activeWindow() == w,
-                w->opacity(),
-                m_config);
-        back.bind();
-        back.render(region, geo, true);
-        back.unbind();
-        m_shaderManager.Unbind();
-    }
-    glDisable(GL_BLEND);
-    glDisable(GL_SCISSOR_TEST);
+    auto &shader = m_shaderManager.Bind(
+            m_managed[w]->size(),
+            isWindowActive(w),
+            w->hasDecoration(),
+            m_config);
+    data.shader = shader.get();
+    glActiveTexture(GL_TEXTURE1);
+    m_managed[w]->bind();
+    glActiveTexture(GL_TEXTURE0);
+    KWin::effects->drawWindow(w, mask, region, data);
+    m_managed[w]->unbind();
+    m_shaderManager.Unbind();
 }
 
 bool ShapeCornersEffect::supported()
@@ -149,4 +152,13 @@ bool ShapeCornersEffect::isMaximized(KWin::EffectWindow *w) {
 #else
     return w->isFullScreen();
 #endif
+}
+
+bool ShapeCornersEffect::isWindowActive(KWin::EffectWindow *w) {
+    return KWin::effects->activeWindow() == w;
+}
+
+void ShapeCornersEffect::windowGetBackground(KWin::EffectWindow *window) {
+    if(m_managed.contains(window))
+        m_managed[window].reset();
 }

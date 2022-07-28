@@ -11,15 +11,7 @@
 ShaderManager::ShaderManager():
         m_manager(KWin::ShaderManager::instance())
 {
-    QString shadersDir(QStringLiteral("kwin/shaders/1.10/"));
-#ifdef KWIN_HAVE_OPENGLES
-    const qint64 coreVersionNumber = kVersionNumber(3, 0);
-#else
-    const qint64 version = KWin::kVersionNumber(1, 40);
-#endif
-    if (KWin::GLPlatform::instance()->glslVersion() >= version)
-        shadersDir = QStringLiteral("kwin/shaders/1.40/");
-
+    const QString shadersDir = IsLegacy()? "kwin/shaders/1.10/": "kwin/shaders/1.40/";
     const QString fragmentshader = QStandardPaths::locate(QStandardPaths::GenericDataLocation, shadersDir + QStringLiteral("shapecorners.frag"));
 //    m_shader = KWin::ShaderManager::instance()->loadFragmentShader(KWin::ShaderManager::GenericShader, fragmentshader);
     QFile file(fragmentshader);
@@ -37,12 +29,14 @@ ShaderManager::ShaderManager():
 //        qDebug() << "shader valid: " << m_shader->isValid();
         if (m_shader->isValid())
         {
-            m_shader_windowSize = m_shader->uniformLocation("windowSize");
             m_shader_windowActive = m_shader->uniformLocation("windowActive");
+            m_shader_windowSize = m_shader->uniformLocation("windowSize");
             m_shader_shadowColor = m_shader->uniformLocation("shadowColor");
             m_shader_radius = m_shader->uniformLocation("radius");
             m_shader_outlineColor = m_shader->uniformLocation("outlineColor");
             m_shader_outlineThickness = m_shader->uniformLocation("outlineThickness");
+            m_shader_sampler = m_shader->uniformLocation("sampler");
+            m_shader_back = m_shader->uniformLocation("back");
         }
         else
             qDebug() << "ShapeCorners: no valid shaders found! ShapeCorners will not work.";
@@ -57,30 +51,43 @@ bool ShaderManager::IsValid() const {
     return m_shader && m_shader->isValid();
 }
 
-void ShaderManager::Bind(
-    QMatrix4x4 mvp,
-    const QRect& geo,
-    bool windowActive,
-    double windowOpacity,
-    const ConfigModel& config
-) const {
-
-    auto shadowColor = config.m_shadowColor;
-    auto outlineColor = windowActive ? config.m_outlineColor : config.m_inactiveOutlineColor;
-    shadowColor.setAlphaF(shadowColor.alphaF() * windowOpacity);
-    outlineColor.setAlphaF(outlineColor.alphaF() * windowOpacity);
-
+const std::unique_ptr<KWin::GLShader>&
+ShaderManager::Bind(const QSizeF& windowSize, bool windowActive, bool enableShadowCorner, const ConfigModel& config) const {
     m_manager->pushShader(m_shader.get());
-    mvp.translate((float)geo.x(), (float)geo.y());
-    m_shader->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
-    m_shader->setUniform(m_shader_windowSize, QVector2D{(float)geo.width(), (float)geo.height()});
     m_shader->setUniform(m_shader_windowActive, windowActive);
-    m_shader->setUniform(m_shader_shadowColor, shadowColor);
+    m_shader->setUniform(m_shader_windowSize, QVector2D(windowSize.width(), windowSize.height()));
+    m_shader->setUniform(m_shader_shadowColor, enableShadowCorner? config.m_shadowColor: QColor(Qt::transparent));
     m_shader->setUniform(m_shader_radius, config.m_size);
-    m_shader->setUniform(m_shader_outlineColor, outlineColor);
+    m_shader->setUniform(m_shader_outlineColor, windowActive ? config.m_outlineColor : config.m_inactiveOutlineColor);
     m_shader->setUniform(m_shader_outlineThickness, config.m_outlineThickness);
+    m_shader->setUniform(m_shader_sampler, 0);
+    m_shader->setUniform(m_shader_back, 1);
+    return m_shader;
+}
+
+const std::unique_ptr<KWin::GLShader>&
+ShaderManager::Bind(
+        QMatrix4x4 mvp,
+        const QRectF& geo,
+        bool windowActive,
+        bool enableShadowCorner,
+        const ConfigModel& config
+) const {
+    Bind(geo.size(), windowActive, enableShadowCorner, config);
+    mvp.translate(geo.x(), geo.y());
+    m_shader->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
+    return m_shader;
 }
 
 void ShaderManager::Unbind() const {
     m_manager->popShader();
+}
+
+bool ShaderManager::IsLegacy() {
+#ifdef KWIN_HAVE_OPENGLES
+    const qint64 coreVersionNumber = kVersionNumber(3, 0);
+#else
+    const qint64 version = KWin::kVersionNumber(1, 40);
+#endif
+    return (KWin::GLPlatform::instance()->glslVersion() < version);
 }
