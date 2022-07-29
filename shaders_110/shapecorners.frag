@@ -45,15 +45,23 @@ vec4 shadowCorner(float distance_from_center, vec4 backColor, bool isTopCorner) 
 
 vec4 shapeCorner(vec2 coord0, vec4 tex, vec4 backColor, vec2 center, bool isTopCorner) {
     float distance_from_center = distance(coord0, center);
-    if(distance_from_center < radius - outlineThickness)
-        return tex;
-    else if(isDrawingOutline() && distance_from_center < radius)
-        return vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), 1.0);
+    vec4 c = isDrawingShadows() ? shadowCorner(distance_from_center, backColor, isTopCorner) : backColor;
+
+    if(isDrawingOutline()) {
+        vec4 outlineOverlay = vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), 1.0);
+
+        if (distance_from_center < radius - outlineThickness/2.0) {
+            float antialiasing = clamp(radius-outlineThickness+0.5-distance_from_center, 0.0, 1.0);
+            return mix(outlineOverlay, tex, antialiasing);
+        }
+        else {
+            float antialiasing = clamp(distance_from_center-radius+0.5, 0.0, 1.0);
+            return mix(outlineOverlay, c, antialiasing);
+        }
+    }
     else {
-        if(isDrawingShadows())
-            return shadowCorner(distance_from_center, backColor, isTopCorner);
-        else
-            return backColor;
+        float antialiasing = clamp(radius-distance_from_center, 0.0, 1.0);
+        return mix(c, tex, antialiasing);
     }
 }
 
