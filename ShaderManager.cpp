@@ -62,7 +62,7 @@ ShaderManager::Bind(KWin::EffectWindow *w, const ConfigModel& config) const {
     m_shader->setUniform(m_shader_windowActive, isWindowActive(w));
     m_shader->setUniform(m_shader_windowSize, QVector2D(w->frameGeometry().width(), w->frameGeometry().height()));
     m_shader->setUniform(m_shader_windowHasDecoration, w->hasDecoration());
-    m_shader->setUniform(m_shader_shadowColor, KWin::effects->hasDecorationShadows()? config.m_shadowColor: QColor(Qt::transparent));
+    m_shader->setUniform(m_shader_shadowColor, w->frameGeometry() != w->expandedGeometry()? config.m_shadowColor: QColor(Qt::transparent));
     m_shader->setUniform(m_shader_radius, config.m_size);
     m_shader->setUniform(m_shader_outlineColor, isWindowActive(w) ? config.m_outlineColor : config.m_inactiveOutlineColor);
     m_shader->setUniform(m_shader_outlineThickness, config.m_outlineThickness);
