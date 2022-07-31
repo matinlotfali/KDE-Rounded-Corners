@@ -43,7 +43,7 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
     WindowSystem
     GuiAddons
 )
-
+find_package(KDecoration2 REQUIRED)
 find_package(X11 REQUIRED)
 find_package(XCB REQUIRED)
 
@@ -94,6 +94,7 @@ target_link_libraries(${SHAPECORNERS}
         KF5::ConfigWidgets
         KF5::GuiAddons
         KF5::WindowSystem
+        KDecoration2::KDecoration
         )
 
 if (XCB_FOUND)

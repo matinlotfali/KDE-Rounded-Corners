@@ -32,8 +32,6 @@ public:
 
     static bool supported();
     static bool enabledByDefault() { return supported(); }
-    static bool isMaximized(KWin::EffectWindow *w);
-    static bool isWindowActive(KWin::EffectWindow *w);
 
     void reconfigure(ReconfigureFlags flags) override;
     void drawWindow(KWin::EffectWindow* w, int mask, const QRegion& region, KWin::WindowPaintData& data) override;

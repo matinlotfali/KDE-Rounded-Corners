@@ -20,11 +20,8 @@ public:
 
     static bool IsLegacy();
     bool IsValid() const;
-    const std::unique_ptr<KWin::GLShader>& Bind(
-            const QSizeF& windowSize, bool windowActive, bool windowHasDecoration, const ConfigModel& config) const;
-    const std::unique_ptr<KWin::GLShader>& Bind(
-            QMatrix4x4 mvp,
-            const QRectF& geo, bool windowActive, bool windowHasDecoration, const ConfigModel& config) const;
+    const std::unique_ptr<KWin::GLShader>& Bind(KWin::EffectWindow *w, const ConfigModel& config) const;
+    const std::unique_ptr<KWin::GLShader>& Bind(QMatrix4x4 mvp, KWin::EffectWindow *w, const ConfigModel& config) const;
     void Unbind() const;
 
 private:
