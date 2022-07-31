@@ -6,7 +6,6 @@
 #include <QFile>
 #include <QStandardPaths>
 #include <kwineffects.h>
-#include <KDecoration2/kdecoration2/decoration.h>
 #include "ShaderManager.h"
 
 ShaderManager::ShaderManager():
