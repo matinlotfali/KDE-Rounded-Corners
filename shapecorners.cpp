@@ -85,6 +85,16 @@ static bool hasShadow(KWin::WindowQuadList &qds)
 }
 #endif
 
+bool isMaximized(KWin::EffectWindow *w) {
+#if KWIN_EFFECT_API_VERSION >= 233
+    auto screenGeometry = KWin::effects->findScreen(w->screen()->name())->geometry();
+    return (w->x() == screenGeometry.x() && w->width() == screenGeometry.width()) ||
+           (w->y() == screenGeometry.y() && w->height() == screenGeometry.height());
+#else
+    return w->isFullScreen();
+#endif
+}
+
 void
 ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion& region, KWin::WindowPaintData &data)
 {
@@ -121,11 +131,7 @@ ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion& r
     }
 
     //'shape' the corners
-    auto &shader = m_shaderManager.Bind(
-            m_managed[w]->size(),
-            isWindowActive(w),
-            w->hasDecoration(),
-            m_config);
+    auto &shader = m_shaderManager.Bind(w, m_config);
     data.shader = shader.get();
     glActiveTexture(GL_TEXTURE1);
     m_managed[w]->bind();
@@ -142,20 +148,6 @@ bool ShapeCornersEffect::supported()
 #else
     return KWin::effects->isOpenGLCompositing();
 #endif
-}
-
-bool ShapeCornersEffect::isMaximized(KWin::EffectWindow *w) {
-#if KWIN_EFFECT_API_VERSION >= 233
-    auto screenGeometry = KWin::effects->findScreen(w->screen()->name())->geometry();
-    return (w->x() == screenGeometry.x() && w->width() == screenGeometry.width()) ||
-            (w->y() == screenGeometry.y() && w->height() == screenGeometry.height());
-#else
-    return w->isFullScreen();
-#endif
-}
-
-bool ShapeCornersEffect::isWindowActive(KWin::EffectWindow *w) {
-    return KWin::effects->activeWindow() == w;
 }
 
 void ShapeCornersEffect::windowGetBackground(KWin::EffectWindow *window) {

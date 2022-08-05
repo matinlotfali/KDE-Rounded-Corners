@@ -5,7 +5,7 @@ set(SHAPECORNERS kwin4_effect_shapecorners)
 project(${SHAPECORNERS})
 
 set(QT_MIN_VERSION "5.4.0")
-set(KF5_MIN_VERSION "5.9.0")
+set(KF5_MIN_VERSION "5.68.0")
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose Release or Debug" FORCE)
