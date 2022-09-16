@@ -1,6 +1,6 @@
 # KDE-Rounded-Corners
 
-This effect rounds the corners of your windows and adds an outline around them without much affecting the performance of the KDE Plasma desktop (see [#49](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/49) and [#50](https://github.com/matinlotfali/KDE-Rounded-Corners/issues/50)). Window borders should be turned off for the effect to work. [How?](#settings)
+This effect rounds the corners of your windows and adds an outline around them without much affecting the performance of the KDE Plasma desktop (see [#49](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/49) and [#50](https://github.com/matinlotfali/KDE-Rounded-Corners/issues/50)).
 
 This effect started as a fork of [shapecorners](https://sourceforge.net/projects/shapecorners/) with some additional contributions in [Alex47's project](https://github.com/alex47/KDE-Rounded-Corners), then I optimized and reimplemented the effect with shaders.
 
@@ -71,10 +71,6 @@ kwin_x11 --replace &
 ```
 
 # Settings
-
-You need to turn off the border size in:
-
-> System Settings --> Application Style --> Window Decoration
 
 You can change corner radius, or disable the effect in:
 
