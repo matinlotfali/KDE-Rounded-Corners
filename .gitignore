@@ -1,3 +1,4 @@
 /.idea/
 /cmake-build-*/
 /qt5build/
+/build/

@@ -119,7 +119,7 @@ ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion& r
         const QRect &geo = w->frameGeometry();
 #else
         const QRectF& geoF = w->frameGeometry();
-        const QRect geo ((int)geo.left(), (int)geo.top(), (int)geo.width(), (int)geo.height());
+        const QRect geo ((int)geoF.left(), (int)geoF.top(), (int)geoF.width(), (int)geoF.height());
 #endif
         const auto &s = KWin::effects->virtualScreenGeometry();
         m_managed[w].reset(new KWin::GLTexture(GL_RGBA8, geo.size()));
