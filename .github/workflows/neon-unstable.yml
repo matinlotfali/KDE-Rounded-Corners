@@ -27,9 +27,6 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v3
 
-    - name: Run  github-actions-tune
-      uses: abbbi/github-actions-tune@v1
-
     - name: Refresh KDE Neon Packages
       run: apt update && apt -y dist-upgrade
 
