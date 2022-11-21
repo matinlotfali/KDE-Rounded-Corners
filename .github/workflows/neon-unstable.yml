@@ -18,7 +18,8 @@ jobs:
     # well on Windows or Mac.  You can convert this to a matrix build if you need
     # cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+    container: kdeneon/plasma:unstable
 
     steps:
     - name: Check out repository
@@ -27,13 +28,8 @@ jobs:
     - name: Run  github-actions-tune
       uses: abbbi/github-actions-tune@v1
 
-    - name: Add the KDE Neon repository
-      run: |
-        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E6D4736255751E5D
-        sudo apt-add-repository https://archive.neon.kde.org/unstable
-
     - name: Refresh KDE Neon Packages
-      run: sudo apt -y dist-upgrade
+      run: sudo apt update && sudo apt -y dist-upgrade
 
     - name: Install Dependencies
       uses: awalsh128/cache-apt-pkgs-action@staging
