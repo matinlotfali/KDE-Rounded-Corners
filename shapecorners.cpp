@@ -18,15 +18,23 @@
  */
 
 #include "shapecorners.h"
-#include <kwindowsystem.h>
 #include <kwingltexture.h>
-#include <KX11Extras>
 
+#if KWIN_EFFECT_API_VERSION >= 234
+#include <KX11Extras>
+#else
+#include <kwindowsystem.h>
+#endif
 
 ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect()
 {
     if(m_shaderManager.IsValid()) {
-        for (const auto& id: KX11Extras::windows())
+#if KWIN_EFFECT_API_VERSION >= 234
+        const auto& windowList = KX11Extras::windows();
+#else
+        const auto& windowList = KWindowSystem::windows();
+#endif
+        for (const auto& id: windowList)
             if (auto win = KWin::effects->findWindow(id))
                 windowAdded(win);
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
