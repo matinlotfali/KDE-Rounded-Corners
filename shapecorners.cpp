@@ -20,12 +20,13 @@
 #include "shapecorners.h"
 #include <kwindowsystem.h>
 #include <kwingltexture.h>
+#include <KX11Extras>
 
 
 ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect()
 {
     if(m_shaderManager.IsValid()) {
-        for (const auto& id: KWindowSystem::windows())
+        for (const auto& id: KX11Extras::windows())
             if (auto win = KWin::effects->findWindow(id))
                 windowAdded(win);
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
@@ -113,14 +114,15 @@ ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion& r
         return;
     }
 
-    //copy the background
-    if(!m_managed[w]) {
 #if KWIN_EFFECT_API_VERSION < 235
         const QRect &geo = w->frameGeometry();
 #else
         const QRectF& geoF = w->frameGeometry();
         const QRect geo ((int)geoF.left(), (int)geoF.top(), (int)geoF.width(), (int)geoF.height());
 #endif
+
+    //copy the background
+    if(!m_managed[w]) {
         const auto &s = KWin::effects->virtualScreenGeometry();
         m_managed[w].reset(new KWin::GLTexture(GL_RGBA8, geo.size()));
         m_managed[w]->bind();
@@ -130,15 +132,21 @@ ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion& r
         m_managed[w]->unbind();
     }
 
+    KWin::effects->paintWindow(w, mask, region, data);
+
     //'shape' the corners
-    auto &shader = m_shaderManager.Bind(w, m_config);
-    data.shader = shader.get();
-    glActiveTexture(GL_TEXTURE1);
-    m_managed[w]->bind();
-    glActiveTexture(GL_TEXTURE0);
-    KWin::effects->drawWindow(w, mask, region, data);
-    m_managed[w]->unbind();
-    m_shaderManager.Unbind();
+    glEnable(GL_SCISSOR_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    {
+        m_shaderManager.Bind(data.screenProjectionMatrix(), w, m_config);
+        m_managed[w]->bind();
+        m_managed[w]->render(region, geo, true);
+        m_managed[w]->unbind();
+        m_shaderManager.Unbind();
+    }
+    glDisable(GL_BLEND);
+    glDisable(GL_SCISSOR_TEST);
 }
 
 bool ShapeCornersEffect::supported()
