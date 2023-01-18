@@ -140,7 +140,7 @@ ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion& r
         m_managed[w]->unbind();
     }
 
-    KWin::effects->paintWindow(w, mask, region, data);
+    KWin::effects->drawWindow(w, mask, region, data);
 
     //'shape' the corners
     glEnable(GL_SCISSOR_TEST);
