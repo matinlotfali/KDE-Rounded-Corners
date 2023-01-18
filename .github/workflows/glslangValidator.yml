@@ -26,7 +26,7 @@ jobs:
       uses: abbbi/github-actions-tune@v1
 
     - name: Install Dependencies
-      run: apt update && apt install -y glslang-tools
+      run: sudo apt update && sudo apt install -y glslang-tools
 
     - name: Validate Shaders
       run: glslangValidator shaders_110/shapecorners.frag shaders_140/shapecorners.frag
