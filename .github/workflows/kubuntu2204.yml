@@ -29,11 +29,7 @@ jobs:
       run: sudo apt update
 
     - name: Install Dependencies
-      uses: awalsh128/cache-apt-pkgs-action@latest
-      with:
-          packages: gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5globalaccel-dev libkf5notifications-dev kwin-dev
-          version: 22.04
-          refresh: true
+      run: apt update && apt install -y gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5globalaccel-dev libkf5notifications-dev kwin-dev
     
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
