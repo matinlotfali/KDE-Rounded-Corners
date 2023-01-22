@@ -66,7 +66,7 @@ ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
             || w->isOnScreenDisplay()
             || w->isDock())
         return;
-    qDebug() << w->windowRole() << w->windowType() << w->windowClass() << w->hasAlpha() << w->decorationHasAlpha() << w->hasDecoration();
+    qDebug() << w->windowRole() << w->windowType() << w->windowClass();
     if (!w->hasDecoration()
             && (w->windowClass().contains("plasma", Qt::CaseInsensitive)
             || w->windowClass().contains("krunner", Qt::CaseInsensitive)
