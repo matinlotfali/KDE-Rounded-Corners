@@ -63,14 +63,15 @@ ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
             || w->isDropdownMenu()
             || w->isTooltip()
             || w->isMenu()
-            || (w->hasAlpha() && !w->hasDecoration())
-            || w->windowType() == NET::WindowType::OnScreenDisplay
-            || w->windowType() == NET::WindowType::Dock)
+            || w->isOnScreenDisplay()
+            || w->isDock())
         return;
     qDebug() << w->windowRole() << w->windowType() << w->windowClass() << w->hasAlpha() << w->decorationHasAlpha() << w->hasDecoration();
-    if (!w->hasDecoration() && (w->windowClass().contains("plasma", Qt::CaseInsensitive)
+    if (!w->hasDecoration()
+            && (w->windowClass().contains("plasma", Qt::CaseInsensitive)
             || w->windowClass().contains("krunner", Qt::CaseInsensitive)
-            || w->windowClass().contains("latte-dock", Qt::CaseInsensitive)))
+            || w->windowClass().contains("latte-dock", Qt::CaseInsensitive)
+            || w->windowClass().contains("telegram", Qt::CaseInsensitive)))
         return;
     m_managed.insert(w, nullptr);
 }
