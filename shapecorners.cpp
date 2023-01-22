@@ -63,11 +63,11 @@ ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
             || w->isDropdownMenu()
             || w->isTooltip()
             || w->isMenu()
-            || w->hasAlpha()
+            || (w->hasAlpha() && !w->hasDecoration())
             || w->windowType() == NET::WindowType::OnScreenDisplay
             || w->windowType() == NET::WindowType::Dock)
         return;
-    qDebug() << w->windowRole() << w->windowType() << w->windowClass();
+    qDebug() << w->windowRole() << w->windowType() << w->windowClass() << w->hasAlpha() << w->decorationHasAlpha() << w->hasDecoration();
     if (!w->hasDecoration() && (w->windowClass().contains("plasma", Qt::CaseInsensitive)
             || w->windowClass().contains("krunner", Qt::CaseInsensitive)
             || w->windowClass().contains("latte-dock", Qt::CaseInsensitive)))
@@ -128,11 +128,12 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
 
 #if KWIN_EFFECT_API_VERSION < 235
         const QRect &geo = w->frameGeometry();
+        const qreal scale = 1;
 #else
         const QRectF& geoF = w->frameGeometry();
         const QRect geo ((int)geoF.left(), (int)geoF.top(), (int)geoF.width(), (int)geoF.height());
+        const qreal scale = KWin::effects->renderTargetScale();
 #endif
-    const auto scale = KWin::effects->renderTargetScale();
 
     //copy the background
     if(!m_managed[w]) {
