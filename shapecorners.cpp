@@ -26,6 +26,8 @@
 #include <kwindowsystem.h>
 #endif
 
+#define DEBUG_BACKGROUND 0
+
 ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect()
 {
     if(m_shaderManager.IsValid()) {
@@ -61,10 +63,11 @@ ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
             || w->isDropdownMenu()
             || w->isTooltip()
             || w->isMenu()
+            || w->hasAlpha()
             || w->windowType() == NET::WindowType::OnScreenDisplay
             || w->windowType() == NET::WindowType::Dock)
         return;
-//    qDebug() << w->windowRole() << w->windowType() << w->windowClass();
+    qDebug() << w->windowRole() << w->windowType() << w->windowClass();
     if (!w->hasDecoration() && (w->windowClass().contains("plasma", Qt::CaseInsensitive)
             || w->windowClass().contains("krunner", Qt::CaseInsensitive)
             || w->windowClass().contains("latte-dock", Qt::CaseInsensitive)))
@@ -105,11 +108,12 @@ bool isMaximized(KWin::EffectWindow *w) {
 }
 
 void
-ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion& region, KWin::WindowPaintData &data)
+ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region, KWin::WindowPaintData &data)
 {
     if (!m_shaderManager.IsValid()
             || !m_managed.contains(w)
             || isMaximized(w)
+            || mask & PAINT_WINDOW_TRANSFORMED
 #if KWIN_EFFECT_API_VERSION < 234
             || !w->isPaintingEnabled()
 #elif KWIN_EFFECT_API_VERSION < 233
@@ -118,7 +122,7 @@ ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion& r
 #endif
             )
     {
-        KWin::effects->drawWindow(w, mask, region, data);
+        KWin::effects->paintWindow(w, mask, region, data);
         return;
     }
 
@@ -128,6 +132,7 @@ ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion& r
         const QRectF& geoF = w->frameGeometry();
         const QRect geo ((int)geoF.left(), (int)geoF.top(), (int)geoF.width(), (int)geoF.height());
 #endif
+    const auto scale = KWin::effects->renderTargetScale();
 
     //copy the background
     if(!m_managed[w]) {
@@ -140,14 +145,17 @@ ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion& r
         m_managed[w]->unbind();
     }
 
-    KWin::effects->drawWindow(w, mask, region, data);
+    KWin::effects->paintWindow(w, mask, region, data);
 
     //'shape' the corners
     glEnable(GL_SCISSOR_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     {
-        m_shaderManager.Bind(data.screenProjectionMatrix(), w, m_config);
+        QMatrix4x4 mvp;
+        const QSize size = KWin::effects->virtualScreenSize();
+        mvp.ortho(0, size.width() * scale, size.height() * scale, 0, 0, 65535);
+        m_shaderManager.Bind(mvp, w, m_config);
         m_managed[w]->bind();
         m_managed[w]->render(region, geo, true);
         m_managed[w]->unbind();
@@ -155,6 +163,20 @@ ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion& r
     }
     glDisable(GL_BLEND);
     glDisable(GL_SCISSOR_TEST);
+
+#if DEBUG_BACKGROUND == 1
+    if (KWin::effects->activeWindow() == w) {
+        auto s = KWin::ShaderManager::instance()->pushShader(KWin::ShaderTrait::MapTexture);
+        QMatrix4x4 mvp;
+        const QSize size = KWin::effects->virtualScreenSize();
+        mvp.ortho(0, size.width() * scale, size.height() * scale, 0, 0, 65535);
+        s->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
+        m_managed[w]->bind();
+        m_managed[w]->render(region, QRect(0,0,500,500));
+        m_managed[w]->unbind();
+        KWin::ShaderManager::instance()->popShader();
+    }
+#endif
 }
 
 bool ShapeCornersEffect::supported()
