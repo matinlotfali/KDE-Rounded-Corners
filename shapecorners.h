@@ -34,7 +34,7 @@ public:
     static bool enabledByDefault() { return supported(); }
 
     void reconfigure(ReconfigureFlags flags) override;
-    void drawWindow(KWin::EffectWindow* w, int mask, const QRegion& region, KWin::WindowPaintData& data) override;
+    void paintWindow(KWin::EffectWindow* w, int mask, QRegion region, KWin::WindowPaintData& data) override;
     int requestedEffectChainPosition() const override { return 99; }
 
 protected Q_SLOTS:
