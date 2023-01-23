@@ -108,8 +108,11 @@ QRectF operator *(QRectF r, qreal scale) { return {r.x() * scale, r.y() * scale,
 QRect toRect(const QRectF& r) { return {(int)r.x(), (int)r.y(), (int)r.width(), (int)r.height()}; }
 const QRect& toRect(const QRect& r) { return r; }
 
-void
-ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
+#if KWIN_EFFECT_API_VERSION >= 233
+void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
+#else
+void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, int time)
+#endif
 {
     if (!m_shaderManager.IsValid()
             || !m_managed.contains(w)
