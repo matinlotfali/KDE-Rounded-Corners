@@ -72,7 +72,6 @@ ShaderManager::Bind(KWin::EffectWindow *w, const ConfigModel& config) const {
 const std::unique_ptr<KWin::GLShader>&
 ShaderManager::Bind(QMatrix4x4 mvp, KWin::EffectWindow *w, const ConfigModel& config) const {
     Bind(w, config);
-    mvp.translate(w->frameGeometry().x(), w->frameGeometry().y());
     m_shader->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
     return m_shader;
 }

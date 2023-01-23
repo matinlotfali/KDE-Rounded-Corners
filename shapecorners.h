@@ -34,6 +34,7 @@ public:
     static bool enabledByDefault() { return supported(); }
 
     void reconfigure(ReconfigureFlags flags) override;
+    void prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time) override;
     void paintWindow(KWin::EffectWindow* w, int mask, QRegion region, KWin::WindowPaintData& data) override;
     int requestedEffectChainPosition() const override { return 99; }
 
