@@ -43,12 +43,7 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect()
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
         connect(KWin::effects, &KWin::EffectsHandler::windowClosed, this, &ShapeCornersEffect::windowRemoved);
         connect(KWin::effects, &KWin::EffectsHandler::windowActivated, this,&ShapeCornersEffect::windowGetBackground);
-#if KWIN_EFFECT_API_VERSION > 231
         connect(KWin::effects, &KWin::EffectsHandler::windowFrameGeometryChanged, this,&ShapeCornersEffect::windowGetBackground);
-#else
-        connect(KWin::effects, &KWin::EffectsHandler::windowStepUserMovedResized, this,&ShapeCornersEffect::windowGetBackground);
-        connect(KWin::effects, &KWin::EffectsHandler::windowFinishUserMovedResized, this,&ShapeCornersEffect::windowGetBackground);
-#endif
     }
     m_config.Load();
 }
@@ -132,7 +127,9 @@ ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintDa
     }
 
     const auto geo = w->frameGeometry();
+#if KWIN_EFFECT_API_VERSION >= 234
     data.opaque -= toRect(geo);
+#endif
     data.paint += toRect(geo);
     KWin::effects->prePaintWindow(w, data, time);
 }
@@ -156,9 +153,17 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
         return;
     }
 
+    const bool clipping = region != KWin::infiniteRegion();
+#if KWIN_EFFECT_API_VERSION >= 234
     const qreal scale = KWin::effects->renderTargetScale();
+    const QRectF renderRect = KWin::effects->renderTargetRect() * scale;
+    const QRegion clipRegion = clipping ? KWin::effects->mapToRenderTarget(region) : KWin::infiniteRegion();
+#else
+    const qreal scale = 1;
+    const QRectF renderRect();
+    const QRegion clipRegion = region;
+#endif
     const QRectF geo = w->frameGeometry() * scale;
-    const QRectF renderRect = KWin::effects->renderTargetRect() * scale;    
 
     //copy the background
     if(!m_managed[w]) {
@@ -174,9 +179,6 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     KWin::effects->paintWindow(w, mask, region, data);
 
     //'shape' the corners
-    const bool clipping = region != KWin::infiniteRegion();
-    const QRegion clipRegion = clipping ? KWin::effects->mapToRenderTarget(region) : KWin::infiniteRegion();
-
     if (clipping) {
         glEnable(GL_SCISSOR_TEST);
     }
