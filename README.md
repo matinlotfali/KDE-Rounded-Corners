@@ -7,17 +7,14 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 #### Tested on:
 - ![Kubuntu 22.04 Jammy](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2204.yml?label=Kubuntu%2022.04%20Jammy&logo=kubuntu&branch=master) 
 ![](https://img.shields.io/badge/KWinEffects-v233-lightgrey)
-[![Deb Binary](https://img.shields.io/github/downloads/matinlotfali/KDE-Rounded-Corners/latest/kwin4-effect-shapecorners-kubuntu2204-amd64.deb?label=Download%20Binary)](https://github.com/matinlotfali/KDE-Rounded-Corners/releases/download/latest/kwin4-effect-shapecorners-kubuntu2204-amd64.deb)
 - ![Kubuntu 22.04 Jammy + Backports](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2204-backports.yml?label=Kubuntu%2022.04%20Jammy%20+%20Backports&logo=kubuntu&branch=master) 
 ![](https://img.shields.io/badge/KWinEffects-v234-lightgrey)
-[![Deb Binary](https://img.shields.io/github/downloads/matinlotfali/KDE-Rounded-Corners/latest/kwin4-effect-shapecorners-kubuntu2204backports-amd64.deb?label=Download%20Binary)](https://github.com/matinlotfali/KDE-Rounded-Corners/releases/download/latest/kwin4-effect-shapecorners-kubuntu2204backports-amd64.deb)
 - ![KDE Neon (Stable)](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/neon.yml?branch=master&label=KDE%20Neon%20%28Stable%29&logo=kde&logoColor=white)
 ![](https://img.shields.io/badge/KWinEffects-v235-lightgrey)
 - ![KDE Neon (Unstable)](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/neon-unstable.yml?branch=master&label=KDE%20Neon%20%28Unstable%29&logo=kde&logoColor=white)
 ![](https://img.shields.io/badge/KWinEffects-v236-lightgrey)
 - ![Debian 11 Bullseye](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/debian11.yml?branch=master&label=Debian%2011%20Bullseye&logo=debian) 
 ![](https://img.shields.io/badge/KWinEffects-v232-lightgrey)
-[![Deb Binary](https://img.shields.io/github/downloads/matinlotfali/KDE-Rounded-Corners/latest/kwin4-effect-shapecorners-debian11-amd64.deb?label=Download%20Binary)](https://github.com/matinlotfali/KDE-Rounded-Corners/releases/download/v0.2.0/kwin4-effect-shapecorners-debian11-amd64.deb)
 - [![Arch](https://img.shields.io/badge/-manual-lightgrey?label=Arch%20Linux&logo=archlinux&logoColor=white) ![](https://img.shields.io/aur/maintainer/kde-rounded-corners?label=AUR%20Maintainer) ![](https://img.shields.io/aur/votes/kde-rounded-corners?label=AUR%20Votes)](https://aur.archlinux.org/packages/kde-rounded-corners)
 
 ![After](https://raw.githubusercontent.com/matinlotfali/KDE-Rounded-Corners/master/screenshots/outlines.png)
