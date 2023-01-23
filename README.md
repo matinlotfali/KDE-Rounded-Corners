@@ -33,46 +33,46 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 
 You need to install development packages for your distrobution first:
 
-**Debian based (Ubuntu, Kubuntu, KDE Neon)** - by [alex47](https://github.com/alex47):
-```
-sudo apt install git cmake g++ gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5globalaccel-dev libkf5notifications-dev kwin-dev 
-```
-**Fedora** - by [matinlotfali](https://github.com/matinlotfali)
-```
-sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttools-devel qt5-qttools-static qt5-qtx11extras-devel kf5-kconfigwidgets-devel kf5-kcrash-devel kf5-kguiaddons-devel kf5-kglobalaccel-devel kf5-kio-devel kf5-ki18n-devel kwin-devel qt5-qtbase-devel libepoxy-devel
-```
-**Arch** - by [hexa-one](https://github.com/hexa-one)
-```
-sudo pacman -S git cmake extra-cmake-modules base-devel
-yay -S qt5-tools
-```
-or AUR package by [Shaurya-Kalia](https://github.com/Shaurya-Kalia)
+- **Debian based (Ubuntu, Kubuntu, KDE Neon)** - by [alex47](https://github.com/alex47):
+  ```
+  sudo apt install git cmake g++ gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5globalaccel-dev libkf5notifications-dev kwin-dev 
+  ```
+- **Fedora** - by [matinlotfali](https://github.com/matinlotfali)
+  ```
+  sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttools-devel qt5-qttools-static qt5-qtx11extras-devel kf5-kconfigwidgets-devel kf5-kcrash-devel kf5-kguiaddons-devel kf5-kglobalaccel-devel kf5-kio-devel kf5-ki18n-devel kwin-devel qt5-qtbase-devel libepoxy-devel
+  ```
+- **Arch** - by [hexa-one](https://github.com/hexa-one)
+  ```
+  sudo pacman -S git cmake extra-cmake-modules base-devel
+  yay -S qt5-tools
+  ```
+  or AUR package by [Shaurya-Kalia](https://github.com/Shaurya-Kalia)
 
-```
-sudo pamac build kde-rounded-corners
-```
-**OpenSUSE** - by [mathiasgredal](https://github.com/mathiasgredal)
-```
-sudo zypper install git cmake gcc-c++ extra-cmake-modules libqt5-qttools-devel libqt5-qtx11extras-devel kconfigwidgets-devel kguiaddons-devel kglobalaccel-devel ki18n-devel knotifications-devel kwin5-devel libQt5Gui-devel libQt5OpenGL-devel libepoxy-devel
-```
-**Void** - by [lay-by](https://github.com/lay-by)
-```
-xbps-install git cmake make qt5-tools-devel extra-cmake-modules qt5-x11extras-devel gettext-devel kwin-devel
-```
+  ```
+  sudo pamac build kde-rounded-corners
+  ```
+- **OpenSUSE** - by [mathiasgredal](https://github.com/mathiasgredal)
+  ```
+  sudo zypper install git cmake gcc-c++ extra-cmake-modules libqt5-qttools-devel libqt5-qtx11extras-devel kconfigwidgets-devel kguiaddons-devel kglobalaccel-devel ki18n-devel knotifications-devel kwin5-devel libQt5Gui-devel libQt5OpenGL-devel libepoxy-devel
+  ```
+- **Void** - by [lay-by](https://github.com/lay-by)
+  ```
+  xbps-install git cmake make qt5-tools-devel extra-cmake-modules qt5-x11extras-devel gettext-devel kwin-devel
+  ```
 Then get the source code and compile:
 ```
 git clone https://github.com/matinlotfali/KDE-Rounded-Corners
 cd KDE-Rounded-Corners
-mkdir qt5build
-cd qt5build
-cmake ../ -DCMAKE_INSTALL_PREFIX=/usr -DQT5BUILD=ON
+mkdir build
+cd build
+cmake ..
 make
 sudo make install
 ```
 
 You can now logout and log back in or run the command below to have it activated.
 ```
-kwin_x11 --replace &
+kwin --replace &
 ```
 
 # Settings
@@ -81,4 +81,4 @@ You can change corner radius, or disable the effect in:
 
 > System Settings --> Workspace Behavior --> Desktop Effects --> ShapeCorners
 
-To fully uninstall, simply run the command `sudo make uninstall` inside `qt5build` directory
+To fully uninstall, simply run the command `sudo make uninstall` inside `build` directory
