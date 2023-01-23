@@ -160,7 +160,7 @@ ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region,
     const QRegion clipRegion = clipping ? KWin::effects->mapToRenderTarget(region) : KWin::infiniteRegion();
 #else
     const qreal scale = 1;
-    const QRectF renderRect();
+    const QRectF renderRect = {0, 0, 0, 0};
     const QRegion clipRegion = region;
 #endif
     const QRectF geo = w->frameGeometry() * scale;
