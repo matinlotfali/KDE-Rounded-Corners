@@ -21,7 +21,7 @@
 #include <kwingltexture.h>
 #include <kwinglutils.h>
 
-#if KWIN_EFFECT_API_VERSION >= 234
+#if KWIN_EFFECT_API_VERSION >= 235
 #include <KX11Extras>
 #else
 #include <kwindowsystem.h>
@@ -32,7 +32,7 @@
 ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect()
 {
     if(m_shaderManager.IsValid()) {
-#if KWIN_EFFECT_API_VERSION >= 234
+#if KWIN_EFFECT_API_VERSION >= 235
         const auto& windowList = KX11Extras::windows();
 #else
         const auto& windowList = KWindowSystem::windows();

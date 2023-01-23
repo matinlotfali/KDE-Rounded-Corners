@@ -141,7 +141,7 @@ set(CPACK_PACKAGE_NAME kwin4-effect-shapecorners
 set(CPACK_DEBIAN_FILE_NAME "kwin4-effect-shapecorners-kubuntu2204-amd64.deb")
 set(CPACK_PACKAGE_CONTACT "matinlotfali@gmail.com")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Matin Lotfaliei")
-set(CPACK_DEBIAN_PACKAGE_VERSION "0.2.0")
+set(CPACK_DEBIAN_PACKAGE_VERSION "0.3.0")
 
 # autogenerate dependency information
 set (CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
