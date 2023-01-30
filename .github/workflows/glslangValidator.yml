@@ -24,13 +24,9 @@ jobs:
 
     - name: Run  github-actions-tune
       uses: abbbi/github-actions-tune@v1
-      
+
     - name: Install Dependencies
-      uses: awalsh128/cache-apt-pkgs-action@staging
-      with:
-          packages: glslang-tools
-          version: 123.0
-          refresh: true
+      run: sudo apt update && sudo apt install -y glslang-tools
 
     - name: Validate Shaders
       run: glslangValidator shaders_110/shapecorners.frag shaders_140/shapecorners.frag

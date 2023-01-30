@@ -34,7 +34,6 @@ private:
     int m_shader_radius = 0;
     int m_shader_outlineColor = 0;
     int m_shader_outlineThickness = 0;
-    int m_shader_sampler = 0;
     int m_shader_back = 0;
 };
 

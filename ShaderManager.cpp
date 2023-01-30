@@ -25,8 +25,7 @@ ShaderManager::ShaderManager():
         m_shader.reset(shader);
 #endif
         file.close();
-//        qDebug() << frag;
-//        qDebug() << "shader valid: " << m_shader->isValid();
+//        qDebug() << frag;        
         if (m_shader->isValid())
         {
             m_shader_windowActive = m_shader->uniformLocation("windowActive");
@@ -36,15 +35,15 @@ ShaderManager::ShaderManager():
             m_shader_radius = m_shader->uniformLocation("radius");
             m_shader_outlineColor = m_shader->uniformLocation("outlineColor");
             m_shader_outlineThickness = m_shader->uniformLocation("outlineThickness");
-            m_shader_sampler = m_shader->uniformLocation("sampler");
             m_shader_back = m_shader->uniformLocation("back");
+            qInfo() << "ShapeCorners: shaders loaded.";
         }
         else
-            qDebug() << "ShapeCorners: no valid shaders found! ShapeCorners will not work.";
+            qCritical() << "ShapeCorners: no valid shaders found! ShapeCorners will not work.";
     }
     else
     {
-        qDebug() << "ShapeCorners: no shaders found! Exiting...";
+        qCritical() << "ShapeCorners: no shaders found! Exiting...";
     }
 }
 
@@ -66,15 +65,13 @@ ShaderManager::Bind(KWin::EffectWindow *w, const ConfigModel& config) const {
     m_shader->setUniform(m_shader_radius, config.m_size);
     m_shader->setUniform(m_shader_outlineColor, isWindowActive(w) ? config.m_outlineColor : config.m_inactiveOutlineColor);
     m_shader->setUniform(m_shader_outlineThickness, config.m_outlineThickness);
-    m_shader->setUniform(m_shader_sampler, 0);
-    m_shader->setUniform(m_shader_back, 1);
+    m_shader->setUniform(m_shader_back, 0);
     return m_shader;
 }
 
 const std::unique_ptr<KWin::GLShader>&
 ShaderManager::Bind(QMatrix4x4 mvp, KWin::EffectWindow *w, const ConfigModel& config) const {
     Bind(w, config);
-    mvp.translate(w->frameGeometry().x(), w->frameGeometry().y());
     m_shader->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
     return m_shader;
 }

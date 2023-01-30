@@ -1,4 +1,4 @@
-name: Kubuntu 22.04
+name: Kubuntu 22.04 Backports
 
 on:
   push:
@@ -11,7 +11,7 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  ubuntu2204:
+  ubuntu2204-backports:
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
     # cross-platform coverage.
@@ -27,6 +27,15 @@ jobs:
       
     - name: Refresh Ubuntu Packages
       run: sudo apt update
+
+    - name: Add PPA support
+      run: sudo apt install -y software-properties-common
+
+    - name: Add Kubuntu Backports PPA
+      run: sudo add-apt-repository -y ppa:kubuntu-ppa/backports-extra
+
+    - name: Refresh Backports Packages
+      run: sudo apt update && sudo apt -y dist-upgrade
 
     - name: Install Dependencies
       run: sudo apt install -y gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5globalaccel-dev libkf5notifications-dev kwin-dev
