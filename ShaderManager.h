@@ -19,7 +19,7 @@ public:
     ShaderManager();
 
     static bool IsLegacy();
-    bool IsValid() const;
+    [[nodiscard]] bool IsValid() const;
     const std::unique_ptr<KWin::GLShader>& Bind(KWin::EffectWindow *w, const ConfigModel& config) const;
     const std::unique_ptr<KWin::GLShader>& Bind(QMatrix4x4 mvp, KWin::EffectWindow *w, const ConfigModel& config) const;
     void Unbind() const;

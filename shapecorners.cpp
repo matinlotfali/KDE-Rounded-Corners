@@ -19,7 +19,6 @@
 
 #include "shapecorners.h"
 #include <kwingltexture.h>
-#include <kwinglutils.h>
 
 #if KWIN_EFFECT_API_VERSION >= 235
 #include <KX11Extras>

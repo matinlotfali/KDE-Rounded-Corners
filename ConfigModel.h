@@ -17,7 +17,7 @@ public:
            m_outlineThickness;
     QColor m_shadowColor,
            m_outlineColor,
-	   m_inactiveOutlineColor;
+	       m_inactiveOutlineColor;
 };
 
 #endif //KWIN4_SHAPECORNERS_CONFIG_CONFIGMODEL_H

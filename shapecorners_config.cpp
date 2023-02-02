@@ -91,7 +91,6 @@ void
 ShapeCornersConfig::defaults()
 {
     KCModule::defaults();
-    ConfigModel defaultConfig;
     ui->roundness->setValue(m_config.m_size);
     QColor shadowColor = m_config.m_shadowColor;
     ui->drawShadowEnabled->setChecked(shadowColor.alpha() > 0);
