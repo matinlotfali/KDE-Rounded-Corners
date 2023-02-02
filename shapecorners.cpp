@@ -52,21 +52,10 @@ ShapeCornersEffect::~ShapeCornersEffect() = default;
 void
 ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
 {
-    if (m_managed.contains(w)
-            || w->isDesktop()
-            || w->isPopupMenu()
-            || w->isDropdownMenu()
-            || w->isTooltip()
-            || w->isMenu()
-            || w->isOnScreenDisplay()
-            || w->isDock())
+    if (m_managed.contains(w))
         return;
     qDebug() << w->windowRole() << w->windowType() << w->windowClass();
-    if (!w->hasDecoration()
-            && (w->windowClass().contains("plasma", Qt::CaseInsensitive)
-            || w->windowClass().contains("krunner", Qt::CaseInsensitive)
-            || w->windowClass().contains("latte-dock", Qt::CaseInsensitive)
-            || w->windowClass().contains("telegram", Qt::CaseInsensitive)))
+    if (!w->hasDecoration())
         return;
     m_managed.insert(w, nullptr);
 }
