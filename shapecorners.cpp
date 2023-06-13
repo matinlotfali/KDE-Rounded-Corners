@@ -26,9 +26,12 @@
 #include <kwindowsystem.h>
 #endif
 
-#define DEBUG_BACKGROUND 0
-
-ShapeCornersEffect::ShapeCornersEffect() : KWin::OffscreenEffect()
+ShapeCornersEffect::ShapeCornersEffect()
+#if KWIN_EFFECT_API_VERSION >= 236
+    : KWin::OffscreenEffect()
+#else
+    : KWin::DeformEffect()
+#endif
 {
     if(m_shaderManager.IsValid()) {
 #if KWIN_EFFECT_API_VERSION >= 235
@@ -169,14 +172,24 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
 #endif
             )
     {
-        OffscreenEffect::drawWindow(w, mask, region, data);
+#if KWIN_EFFECT_API_VERSION >= 236
+        OffscreenEffect::
+#else
+        DeformEffect::
+#endif
+            drawWindow(w, mask, region, data);
         return;
     }
 
     m_shaderManager.Bind(w, m_config);
     glActiveTexture(GL_TEXTURE0);
 
-    OffscreenEffect::drawWindow(w, mask, region, data);
+#if KWIN_EFFECT_API_VERSION >= 236
+    OffscreenEffect::
+#else
+    DeformEffect::
+#endif
+        drawWindow(w, mask, region, data);
 
     m_shaderManager.Unbind();
 }

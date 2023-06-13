@@ -20,10 +20,16 @@
 #ifndef SHAPECORNERS_H
 #define SHAPECORNERS_H
 
-#include <kwinoffscreeneffect.h>
+#include <kwineffects.h>
 #include "shapecorners_shader.h"
 
+#if KWIN_EFFECT_API_VERSION >= 236
+#include <kwinoffscreeneffect.h>
 class Q_DECL_EXPORT ShapeCornersEffect : public KWin::OffscreenEffect
+#else
+#include <kwindeformeffect.h>
+class Q_DECL_EXPORT ShapeCornersEffect : public KWin::DeformEffect
+#endif
 {
     Q_OBJECT
 public:
