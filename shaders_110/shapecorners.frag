@@ -62,7 +62,7 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 center, bool isTopCorner) {
 
 void main(void)
 {
-    vec4 tex = texture2D(sampler, texcoord0);
+    vec4 tex = texture2D(front, texcoord0);
     vec2 coord0 = vec2(texcoord0.x * windowExpandedSize.x - windowTopLeft.x,
                   (1.0-texcoord0.y)* windowExpandedSize.y - windowTopLeft.y);
 

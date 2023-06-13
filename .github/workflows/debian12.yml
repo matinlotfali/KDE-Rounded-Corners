@@ -1,4 +1,4 @@
-name: Debian 11
+name: Debian 12
 
 on:
   push:
