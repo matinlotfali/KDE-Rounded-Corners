@@ -28,7 +28,7 @@
 
 #define DEBUG_BACKGROUND 0
 
-ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect()
+ShapeCornersEffect::ShapeCornersEffect() : KWin::OffscreenEffect()
 {
     if(m_shaderManager.IsValid()) {
 #if KWIN_EFFECT_API_VERSION >= 235
@@ -41,8 +41,6 @@ ShapeCornersEffect::ShapeCornersEffect() : KWin::Effect()
                 windowAdded(win);
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
         connect(KWin::effects, &KWin::EffectsHandler::windowClosed, this, &ShapeCornersEffect::windowRemoved);
-        connect(KWin::effects, &KWin::EffectsHandler::windowActivated, this,&ShapeCornersEffect::windowGetBackground);
-        connect(KWin::effects, &KWin::EffectsHandler::windowFrameGeometryChanged, this,&ShapeCornersEffect::windowGetBackground);
     }
     m_config.Load();
 }
@@ -68,12 +66,16 @@ ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
             || w->windowClass().contains("latte-dock", Qt::CaseInsensitive)
             || w->windowClass().contains("telegram", Qt::CaseInsensitive)))
         return;
-    m_managed.insert(w, nullptr);
+    m_managed.insert(w);
+
+    redirect(w);
+    setShader(w, m_shaderManager.GetShader().get());
 }
 
 void ShapeCornersEffect::windowRemoved(KWin::EffectWindow *w)
 {
     m_managed.remove(w);
+    unredirect(w);
 }
 
 void
@@ -124,97 +126,24 @@ void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePa
 #endif
             )
     {
-        KWin::effects->prePaintWindow(w, data, time);
+        Effect::prePaintWindow(w, data, time);
         return;
     }
 
-    const auto geo = w->frameGeometry();
+#if KWIN_EFFECT_API_VERSION >= 234
+    const qreal scale = KWin::effects->renderTargetScale();
+#else
+    const qreal scale = 1;
+#endif
+    const QRectF geo = w->frameGeometry() * scale;
+
+
 #if KWIN_EFFECT_API_VERSION >= 234
     data.opaque -= toRect(geo);
 #endif
     data.paint += toRect(geo);
-    KWin::effects->prePaintWindow(w, data, time);
-}
 
-void
-ShapeCornersEffect::paintWindow(KWin::EffectWindow *w, int mask, QRegion region, KWin::WindowPaintData &data)
-{
-    if (!m_shaderManager.IsValid()
-            || !m_managed.contains(w)
-            || isMaximized(w)
-            || mask & PAINT_WINDOW_TRANSFORMED
-#if KWIN_EFFECT_API_VERSION < 234
-            || !w->isPaintingEnabled()
-#elif KWIN_EFFECT_API_VERSION < 233
-            || data.quads.isTransformed()
-            || !hasShadow(data.quads)
-#endif
-            )
-    {
-        KWin::effects->paintWindow(w, mask, region, data);
-        return;
-    }
-
-    const bool clipping = region != KWin::infiniteRegion();
-#if KWIN_EFFECT_API_VERSION >= 234
-    const qreal scale = KWin::effects->renderTargetScale();
-    const QRectF renderRect = KWin::effects->renderTargetRect() * scale;
-    const QRegion clipRegion = clipping ? KWin::effects->mapToRenderTarget(region) : KWin::infiniteRegion();
-#else
-    const qreal scale = 1;
-    const QRectF renderRect = {0, 0, 0, 0};
-    const QRegion clipRegion = region;
-#endif
-    const QRectF geo = w->frameGeometry() * scale;
-
-    //copy the background
-    if(!m_managed[w]) {
-        m_managed[w].reset(new KWin::GLTexture(GL_RGBA8, geo.width(), geo.height()));
-        m_managed[w]->bind();
-        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0,
-                            geo.x() - renderRect.x(),
-                            renderRect.height() - (geo.y() - renderRect.y() + geo.height()),
-                            geo.width(), geo.height());
-        m_managed[w]->unbind();
-    }
-
-    KWin::effects->paintWindow(w, mask, region, data);
-
-    //'shape' the corners
-    if (clipping) {
-        glEnable(GL_SCISSOR_TEST);
-    }
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    {
-        QMatrix4x4 mvp;
-        mvp.ortho(0, renderRect.width(), renderRect.height(), 0, 0, 65535);
-        mvp.translate(geo.x()-renderRect.x(), geo.y()-renderRect.y());
-        m_shaderManager.Bind(mvp, w, m_config);
-        m_managed[w]->bind();
-        m_managed[w]->render(clipRegion, toRect(geo), true);
-        m_managed[w]->unbind();
-        m_shaderManager.Unbind();
-    }
-    glDisable(GL_BLEND);
-    if (clipping) {
-        glDisable(GL_SCISSOR_TEST);
-    }
-
-#if DEBUG_BACKGROUND == 1
-    if (KWin::effects->activeWindow() == w) {
-        auto s = KWin::ShaderManager::instance()->pushShader(KWin::ShaderTrait::MapTexture);
-        const QRectF screenRect = w->screen()->geometry() * scale;
-        QMatrix4x4 mvp;
-        mvp.ortho(0, renderRect.width(), renderRect.height(), 0, 0, 65535);
-        mvp.translate(screenRect.x()-renderRect.x(), screenRect.y()-renderRect.y());
-        s->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
-        m_managed[w]->bind();
-        m_managed[w]->render(region, toRect(QRect(0,0,500,500)*scale));
-        m_managed[w]->unbind();
-        KWin::ShaderManager::instance()->popShader();
-    }
-#endif
+    Effect::prePaintWindow(w, data, time);
 }
 
 bool ShapeCornersEffect::supported()
@@ -226,7 +155,28 @@ bool ShapeCornersEffect::supported()
 #endif
 }
 
-void ShapeCornersEffect::windowGetBackground(KWin::EffectWindow *window) {
-    if(m_managed.contains(window))
-        m_managed[window].reset();
+void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion &region,
+                                    KWin::WindowPaintData &data) {
+
+    if (!m_shaderManager.IsValid()
+        || !m_managed.contains(w)
+        || isMaximized(w)
+#if KWIN_EFFECT_API_VERSION < 234
+        || !w->isPaintingEnabled()
+#elif KWIN_EFFECT_API_VERSION < 233
+        || data.quads.isTransformed()
+        || !hasShadow(data.quads)
+#endif
+            )
+    {
+        OffscreenEffect::drawWindow(w, mask, region, data);
+        return;
+    }
+
+    m_shaderManager.Bind(w, m_config);
+    glActiveTexture(GL_TEXTURE0);
+
+    OffscreenEffect::drawWindow(w, mask, region, data);
+
+    m_shaderManager.Unbind();
 }

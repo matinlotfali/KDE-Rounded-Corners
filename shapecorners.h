@@ -20,10 +20,10 @@
 #ifndef SHAPECORNERS_H
 #define SHAPECORNERS_H
 
-#include <kwineffects.h>
-#include "ShaderManager.h"
+#include <kwinoffscreeneffect.h>
+#include "shapecorners_shader.h"
 
-class Q_DECL_EXPORT ShapeCornersEffect : public KWin::Effect
+class Q_DECL_EXPORT ShapeCornersEffect : public KWin::OffscreenEffect
 {
     Q_OBJECT
 public:
@@ -40,17 +40,17 @@ public:
 #else
     void prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, int time) override;
 #endif
-    void paintWindow(KWin::EffectWindow* w, int mask, QRegion region, KWin::WindowPaintData& data) override;
+    void drawWindow(KWin::EffectWindow *window, int mask, const QRegion &region, KWin::WindowPaintData &data) override;
+
     int requestedEffectChainPosition() const override { return 99; }
 
 protected Q_SLOTS:
     void windowAdded(KWin::EffectWindow *window);
     void windowRemoved(KWin::EffectWindow *window);
-    void windowGetBackground(KWin::EffectWindow *window);
 
 private:
-    QMap<KWin::EffectWindow*, QSharedPointer<KWin::GLTexture>> m_managed;
-    ShaderManager m_shaderManager;
+    QSet<KWin::EffectWindow*> m_managed;
+    ShapeCornersShader m_shaderManager;
     ConfigModel m_config;
 };
 
