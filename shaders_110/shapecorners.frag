@@ -40,7 +40,7 @@ vec4 shadowCorner(float distance_from_center, bool isTopCorner) {
 
 vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 center, bool isTopCorner) {
     float distance_from_center = distance(coord0, center);
-    vec4 c = isDrawingShadows() ? shadowCorner(distance_from_center, backColor, isTopCorner) : backColor;
+    vec4 c = isDrawingShadows() ? shadowCorner(distance_from_center, isTopCorner) : vec4(0.0,0.0,0.0,0.0);
 
     if(isDrawingOutline()) {
         vec4 outlineOverlay = vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), 1.0);
