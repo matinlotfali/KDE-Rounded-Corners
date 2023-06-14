@@ -28,7 +28,7 @@ jobs:
       run: yes | pacman -Syu
 
     - name: Install Dependencies
-      run: yes | pacman -S git cmake extra-cmake-modules qt5-tools kwin pipewire-media-session
+      run: yes | pacman -S git cmake extra-cmake-modules qt5-tools kwin wireplumber
 
     - name: Check out repository
       uses: actions/checkout@v3
