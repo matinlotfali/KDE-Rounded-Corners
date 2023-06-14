@@ -110,19 +110,24 @@ void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePa
     }
 
 #if KWIN_EFFECT_API_VERSION >= 234
-    const qreal scale = KWin::effects->renderTargetScale();
+    const auto geo = w->frameGeometry() * KWin::effects->renderTargetScale();
+    data.opaque -= QRect(geo.x(), geo.y(), m_config.m_size, m_config.m_size);
+    data.opaque -= QRect(geo.x()+geo.width()-m_config.m_size, geo.y(), m_config.m_size, m_config.m_size);
+    data.opaque -= QRect(geo.x(), geo.y()+geo.height()-m_config.m_size, m_config.m_size, m_config.m_size);
+    data.opaque -= QRect(geo.x()+geo.width()-m_config.m_size, geo.y()+geo.height()-m_config.m_size, m_config.m_size, m_config.m_size);
 #else
-    const qreal scale = 1;
+    const auto& geo = w->frameGeometry();
 #endif
-    const QRectF geo = w->frameGeometry() * scale;
+    data.paint += QRect(geo.x(), geo.y(), m_config.m_size, m_config.m_size);
+    data.paint += QRect(geo.x()+geo.width()-m_config.m_size, geo.y(), m_config.m_size, m_config.m_size);
+    data.paint += QRect(geo.x(), geo.y()+geo.height()-m_config.m_size, m_config.m_size, m_config.m_size);
+    data.paint += QRect(geo.x()+geo.width()-m_config.m_size, geo.y()+geo.height()-m_config.m_size, m_config.m_size, m_config.m_size);
 
-
-#if KWIN_EFFECT_API_VERSION >= 234
-    data.opaque -= toRect(geo);
+#if KWIN_EFFECT_API_VERSION >= 236
+    OffscreenEffect::prePaintWindow(w, data, time);
+#else
+    DeformEffect::prePaintWindow(w, data, time);
 #endif
-    data.paint += toRect(geo);
-
-    Effect::prePaintWindow(w, data, time);
 }
 
 bool ShapeCornersEffect::supported()
