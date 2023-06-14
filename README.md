@@ -5,17 +5,17 @@ This effect rounds the corners of your windows and adds an outline around them w
 This effect started as a fork of [shapecorners](https://sourceforge.net/projects/shapecorners/) with some additional contributions in [Alex47's project](https://github.com/alex47/KDE-Rounded-Corners), then I optimized and reimplemented the effect with shaders.
 
 #### Tested on:
-- ![Kubuntu 22.04 Jammy](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2204.yml?label=Kubuntu%2022.04%20Jammy&logo=kubuntu&branch=master) 
+- ![Kubuntu 22.04 Jammy](https://img.shields.io/badge/-not_supported-red?label=Kubuntu%2022.04%20Jammy&logo=kubuntu&branch=master) 
 ![](https://img.shields.io/badge/KWinEffects-v233-lightgrey)
 - ![Kubuntu 22.04 Jammy + Backports](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2204-backports.yml?label=Kubuntu%2022.04%20Jammy%20+%20Backports&logo=kubuntu&branch=master) 
 ![](https://img.shields.io/badge/KWinEffects-v234-lightgrey)
+- ![Debian 12 Bookworm](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/debian12.yml?branch=master&label=Debian%2012%20Bookworm&logo=debian)
+    ![](https://img.shields.io/badge/KWinEffects-v236-lightgrey)
 - ![KDE Neon (Stable)](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/neon.yml?branch=master&label=KDE%20Neon%20%28Stable%29&logo=kde&logoColor=white)
 ![](https://img.shields.io/badge/KWinEffects-v236-lightgrey)
 - ![KDE Neon (Unstable)](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/neon-unstable.yml?branch=master&label=KDE%20Neon%20%28Unstable%29&logo=kde&logoColor=white)
 ![](https://img.shields.io/badge/KWinEffects-v237-lightgrey)
-- ![Debian 12 Bookworm](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/debian12.yml?branch=master&label=Debian%2012%20Bookworm&logo=debian) 
-![](https://img.shields.io/badge/KWinEffects-v236-lightgrey)
-- [![Arch](https://img.shields.io/badge/-manual-lightgrey?label=Arch%20Linux&logo=archlinux&logoColor=white) ![](https://img.shields.io/aur/maintainer/kde-rounded-corners?label=AUR%20Maintainer) ![](https://img.shields.io/aur/votes/kde-rounded-corners?label=AUR%20Votes)](https://aur.archlinux.org/packages/kde-rounded-corners)
+- [![Arch](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/arch.yml?branch=master&label=Arch%20Linux&logo=archlinux&logoColor=white) ![](https://img.shields.io/aur/maintainer/kwin-effect-rounded-corners-git?label=AUR%20Maintainer) ![](https://img.shields.io/aur/votes/kwin-effect-rounded-corners-git?label=AUR%20Votes)](https://aur.archlinux.org/packages/kwin-effect-rounded-corners-git)
 
 ![After](https://raw.githubusercontent.com/matinlotfali/KDE-Rounded-Corners/master/screenshots/outlines.png)
 
