@@ -5,6 +5,8 @@ on:
     branches: [ master, latest-shapecorners-code, kwin_5.24 ]
   pull_request:
     branches: [ master ]
+  schedule:
+      - cron: "0 0 * * *"
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -33,9 +35,6 @@ jobs:
 
     - name: Add Kubuntu Backports PPA
       run: sudo add-apt-repository -y ppa:kubuntu-ppa/backports-extra
-
-    - name: Refresh Backports Packages
-      run: sudo apt update && sudo apt -y dist-upgrade
 
     - name: Install Dependencies
       run: sudo apt install -y gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5globalaccel-dev libkf5notifications-dev kwin-dev

@@ -5,6 +5,8 @@ on:
     branches: [ master, latest-shapecorners-code, kwin_5.23, kwin_5.24, kwin_5.25 ]
   pull_request:
     branches: [ master ]
+  schedule:
+    - cron: "0 0 * * *"
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -27,6 +29,7 @@ jobs:
 
     - name: Refresh KDE Neon Packages
       run: apt update && apt -y dist-upgrade
+      continue-on-error: true
 
     - name: Install Dependencies
       run: apt -y install cmake g++ gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5globalaccel-dev libkf5notifications-dev kwin-dev

@@ -1,24 +1,26 @@
-name: Debian 11
+name: Debian 12
 
 on:
   push:
     branches: [ master, latest-shapecorners-code, kwin_5.23, kwin_5.24, kwin_5.25 ]
   pull_request:
     branches: [ master ]
+  schedule:
+    - cron: "0 0 * * *"
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
 
 jobs:
-  debian-11:
+  debian-12:
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
     # cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-latest
     container:
-      image: debian:11
+      image: debian:12
       options: --user root
 
     steps:
@@ -27,6 +29,7 @@ jobs:
 
     - name: Refresh Debian Packages
       run: apt update && apt -y dist-upgrade
+      continue-on-error: true
 
     - name: Install Dependencies
       run: apt -y install cmake g++ gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5globalaccel-dev libkf5notifications-dev kwin-dev

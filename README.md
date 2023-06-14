@@ -5,17 +5,17 @@ This effect rounds the corners of your windows and adds an outline around them w
 This effect started as a fork of [shapecorners](https://sourceforge.net/projects/shapecorners/) with some additional contributions in [Alex47's project](https://github.com/alex47/KDE-Rounded-Corners), then I optimized and reimplemented the effect with shaders.
 
 #### Tested on:
-- ![Kubuntu 22.04 Jammy](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2204.yml?label=Kubuntu%2022.04%20Jammy&logo=kubuntu&branch=master) 
+- ![Kubuntu 22.04 Jammy](https://img.shields.io/badge/-not_supported-red?label=Kubuntu%2022.04%20Jammy&logo=kubuntu&branch=master) 
 ![](https://img.shields.io/badge/KWinEffects-v233-lightgrey)
 - ![Kubuntu 22.04 Jammy + Backports](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2204-backports.yml?label=Kubuntu%2022.04%20Jammy%20+%20Backports&logo=kubuntu&branch=master) 
 ![](https://img.shields.io/badge/KWinEffects-v234-lightgrey)
+- ![Debian 12 Bookworm](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/debian12.yml?branch=master&label=Debian%2012%20Bookworm&logo=debian)
+    ![](https://img.shields.io/badge/KWinEffects-v236-lightgrey)
 - ![KDE Neon (Stable)](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/neon.yml?branch=master&label=KDE%20Neon%20%28Stable%29&logo=kde&logoColor=white)
-![](https://img.shields.io/badge/KWinEffects-v235-lightgrey)
-- ![KDE Neon (Unstable)](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/neon-unstable.yml?branch=master&label=KDE%20Neon%20%28Unstable%29&logo=kde&logoColor=white)
 ![](https://img.shields.io/badge/KWinEffects-v236-lightgrey)
-- ![Debian 11 Bullseye](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/debian11.yml?branch=master&label=Debian%2011%20Bullseye&logo=debian) 
-![](https://img.shields.io/badge/KWinEffects-v232-lightgrey)
-- [![Arch](https://img.shields.io/badge/-manual-lightgrey?label=Arch%20Linux&logo=archlinux&logoColor=white) ![](https://img.shields.io/aur/maintainer/kde-rounded-corners?label=AUR%20Maintainer) ![](https://img.shields.io/aur/votes/kde-rounded-corners?label=AUR%20Votes)](https://aur.archlinux.org/packages/kde-rounded-corners)
+- ![KDE Neon (Unstable)](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/neon-unstable.yml?branch=master&label=KDE%20Neon%20%28Unstable%29&logo=kde&logoColor=white)
+![](https://img.shields.io/badge/KWinEffects-v237-lightgrey)
+- [![Arch](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/arch.yml?branch=master&label=Arch%20Linux&logo=archlinux&logoColor=white) ![](https://img.shields.io/aur/maintainer/kwin-effect-rounded-corners-git?label=AUR%20Maintainer) ![](https://img.shields.io/aur/votes/kwin-effect-rounded-corners-git?label=AUR%20Votes)](https://aur.archlinux.org/packages/kwin-effect-rounded-corners-git)
 
 ![After](https://raw.githubusercontent.com/matinlotfali/KDE-Rounded-Corners/master/screenshots/outlines.png)
 
@@ -24,14 +24,14 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 - Compatibility of the effect with other effects like Wobbly windows - by [matinlotfali](https://github.com/matinlotfali)
 - Optimize the effect to render once instead of 5 times - by [matinlotfali](https://github.com/matinlotfali) - see [#49](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/49)
 - Reimplementation with shaders to include shadows at corners and an outline - by [matinlotfali](https://github.com/matinlotfali)
-- Compatiblity with KWin from versions 5.23 to 5.26 - by [matinlotfali](https://github.com/matinlotfali)
+- Compatibility with KWin from versions 5.23 to 5.27 - by [matinlotfali](https://github.com/matinlotfali)
 - Disable effect when window gets maximized - by [matinlotfali](https://github.com/matinlotfali)
 - Cleanups for the plugin logic, remove unneeded dependencies from CMakeLists.txt file - by [alex1701c](https://github.com/alex1701c)
 - Separate outline color for active and inactive windows - by [OrkenWhite](https://github.com/OrkenWhite)
 
 # How to build from source code:
 
-You need to install development packages for your distrobution first:
+You need to install development packages for your distribution first:
 
 - **Debian based (Ubuntu, Kubuntu, KDE Neon)** - by [alex47](https://github.com/alex47):
   ```
@@ -46,9 +46,9 @@ You need to install development packages for your distrobution first:
   sudo pacman -S git cmake extra-cmake-modules base-devel
   yay -S qt5-tools
   ```
-  or AUR package by [Shaurya-Kalia](https://github.com/Shaurya-Kalia)  
+  or AUR package by [xiota](https://aur.archlinux.org/account/xiota)  
   ```
-  sudo pamac build kde-rounded-corners
+  sudo pamac build kwin-effect-rounded-corners-git
   ```
 - **OpenSUSE** - by [mathiasgredal](https://github.com/mathiasgredal) and [Richardsause](https://github.com/Richardsause)
   ```
