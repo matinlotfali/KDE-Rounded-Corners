@@ -5,6 +5,8 @@ on:
     branches: [ master, latest-shapecorners-code, kwin_5.24 ]
   pull_request:
     branches: [ master ]
+  schedule:
+      - cron: "0 0 * * *"
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
