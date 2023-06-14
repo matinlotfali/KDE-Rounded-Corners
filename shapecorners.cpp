@@ -137,6 +137,7 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
         || isMaximized(w)
         )
     {
+        unredirect(w);
 #if KWIN_EFFECT_API_VERSION >= 236
         OffscreenEffect::drawWindow(w, mask, region, data);
 #else
@@ -145,6 +146,8 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
         return;
     }
 
+    redirect(w);
+    setShader(w, m_shaderManager.GetShader().get());
     m_shaderManager.Bind(w, m_config);
     glActiveTexture(GL_TEXTURE0);
 
