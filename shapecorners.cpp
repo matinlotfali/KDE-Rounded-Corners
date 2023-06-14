@@ -115,6 +115,7 @@ void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePa
     data.opaque -= QRect(geo.x()+geo.width()-m_config.m_size, geo.y(), m_config.m_size, m_config.m_size);
     data.opaque -= QRect(geo.x(), geo.y()+geo.height()-m_config.m_size, m_config.m_size, m_config.m_size);
     data.opaque -= QRect(geo.x()+geo.width()-m_config.m_size, geo.y()+geo.height()-m_config.m_size, m_config.m_size, m_config.m_size);
+    data.setTranslucent();
 #else
     const auto& geo = w->frameGeometry();
 #endif
