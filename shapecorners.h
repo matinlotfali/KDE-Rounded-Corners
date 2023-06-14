@@ -41,11 +41,7 @@ public:
 
     void reconfigure(ReconfigureFlags flags) override;
 
-#if KWIN_EFFECT_API_VERSION >= 233
     void prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time) override;
-#else
-    void prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, int time) override;
-#endif
     void drawWindow(KWin::EffectWindow *window, int mask, const QRegion &region, KWin::WindowPaintData &data) override;
 
     int requestedEffectChainPosition() const override { return 99; }

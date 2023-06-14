@@ -88,46 +88,22 @@ ShapeCornersEffect::reconfigure(ReconfigureFlags flags)
     m_config.Load();
 }
 
-#if KWIN_EFFECT_API_VERSION < 233
-static bool hasShadow(KWin::WindowQuadList &qds)
-{
-    for (int i = 0; i < qds.count(); ++i)
-        if (qds.at(i).type() == KWin::WindowQuadShadow)
-            return true;
-    return false;
-}
-#endif
-
 bool isMaximized(KWin::EffectWindow *w) {
-#if KWIN_EFFECT_API_VERSION >= 233
     auto screenGeometry = KWin::effects->findScreen(w->screen()->name())->geometry();
     return (w->x() == screenGeometry.x() && w->width() == screenGeometry.width()) ||
            (w->y() == screenGeometry.y() && w->height() == screenGeometry.height());
-#else
-    return w->isFullScreen();
-#endif
 }
 QRectF operator *(QRect r, qreal scale) { return {r.x() * scale, r.y() * scale, r.width() * scale, r.height() * scale}; }
 QRectF operator *(QRectF r, qreal scale) { return {r.x() * scale, r.y() * scale, r.width() * scale, r.height() * scale}; }
 QRect toRect(const QRectF& r) { return {(int)r.x(), (int)r.y(), (int)r.width(), (int)r.height()}; }
 const QRect& toRect(const QRect& r) { return r; }
 
-#if KWIN_EFFECT_API_VERSION >= 233
 void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
-#else
-void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, int time)
-#endif
 {
     if (!m_shaderManager.IsValid()
             || !m_managed.contains(w)
             || isMaximized(w)
-#if KWIN_EFFECT_API_VERSION < 234
-            || !w->isPaintingEnabled()
-#elif KWIN_EFFECT_API_VERSION < 233
-            || data.quads.isTransformed()
-            || !hasShadow(data.quads)
-#endif
-            )
+        )
     {
         Effect::prePaintWindow(w, data, time);
         return;
@@ -151,33 +127,21 @@ void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePa
 
 bool ShapeCornersEffect::supported()
 {
-#if KWIN_EFFECT_API_VERSION < 234
-    return KWin::effects->isOpenGLCompositing() && KWin::GLRenderTarget::supported();
-#else
     return KWin::effects->isOpenGLCompositing();
-#endif
 }
 
 void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion &region,
                                     KWin::WindowPaintData &data) {
-
     if (!m_shaderManager.IsValid()
         || !m_managed.contains(w)
         || isMaximized(w)
-#if KWIN_EFFECT_API_VERSION < 234
-        || !w->isPaintingEnabled()
-#elif KWIN_EFFECT_API_VERSION < 233
-        || data.quads.isTransformed()
-        || !hasShadow(data.quads)
-#endif
-            )
+        )
     {
 #if KWIN_EFFECT_API_VERSION >= 236
-        OffscreenEffect::
+        OffscreenEffect::drawWindow(w, mask, region, data);
 #else
-        DeformEffect::
+        DeformEffect::drawWindow(w, mask, region, data);
 #endif
-            drawWindow(w, mask, region, data);
         return;
     }
 
@@ -185,11 +149,9 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
     glActiveTexture(GL_TEXTURE0);
 
 #if KWIN_EFFECT_API_VERSION >= 236
-    OffscreenEffect::
+    OffscreenEffect::drawWindow(w, mask, region, data);
 #else
-    DeformEffect::
+    DeformEffect::drawWindow(w, mask, region, data);
 #endif
-        drawWindow(w, mask, region, data);
-
     m_shaderManager.Unbind();
 }
