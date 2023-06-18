@@ -20,7 +20,7 @@ bool isDrawingOutline() { return  outlineColor.a > 0.0 && outlineThickness > 0.0
 
 vec4 shadowCorner(float distance_from_center) {
     float percent = -distance_from_center/shadowSize + 1.0;
-    if (percent < 0)
+    if (percent < 0.0)
         return vec4(0.0, 0.0, 0.0, 0.0);
     else
         return vec4(shadowColor.rgb, percent);
