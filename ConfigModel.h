@@ -14,8 +14,11 @@ public:
     void Save() const;
 
     float  m_size,
+           m_shadowSize,
+           m_inactiveShadowSize,
            m_outlineThickness;
     QColor m_shadowColor,
+           m_inactiveShadowColor,
            m_outlineColor,
 	       m_inactiveOutlineColor;
 };

@@ -37,7 +37,6 @@ ShapeCornersConfig::ShapeCornersConfig(QWidget* parent, const QVariantList& args
     : KCModule(parent, args)
     , ui(new ConfigDialog(this))
 {
-    setAboutData(new KAboutData("ShapeCorners","ShapeCorners", "git"));
     auto* layout = new QVBoxLayout(this);
     layout->addWidget(ui);
     setLayout(layout);
@@ -51,10 +50,15 @@ ShapeCornersConfig::load()
     KCModule::load();
     m_config.Load();
     ui->roundness->setValue(m_config.m_size);
+
     QColor shadowColor = m_config.m_shadowColor;
     ui->drawShadowEnabled->setChecked(shadowColor.alpha() > 0);
     shadowColor.setAlpha(255);
-    ui->shadowColor->setColor(shadowColor);
+    ui->activeShadowColor->setColor(m_config.m_shadowColor);
+    ui->inactiveShadowColor->setColor(m_config.m_inactiveShadowColor);
+    ui->activeShadowSize->setValue(m_config.m_shadowSize);
+    ui->inactiveShadowSize->setValue(m_config.m_inactiveShadowSize);
+
     QColor outlineColor = m_config.m_outlineColor;
     QColor inactiveOutlineColor = m_config.m_inactiveOutlineColor;
     ui->drawOutlineEnabled->setChecked(outlineColor.alpha() > 0);
@@ -69,8 +73,14 @@ ShapeCornersConfig::save()
 {
     KCModule::save();
     m_config.m_size = ui->roundness->value();
-    m_config.m_shadowColor = ui->shadowColor->color();
+
+    m_config.m_shadowColor = ui->activeShadowColor->color();
     m_config.m_shadowColor.setAlpha(ui->drawShadowEnabled->isChecked()? 255: 0);
+    m_config.m_shadowSize = ui->activeShadowSize->value();
+    m_config.m_inactiveShadowColor = ui->inactiveShadowColor->color();
+    m_config.m_inactiveShadowColor.setAlpha(ui->drawShadowEnabled->isChecked()? 255: 0);
+    m_config.m_inactiveShadowSize = ui->inactiveShadowSize->value();
+
     m_config.m_outlineColor = ui->outlineColor->color();
     m_config.m_inactiveOutlineColor = ui->inactiveOutlineColor->color();
     if(!ui->drawOutlineEnabled->isChecked()){
@@ -91,11 +101,17 @@ void
 ShapeCornersConfig::defaults()
 {
     KCModule::defaults();
+    m_config = ConfigModel();
     ui->roundness->setValue(m_config.m_size);
+
     QColor shadowColor = m_config.m_shadowColor;
     ui->drawShadowEnabled->setChecked(shadowColor.alpha() > 0);
     shadowColor.setAlpha(255);
-    ui->shadowColor->setColor(shadowColor);
+    ui->activeShadowColor->setColor(m_config.m_shadowColor);
+    ui->inactiveShadowColor->setColor(m_config.m_inactiveShadowColor);
+    ui->activeShadowSize->setValue(m_config.m_shadowSize);
+    ui->inactiveShadowSize->setValue(m_config.m_inactiveShadowSize);
+
     QColor outlineColor = m_config.m_outlineColor;
     QColor inactiveOutlineColor = m_config.m_inactiveOutlineColor;
     ui->drawOutlineEnabled->setChecked(outlineColor.alpha() > 0);
