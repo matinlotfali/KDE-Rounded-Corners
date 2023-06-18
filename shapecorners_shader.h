@@ -28,12 +28,12 @@ public:
 private:
     std::unique_ptr<KWin::GLShader> m_shader;
     KWin::ShaderManager* m_manager;
-    int m_shader_windowActive = 0;
     int m_shader_windowSize = 0;
     int m_shader_windowExpandedSize = 0;
     int m_shader_windowTopLeft = 0;
     int m_shader_windowHasDecoration = 0;
     int m_shader_shadowColor = 0;
+    int m_shader_shadowSize = 0;
     int m_shader_radius = 0;
     int m_shader_outlineColor = 0;
     int m_shader_outlineThickness = 0;

@@ -28,12 +28,12 @@ ShapeCornersShader::ShapeCornersShader():
 //        qDebug() << frag;        
         if (m_shader->isValid())
         {
-            m_shader_windowActive = m_shader->uniformLocation("windowActive");
             m_shader_windowHasDecoration = m_shader->uniformLocation("windowHasDecoration");
             m_shader_windowSize = m_shader->uniformLocation("windowSize");
             m_shader_windowExpandedSize = m_shader->uniformLocation("windowExpandedSize");
             m_shader_windowTopLeft = m_shader->uniformLocation("windowTopLeft");
             m_shader_shadowColor = m_shader->uniformLocation("shadowColor");
+            m_shader_shadowSize = m_shader->uniformLocation("shadowSize");
             m_shader_radius = m_shader->uniformLocation("radius");
             m_shader_outlineColor = m_shader->uniformLocation("outlineColor");
             m_shader_outlineThickness = m_shader->uniformLocation("outlineThickness");
@@ -62,12 +62,12 @@ ShapeCornersShader::Bind(KWin::EffectWindow *w, const ConfigModel& config) const
     auto xy = QVector2D((w->frameGeometry().left() - w->expandedGeometry().left()),
                         (w->frameGeometry().top() - w->expandedGeometry().top()));
     m_manager->pushShader(m_shader.get());
-    m_shader->setUniform(m_shader_windowActive, isWindowActive(w));
     m_shader->setUniform(m_shader_windowSize, QVector2D(w->frameGeometry().width(), w->frameGeometry().height()));
     m_shader->setUniform(m_shader_windowExpandedSize, QVector2D(w->expandedGeometry().width(), w->expandedGeometry().height()));
     m_shader->setUniform(m_shader_windowTopLeft, xy);
     m_shader->setUniform(m_shader_windowHasDecoration, w->hasDecoration());
-    m_shader->setUniform(m_shader_shadowColor, w->frameGeometry() != w->expandedGeometry()? config.m_shadowColor: QColor(Qt::transparent));
+    m_shader->setUniform(m_shader_shadowColor, isWindowActive(w) ? config.m_shadowColor: config.m_inactiveShadowColor);
+    m_shader->setUniform(m_shader_shadowSize, isWindowActive(w) ? config.m_shadowSize: config.m_inactiveShadowSize);
     m_shader->setUniform(m_shader_radius, config.m_size);
     m_shader->setUniform(m_shader_outlineColor, isWindowActive(w) ? config.m_outlineColor : config.m_inactiveOutlineColor);
     m_shader->setUniform(m_shader_outlineThickness, config.m_outlineThickness);

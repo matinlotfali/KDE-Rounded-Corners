@@ -10,6 +10,12 @@
     <height>305</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>400</width>
+    <height>0</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
@@ -29,7 +35,7 @@
         <number>1</number>
        </property>
        <property name="maximum">
-        <number>64</number>
+        <number>50</number>
        </property>
        <property name="pageStep">
         <number>1</number>
@@ -65,7 +71,7 @@
           </item>
           <item row="0" column="1">
            <widget class="KColorButton" name="outlineColor">
-            <property name="alphaChannelEnabled">
+            <property name="alphaChannelEnabled" stdset="0">
              <bool>true</bool>
             </property>
            </widget>
@@ -105,10 +111,10 @@
           </item>
           <item row="1" column="1">
            <widget class="KColorButton" name="inactiveOutlineColor">
-            <property name="alphaChannelEnabled">
-	     <bool>true</bool>
-	    </property>
-	   </widget>
+            <property name="alphaChannelEnabled" stdset="0">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -118,7 +124,7 @@
      <item>
       <widget class="QGroupBox" name="drawShadowEnabled">
        <property name="title">
-        <string>Corner Shadows</string>
+        <string>Shadows</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -130,14 +136,68 @@
            <set>Qt::AlignHCenter|Qt::AlignTop</set>
           </property>
           <item row="0" column="0">
-           <widget class="QLabel" name="shadowColorLabel">
+           <widget class="QLabel" name="activeShadowColorLabel">
             <property name="text">
-             <string>Shadow Color</string>
+             <string>Active Window Shadow Color</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="KColorButton" name="shadowColor"/>
+           <widget class="KColorButton" name="activeShadowColor"/>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSlider" name="activeShadowSize">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>50</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QSlider" name="inactiveShadowSize">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>50</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="activeShadowSizeLabel">
+            <property name="text">
+             <string>Active Window Shadow Size</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="inactiveShadowSizeLabel">
+            <property name="text">
+             <string>Inactive Window Shadow Size</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="inactiveShadowColorLabel">
+            <property name="text">
+             <string>Inactive Window Shadow Color</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="KColorButton" name="inactiveShadowColor">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
