@@ -99,7 +99,11 @@ void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePa
     }
 
 #if KWIN_EFFECT_API_VERSION >= 234
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    const auto geo = w->frameGeometry();
+#else
     const auto geo = w->frameGeometry() * KWin::effects->renderTargetScale();
+#endif
     data.opaque -= QRect(geo.x(), geo.y(), m_config.m_size, m_config.m_size);
     data.opaque -= QRect(geo.x()+geo.width()-m_config.m_size, geo.y(), m_config.m_size, m_config.m_size);
     data.opaque -= QRect(geo.x(), geo.y()+geo.height()-m_config.m_size, m_config.m_size, m_config.m_size);
@@ -125,8 +129,12 @@ bool ShapeCornersEffect::supported()
     return KWin::effects->isOpenGLCompositing();
 }
 
-void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion &region,
-                                    KWin::WindowPaintData &data) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+void ShapeCornersEffect::drawWindow(const KWin::RenderTarget &renderTarget, const KWin::RenderViewport& viewport,
+                                    KWin::EffectWindow *w, int mask, const QRegion &region, KWin::WindowPaintData &data) {
+#else
+void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion &region, KWin::WindowPaintData &data) {
+#endif
     if (!m_shaderManager.IsValid()
         || !m_managed.contains(w)
         || isMaximized(w)
@@ -134,7 +142,11 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
     {
         unredirect(w);
 #if KWIN_EFFECT_API_VERSION >= 236
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        OffscreenEffect::drawWindow(renderTarget, viewport, w, mask, region, data);
+#else
         OffscreenEffect::drawWindow(w, mask, region, data);
+#endif
 #else
         DeformEffect::drawWindow(w, mask, region, data);
 #endif
@@ -147,9 +159,13 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
     glActiveTexture(GL_TEXTURE0);
 
 #if KWIN_EFFECT_API_VERSION >= 236
-    OffscreenEffect::drawWindow(w, mask, region, data);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        OffscreenEffect::drawWindow(renderTarget, viewport, w, mask, region, data);
 #else
-    DeformEffect::drawWindow(w, mask, region, data);
+        OffscreenEffect::drawWindow(w, mask, region, data);
+#endif
+#else
+        DeformEffect::drawWindow(w, mask, region, data);
 #endif
     m_shaderManager.Unbind();
 }
