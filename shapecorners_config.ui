@@ -122,12 +122,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="drawShadowEnabled">
+      <widget class="QGroupBox">
        <property name="title">
         <string>Shadows</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>

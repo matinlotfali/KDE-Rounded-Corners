@@ -51,9 +51,6 @@ ShapeCornersConfig::load()
     m_config.Load();
     ui->roundness->setValue(m_config.m_size);
 
-    QColor shadowColor = m_config.m_shadowColor;
-    ui->drawShadowEnabled->setChecked(shadowColor.alpha() > 0);
-    shadowColor.setAlpha(255);
     ui->activeShadowColor->setColor(m_config.m_shadowColor);
     ui->inactiveShadowColor->setColor(m_config.m_inactiveShadowColor);
     ui->activeShadowSize->setValue(m_config.m_shadowSize);
@@ -75,10 +72,8 @@ ShapeCornersConfig::save()
     m_config.m_size = ui->roundness->value();
 
     m_config.m_shadowColor = ui->activeShadowColor->color();
-    m_config.m_shadowColor.setAlpha(ui->drawShadowEnabled->isChecked()? 255: 0);
     m_config.m_shadowSize = ui->activeShadowSize->value();
     m_config.m_inactiveShadowColor = ui->inactiveShadowColor->color();
-    m_config.m_inactiveShadowColor.setAlpha(ui->drawShadowEnabled->isChecked()? 255: 0);
     m_config.m_inactiveShadowSize = ui->inactiveShadowSize->value();
 
     m_config.m_outlineColor = ui->outlineColor->color();
@@ -104,9 +99,6 @@ ShapeCornersConfig::defaults()
     m_config = ConfigModel();
     ui->roundness->setValue(m_config.m_size);
 
-    QColor shadowColor = m_config.m_shadowColor;
-    ui->drawShadowEnabled->setChecked(shadowColor.alpha() > 0);
-    shadowColor.setAlpha(255);
     ui->activeShadowColor->setColor(m_config.m_shadowColor);
     ui->inactiveShadowColor->setColor(m_config.m_inactiveShadowColor);
     ui->activeShadowSize->setValue(m_config.m_shadowSize);
