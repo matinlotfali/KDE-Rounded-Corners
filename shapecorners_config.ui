@@ -122,12 +122,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="drawShadowEnabled">
+      <widget class="QGroupBox">
        <property name="title">
         <string>Shadows</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
@@ -143,7 +140,11 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="KColorButton" name="activeShadowColor"/>
+           <widget class="KColorButton" name="activeShadowColor">
+             <property name="alphaChannelEnabled" stdset="0">
+              <bool>true</bool>
+             </property>
+           </widget>
           </item>
           <item row="1" column="1">
            <widget class="QSlider" name="activeShadowSize">
@@ -194,8 +195,8 @@
           </item>
           <item row="2" column="1">
            <widget class="KColorButton" name="inactiveShadowColor">
-            <property name="text">
-             <string/>
+            <property name="alphaChannelEnabled" stdset="0">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
