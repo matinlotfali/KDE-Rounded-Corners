@@ -1,0 +1,4 @@
+File=options.kcfg
+ClassName=ShapeCornersConfig
+Singleton=true
+Mutators=true

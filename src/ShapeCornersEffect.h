@@ -17,18 +17,17 @@
  *   Boston, MA 02110-1301, USA.
  */
 
-#ifndef SHAPECORNERS_H
-#define SHAPECORNERS_H
+#pragma once
 
 #include <kwineffects.h>
-#include "shapecorners_shader.h"
+#include "ShapeCornersShader.h"
 
 #if KWIN_EFFECT_API_VERSION >= 236
 #include <kwinoffscreeneffect.h>
-class Q_DECL_EXPORT ShapeCornersEffect : public KWin::OffscreenEffect
+class ShapeCornersEffect : public KWin::OffscreenEffect
 #else
 #include <kwindeformeffect.h>
-class Q_DECL_EXPORT ShapeCornersEffect : public KWin::DeformEffect
+class ShapeCornersEffect : public KWin::DeformEffect
 #endif
 {
     Q_OBJECT
@@ -53,8 +52,5 @@ protected Q_SLOTS:
 private:
     QSet<KWin::EffectWindow*> m_managed;
     ShapeCornersShader m_shaderManager;
-    ConfigModel m_config;
 };
-
-#endif //SHAPECORNERS_H
 

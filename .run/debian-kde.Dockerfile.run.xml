@@ -4,7 +4,6 @@
       <settings>
         <option name="imageTag" value="matinlotfali/debian-kde:latest" />
         <option name="buildOnly" value="true" />
-        <option name="containerName" value="debian11-kde" />
         <option name="sourceFilePath" value="dockers/debian-kde.Dockerfile" />
       </settings>
     </deployment>

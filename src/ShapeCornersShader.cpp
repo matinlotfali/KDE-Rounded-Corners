@@ -6,7 +6,7 @@
 #include <QFile>
 #include <QStandardPaths>
 #include <kwineffects.h>
-#include "shapecorners_shader.h"
+#include "ShapeCornersShader.h"
 
 ShapeCornersShader::ShapeCornersShader():
         m_manager(KWin::ShaderManager::instance())
@@ -58,7 +58,7 @@ bool isWindowActive(KWin::EffectWindow *w) {
 }
 
 const std::unique_ptr<KWin::GLShader>&
-ShapeCornersShader::Bind(KWin::EffectWindow *w, const ConfigModel& config) const {
+ShapeCornersShader::Bind(KWin::EffectWindow *w) const {
     auto xy = QVector2D((w->frameGeometry().left() - w->expandedGeometry().left()),
                         (w->frameGeometry().top() - w->expandedGeometry().top()));
     m_manager->pushShader(m_shader.get());
@@ -66,18 +66,18 @@ ShapeCornersShader::Bind(KWin::EffectWindow *w, const ConfigModel& config) const
     m_shader->setUniform(m_shader_windowExpandedSize, QVector2D(w->expandedGeometry().width(), w->expandedGeometry().height()));
     m_shader->setUniform(m_shader_windowTopLeft, xy);
     m_shader->setUniform(m_shader_windowHasDecoration, w->hasDecoration());
-    m_shader->setUniform(m_shader_shadowColor, isWindowActive(w) ? config.m_shadowColor: config.m_inactiveShadowColor);
-    m_shader->setUniform(m_shader_shadowSize, isWindowActive(w) ? config.m_shadowSize: config.m_inactiveShadowSize);
-    m_shader->setUniform(m_shader_radius, config.m_size);
-    m_shader->setUniform(m_shader_outlineColor, isWindowActive(w) ? config.m_outlineColor : config.m_inactiveOutlineColor);
-    m_shader->setUniform(m_shader_outlineThickness, config.m_outlineThickness);
+    m_shader->setUniform(m_shader_shadowColor, isWindowActive(w) ? ShapeCornersConfig::shadowColor(): ShapeCornersConfig::inactiveShadowColor());
+    m_shader->setUniform(m_shader_shadowSize, isWindowActive(w) ? (float)ShapeCornersConfig::shadowSize(): (float)ShapeCornersConfig::inactiveShadowSize());
+    m_shader->setUniform(m_shader_radius, (float)ShapeCornersConfig::size());
+    m_shader->setUniform(m_shader_outlineColor, isWindowActive(w) ? ShapeCornersConfig::outlineColor() : ShapeCornersConfig::inactiveOutlineColor());
+    m_shader->setUniform(m_shader_outlineThickness, (float)ShapeCornersConfig::outlineThickness());
     m_shader->setUniform(m_shader_front, 0);
     return m_shader;
 }
 
 const std::unique_ptr<KWin::GLShader>&
-ShapeCornersShader::Bind(QMatrix4x4 mvp, KWin::EffectWindow *w, const ConfigModel& config) const {
-    Bind(w, config);
+ShapeCornersShader::Bind(QMatrix4x4 mvp, KWin::EffectWindow *w) const {
+    Bind(w);
     m_shader->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
     return m_shader;
 }
