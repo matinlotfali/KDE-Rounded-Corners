@@ -12,7 +12,7 @@ ShapeCornersKCM::ShapeCornersKCM(QWidget* parent, const QVariantList& args)
     , ui(new Ui::Form)
 {
     ui->setupUi(this);
-    addConfig(ShapeCornersConfig::self(), widget());
+    addConfig(ShapeCornersConfig::self(), this);
 }
 
 void
