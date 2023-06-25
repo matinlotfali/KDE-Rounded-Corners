@@ -17,7 +17,7 @@
  *   Boston, MA 02110-1301, USA.
  */
 
-#include "shapecorners.h"
+#include "ShapeCornersEffect.h"
 #include <kwingltexture.h>
 
 #if KWIN_EFFECT_API_VERSION >= 235
@@ -33,6 +33,8 @@ ShapeCornersEffect::ShapeCornersEffect()
     : KWin::DeformEffect()
 #endif
 {
+    reconfigure(ReconfigureAll);
+
     if(m_shaderManager.IsValid()) {
 #if KWIN_EFFECT_API_VERSION >= 235
         const auto& windowList = KX11Extras::windows();
@@ -45,7 +47,6 @@ ShapeCornersEffect::ShapeCornersEffect()
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
         connect(KWin::effects, &KWin::EffectsHandler::windowDeleted, this, &ShapeCornersEffect::windowRemoved);
     }
-    m_config.Load();
 }
 
 ShapeCornersEffect::~ShapeCornersEffect() = default;
@@ -74,7 +75,7 @@ void
 ShapeCornersEffect::reconfigure(ReconfigureFlags flags)
 {
     Q_UNUSED(flags)
-    m_config.Load();
+    ShapeCornersConfig::self()->read();
 }
 
 bool isMaximized(KWin::EffectWindow *w) {
@@ -97,21 +98,22 @@ void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePa
         Effect::prePaintWindow(w, data, time);
         return;
     }
+    auto size = (int)ShapeCornersConfig::size();
 
 #if KWIN_EFFECT_API_VERSION >= 234
     const auto geo = w->frameGeometry() * KWin::effects->renderTargetScale();
-    data.opaque -= QRect(geo.x(), geo.y(), m_config.m_size, m_config.m_size);
-    data.opaque -= QRect(geo.x()+geo.width()-m_config.m_size, geo.y(), m_config.m_size, m_config.m_size);
-    data.opaque -= QRect(geo.x(), geo.y()+geo.height()-m_config.m_size, m_config.m_size, m_config.m_size);
-    data.opaque -= QRect(geo.x()+geo.width()-m_config.m_size, geo.y()+geo.height()-m_config.m_size, m_config.m_size, m_config.m_size);
+    data.opaque -= QRect(geo.x(), geo.y(), size, size);
+    data.opaque -= QRect(geo.x()+geo.width()-size, geo.y(), size, size);
+    data.opaque -= QRect(geo.x(), geo.y()+geo.height()-size, size, size);
+    data.opaque -= QRect(geo.x()+geo.width()-size, geo.y()+geo.height()-size, size, size);
     data.setTranslucent();
 #else
     const auto& geo = w->frameGeometry();
 #endif
-    data.paint += QRect(geo.x(), geo.y(), m_config.m_size, m_config.m_size);
-    data.paint += QRect(geo.x()+geo.width()-m_config.m_size, geo.y(), m_config.m_size, m_config.m_size);
-    data.paint += QRect(geo.x(), geo.y()+geo.height()-m_config.m_size, m_config.m_size, m_config.m_size);
-    data.paint += QRect(geo.x()+geo.width()-m_config.m_size, geo.y()+geo.height()-m_config.m_size, m_config.m_size, m_config.m_size);
+    data.paint += QRect(geo.x(), geo.y(), size, size);
+    data.paint += QRect(geo.x()+geo.width()-size, geo.y(), size, size);
+    data.paint += QRect(geo.x(), geo.y()+geo.height()-size, size, size);
+    data.paint += QRect(geo.x()+geo.width()-size, geo.y()+geo.height()-size, size, size);
 
 #if KWIN_EFFECT_API_VERSION >= 236
     OffscreenEffect::prePaintWindow(w, data, time);
@@ -143,7 +145,7 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
 
     redirect(w);
     setShader(w, m_shaderManager.GetShader().get());
-    m_shaderManager.Bind(w, m_config);
+    m_shaderManager.Bind(w);
     glActiveTexture(GL_TEXTURE0);
 
 #if KWIN_EFFECT_API_VERSION >= 236

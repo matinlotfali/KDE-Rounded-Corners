@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Service
-X-KDE-ServiceTypes=KCModule
-
-X-KDE-Library=kwin4_shapecorners_config
-X-KDE-ParentComponents=kwin4_effect_shapecorners
-X-KDE-PluginKeyword=shapecorners
-
-Name=ShapeCorners

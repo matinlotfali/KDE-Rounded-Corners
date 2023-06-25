@@ -7,7 +7,7 @@
 
 #include <kwinglutils.h>
 #include <memory>
-#include "ConfigModel.h"
+#include "ShapeCornersConfig.h"
 
 namespace KWin {
     class GLShader;
@@ -20,8 +20,8 @@ public:
 
     static bool IsLegacy();
     bool IsValid() const;
-    const std::unique_ptr<KWin::GLShader>& Bind(KWin::EffectWindow *w, const ConfigModel& config) const;
-    const std::unique_ptr<KWin::GLShader>& Bind(QMatrix4x4 mvp, KWin::EffectWindow *w, const ConfigModel& config) const;
+    const std::unique_ptr<KWin::GLShader>& Bind(KWin::EffectWindow *w) const;
+    const std::unique_ptr<KWin::GLShader>& Bind(QMatrix4x4 mvp, KWin::EffectWindow *w) const;
     void Unbind() const;
     std::unique_ptr<KWin::GLShader>& GetShader() { return m_shader; }
 

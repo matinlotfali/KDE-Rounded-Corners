@@ -1,0 +1,11 @@
+{
+    "KPlugin": {
+        "Name": "ShapeCorners",
+        "ServiceTypes": [
+            "KCModule"
+        ]
+    },
+    "X-KDE-ParentComponents": [
+        "kwin4_effect_shapecorners"
+    ]
+}

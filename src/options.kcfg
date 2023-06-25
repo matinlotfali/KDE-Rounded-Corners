@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+                          http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+    <kcfgfile name="kwinrc"/>
+    <group name="Effect-ًRound-Corners">
+        <entry name="Size" type="UInt">
+            <default>10</default>
+        </entry>
+        <entry name="ShadowSize" type="UInt">
+            <default>25</default>
+            <min>1</min>
+        </entry>
+        <entry name="InactiveShadowSize" type="UInt">
+            <default>20</default>
+            <min>1</min>
+        </entry>
+        <entry name="ShadowColor" type="Color">
+            <default>black</default>
+        </entry>
+        <entry name="InactiveShadowColor" type="Color">
+            <default>black</default>
+        </entry>
+        <entry name="OutlineThickness" type="Double">
+            <default>1</default>
+        </entry>
+        <entry name="OutlineColor" type="Color">
+            <default>black</default>
+        </entry>
+        <entry name="InactiveOutlineColor" type="Color">
+            <default>black</default>
+        </entry>
+    </group>
+</kcfg>

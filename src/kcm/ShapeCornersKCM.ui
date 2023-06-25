@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>305</height>
+    <height>390</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -30,7 +30,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QSlider" name="roundness">
+      <widget class="QSlider" name="kcfg_Size">
        <property name="minimum">
         <number>1</number>
        </property>
@@ -46,15 +46,12 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="drawOutlineEnabled">
+      <widget class="QGroupBox" name="outlineGroupBox">
        <property name="title">
         <string>Outline</string>
        </property>
        <property name="flat">
         <bool>false</bool>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
@@ -70,8 +67,8 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="KColorButton" name="outlineColor">
-            <property name="alphaChannelEnabled" stdset="0">
+           <widget class="KColorButton" name="kcfg_OutlineColor">
+            <property name="alphaChannelEnabled">
              <bool>true</bool>
             </property>
            </widget>
@@ -84,7 +81,7 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QDoubleSpinBox" name="outlineThickness">
+           <widget class="QDoubleSpinBox" name="kcfg_OutlineThickness">
             <property name="decimals">
              <number>1</number>
             </property>
@@ -110,8 +107,8 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="KColorButton" name="inactiveOutlineColor">
-            <property name="alphaChannelEnabled" stdset="0">
+           <widget class="KColorButton" name="kcfg_InactiveOutlineColor">
+            <property name="alphaChannelEnabled">
              <bool>true</bool>
             </property>
            </widget>
@@ -122,7 +119,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox">
+      <widget class="QGroupBox" name="shadowsGroupBox">
        <property name="title">
         <string>Shadows</string>
        </property>
@@ -140,14 +137,14 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="KColorButton" name="activeShadowColor">
-             <property name="alphaChannelEnabled" stdset="0">
-              <bool>true</bool>
-             </property>
+           <widget class="KColorButton" name="kcfg_ShadowColor">
+            <property name="alphaChannelEnabled">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QSlider" name="activeShadowSize">
+           <widget class="QSlider" name="kcfg_ShadowSize">
             <property name="minimum">
              <number>1</number>
             </property>
@@ -160,7 +157,7 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QSlider" name="inactiveShadowSize">
+           <widget class="QSlider" name="kcfg_InactiveShadowSize">
             <property name="minimum">
              <number>1</number>
             </property>
@@ -194,8 +191,8 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="KColorButton" name="inactiveShadowColor">
-            <property name="alphaChannelEnabled" stdset="0">
+           <widget class="KColorButton" name="kcfg_InactiveShadowColor">
+            <property name="alphaChannelEnabled">
              <bool>true</bool>
             </property>
            </widget>
