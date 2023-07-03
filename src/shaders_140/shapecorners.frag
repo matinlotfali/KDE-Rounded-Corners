@@ -24,7 +24,7 @@ vec4 shadowCorner(float distance_from_center) {
     if(percent < 0)
         return vec4(0,0,0,0);
     else
-        return vec4(shadowColor.rgb * (shadowColor.a / 1) * percent, shadowColor.a * percent);
+        return vec4(shadowColor.rgb * shadowColor.a * percent, shadowColor.a * percent);
 }
 
 vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 center) {
