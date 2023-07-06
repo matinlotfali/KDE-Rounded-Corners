@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(kwin-effects-yaml)
+project(kwin4-effect-shapecorners VERSION "0.4")
 
 set(KF5_MIN_VERSION "5.78")
 set(CMAKE_CXX_STANDARD 20)
@@ -54,19 +54,29 @@ find_package(KWinEffects REQUIRED COMPONENTS
 
 find_package(KWinDBusInterface CONFIG REQUIRED)
 find_package(epoxy REQUIRED)
+find_package(Git REQUIRED)
+execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+    OUTPUT_VARIABLE GIT_HASH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+execute_process (
+    COMMAND bash -c "awk -F= '/^ID=/{print $2}' /etc/os-release |tr -d '\n' | tr -d '\"'"
+    OUTPUT_VARIABLE OS_ID
+)
 
 add_subdirectory(src)
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
 
 # these are cache variables, so they could be overwritten with -D,
-set(CPACK_PACKAGE_NAME kwin4-effect-shapecorners
-    CACHE STRING kwin4-effect-shapecorners
+set(CPACK_PACKAGE_NAME ${CMAKE_PROJECT_NAME}
+    CACHE STRING ${CMAKE_PROJECT_NAME}
 )
-set(CPACK_DEBIAN_FILE_NAME "kwin4-effect-shapecorners-kubuntu2204-amd64.deb")
+set(CPACK_DEBIAN_PACKAGE_VERSION "${CMAKE_PROJECT_VERSION}.${GIT_HASH}")
+set(CPACK_DEBIAN_FILE_NAME "${CMAKE_PROJECT_NAME}_${CPACK_DEBIAN_PACKAGE_VERSION}_${OS_ID}.deb")
 set(CPACK_PACKAGE_CONTACT "matinlotfali@gmail.com")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Matin Lotfaliei")
-set(CPACK_DEBIAN_PACKAGE_VERSION "0.3.0")
 
 # autogenerate dependency information
 set (CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
