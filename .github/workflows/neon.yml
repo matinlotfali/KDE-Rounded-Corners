@@ -43,15 +43,16 @@ jobs:
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
-    - name: Package
-      run: cd ${{github.workspace}}/build && cpack -G DEB
+    - id: package
+      name: Package
+      run: cd ${{github.workspace}}/build && cpack -G DEB && echo "::set-output name=file::$(ls *.deb)"
       continue-on-error: true
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
         name: Debian Package
-        path: ${{github.workspace}}/build/*.deb
+        path: ${{github.workspace}}/build/${{steps.package.outputs.file}}
 
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build
