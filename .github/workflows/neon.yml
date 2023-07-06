@@ -45,14 +45,15 @@ jobs:
 
     - id: package
       name: Package
-      run: cd ${{github.workspace}}/build && cpack -G DEB && echo "::set-output name=file::$(ls *.deb)"
+      run: cd ${{github.workspace}}/build && cpack -G DEB && (echo "file=$(find . -name *.deb)" >> $GITHUB_OUTPUT)
       continue-on-error: true
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
+      if: github.event_name != "schedule"
       with:
         name: Debian Package
-        path: ${{github.workspace}}/build/${{steps.package.outputs.file}}
+        path: ${{steps.package.outputs.file}}
 
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build
