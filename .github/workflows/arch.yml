@@ -28,7 +28,9 @@ jobs:
       run: yes | pacman -Syu
 
     - name: Install Dependencies
-      run: yes | pacman -S git cmake extra-cmake-modules qt5-tools kwin wireplumber
+      run: |
+        yes | pacman -S git cmake extra-cmake-modules qt5-tools kwin wireplumber
+        git config --global --add safe.directory '*'
 
     - name: Check out repository
       uses: actions/checkout@v3
