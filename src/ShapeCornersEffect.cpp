@@ -92,6 +92,7 @@ void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePa
 {
     if (!m_shaderManager.IsValid()
             || !m_managed.contains(w)
+            || !enabled()
             || isMaximized(w)
         )
     {
@@ -131,6 +132,7 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
                                     KWin::WindowPaintData &data) {
     if (!m_shaderManager.IsValid()
         || !m_managed.contains(w)
+        || !enabled()
         || isMaximized(w)
         )
     {
@@ -154,4 +156,8 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
     DeformEffect::drawWindow(w, mask, region, data);
 #endif
     m_shaderManager.Unbind();
+}
+
+bool ShapeCornersEffect::enabled() {
+    return !isMaximized(KWin::effects->activeWindow());
 }

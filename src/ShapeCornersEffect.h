@@ -37,6 +37,7 @@ public:
 
     static bool supported();
     static bool enabledByDefault() { return supported(); }
+    static bool enabled();
 
     void reconfigure(ReconfigureFlags flags) override;
 
