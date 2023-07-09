@@ -78,8 +78,15 @@ ShapeCornersEffect::reconfigure(ReconfigureFlags flags)
     ShapeCornersConfig::self()->read();
 }
 
-bool isMaximized(KWin::EffectWindow *w) {
-    auto screenGeometry = KWin::effects->findScreen(w->screen()->name())->geometry();
+bool isMaximized(const KWin::EffectWindow *w) {
+    if (w == nullptr)
+        return false;
+
+    auto screen = KWin::effects->findScreen(w->screen()->name());
+    if (screen == nullptr)
+        return false;
+
+    auto screenGeometry = screen->geometry();
     return (w->x() == screenGeometry.x() && w->width() == screenGeometry.width()) ||
            (w->y() == screenGeometry.y() && w->height() == screenGeometry.height());
 }
