@@ -50,7 +50,7 @@ jobs:
 
     - id: package
       name: Package
-      run: cd ${{github.workspace}}/build && cpack -G DEB && (echo "file=$(ls -d $PWD/*.deb)" >> $GITHUB_OUTPUT)
+      run: cd ${{github.workspace}}/build && cpack -G DEB && (echo "file=$(ls *.deb)" >> $GITHUB_OUTPUT)
       continue-on-error: true
 
     - name: Upload Artifact
