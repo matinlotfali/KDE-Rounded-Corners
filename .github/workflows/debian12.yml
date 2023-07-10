@@ -33,7 +33,8 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        apt -y install cmake g++ gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5globalaccel-dev libkf5notifications-dev kwin-dev dpkg-dev
+        apt -y install cmake g++ gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5globalaccel-dev libkf5notifications-dev kwin-dev
+        apt -y install dpkg-dev file 
         git config --global --add safe.directory '*'
     
     - name: Configure CMake
