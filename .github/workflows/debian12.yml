@@ -56,7 +56,7 @@ jobs:
       if: github.event_name != 'schedule'
       with:
         name: Debian Package
-        path: ${{steps.package.outputs.file}}
+        path: build/${{steps.package.outputs.file}}
 
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build
