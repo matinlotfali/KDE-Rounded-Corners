@@ -53,7 +53,6 @@ jobs:
     - id: package
       name: Package
       run: cd ${{github.workspace}}/build && cpack -G DEB && (echo "file=$(ls *.deb)" >> $GITHUB_OUTPUT)
-      continue-on-error: true
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
@@ -61,6 +60,7 @@ jobs:
       with:
         name: Debian Package
         path: build/${{steps.package.outputs.file}}
+        if-no-files-found: error
 
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build
