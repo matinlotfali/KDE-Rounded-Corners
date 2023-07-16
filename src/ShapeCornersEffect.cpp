@@ -54,20 +54,17 @@ ShapeCornersEffect::~ShapeCornersEffect() = default;
 void
 ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
 {
-    if (m_managed.contains(w))
-        return;
     qDebug() << w->windowRole() << w->windowType() << w->windowClass();
-    if (!w->hasDecoration())
-        return;
-    m_managed.insert(w);
-
-    redirect(w);
-    setShader(w, m_shaderManager.GetShader().get());
+    auto r = m_managed.insert(w);
+    if (r.second) {
+        redirect(w);
+        setShader(w, m_shaderManager.GetShader().get());
+    }
 }
 
 void ShapeCornersEffect::windowRemoved(KWin::EffectWindow *w)
 {
-    m_managed.remove(w);
+    m_managed.erase(w);
     unredirect(w);
 }
 
@@ -78,11 +75,12 @@ ShapeCornersEffect::reconfigure(ReconfigureFlags flags)
     ShapeCornersConfig::self()->read();
 }
 
-bool isMaximized(KWin::EffectWindow *w) {
+bool ShapeCornersEffect::isMaximized(const KWin::EffectWindow *w) {
     auto screenGeometry = KWin::effects->findScreen(w->screen()->name())->geometry();
     return (w->x() == screenGeometry.x() && w->width() == screenGeometry.width()) ||
            (w->y() == screenGeometry.y() && w->height() == screenGeometry.height());
 }
+
 QRectF operator *(QRect r, qreal scale) { return {r.x() * scale, r.y() * scale, r.width() * scale, r.height() * scale}; }
 QRectF operator *(QRectF r, qreal scale) { return {r.x() * scale, r.y() * scale, r.width() * scale, r.height() * scale}; }
 QRect toRect(const QRectF& r) { return {(int)r.x(), (int)r.y(), (int)r.width(), (int)r.height()}; }
@@ -90,10 +88,7 @@ const QRect& toRect(const QRect& r) { return r; }
 
 void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
 {
-    if (!m_shaderManager.IsValid()
-            || !m_managed.contains(w)
-            || isMaximized(w)
-        )
+    if (!hasEffect(w))
     {
         Effect::prePaintWindow(w, data, time);
         return;
@@ -129,10 +124,7 @@ bool ShapeCornersEffect::supported()
 
 void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion &region,
                                     KWin::WindowPaintData &data) {
-    if (!m_shaderManager.IsValid()
-        || !m_managed.contains(w)
-        || isMaximized(w)
-        )
+    if (!hasEffect(w))
     {
         unredirect(w);
 #if KWIN_EFFECT_API_VERSION >= 236
@@ -154,4 +146,11 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
     DeformEffect::drawWindow(w, mask, region, data);
 #endif
     m_shaderManager.Unbind();
+}
+
+bool ShapeCornersEffect::hasEffect(const KWin::EffectWindow *w) const {
+    return m_shaderManager.IsValid()
+           && m_managed.contains(w)
+           && w->hasDecoration()
+           && !isMaximized(w);
 }

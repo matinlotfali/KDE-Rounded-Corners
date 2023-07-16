@@ -20,6 +20,7 @@
 #pragma once
 
 #include <kwineffects.h>
+#include <set>
 #include "ShapeCornersShader.h"
 
 #if KWIN_EFFECT_API_VERSION >= 236
@@ -50,7 +51,10 @@ protected Q_SLOTS:
     void windowRemoved(KWin::EffectWindow *window);
 
 private:
-    QSet<KWin::EffectWindow*> m_managed;
+    std::set<const KWin::EffectWindow*> m_managed;
     ShapeCornersShader m_shaderManager;
+
+    bool hasEffect(const KWin::EffectWindow *w) const;
+    static bool isMaximized(const KWin::EffectWindow *w);
 };
 
