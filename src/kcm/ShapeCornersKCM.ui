@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>390</height>
+    <width>658</width>
+    <height>494</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -19,97 +19,267 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_4">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Roundness Radius</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSlider" name="kcfg_Size">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>50</number>
-       </property>
-       <property name="pageStep">
-        <number>1</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="outlineGroupBox">
+      <widget class="QGroupBox" name="activeBox">
        <property name="title">
-        <string>Outline</string>
+        <string>Active Window</string>
        </property>
-       <property name="flat">
-        <bool>false</bool>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <layout class="QFormLayout" name="formLayout">
-          <property name="formAlignment">
-           <set>Qt::AlignHCenter|Qt::AlignTop</set>
-          </property>
+         <layout class="QFormLayout" name="formLayout_7">
           <item row="0" column="0">
-           <widget class="QLabel" name="outlineColorLabel">
+           <widget class="QLabel" name="label_6">
             <property name="text">
-             <string>Active Window Outline Color</string>
+             <string>Corner Roundness Radius</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="KColorButton" name="kcfg_OutlineColor">
-            <property name="alphaChannelEnabled">
-             <bool>true</bool>
-            </property>
-           </widget>
+           <widget class="QDoubleSpinBox" name="kcfg_Size"/>
           </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="thicknessLabel">
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="inactiveBox">
+       <property name="title">
+        <string>Inactive Window</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <layout class="QFormLayout" name="formLayout_6">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_2">
             <property name="text">
-             <string>Thickness</string>
+             <string>Corner Roundness Radius</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QDoubleSpinBox" name="kcfg_OutlineThickness">
-            <property name="decimals">
-             <number>1</number>
-            </property>
-            <property name="minimum">
-             <double>0.500000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>10.000000000000000</double>
-            </property>
-            <property name="singleStep">
-             <double>0.500000000000000</double>
-            </property>
-            <property name="value">
-             <double>1.000000000000000</double>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="kcfg_InactiveCornerRadius"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>Active Outline</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <layout class="QFormLayout" name="formLayout_9">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>Outline Thickness</string>
             </property>
            </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="kcfg_OutlineThickness"/>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="inactiveOutlineColorLabel">
+           <widget class="QLabel" name="label_8">
             <property name="text">
-             <string>Inactive Window Outline Color</string>
+             <string>Outline Transparency</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="KColorButton" name="kcfg_InactiveOutlineColor">
-            <property name="alphaChannelEnabled">
+           <widget class="KGradientSelector" name="kcfg_ActiveOutlineAlpha">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>30</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="value">
+             <number>99</number>
+            </property>
+            <property name="maxValue" stdset="0">
+             <number>255</number>
+            </property>
+            <property name="indent">
              <bool>true</bool>
+            </property>
+            <property name="arrowDirection">
+             <enum>Qt::UpArrow</enum>
+            </property>
+            <property name="firstColor">
+             <color alpha="0">
+              <red>0</red>
+              <green>0</green>
+              <blue>0</blue>
+             </color>
+            </property>
+            <property name="secondColor">
+             <color>
+              <red>0</red>
+              <green>0</green>
+              <blue>0</blue>
+             </color>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="kcfg_ActiveOutlinePalette">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="currentText">
+             <string>Highlight</string>
+            </property>
+            <property name="currentIndex">
+             <number>12</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>WindowText</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Button</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Light</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Midlight</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Dark</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Mid</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Text</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>BrightText</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ButtonText</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Base</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Window</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Shadow</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Highlight</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>HighlightedText</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Link</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>LinkVisited</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>AlternateBase</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>NoRole</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ToolTipBase</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ToolTipText</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PlaceholderText</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QRadioButton" name="kcfg_ActiveOutlineUsePalette">
+            <property name="text">
+             <string>Use Decoration Color</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="KColorButton" name="kcfg_OutlineColor"/>
+          </item>
+          <item row="3" column="0">
+           <widget class="QRadioButton" name="kcfg_ActiveOutlineUseCustom">
+            <property name="text">
+             <string>Use Custom Color</string>
             </property>
            </widget>
           </item>
@@ -119,81 +289,645 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="shadowsGroupBox">
+      <widget class="QGroupBox" name="groupBox_2">
        <property name="title">
-        <string>Shadows</string>
+        <string>Inactive Outline</string>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
-         <layout class="QFormLayout" name="formLayout_2">
-          <property name="formAlignment">
-           <set>Qt::AlignHCenter|Qt::AlignTop</set>
-          </property>
+         <layout class="QFormLayout" name="formLayout_3">
           <item row="0" column="0">
-           <widget class="QLabel" name="activeShadowColorLabel">
+           <widget class="QLabel" name="label_3">
             <property name="text">
-             <string>Active Window Shadow Color</string>
+             <string>Outline Thickness</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="KColorButton" name="kcfg_ShadowColor">
-            <property name="alphaChannelEnabled">
-             <bool>true</bool>
+           <widget class="QDoubleSpinBox" name="kcfg_InactiveOutlineThickness"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Outline Transparency</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QSlider" name="kcfg_ShadowSize">
-            <property name="minimum">
-             <number>1</number>
+           <widget class="KGradientSelector" name="kcfg_InactiveOutlineAlpha">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="maximum">
-             <number>50</number>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
             </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>30</height>
+             </size>
             </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QSlider" name="kcfg_InactiveShadowSize">
-            <property name="minimum">
-             <number>1</number>
+            <property name="value">
+             <number>99</number>
             </property>
-            <property name="maximum">
-             <number>50</number>
+            <property name="maxValue" stdset="0">
+             <number>255</number>
             </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+            <property name="indent">
+             <bool>true</bool>
             </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="activeShadowSizeLabel">
-            <property name="text">
-             <string>Active Window Shadow Size</string>
+            <property name="arrowDirection">
+             <enum>Qt::UpArrow</enum>
             </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="inactiveShadowSizeLabel">
-            <property name="text">
-             <string>Inactive Window Shadow Size</string>
+            <property name="firstColor">
+             <color alpha="0">
+              <red>0</red>
+              <green>0</green>
+              <blue>0</blue>
+             </color>
+            </property>
+            <property name="secondColor">
+             <color>
+              <red>0</red>
+              <green>0</green>
+              <blue>0</blue>
+             </color>
             </property>
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="inactiveShadowColorLabel">
+           <widget class="QRadioButton" name="kcfg_InactiveOutlineUsePalette">
             <property name="text">
-             <string>Inactive Window Shadow Color</string>
+             <string>Use Decoration Color</string>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
+           <widget class="QComboBox" name="kcfg_InactiveOutlinePalette">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="currentText">
+             <string>Highlight</string>
+            </property>
+            <property name="currentIndex">
+             <number>12</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>WindowText</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Button</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Light</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Midlight</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Dark</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Mid</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Text</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>BrightText</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ButtonText</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Base</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Window</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Shadow</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Highlight</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>HighlightedText</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Link</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>LinkVisited</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>AlternateBase</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>NoRole</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ToolTipBase</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ToolTipText</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PlaceholderText</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QRadioButton" name="kcfg_InactiveOutlineUseCustom">
+            <property name="text">
+             <string>Use Custom Color</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="KColorButton" name="kcfg_InactiveOutlineColor"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QGroupBox" name="groupBox_3">
+       <property name="title">
+        <string>Active Shadow</string>
+       </property>
+       <layout class="QHBoxLayout" name="activeShadowBox">
+        <item>
+         <layout class="QFormLayout" name="formLayout_4">
+          <item row="0" column="0">
+           <widget class="QLabel" name="inactiveShadowSizeLabel_2">
+            <property name="text">
+             <string>Shadow Size</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="kcfg_ShadowSize"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_9">
+            <property name="text">
+             <string>Initial Transparency</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="KGradientSelector" name="kcfg_ActiveShadowAlpha">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="maximum">
+             <number>255</number>
+            </property>
+            <property name="value">
+             <number>255</number>
+            </property>
+            <property name="arrowDirection">
+             <enum>Qt::UpArrow</enum>
+            </property>
+            <property name="firstColor">
+             <color alpha="0">
+              <red>0</red>
+              <green>0</green>
+              <blue>0</blue>
+             </color>
+            </property>
+            <property name="secondColor">
+             <color>
+              <red>0</red>
+              <green>0</green>
+              <blue>0</blue>
+             </color>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QRadioButton" name="kcfg_ActiveShadowUsePalette">
+            <property name="text">
+             <string>Use Decoration Color</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="kcfg_ActiveShadowPalette">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="currentText">
+             <string>WindowText</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>WindowText</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Button</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Light</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Midlight</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Dark</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Mid</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Text</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>BrightText</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ButtonText</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Base</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Window</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Shadow</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Highlight</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>HighlightedText</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Link</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>LinkVisited</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>AlternateBase</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>NoRole</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ToolTipBase</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ToolTipText</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PlaceholderText</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QRadioButton" name="kcfg_ActiveShadowUseCustom">
+            <property name="text">
+             <string>Use Custom Color</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="KColorButton" name="kcfg_ShadowColor">
+            <property name="alphaChannelEnabled">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox_4">
+       <property name="title">
+        <string>Inactive Shadow</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <item>
+         <layout class="QFormLayout" name="formLayout_5">
+          <item row="0" column="0">
+           <widget class="QLabel" name="inactiveShadowSizeLabel">
+            <property name="text">
+             <string>Shadow Size</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="kcfg_InactiveShadowSize"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Initial Transparency</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="KGradientSelector" name="kcfg_InactiveShadowAlpha">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="maximum">
+             <number>255</number>
+            </property>
+            <property name="value">
+             <number>255</number>
+            </property>
+            <property name="arrowDirection">
+             <enum>Qt::UpArrow</enum>
+            </property>
+            <property name="firstColor">
+             <color alpha="0">
+              <red>0</red>
+              <green>0</green>
+              <blue>0</blue>
+             </color>
+            </property>
+            <property name="secondColor">
+             <color>
+              <red>0</red>
+              <green>0</green>
+              <blue>0</blue>
+             </color>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QRadioButton" name="kcfg_InactiveShadowUsePalette">
+            <property name="text">
+             <string>Use Decoration Color</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="kcfg_InactiveShadowPalette">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="currentText">
+             <string>WindowText</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>WindowText</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Button</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Light</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Midlight</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Dark</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Mid</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Text</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>BrightText</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ButtonText</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Base</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Window</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Shadow</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Highlight</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>HighlightedText</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Link</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>LinkVisited</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>AlternateBase</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>NoRole</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ToolTipBase</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ToolTipText</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PlaceholderText</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QRadioButton" name="kcfg_InactiveShadowUseCustom">
+            <property name="text">
+             <string>Use Custom Color</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
            <widget class="KColorButton" name="kcfg_InactiveShadowColor">
             <property name="alphaChannelEnabled">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -204,7 +938,7 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0">
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -224,6 +958,11 @@
    <class>KColorButton</class>
    <extends>QPushButton</extends>
    <header>kcolorbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KGradientSelector</class>
+   <extends>QWidget</extends>
+   <header>kselector.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
