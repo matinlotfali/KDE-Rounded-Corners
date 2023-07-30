@@ -12,6 +12,7 @@ public:
 
 public slots:
     void save() override;
+    void update_colors();
 
 private:
     Ui::Form *ui;
