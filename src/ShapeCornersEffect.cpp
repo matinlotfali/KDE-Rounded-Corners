@@ -164,5 +164,7 @@ bool ShapeCornersEffect::hasEffect(const KWin::EffectWindow *w) const {
 }
 
 bool ShapeCornersEffect::enabled() {
-    return !isMaximized(KWin::effects->activeWindow());
+    if (ShapeCornersConfig::gameMode() && isMaximized(KWin::effects->activeWindow()))
+        return false;
+    return true;
 }
