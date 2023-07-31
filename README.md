@@ -17,7 +17,7 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 ![](https://img.shields.io/badge/KWinEffects-v237-lightgrey)
 - [![Arch](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/arch.yml?branch=master&label=Arch%20Linux&logo=archlinux&logoColor=white) ![](https://img.shields.io/aur/maintainer/kwin-effect-rounded-corners-git?label=AUR%20Maintainer) ![](https://img.shields.io/aur/votes/kwin-effect-rounded-corners-git?label=AUR%20Votes)](https://aur.archlinux.org/packages/kwin-effect-rounded-corners-git)
 
-![After](screenshots/shadows.png)
+![After](screenshots/decoration-color.png)
 
 # Contributions:
 
