@@ -7,6 +7,7 @@
 #include <QStandardPaths>
 #include <kwineffects.h>
 #include <QWidget>
+#include "ShapeCornersEffect.h"
 #include "ShapeCornersShader.h"
 
 ShapeCornersShader::ShapeCornersShader():
@@ -55,10 +56,6 @@ bool ShapeCornersShader::IsValid() const {
     return m_shader && m_shader->isValid();
 }
 
-bool isWindowActive(KWin::EffectWindow *w) {
-    return KWin::effects->activeWindow() == w;
-}
-
 const std::unique_ptr<KWin::GLShader>&
 ShapeCornersShader::Bind(KWin::EffectWindow *w) const {
     QColor outlineColor, shadowColor;
@@ -70,7 +67,7 @@ ShapeCornersShader::Bind(KWin::EffectWindow *w) const {
     m_shader->setUniform(m_shader_windowTopLeft, xy);
     m_shader->setUniform(m_shader_windowHasDecoration, w->hasDecoration());
     m_shader->setUniform(m_shader_front, 0);
-    if (isWindowActive(w)) {
+    if (ShapeCornersEffect::isWindowActive(w)) {
         m_shader->setUniform(m_shader_shadowSize, (float)ShapeCornersConfig::shadowSize());
         m_shader->setUniform(m_shader_radius, (float)ShapeCornersConfig::size());
         m_shader->setUniform(m_shader_outlineThickness, (float)ShapeCornersConfig::outlineThickness());
