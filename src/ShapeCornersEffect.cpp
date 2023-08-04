@@ -88,7 +88,7 @@ const QRect& toRect(const QRect& r) { return r; }
 
 void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
 {
-    if (!hasEffect(w) && !w->isDesktop())
+    if (!hasEffect(w))
     {
         Effect::prePaintWindow(w, data, time);
         return;
@@ -96,19 +96,13 @@ void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePa
     auto size = (int)ShapeCornersConfig::size();
 
 #if KWIN_EFFECT_API_VERSION >= 234
-    const auto geo = w->frameGeometry() * KWin::effects->renderTargetScale();
-    data.opaque -= QRect(geo.x(), geo.y(), size, size);
-    data.opaque -= QRect(geo.x()+geo.width()-size, geo.y(), size, size);
-    data.opaque -= QRect(geo.x(), geo.y()+geo.height()-size, size, size);
-    data.opaque -= QRect(geo.x()+geo.width()-size, geo.y()+geo.height()-size, size, size);
+    const auto geo = w->expandedGeometry() * KWin::effects->renderTargetScale();
+    data.opaque -= toRect(geo);
     data.setTranslucent();
 #else
-    const auto& geo = w->frameGeometry();
+    const auto& geo = w->expandedGeometry();
 #endif
-    data.paint += QRect(geo.x(), geo.y(), size, size);
-    data.paint += QRect(geo.x()+geo.width()-size, geo.y(), size, size);
-    data.paint += QRect(geo.x(), geo.y()+geo.height()-size, size, size);
-    data.paint += QRect(geo.x()+geo.width()-size, geo.y()+geo.height()-size, size, size);
+    data.paint += toRect(geo);
 
 #if KWIN_EFFECT_API_VERSION >= 236
     OffscreenEffect::prePaintWindow(w, data, time);
