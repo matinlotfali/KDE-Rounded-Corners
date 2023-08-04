@@ -38,6 +38,8 @@ public:
 
     static bool supported();
     static bool enabledByDefault() { return supported(); }
+    static bool isMaximized(const KWin::EffectWindow *w);
+    static bool isWindowActive(const KWin::EffectWindow *w) { return KWin::effects->activeWindow() == w; }
 
     void reconfigure(ReconfigureFlags flags) override;
 
@@ -55,6 +57,5 @@ private:
     ShapeCornersShader m_shaderManager;
 
     bool hasEffect(const KWin::EffectWindow *w) const;
-    static bool isMaximized(const KWin::EffectWindow *w);
 };
 

@@ -93,16 +93,28 @@ void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePa
         Effect::prePaintWindow(w, data, time);
         return;
     }
-    auto size = (int)ShapeCornersConfig::size();
+
+    auto size = isWindowActive(w) ? ShapeCornersConfig::size(): ShapeCornersConfig::inactiveCornerRadius();
 
 #if KWIN_EFFECT_API_VERSION >= 234
-    const auto geo = w->expandedGeometry() * KWin::effects->renderTargetScale();
-    data.opaque -= toRect(geo);
+    const auto geo_ex = w->expandedGeometry() * KWin::effects->renderTargetScale();
+    const auto geo = w->frameGeometry() * KWin::effects->renderTargetScale();
     data.setTranslucent();
 #else
+    const auto& geo_ex = w->expandedGeometry();
     const auto& geo = w->expandedGeometry();
 #endif
-    data.paint += toRect(geo);
+    QRegion reg {};
+    reg += toRect(geo_ex);
+    reg -= toRect(geo);
+    reg += QRect(geo.x(), geo.y(), size, size);
+    reg += QRect(geo.x()+geo.width()-size, geo.y(), size, size);
+    reg += QRect(geo.x(), geo.y()+geo.height()-size, size, size);
+    reg += QRect(geo.x()+geo.width()-size, geo.y()+geo.height()-size, size, size);
+#if KWIN_EFFECT_API_VERSION >= 234
+    data.opaque -= reg;
+#endif
+    data.paint += reg;
 
 #if KWIN_EFFECT_API_VERSION >= 236
     OffscreenEffect::prePaintWindow(w, data, time);
