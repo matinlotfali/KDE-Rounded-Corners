@@ -11,8 +11,11 @@ public:
     ~ShapeCornersKCM() override;
 
 public slots:
+    void defaults() override;
+    void load() override;
     void save() override;
     void update_colors();
+    void update_windows();
 
 private:
     Ui::Form *ui;

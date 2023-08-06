@@ -12,6 +12,7 @@ add_library(kwin4_effect_shapecorners SHARED ${effect_SRCS})
 target_link_libraries(kwin4_effect_shapecorners
     Qt5::Core
     Qt5::Gui
+    Qt5::DBus
     KWinEffects::kwineffects
     KWinEffects::kwinglutils
     epoxy::epoxy

@@ -48,6 +48,9 @@ public:
 
     int requestedEffectChainPosition() const override { return 99; }
 
+public Q_SLOTS:
+    QString get_window_titles();
+
 protected Q_SLOTS:
     void windowAdded(KWin::EffectWindow *window);
     void windowRemoved(KWin::EffectWindow *window);

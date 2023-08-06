@@ -1,5 +1,5 @@
 #include <QDialog>
-#include <QVBoxLayout>
+#include <QList>
 
 #include <kwineffects.h>
 #include "kwineffects_interface.h"
@@ -14,6 +14,7 @@ ShapeCornersKCM::ShapeCornersKCM(QWidget* parent, const QVariantList& args)
     ui->setupUi(this);
     addConfig(ShapeCornersConfig::self(), this);
     update_colors();
+    update_windows();
 
     QPixmap pix (16, 16);
     for (int index = 0; index < ui->kcfg_ActiveOutlinePalette->count(); ++index) {
@@ -43,11 +44,37 @@ ShapeCornersKCM::ShapeCornersKCM(QWidget* parent, const QVariantList& args)
     connect(ui->kcfg_InactiveShadowColor, &KColorButton::changed, this, &ShapeCornersKCM::update_colors);
     connect(ui->kcfg_ActiveShadowUsePalette, &QRadioButton::toggled, this, &ShapeCornersKCM::update_colors);
     connect(ui->kcfg_InactiveShadowUsePalette, &QRadioButton::toggled, this, &ShapeCornersKCM::update_colors);
+
+    connect(ui->refreshButton, &QPushButton::pressed, this, &ShapeCornersKCM::update_windows);
+    connect(ui->includeButton, &QPushButton::pressed, [=, this]() {
+        auto s = ui->currentWindowList->currentItem();
+        if (s && ui->InclusionList->findItems(s->text(), Qt::MatchExactly).empty())
+            ui->InclusionList->addItem(s->text());
+    });
+    connect(ui->excludeButton, &QPushButton::pressed, [=, this]() {
+        auto s = ui->currentWindowList->currentItem();
+        if (s && ui->ExclusionList->findItems(s->text(), Qt::MatchExactly).empty())
+            ui->ExclusionList->addItem(s->text());
+    });
+    connect(ui->deleteIncludeButton, &QPushButton::pressed, [=, this]() {
+        ui->InclusionList->takeItem(ui->InclusionList->currentRow());
+    });
+    connect(ui->deleteExcludeButton, &QPushButton::pressed, [=, this]() {
+        ui->ExclusionList->takeItem(ui->ExclusionList->currentRow());
+    });
 }
 
 void
 ShapeCornersKCM::save()
 {
+    QStringList inclusions, exclusions;
+    for (int i = 0; i < ui->InclusionList->count(); ++i)
+        inclusions.push_back(ui->InclusionList->item(i)->text());
+    for (int i = 0; i < ui->ExclusionList->count(); ++i)
+        exclusions.push_back(ui->ExclusionList->item(i)->text());
+
+    ShapeCornersConfig::setInclusions(inclusions);
+    ShapeCornersConfig::setExclusions(exclusions);
     ShapeCornersConfig::self()->save();
     KCModule::save();
     OrgKdeKwinEffectsInterface interface(QStringLiteral("org.kde.KWin"),
@@ -84,4 +111,39 @@ void ShapeCornersKCM::update_colors() {
     index = ui->kcfg_InactiveShadowPalette->currentIndex();
     color = checked ? palette().color(QPalette::Inactive, static_cast<QPalette::ColorRole>(index)): ui->kcfg_InactiveShadowColor->color();
     ui->kcfg_InactiveShadowAlpha->setSecondColor(color);
+}
+
+void ShapeCornersKCM::update_windows() {
+    QList<QString> windowList;
+    ui->currentWindowList->clear();
+
+    auto connection = QDBusConnection::sessionBus();
+    if (connection.isConnected()) {
+        QDBusInterface interface("org.kde.ShapeCorners", "/ShapeCornersEffect");
+        if (interface.isValid()) {
+            QDBusReply<QString> reply = interface.call("get_window_titles");
+            if (reply.isValid())
+                windowList = reply.value().split("\n");
+        }
+    }
+
+    for (const auto& w: windowList)
+        if (!w.isEmpty())
+            ui->currentWindowList->addItem(w);
+}
+
+void ShapeCornersKCM::load() {
+    KCModule::load();
+    ShapeCornersConfig::self()->load();
+    ui->InclusionList->addItems(ShapeCornersConfig::inclusions());
+    ui->ExclusionList->addItems(ShapeCornersConfig::exclusions());
+}
+
+void ShapeCornersKCM::defaults() {
+    KCModule::defaults();
+    ShapeCornersConfig::self()->setDefaults();
+    ui->InclusionList->clear();
+    ui->InclusionList->addItems(ShapeCornersConfig::inclusions());
+    ui->ExclusionList->clear();
+    ui->ExclusionList->addItems(ShapeCornersConfig::exclusions());
 }
