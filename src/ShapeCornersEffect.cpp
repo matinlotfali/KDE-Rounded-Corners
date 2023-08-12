@@ -19,6 +19,8 @@
 
 #include "ShapeCornersEffect.h"
 #include <kwingltexture.h>
+#include <QtDBus/QDBusConnection>
+#include <QDBusError>
 
 #if KWIN_EFFECT_API_VERSION >= 235
 #include <KX11Extras>
@@ -34,6 +36,21 @@ ShapeCornersEffect::ShapeCornersEffect()
 #endif
 {
     reconfigure(ReconfigureAll);
+
+    auto connection = QDBusConnection::sessionBus();
+    if (!connection.isConnected()) {
+        qWarning("ShapeCorners: Cannot connect to the D-Bus session bus.\n");
+    }
+    else {
+        if (!connection.registerService("org.kde.ShapeCorners")) {
+            qWarning("%s\n", qPrintable(connection.lastError().message()));
+        }
+        else {
+            if (!connection.registerObject("/ShapeCornersEffect",  this, QDBusConnection::ExportAllSlots)) {
+                qWarning("%s\n", qPrintable(connection.lastError().message()));
+            }
+        }
+    }
 
     if(m_shaderManager.IsValid()) {
 #if KWIN_EFFECT_API_VERSION >= 235
@@ -155,8 +172,21 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
 }
 
 bool ShapeCornersEffect::hasEffect(const KWin::EffectWindow *w) const {
+    auto name = w->windowClass().split(' ').first();
     return m_shaderManager.IsValid()
            && m_managed.contains(w)
-           && w->hasDecoration()
+           && (w->hasDecoration() || ShapeCornersConfig::inclusions().contains(name))
+           && !ShapeCornersConfig::exclusions().contains(name)
            && !isMaximized(w);
+}
+
+QString ShapeCornersEffect::get_window_titles() {
+    QSet<QString> response;
+    for (const auto& win: m_managed) {
+        auto name = win->windowClass().split(' ').first();
+        if (name == "plasmashell")
+            continue;
+        response.insert(name);
+    }
+    return response.values().join("\n");
 }
