@@ -63,6 +63,8 @@ ShapeCornersEffect::ShapeCornersEffect()
                 windowAdded(win);
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
         connect(KWin::effects, &KWin::EffectsHandler::windowDeleted, this, &ShapeCornersEffect::windowRemoved);
+        connect(KWin::effects, &KWin::EffectsHandler::windowFinishUserMovedResized, this, &ShapeCornersEffect::checkTiled);
+        connect(KWin::effects, &KWin::EffectsHandler::windowMaximizedStateChanged, this, &ShapeCornersEffect::checkTiled);
     }
 }
 
@@ -72,10 +74,11 @@ void
 ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
 {
     qDebug() << w->windowRole() << w->windowType() << w->windowClass();
-    auto r = m_managed.insert(w);
-    if (r.second) {
+    auto [it, success] = m_managed.insert({w, false});
+    if (success) {
         redirect(w);
         setShader(w, m_shaderManager.GetShader().get());
+        checkTiled();
     }
 }
 
@@ -83,6 +86,7 @@ void ShapeCornersEffect::windowRemoved(KWin::EffectWindow *w)
 {
     m_managed.erase(w);
     unredirect(w);
+    checkTiled();
 }
 
 void
@@ -90,12 +94,6 @@ ShapeCornersEffect::reconfigure(ReconfigureFlags flags)
 {
     Q_UNUSED(flags)
     ShapeCornersConfig::self()->read();
-}
-
-bool ShapeCornersEffect::isMaximized(const KWin::EffectWindow *w) {
-    auto screenGeometry = KWin::effects->findScreen(w->screen()->name())->geometry();
-    return (w->x() == screenGeometry.x() && w->width() == screenGeometry.width()) ||
-           (w->y() == screenGeometry.y() && w->height() == screenGeometry.height());
 }
 
 QRectF operator *(QRect r, qreal scale) { return {r.x() * scale, r.y() * scale, r.width() * scale, r.height() * scale}; }
@@ -177,16 +175,60 @@ bool ShapeCornersEffect::hasEffect(const KWin::EffectWindow *w) const {
            && m_managed.contains(w)
            && (w->hasDecoration() || ShapeCornersConfig::inclusions().contains(name))
            && !ShapeCornersConfig::exclusions().contains(name)
-           && !isMaximized(w);
+           && !isTiled(w);
 }
 
 QString ShapeCornersEffect::get_window_titles() {
-    QSet<QString> response;
-    for (const auto& win: m_managed) {
+    QList<QString> response;
+    for (const auto& [win, tiled]: m_managed) {
         auto name = win->windowClass().split(' ').first();
         if (name == "plasmashell")
             continue;
-        response.insert(name);
+        if (!response.contains(name))
+            response.push_back(name);
     }
-    return response.values().join("\n");
+    return response.join("\n");
+}
+
+bool ShapeCornersEffect::checkTiledX(double window_start, const double& screen_size) {
+    if (window_start == screen_size)
+        return true;
+
+    bool r = false;
+    for (auto& [w, tiled]: m_managed) {
+        if (w->x() == window_start) {
+            if (checkTiledX(window_start + w->width(), screen_size)) {
+                tiled = true;
+                r = true;
+            }
+        }
+    }
+    return r;
+}
+
+bool ShapeCornersEffect::checkTiledY(double window_start, const double& screen_size) {
+    if (window_start == screen_size)
+        return true;
+
+    bool r = false;
+    for (auto& [w, tiled]: m_managed) {
+        if (w->y() == window_start) {
+            if (checkTiledY(window_start + w->height(), screen_size)) {
+                tiled = true;
+                r = true;
+            }
+        }
+    }
+    return r;
+}
+
+void ShapeCornersEffect::checkTiled() {
+    for (auto& [w, tiled]: m_managed) {
+        tiled = false;
+    }
+    for (const auto& screen: KWin::effects->screens()) {
+        const auto& geometry = screen->geometry();
+        checkTiledX(geometry.x(), geometry.width());
+        checkTiledY(geometry.y(), geometry.height());
+    }
 }
