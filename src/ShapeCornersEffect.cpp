@@ -63,8 +63,8 @@ ShapeCornersEffect::ShapeCornersEffect()
                 windowAdded(win);
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
         connect(KWin::effects, &KWin::EffectsHandler::windowDeleted, this, &ShapeCornersEffect::windowRemoved);
-        connect(KWin::effects, &KWin::EffectsHandler::windowFinishUserMovedResized, this, &ShapeCornersEffect::checkTiled);
-        connect(KWin::effects, &KWin::EffectsHandler::windowMaximizedStateChanged, this, &ShapeCornersEffect::checkTiled);
+        connect(KWin::effects, &KWin::EffectsHandler::windowFinishUserMovedResized, this, &ShapeCornersEffect::windowResized);
+        connect(KWin::effects, &KWin::EffectsHandler::windowMaximizedStateChanged, this, &ShapeCornersEffect::windowResized);
     }
 }
 
@@ -190,30 +190,16 @@ QString ShapeCornersEffect::get_window_titles() {
     return response.join("\n");
 }
 
-bool ShapeCornersEffect::checkTiledX(double window_start, const double& screen_size) {
+bool ShapeCornersEffect::checkTiled(bool horizontal, double window_start, const double& screen_size) {
     if (window_start == screen_size)
         return true;
 
-    bool r = false;
-    for (auto& [w, tiled]: m_managed) {
-        if (w->x() == window_start) {
-            if (checkTiledX(window_start + w->width(), screen_size)) {
-                tiled = true;
-                r = true;
-            }
-        }
-    }
-    return r;
-}
-
-bool ShapeCornersEffect::checkTiledY(double window_start, const double& screen_size) {
-    if (window_start == screen_size)
-        return true;
+    #define DIM(a,b) (a*horizontal + b*!horizontal)
 
     bool r = false;
     for (auto& [w, tiled]: m_managed) {
-        if (w->y() == window_start) {
-            if (checkTiledY(window_start + w->height(), screen_size)) {
+        if (DIM(w->x(), w->y()) == window_start) {
+            if (checkTiled(horizontal, window_start + DIM(w->width(), w->height()), screen_size)) {
                 tiled = true;
                 r = true;
             }
@@ -228,7 +214,7 @@ void ShapeCornersEffect::checkTiled() {
     }
     for (const auto& screen: KWin::effects->screens()) {
         const auto& geometry = screen->geometry();
-        checkTiledX(geometry.x(), geometry.width());
-        checkTiledY(geometry.y(), geometry.height());
+        checkTiled(true, geometry.x(), geometry.width());
+        checkTiled(false, geometry.y(), geometry.height());
     }
 }
