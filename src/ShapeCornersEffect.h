@@ -38,8 +38,8 @@ public:
 
     static bool supported();
     static bool enabledByDefault() { return supported(); }
-    static bool isMaximized(const KWin::EffectWindow *w);
     static bool isWindowActive(const KWin::EffectWindow *w) { return KWin::effects->activeWindow() == w; }
+    bool isMaximized(const KWin::EffectWindow *w) const { return m_managed.at(w); }
 
     void reconfigure(ReconfigureFlags flags) override;
 
@@ -54,9 +54,11 @@ public Q_SLOTS:
 protected Q_SLOTS:
     void windowAdded(KWin::EffectWindow *window);
     void windowRemoved(KWin::EffectWindow *window);
+    void windowMaximizedStateChanged(KWin::EffectWindow *w, bool horizontal, bool vertical)
+    { m_managed.at(w) = horizontal || vertical; }
 
 private:
-    std::set<const KWin::EffectWindow*> m_managed;
+    std::map<const KWin::EffectWindow*, bool> m_managed; // Every managed window and their maximized/tiled state
     ShapeCornersShader m_shaderManager;
 
     bool hasEffect(const KWin::EffectWindow *w) const;

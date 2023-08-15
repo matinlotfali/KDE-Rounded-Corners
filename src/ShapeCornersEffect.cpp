@@ -63,6 +63,7 @@ ShapeCornersEffect::ShapeCornersEffect()
                 windowAdded(win);
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
         connect(KWin::effects, &KWin::EffectsHandler::windowDeleted, this, &ShapeCornersEffect::windowRemoved);
+        connect(KWin::effects, &KWin::EffectsHandler::windowMaximizedStateChanged, this, &ShapeCornersEffect::windowMaximizedStateChanged);
     }
 }
 
@@ -72,8 +73,8 @@ void
 ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
 {
     qDebug() << w->windowRole() << w->windowType() << w->windowClass();
-    auto r = m_managed.insert(w);
-    if (r.second) {
+    auto [it, success] = m_managed.insert({w, false});
+    if (success) {
         redirect(w);
         setShader(w, m_shaderManager.GetShader().get());
     }
@@ -90,12 +91,6 @@ ShapeCornersEffect::reconfigure(ReconfigureFlags flags)
 {
     Q_UNUSED(flags)
     ShapeCornersConfig::self()->read();
-}
-
-bool ShapeCornersEffect::isMaximized(const KWin::EffectWindow *w) {
-    auto screenGeometry = KWin::effects->findScreen(w->screen()->name())->geometry();
-    return (w->x() == screenGeometry.x() && w->width() == screenGeometry.width()) ||
-           (w->y() == screenGeometry.y() && w->height() == screenGeometry.height());
 }
 
 QRectF operator *(QRect r, qreal scale) { return {r.x() * scale, r.y() * scale, r.width() * scale, r.height() * scale}; }
@@ -182,7 +177,7 @@ bool ShapeCornersEffect::hasEffect(const KWin::EffectWindow *w) const {
 
 QString ShapeCornersEffect::get_window_titles() {
     QSet<QString> response;
-    for (const auto& win: m_managed) {
+    for (auto [win, maximized]: m_managed) {
         auto name = win->windowClass().split(' ').first();
         if (name == "plasmashell")
             continue;
