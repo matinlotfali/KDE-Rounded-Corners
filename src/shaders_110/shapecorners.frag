@@ -36,7 +36,7 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle) {
     float r = radius;
     if (diagonal && disableRoundedTile) {
         r = outlineThickness;
-        center = start + r * sqrt(2) * vec2(cos(angle), sin(angle));
+        center = start + r * sqrt(2.0) * vec2(cos(angle), sin(angle));
         distance_from_center = distance(coord0, center);
     }
 
