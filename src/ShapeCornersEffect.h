@@ -22,6 +22,7 @@
 #include <kwineffects.h>
 #include <set>
 #include "ShapeCornersShader.h"
+#define qDebugIfActive(w, s) if(ShapeCornersEffect::isWindowActive(w)) { qDebug() << s; }
 
 #if KWIN_EFFECT_API_VERSION >= 236
 #include <kwinoffscreeneffect.h>
@@ -60,6 +61,6 @@ private:
     bool hasEffect(const KWin::EffectWindow *w) const;
     bool isTiled(const KWin::EffectWindow *w) const { return m_managed.at(w); }
     void checkTiled();
-    bool checkTiled(bool horizontal, double window_start, const double& screen_size);
+    bool checkTiled(const bool& horizontal, double window_start, const double& screen_size);
 };
 

@@ -81,6 +81,16 @@
         </layout>
        </item>
        <item>
+        <widget class="QCheckBox" name="kcfg_DisableRoundTile">
+         <property name="text">
+          <string>Disable Roundness on Tile/Maximize</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QGroupBox" name="groupBox">
@@ -515,6 +525,16 @@
           </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="kcfg_DisableOutlineTile">
+         <property name="text">
+          <string>Disable Outline on Tile/Maximize</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">

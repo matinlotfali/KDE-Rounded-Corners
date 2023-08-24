@@ -78,7 +78,8 @@ ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
     if (success) {
         redirect(w);
         setShader(w, m_shaderManager.GetShader().get());
-        checkTiled();
+        if (w->width() >= 300 && w->height() >= 300)
+            checkTiled();
     }
 }
 
@@ -86,7 +87,8 @@ void ShapeCornersEffect::windowRemoved(KWin::EffectWindow *w)
 {
     m_managed.erase(w);
     unredirect(w);
-    checkTiled();
+    if (w->width() >= 300 && w->height() >= 300)
+        checkTiled();
 }
 
 void
@@ -158,7 +160,7 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
 
     redirect(w);
     setShader(w, m_shaderManager.GetShader().get());
-    m_shaderManager.Bind(w);
+    m_shaderManager.Bind(w, isTiled(w));
     glActiveTexture(GL_TEXTURE0);
 
 #if KWIN_EFFECT_API_VERSION >= 236
@@ -174,8 +176,7 @@ bool ShapeCornersEffect::hasEffect(const KWin::EffectWindow *w) const {
     return m_shaderManager.IsValid()
            && m_managed.contains(w)
            && (w->hasDecoration() || ShapeCornersConfig::inclusions().contains(name))
-           && !ShapeCornersConfig::exclusions().contains(name)
-           && !isTiled(w);
+           && !ShapeCornersConfig::exclusions().contains(name);
 }
 
 QString ShapeCornersEffect::get_window_titles() {
@@ -190,7 +191,7 @@ QString ShapeCornersEffect::get_window_titles() {
     return response.join("\n");
 }
 
-bool ShapeCornersEffect::checkTiled(bool horizontal, double window_start, const double& screen_size) {
+bool ShapeCornersEffect::checkTiled(const bool& horizontal, double window_start, const double& screen_size) {
     if (window_start == screen_size)
         return true;
 
@@ -209,6 +210,9 @@ bool ShapeCornersEffect::checkTiled(bool horizontal, double window_start, const 
 }
 
 void ShapeCornersEffect::checkTiled() {
+    if (!ShapeCornersConfig::disableRoundTile() && !ShapeCornersConfig::disableOutlineTile())
+        return;
+
     for (auto& [w, tiled]: m_managed) {
         tiled = false;
     }

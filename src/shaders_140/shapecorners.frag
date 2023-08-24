@@ -3,6 +3,7 @@
 uniform sampler2D front;
 uniform float radius;
 uniform bool windowHasDecoration;
+uniform bool disableRoundedTile;
 uniform vec2 windowSize;
 uniform vec2 windowExpandedSize;
 uniform vec2 windowTopLeft;
@@ -27,24 +28,33 @@ vec4 shadowCorner(float distance_from_center) {
         return vec4(shadowColor.rgb * shadowColor.a * percent, shadowColor.a * percent);
 }
 
-vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 center) {
+vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle) {
+    bool diagonal = abs(cos(angle)) > 0.1 && abs(sin(angle)) > 0.1;
+    vec2 center = start + radius * (diagonal?sqrt(2):1) * vec2(cos(angle), sin(angle));
     float distance_from_center = distance(coord0, center);
     vec4 c = isDrawingShadows() ? shadowCorner(distance_from_center) : vec4(0,0,0,0);
+
+    float r = radius;
+    if (diagonal && disableRoundedTile) {
+        r = outlineThickness;
+        center = start + r * sqrt(2) * vec2(cos(angle), sin(angle));
+        distance_from_center = distance(coord0, center);
+    }
 
     if(isDrawingOutline()) {
         vec4 outlineOverlay = vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), 1.0);
 
-        if (distance_from_center < radius - outlineThickness/2.0) {
-            float antialiasing = clamp(radius-outlineThickness+0.5-distance_from_center, 0.0, 1.0);
+        if (distance_from_center < r - outlineThickness+0.5) {
+            float antialiasing = clamp(r-outlineThickness+0.5-distance_from_center, 0.0, 1.0);
             return mix(outlineOverlay, tex, antialiasing);
         }
         else {
-            float antialiasing = clamp(distance_from_center-radius+0.5, 0.0, 1.0);
+            float antialiasing = clamp(distance_from_center-r+0.5, 0.0, 1.0);
             return mix(outlineOverlay, c, antialiasing);
         }
     }
     else {
-        float antialiasing = clamp(radius-distance_from_center, 0.0, 1.0);
+        float antialiasing = clamp(r-distance_from_center, 0.0, 1.0);
         return mix(c, tex, antialiasing);
     }
 }
@@ -55,27 +65,29 @@ void main(void)
     vec2 coord0 = vec2(texcoord0.x * windowExpandedSize.x - windowTopLeft.x,
                     (1-texcoord0.y)* windowExpandedSize.y - windowTopLeft.y);
 
-    if (coord0.y < radius) {
-        if (coord0.x < radius)
-            tex = shapeCorner(coord0, tex, vec2(radius, radius));
-        else if (coord0.x > windowSize.x - radius)
-            tex = shapeCorner(coord0, tex, vec2(windowSize.x - radius, radius));
+    float r = disableRoundedTile? outlineThickness: radius;
+
+    if (coord0.y < r) {
+        if (coord0.x < r)
+            tex = shapeCorner(coord0, tex, vec2(0, 0), radians(45));
+        else if (coord0.x > windowSize.x - r)
+            tex = shapeCorner(coord0, tex, vec2(windowSize.x, 0), radians(135));
         else if (coord0.y < outlineThickness)
-            tex = shapeCorner(coord0, tex, vec2(coord0.x, radius));
+            tex = shapeCorner(coord0, tex, vec2(coord0.x, 0), radians(90));
     }
-    else if (coord0.y > windowSize.y - radius) {
-        if (coord0.x < radius)
-            tex = shapeCorner(coord0, tex, vec2(radius, windowSize.y - radius));
-        else if (coord0.x > windowSize.x - radius)
-            tex = shapeCorner(coord0, tex, vec2(windowSize.x - radius, windowSize.y - radius));
+    else if (coord0.y > windowSize.y - r) {
+        if (coord0.x < r)
+            tex = shapeCorner(coord0, tex, vec2(0, windowSize.y), radians(315));
+        else if (coord0.x > windowSize.x - r)
+            tex = shapeCorner(coord0, tex, vec2(windowSize.x, windowSize.y), radians(225));
         else if (coord0.y > windowSize.y - outlineThickness)
-            tex = shapeCorner(coord0, tex, vec2(coord0.x, windowSize.y - radius));
+            tex = shapeCorner(coord0, tex, vec2(coord0.x, windowSize.y), radians(270));
     }
     else {
         if (coord0.x < radius)
-            tex = shapeCorner(coord0, tex, vec2(radius, coord0.y));
+            tex = shapeCorner(coord0, tex, vec2(0, coord0.y), radians(0));
         else if (coord0.x > windowSize.x - radius)
-            tex = shapeCorner(coord0, tex, vec2(windowSize.x - radius, coord0.y));
+            tex = shapeCorner(coord0, tex, vec2(windowSize.x, coord0.y), radians(180));
     }
 
     if (saturation != 1.0) {
