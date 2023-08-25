@@ -3,8 +3,10 @@ name: GLSL Validator
 on:
   push:
     branches: [ master ]
+    paths: [ '**.frag' ]
   pull_request:
     branches: [ master ]
+    paths: [ '**.frag' ]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
