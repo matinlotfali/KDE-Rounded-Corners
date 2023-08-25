@@ -105,7 +105,7 @@ const QRect& toRect(const QRect& r) { return r; }
 
 void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
 {
-    if (!hasEffect(w))
+    if (!hasEffect(w) || (isTiled(w) && ShapeCornersConfig::disableRoundTile()))
     {
         Effect::prePaintWindow(w, data, time);
         return;
