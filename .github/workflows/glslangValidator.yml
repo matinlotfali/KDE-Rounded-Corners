@@ -2,7 +2,7 @@ name: GLSL Validator
 
 on:
   push:
-    branches: [ master, latest-shapecorners-code, kwin_5.23 ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
