@@ -29,15 +29,23 @@ vec4 shadowCorner(float distance_from_center) {
 
 vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle) {
     bool diagonal = abs(cos(angle)) > 0.1 && abs(sin(angle)) > 0.1;
-    vec2 center = start + radius * (diagonal?sqrt(2.0):1.0) * vec2(cos(angle), sin(angle));
-    float distance_from_center = distance(coord0, center);
-    vec4 c = isDrawingShadows() ? shadowCorner(distance_from_center) : vec4(0.0,0.0,0.0,0.0);
 
-    float r = radius;
-    if (diagonal && disableRoundedTile) {
+    vec2 center;
+    float distance_from_center;
+    vec4 c;
+    float r;
+
+    if (disableRoundedTile) {
         r = outlineThickness;
-        center = start + r * sqrt(2.0) * vec2(cos(angle), sin(angle));
+        center = start + r * vec2(cos(angle), sin(angle));
         distance_from_center = distance(coord0, center);
+        c = tex;
+    }
+    else {
+        r = radius;
+        center = start + radius * (diagonal? sqrt(2.0) : 1.0) * vec2(cos(angle), sin(angle));
+        distance_from_center = distance(coord0, center);
+        c = isDrawingShadows() ? shadowCorner(distance_from_center) : vec4(0.0, 0.0, 0.0, 0.0);
     }
 
     if(isDrawingOutline()) {
