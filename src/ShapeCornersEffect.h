@@ -61,6 +61,6 @@ private:
     bool hasEffect(const KWin::EffectWindow *w) const;
     bool isTiled(const KWin::EffectWindow *w) const { return m_managed.at(w); }
     void checkTiled();
-    bool checkTiled(const bool& horizontal, double window_start, const double& screen_size);
+    bool checkTiled(const bool& horizontal, double window_start, double gap, const double& screen_size);
 };
 

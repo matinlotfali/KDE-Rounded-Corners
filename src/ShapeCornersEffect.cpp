@@ -191,16 +191,20 @@ QString ShapeCornersEffect::get_window_titles() {
     return response.join("\n");
 }
 
-bool ShapeCornersEffect::checkTiled(const bool& horizontal, double window_start, const double& screen_size) {
-    if (window_start == screen_size)
+bool ShapeCornersEffect::checkTiled(const bool& horizontal, double window_start, double gap, const double& screen_size) {
+    if (window_start + gap == screen_size)
         return true;
 
+    bool firstGap = gap == -1;
     #define DIM(a,b) (a*horizontal + b*!horizontal)
 
     bool r = false;
     for (auto& [w, tiled]: m_managed) {
-        if (DIM(w->x(), w->y()) == window_start) {
-            if (checkTiled(horizontal, window_start + DIM(w->width(), w->height()), screen_size)) {
+        if (firstGap)
+            gap = DIM(w->x(), w->y()) - window_start;
+
+        if (DIM(w->x(), w->y()) == window_start + gap) {
+            if (checkTiled(horizontal, window_start + DIM(w->width(), w->height()), gap, screen_size)) {
                 tiled = true;
                 r = true;
             }
@@ -218,7 +222,7 @@ void ShapeCornersEffect::checkTiled() {
     }
     for (const auto& screen: KWin::effects->screens()) {
         const auto& geometry = screen->geometry();
-        checkTiled(true, geometry.x(), geometry.width());
-        checkTiled(false, geometry.y(), geometry.height());
+        checkTiled(true, geometry.x(), -1, geometry.width());
+        checkTiled(false, geometry.y(), -1, geometry.height());
     }
 }
