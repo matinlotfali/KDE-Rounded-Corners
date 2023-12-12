@@ -17,7 +17,7 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 ![](https://img.shields.io/badge/KWinEffects-v237-lightgrey)
 - [![Arch](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/arch.yml?branch=master&label=Arch%20Linux&logo=archlinux&logoColor=white) ![](https://img.shields.io/aur/maintainer/kwin-effect-rounded-corners-git?label=AUR%20Maintainer) ![](https://img.shields.io/aur/votes/kwin-effect-rounded-corners-git?label=AUR%20Votes)](https://aur.archlinux.org/packages/kwin-effect-rounded-corners-git)
 
-![After](screenshots/shadows.png)
+![After](screenshots/decoration-color.png)
 
 # Contributions:
 
@@ -58,6 +58,12 @@ You need to install development packages for your distribution first:
   ```
   xbps-install git cmake make qt5-tools-devel extra-cmake-modules qt5-x11extras-devel gettext-devel kwin-devel
   ```
+- **NixOS** - by [Pavel Zolotarevskiy](https://github.com/flexagoon)
+   ```
+   nix-env -iA nixos.kde-rounded-corners
+   ```
+    
+
 Then get the source code and compile:
 ```
 git clone https://github.com/matinlotfali/KDE-Rounded-Corners

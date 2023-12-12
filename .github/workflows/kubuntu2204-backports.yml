@@ -2,9 +2,11 @@ name: Kubuntu 22.04 Backports
 
 on:
   push:
-    branches: [ master, latest-shapecorners-code, kwin_5.24 ]
+    branches: [ master ]
+    paths-ignore: [ '**.md', '**.png' ]
   pull_request:
     branches: [ master ]
+    paths-ignore: [ '**.md', '**.png' ]
   schedule:
       - cron: "0 0 * * *"
 

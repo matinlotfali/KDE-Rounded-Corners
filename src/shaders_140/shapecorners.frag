@@ -2,7 +2,6 @@
 
 uniform sampler2D front;
 uniform float radius;
-uniform bool windowHasDecoration;
 uniform vec2 windowSize;
 uniform vec2 windowExpandedSize;
 uniform vec2 windowTopLeft;
@@ -16,7 +15,7 @@ uniform float saturation;
 in vec2 texcoord0;
 out vec4 fragColor;
 
-bool isDrawingShadows() { return  windowHasDecoration && shadowColor.a > 0.0; }
+bool isDrawingShadows() { return  windowSize != windowExpandedSize && shadowColor.a > 0.0; }
 bool isDrawingOutline() { return  outlineColor.a > 0.0 && outlineThickness > 0.0; }
 
 vec4 shadowCorner(float distance_from_center) {
@@ -55,27 +54,27 @@ void main(void)
     vec2 coord0 = vec2(texcoord0.x * windowExpandedSize.x - windowTopLeft.x,
                     (1-texcoord0.y)* windowExpandedSize.y - windowTopLeft.y);
 
-    if (coord0.y < radius - 1) {
-        if (coord0.x < radius - 1)
-            tex = shapeCorner(coord0, tex, vec2(radius-1, radius-1));
-        else if (coord0.x > windowSize.x - radius + 1)
-            tex = shapeCorner(coord0, tex, vec2(windowSize.x - radius+1, radius-1));
-        else if (coord0.y < outlineThickness - 1)
-            tex = shapeCorner(coord0, tex, vec2(coord0.x, radius-1));
+    if (coord0.y < radius) {
+        if (coord0.x < radius)
+            tex = shapeCorner(coord0, tex, vec2(radius, radius));
+        else if (coord0.x > windowSize.x - radius)
+            tex = shapeCorner(coord0, tex, vec2(windowSize.x - radius, radius));
+        else if (coord0.y < outlineThickness)
+            tex = shapeCorner(coord0, tex, vec2(coord0.x, radius));
     }
-    else if (coord0.y > windowSize.y - radius + 1) {
-        if (coord0.x < radius - 1)
-            tex = shapeCorner(coord0, tex, vec2(radius-1, windowSize.y - radius+1));
-        else if (coord0.x > windowSize.x - radius + 1)
-            tex = shapeCorner(coord0, tex, vec2(windowSize.x - radius+1, windowSize.y - radius+1));
-        else if (coord0.y > windowSize.y - outlineThickness + 1)
-            tex = shapeCorner(coord0, tex, vec2(coord0.x, windowSize.y - radius+1));
+    else if (coord0.y > windowSize.y - radius) {
+        if (coord0.x < radius)
+            tex = shapeCorner(coord0, tex, vec2(radius, windowSize.y - radius));
+        else if (coord0.x > windowSize.x - radius)
+            tex = shapeCorner(coord0, tex, vec2(windowSize.x - radius, windowSize.y - radius));
+        else if (coord0.y > windowSize.y - outlineThickness)
+            tex = shapeCorner(coord0, tex, vec2(coord0.x, windowSize.y - radius));
     }
     else {
-        if (coord0.x < radius - 1)
-            tex = shapeCorner(coord0, tex, vec2(radius-1, coord0.y));
-        else if (coord0.x > windowSize.x - radius + 1)
-            tex = shapeCorner(coord0, tex, vec2(windowSize.x - radius+1, coord0.y));
+        if (coord0.x < radius)
+            tex = shapeCorner(coord0, tex, vec2(radius, coord0.y));
+        else if (coord0.x > windowSize.x - radius)
+            tex = shapeCorner(coord0, tex, vec2(windowSize.x - radius, coord0.y));
     }
 
     if (saturation != 1.0) {
