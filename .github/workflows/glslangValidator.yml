@@ -2,9 +2,11 @@ name: GLSL Validator
 
 on:
   push:
-    branches: [ master, latest-shapecorners-code, kwin_5.23 ]
+    branches: [ master ]
+    paths: [ '**.frag' ]
   pull_request:
     branches: [ master ]
+    paths: [ '**.frag' ]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -26,4 +28,4 @@ jobs:
       run: sudo apt update && sudo apt install -y glslang-tools
 
     - name: Validate Shaders
-      run: glslangValidator shaders_110/shapecorners.frag shaders_140/shapecorners.frag
+      run: glslangValidator src/shaders_110/shapecorners.frag src/shaders_140/shapecorners.frag

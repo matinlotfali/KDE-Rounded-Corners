@@ -2,9 +2,11 @@ name: ArchLinux
 
 on:
   push:
-    branches: [ master, latest-shapecorners-code, kwin_5.23, kwin_5.24, kwin_5.25 ]
+    branches: [ master ]
+    paths-ignore: [ '**.md', '**.png' ]
   pull_request:
     branches: [ master ]
+    paths-ignore: [ '**.md', '**.png' ]
   schedule:
     - cron: "0 0 * * *"
 

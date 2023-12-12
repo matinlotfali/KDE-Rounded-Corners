@@ -1,19 +1,24 @@
 cmake_minimum_required(VERSION 3.16)
 
-set(SHAPECORNERS kwin4_effect_shapecorners)
-
 project(${SHAPECORNERS})
 
 set(QT_MIN_VERSION "6.0.0")
-set(KF5_MIN_VERSION "5.68.0")
+set(KF5_MIN_VERSION "5.78")
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose Release or Debug" FORCE)
 endif()
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DQT_NO_DEBUG_OUTPUT")
 
-find_package(ECM REQUIRED NO_MODULE)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
+find_package(ECM ${KF5_MIN_VERSION} REQUIRED NO_MODULE)
+set(CMAKE_MODULE_PATH
+    ${CMAKE_MODULE_PATH}
+    ${ECM_MODULE_PATH}
+    ${ECM_KDE_MODULE_DIR}
+)
 
 find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
     Gui
@@ -29,9 +34,10 @@ find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
 include_directories(${Qt6Widgets_INCLUDE_DIRS} ${Qt6Network_INCLUDE_DIRS} ${Qt6OpenGL_INCLUDE_DIRS} ${Qt6Xml_INCLUDE_DIRS})
 add_definitions(${Qt6Widgets_DEFINITIONS})
 
+include(FeatureSummary)
 include(KDEInstallDirs)
 include(KDECMakeSettings)
-include(KDECompilerSettings)
+include(KDECompilerSettings NO_POLICY_SCOPE)
 
 # required frameworks by Core
 find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
@@ -39,89 +45,22 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
     ConfigWidgets
     CoreAddons
     GlobalAccel
-    I18n
     WindowSystem
-    GuiAddons
 )
 
-find_package(XCB REQUIRED)
+find_package(XCB REQUIRED COMPONENTS XCB)
 
-execute_process(COMMAND kf5-config --install module OUTPUT_VARIABLE MODULEPATH OUTPUT_STRIP_TRAILING_WHITESPACE)
+find_package(KWinEffects REQUIRED COMPONENTS
+    kwineffects
+    kwinglutils
+)
 
-include_directories("/usr/include/kwin/")
-include_directories("/usr/include/kwin/libkwineffects")
+find_package(KWinDBusInterface CONFIG REQUIRED)
+find_package(epoxy REQUIRED)
 
-find_library(KWIN_EFFECTS NAMES kwineffects PATH_SUFFIXES kf5)
-find_library(KWIN_GLUTILS NAMES kwinglutils PATH_SUFFIXES kf5)
-find_library(OPENGL NAMES GL)
+add_subdirectory(src)
 
-if (NOT KWIN_EFFECTS)
-    message(STATUS "didnt find kwineffects lib, not building effects")
-endif (NOT KWIN_EFFECTS)
-
-if (NOT KWIN_GLUTILS)
-    message(STATUS "didnt find kwin glutils lib, not building effects")
-endif (NOT KWIN_GLUTILS)
-
-if (NOT OPENGL)
-    message(STATUS "didnt find opengl, not building effects")
-endif (NOT OPENGL)
-
-if (NOT KWIN_GLUTILS OR NOT KWIN_EFFECTS OR NOT OPENGL)
-    message(FATAL_ERROR "cant continue")
-endif (NOT KWIN_GLUTILS OR NOT KWIN_EFFECTS OR NOT OPENGL)
-
-add_library(${SHAPECORNERS} MODULE shapecorners.cpp main.cpp shapecorners_shader.cpp ConfigModel.cpp)
-
-target_link_libraries(${SHAPECORNERS}
-    PUBLIC
-        Qt6::Core
-        Qt6::Gui
-        Qt6::DBus
-        ${KWIN_EFFECTS}
-        ${KWIN_GLUTILS}
-        epoxy
-        GL
-    PRIVATE
-        KF5::ConfigCore
-        KF5::CoreAddons
-        KF5::ConfigWidgets
-        KF5::GuiAddons
-        KF5::WindowSystem
-        )
-
-if (XCB_FOUND)
-    target_link_libraries(${SHAPECORNERS} PUBLIC XCB::XCB)
-endif (XCB_FOUND)
-
-install(TARGETS ${SHAPECORNERS} DESTINATION ${MODULEPATH}/kwin/effects/plugins)
-# execute_process(COMMAND kf5-config --install services OUTPUT_VARIABLE SERVICEPATH OUTPUT_STRIP_TRAILING_WHITESPACE)
-#install(FILES shapecorners.desktop DESTINATION ${SERVICEPATH}/kwin)
-
-execute_process(COMMAND kf5-config --install data OUTPUT_VARIABLE DATAPATH OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-install(FILES shaders_140/shapecorners.frag DESTINATION ${DATAPATH}/kwin/shaders/1.40)
-install(FILES shaders_110/shapecorners.frag DESTINATION ${DATAPATH}/kwin/shaders/1.10)
-
-#config
-project(kwin4_shapecorners_config)
-set(kwin4_shapecorners_config_SOURCES shapecorners_config.cpp shapecorners_config.h ConfigModel.cpp)
-ki18n_wrap_ui(kwin4_shapecorners_config_SOURCES shapecorners_config.ui)
-qt6_add_dbus_interface(kwin4_shapecorners_config_SOURCES org.kde.kwin.Effects.xml kwineffects_interface)
-add_library(kwin4_shapecorners_config MODULE ${kwin4_shapecorners_config_SOURCES})
-target_link_libraries(kwin4_shapecorners_config
-        PUBLIC
-            kwineffects
-            Qt6::Widgets
-        PRIVATE
-            KF5::ConfigWidgets
-            KF5::WindowSystem
-            KF5::I18n
-            KF5::GlobalAccel
-        )
-kcoreaddons_desktop_to_json(kwin4_shapecorners_config shapecorners_config.desktop)
-install(TARGETS kwin4_shapecorners_config DESTINATION ${MODULEPATH}/kwin/effects/configs)
-install(FILES shapecorners_config.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kwin)
+feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
 
 # these are cache variables, so they could be overwritten with -D,
 set(CPACK_PACKAGE_NAME kwin4-effect-shapecorners

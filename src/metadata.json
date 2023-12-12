@@ -4,6 +4,10 @@
             {
                 "Email": "therealestrob@gmail.com",
                 "Name": "Rob"
+            },
+            {
+                "Email": "matinlotfali@gmail.com",
+                "Name": "Matin Lotfaliei"
             }
         ],
         "Category": "Appearance",
@@ -18,10 +22,8 @@
         "Version": "git"
     },
     "org.kde.kwin.effect": {
-        "video": "",
-        "exclusiveGroup": "",
         "enabledByDefaultMethod": true
     },
     "X-KDE-Ordering": "5",
-    "X-KDE-ConfigModule": "kwin4_shapecorners_config"
+    "X-KDE-ConfigModule": "kwin_shapecorners_config"
 }

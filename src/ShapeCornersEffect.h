@@ -17,18 +17,18 @@
  *   Boston, MA 02110-1301, USA.
  */
 
-#ifndef SHAPECORNERS_H
-#define SHAPECORNERS_H
+#pragma once
 
 #include <kwineffects.h>
-#include "shapecorners_shader.h"
+#include <set>
+#include "ShapeCornersShader.h"
 
 #if KWIN_EFFECT_API_VERSION >= 236
 #include <kwinoffscreeneffect.h>
-class Q_DECL_EXPORT ShapeCornersEffect : public KWin::OffscreenEffect
+class ShapeCornersEffect : public KWin::OffscreenEffect
 #else
 #include <kwindeformeffect.h>
-class Q_DECL_EXPORT ShapeCornersEffect : public KWin::DeformEffect
+class ShapeCornersEffect : public KWin::DeformEffect
 #endif
 {
     Q_OBJECT
@@ -38,6 +38,8 @@ public:
 
     static bool supported();
     static bool enabledByDefault() { return supported(); }
+    static bool isMaximized(const KWin::EffectWindow *w);
+    static bool isWindowActive(const KWin::EffectWindow *w) { return KWin::effects->activeWindow() == w; }
 
     void reconfigure(ReconfigureFlags flags) override;
 
@@ -51,15 +53,17 @@ public:
 
     int requestedEffectChainPosition() const override { return 99; }
 
+public Q_SLOTS:
+    QString get_window_titles();
+
 protected Q_SLOTS:
     void windowAdded(KWin::EffectWindow *window);
     void windowRemoved(KWin::EffectWindow *window);
 
 private:
-    QSet<KWin::EffectWindow*> m_managed;
+    std::set<const KWin::EffectWindow*> m_managed;
     ShapeCornersShader m_shaderManager;
-    ConfigModel m_config;
-};
 
-#endif //SHAPECORNERS_H
+    bool hasEffect(const KWin::EffectWindow *w) const;
+};
 
