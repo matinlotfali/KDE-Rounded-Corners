@@ -101,5 +101,8 @@
         </entry>
         <entry name="Exclusions" type="StringList">
         </entry>
+        <entry name="ExcludeMaximizedWindows" type="Bool">
+            <default>true</default>
+        </entry>
     </group>
 </kcfg>

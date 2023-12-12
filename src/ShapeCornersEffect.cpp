@@ -177,7 +177,7 @@ bool ShapeCornersEffect::hasEffect(const KWin::EffectWindow *w) const {
            && m_managed.contains(w)
            && (w->hasDecoration() || ShapeCornersConfig::inclusions().contains(name))
            && !ShapeCornersConfig::exclusions().contains(name)
-           && !isMaximized(w);
+           && !(ShapeCornersConfig::excludeMaximizedWindows() && isMaximized(w));
 }
 
 QString ShapeCornersEffect::get_window_titles() {
