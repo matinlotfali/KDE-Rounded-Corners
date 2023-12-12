@@ -7,7 +7,7 @@
 
 #include <kwinglutils.h>
 #include <memory>
-#include <QPalette>
+#include <QWidget>
 #include "ShapeCornersConfig.h"
 
 namespace KWin {
@@ -29,7 +29,7 @@ public:
 private:
     std::unique_ptr<KWin::GLShader> m_shader;
     KWin::ShaderManager* m_manager;
-    QPalette m_palette;
+    QWidget m_widget;
     int m_shader_windowSize = 0;
     int m_shader_windowExpandedSize = 0;
     int m_shader_windowTopLeft = 0;
