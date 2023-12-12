@@ -11,8 +11,7 @@
 #include "ShapeCornersShader.h"
 
 ShapeCornersShader::ShapeCornersShader():
-        m_manager(KWin::ShaderManager::instance()),
-        m_palette(QWidget().palette())
+        m_manager(KWin::ShaderManager::instance())
 {
     const QString shadersDir = IsLegacy()? "kwin/shaders/1.10/": "kwin/shaders/1.40/";
     const QString fragmentshader = QStandardPaths::locate(QStandardPaths::GenericDataLocation, shadersDir + QStringLiteral("shapecorners.frag"));
@@ -58,6 +57,7 @@ bool ShapeCornersShader::IsValid() const {
 const std::unique_ptr<KWin::GLShader>&
 ShapeCornersShader::Bind(KWin::EffectWindow *w) const {
     QColor outlineColor, shadowColor;
+    auto& m_palette = m_widget.palette();
     auto xy = QVector2D((w->frameGeometry().left() - w->expandedGeometry().left()),
                         (w->frameGeometry().top() - w->expandedGeometry().top()));
     m_manager->pushShader(m_shader.get());
