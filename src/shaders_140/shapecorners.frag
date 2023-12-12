@@ -2,7 +2,6 @@
 
 uniform sampler2D front;
 uniform float radius;
-uniform bool windowHasDecoration;
 uniform vec2 windowSize;
 uniform vec2 windowExpandedSize;
 uniform vec2 windowTopLeft;
@@ -16,7 +15,7 @@ uniform float saturation;
 in vec2 texcoord0;
 out vec4 fragColor;
 
-bool isDrawingShadows() { return  windowHasDecoration && shadowColor.a > 0.0; }
+bool isDrawingShadows() { return  windowSize != windowExpandedSize && shadowColor.a > 0.0; }
 bool isDrawingOutline() { return  outlineColor.a > 0.0 && outlineThickness > 0.0; }
 
 vec4 shadowCorner(float distance_from_center) {
