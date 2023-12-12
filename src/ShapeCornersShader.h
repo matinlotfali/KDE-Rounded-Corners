@@ -32,7 +32,6 @@ private:
     int m_shader_windowSize = 0;
     int m_shader_windowExpandedSize = 0;
     int m_shader_windowTopLeft = 0;
-    int m_shader_windowHasDecoration = 0;
     int m_shader_disableRoundedTile = 0;
     int m_shader_shadowColor = 0;
     int m_shader_shadowSize = 0;

@@ -58,6 +58,12 @@ You need to install development packages for your distribution first:
   ```
   xbps-install git cmake make qt5-tools-devel extra-cmake-modules qt5-x11extras-devel gettext-devel kwin-devel
   ```
+- **NixOS** - by [Pavel Zolotarevskiy](https://github.com/flexagoon)
+   ```
+   nix-env -iA nixos.kde-rounded-corners
+   ```
+    
+
 Then get the source code and compile:
 ```
 git clone https://github.com/matinlotfali/KDE-Rounded-Corners

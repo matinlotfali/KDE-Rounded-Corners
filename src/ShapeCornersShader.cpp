@@ -31,7 +31,6 @@ ShapeCornersShader::ShapeCornersShader():
 //        qDebug() << frag;        
         if (m_shader->isValid())
         {
-            m_shader_windowHasDecoration = m_shader->uniformLocation("windowHasDecoration");
             m_shader_disableRoundedTile = m_shader->uniformLocation("disableRoundedTile");
             m_shader_windowSize = m_shader->uniformLocation("windowSize");
             m_shader_windowExpandedSize = m_shader->uniformLocation("windowExpandedSize");
@@ -66,7 +65,6 @@ ShapeCornersShader::Bind(KWin::EffectWindow *w, bool isTiled) const {
     m_shader->setUniform(m_shader_windowSize, QVector2D(w->frameGeometry().width(), w->frameGeometry().height()));
     m_shader->setUniform(m_shader_windowExpandedSize, QVector2D(w->expandedGeometry().width(), w->expandedGeometry().height()));
     m_shader->setUniform(m_shader_windowTopLeft, xy);
-    m_shader->setUniform(m_shader_windowHasDecoration, w->hasDecoration());
     m_shader->setUniform(m_shader_disableRoundedTile, isTiled && ShapeCornersConfig::disableRoundTile());
     m_shader->setUniform(m_shader_front, 0);
     if (ShapeCornersEffect::isWindowActive(w)) {
