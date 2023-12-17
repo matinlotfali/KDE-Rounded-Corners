@@ -29,7 +29,7 @@ bool isDrawingOutline() { return  outlineColor.a > 0.0 && outlineThickness > 0.0
  *  \param distance_from_center: Distance of the rendering point and the reference point that is being used for rounding corners.
  *  \return The RGBA color to be used for shadow.
  */
-vec4 shadowColor(float distance_from_center) {
+vec4 getShadowColor(float distance_from_center) {
     if(!isDrawingShadows())
         return vec4(0.0, 0.0, 0.0, 0.0);
     float percent = -distance_from_center/shadowSize + 1.0;
@@ -48,7 +48,7 @@ vec4 shadowColor(float distance_from_center) {
  */
 vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 center) {
     float distance_from_center = distance(coord0, center);
-    vec4 c = shadowColor(distance_from_center);
+    vec4 c = getShadowColor(distance_from_center);
 
     if(isDrawingOutline()) {
         vec4 outlineOverlay = vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), 1.0);
