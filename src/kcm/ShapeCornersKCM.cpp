@@ -47,12 +47,12 @@ ShapeCornersKCM::ShapeCornersKCM(QWidget* parent, const QVariantList& args)
 
     connect(ui->refreshButton, &QPushButton::pressed, this, &ShapeCornersKCM::update_windows);
     connect(ui->includeButton, &QPushButton::pressed, [=, this]() {
-        auto s = ui->currentWindowList->currentItem();
+        const auto s = ui->currentWindowList->currentItem();
         if (s && ui->InclusionList->findItems(s->text(), Qt::MatchExactly).empty())
             ui->InclusionList->addItem(s->text());
     });
     connect(ui->excludeButton, &QPushButton::pressed, [=, this]() {
-        auto s = ui->currentWindowList->currentItem();
+        const auto s = ui->currentWindowList->currentItem();
         if (s && ui->ExclusionList->findItems(s->text(), Qt::MatchExactly).empty())
             ui->ExclusionList->addItem(s->text());
     });
@@ -117,11 +117,11 @@ void ShapeCornersKCM::update_windows() {
     QList<QString> windowList;
     ui->currentWindowList->clear();
 
-    auto connection = QDBusConnection::sessionBus();
+    const auto connection = QDBusConnection::sessionBus();
     if (connection.isConnected()) {
         QDBusInterface interface("org.kde.ShapeCorners", "/ShapeCornersEffect");
         if (interface.isValid()) {
-            QDBusReply<QString> reply = interface.call("get_window_titles");
+            const QDBusReply<QString> reply = interface.call("get_window_titles");
             if (reply.isValid())
                 windowList = reply.value().split("\n");
         }

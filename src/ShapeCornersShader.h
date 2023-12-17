@@ -41,7 +41,7 @@ public:
      * \return A reference to the unique pointer of the loaded shader.
      */
     const std::unique_ptr<KWin::GLShader>& Bind(KWin::EffectWindow *w) const;
-    const std::unique_ptr<KWin::GLShader>& Bind(QMatrix4x4 mvp, KWin::EffectWindow *w) const;
+    const std::unique_ptr<KWin::GLShader>& Bind(const QMatrix4x4& mvp, KWin::EffectWindow *w) const;
 
     /**
      * \brief Pop the shader from the stack of rendering.

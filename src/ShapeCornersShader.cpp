@@ -4,9 +4,7 @@
 
 #include <kwinglplatform.h>
 #include <QFile>
-#include <QStandardPaths>
 #include <kwineffects.h>
-#include <QWidget>
 #include "ShapeCornersEffect.h"
 #include "ShapeCornersShader.h"
 
@@ -98,7 +96,7 @@ ShapeCornersShader::Bind(KWin::EffectWindow *w) const {
 }
 
 const std::unique_ptr<KWin::GLShader>&
-ShapeCornersShader::Bind(QMatrix4x4 mvp, KWin::EffectWindow *w) const {
+ShapeCornersShader::Bind(const QMatrix4x4& mvp, KWin::EffectWindow *w) const {
     Bind(w);
     m_shader->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
     return m_shader;

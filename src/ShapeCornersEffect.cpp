@@ -18,7 +18,6 @@
  */
 
 #include "ShapeCornersEffect.h"
-#include <kwingltexture.h>
 #include <QtDBus/QDBusConnection>
 #include <QDBusError>
 

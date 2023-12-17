@@ -46,7 +46,7 @@ public:
     void prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time) override;
     void drawWindow(KWin::EffectWindow *window, int mask, const QRegion &region, KWin::WindowPaintData &data) override;
 
-    int requestedEffectChainPosition() const override { return 99; }
+    [[nodiscard]] int requestedEffectChainPosition() const override { return 99; }
 
 public Q_SLOTS:
     QString get_window_titles();

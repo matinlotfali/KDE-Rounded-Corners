@@ -4,7 +4,7 @@
 #include "ui_ShapeCornersKCM.h"
 #include "ShapeCornersConfig.h"
 
-class ShapeCornersKCM : public KCModule
+class ShapeCornersKCM final: public KCModule
 {
     Q_OBJECT
 public:
