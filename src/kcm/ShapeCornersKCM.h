@@ -1,4 +1,5 @@
- 
+#pragma once
+
 #include <kcmodule.h>
 #include "ui_ShapeCornersKCM.h"
 #include "ShapeCornersConfig.h"
