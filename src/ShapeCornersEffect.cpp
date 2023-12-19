@@ -113,16 +113,12 @@ void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePa
     auto size = isWindowActive(w) ? ShapeCornersConfig::size(): ShapeCornersConfig::inactiveCornerRadius();
 
 #if KWIN_EFFECT_API_VERSION >= 234
-    const auto geo_ex = w->expandedGeometry() * KWin::effects->renderTargetScale();
     const auto geo = w->frameGeometry() * KWin::effects->renderTargetScale();
     data.setTranslucent();
 #else
-    const auto& geo_ex = w->expandedGeometry();
     const auto& geo = w->expandedGeometry();
 #endif
     QRegion reg {};
-    reg += toRect(geo_ex);
-    reg -= toRect(geo);
     reg += QRect(geo.x(), geo.y(), size, size);
     reg += QRect(geo.x()+geo.width()-size, geo.y(), size, size);
     reg += QRect(geo.x(), geo.y()+geo.height()-size, size, size);
