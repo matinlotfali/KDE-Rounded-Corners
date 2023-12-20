@@ -82,10 +82,10 @@ ShapeCornersShader::Bind(KWin::EffectWindow *w) const {
         m_shader->setUniform(m_shader_outlineThickness, (float)ShapeCornersConfig::inactiveOutlineThickness());
 
         outlineColor = ShapeCornersConfig::inactiveOutlineUsePalette() ?
-                       m_palette.color(QPalette::Active, static_cast<QPalette::ColorRole>(ShapeCornersConfig::inactiveOutlinePalette())):
+                       m_palette.color(QPalette::Inactive, static_cast<QPalette::ColorRole>(ShapeCornersConfig::inactiveOutlinePalette())):
                        ShapeCornersConfig::inactiveOutlineColor();
         shadowColor = ShapeCornersConfig::inactiveShadowUsePalette() ?
-                      m_palette.color(QPalette::Active, static_cast<QPalette::ColorRole>(ShapeCornersConfig::inactiveShadowPalette())):
+                      m_palette.color(QPalette::Inactive, static_cast<QPalette::ColorRole>(ShapeCornersConfig::inactiveShadowPalette())):
                       ShapeCornersConfig::inactiveShadowColor();
         outlineColor.setAlpha(ShapeCornersConfig::inactiveOutlineAlpha());
         shadowColor.setAlpha(ShapeCornersConfig::inactiveShadowAlpha());
