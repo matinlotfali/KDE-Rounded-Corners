@@ -1,9 +1,13 @@
- 
+#pragma once
+
 #include <kcmodule.h>
-#include "ui_ShapeCornersKCM.h"
 #include "ShapeCornersConfig.h"
 
-class ShapeCornersKCM : public KCModule
+namespace Ui {
+    class Form;
+}
+
+class ShapeCornersKCM final: public KCModule
 {
     Q_OBJECT
 public:
@@ -14,8 +18,8 @@ public slots:
     void defaults() override;
     void load() override;
     void save() override;
-    void update_colors();
-    void update_windows();
+    void update_colors() const;
+    void update_windows() const;
 
 private:
     Ui::Form *ui;

@@ -25,10 +25,10 @@
 
 #if KWIN_EFFECT_API_VERSION >= 236
 #include <kwinoffscreeneffect.h>
-class ShapeCornersEffect : public KWin::OffscreenEffect
+class ShapeCornersEffect final: public KWin::OffscreenEffect
 #else
 #include <kwindeformeffect.h>
-class ShapeCornersEffect : public KWin::DeformEffect
+class ShapeCornersEffect final: public KWin::DeformEffect
 #endif
 {
     Q_OBJECT
@@ -45,16 +45,16 @@ public:
     void reconfigure(ReconfigureFlags flags) override;
 
     void prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time) override;
-    void drawWindow(KWin::EffectWindow *window, int mask, const QRegion &region, KWin::WindowPaintData &data) override;
+    void drawWindow(KWin::EffectWindow *w, int mask, const QRegion &region, KWin::WindowPaintData &data) override;
 
-    int requestedEffectChainPosition() const override { return 99; }
+    [[nodiscard]] int requestedEffectChainPosition() const override { return 99; }
 
 public Q_SLOTS:
-    QString get_window_titles();
+    [[nodiscard]] QString get_window_titles() const;
 
 protected Q_SLOTS:
-    void windowAdded(KWin::EffectWindow *window);
-    void windowRemoved(KWin::EffectWindow *window);
+    void windowAdded(KWin::EffectWindow *w);
+    void windowRemoved(KWin::EffectWindow *w);
 
 private:
     std::set<const KWin::EffectWindow*> m_managed;
