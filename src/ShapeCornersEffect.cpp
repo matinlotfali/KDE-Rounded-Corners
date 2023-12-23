@@ -17,9 +17,11 @@
  *   Boston, MA 02110-1301, USA.
  */
 
-#include "ShapeCornersEffect.h"
 #include <QtDBus/QDBusConnection>
 #include <QDBusError>
+#include <kwinglutils.h>
+#include "ShapeCornersEffect.h"
+#include "ShapeCornersConfig.h"
 
 #if KWIN_EFFECT_API_VERSION >= 235
 #include <KX11Extras>
@@ -36,8 +38,8 @@ ShapeCornersEffect::ShapeCornersEffect()
 {
     reconfigure(ReconfigureAll);
 
-    auto connection = QDBusConnection::sessionBus();
-    if (!connection.isConnected()) {
+    if (auto connection = QDBusConnection::sessionBus();
+        !connection.isConnected()) {
         qWarning("ShapeCorners: Cannot connect to the D-Bus session bus.\n");
     }
     else {
@@ -58,7 +60,7 @@ ShapeCornersEffect::ShapeCornersEffect()
         const auto& windowList = KWindowSystem::windows();
 #endif
         for (const auto& id: windowList)
-            if (auto win = KWin::effects->findWindow(id))
+            if (const auto win = KWin::effects->findWindow(id))
                 windowAdded(win);
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
         connect(KWin::effects, &KWin::EffectsHandler::windowDeleted, this, &ShapeCornersEffect::windowRemoved);
@@ -71,8 +73,7 @@ void
 ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
 {
     qDebug() << w->windowRole() << w->windowType() << w->windowClass();
-    auto r = m_managed.insert(w);
-    if (r.second) {
+    if (const auto& [w2, r] = m_managed.insert(w); r) {
         redirect(w);
         setShader(w, m_shaderManager.GetShader().get());
     }
@@ -85,22 +86,22 @@ void ShapeCornersEffect::windowRemoved(KWin::EffectWindow *w)
 }
 
 void
-ShapeCornersEffect::reconfigure(ReconfigureFlags flags)
+ShapeCornersEffect::reconfigure(const ReconfigureFlags flags)
 {
     Q_UNUSED(flags)
     ShapeCornersConfig::self()->read();
 }
 
 bool ShapeCornersEffect::isMaximized(const KWin::EffectWindow *w) {
-    auto screenGeometry = KWin::effects->findScreen(w->screen()->name())->geometry();
+    const auto& screenGeometry = KWin::effects->findScreen(w->screen()->name())->geometry();
     return (w->x() == screenGeometry.x() && w->width() == screenGeometry.width()) ||
            (w->y() == screenGeometry.y() && w->height() == screenGeometry.height());
 }
 
-QRectF operator *(QRect r, qreal scale) { return {r.x() * scale, r.y() * scale, r.width() * scale, r.height() * scale}; }
-QRectF operator *(QRectF r, qreal scale) { return {r.x() * scale, r.y() * scale, r.width() * scale, r.height() * scale}; }
-QRect toRect(const QRectF& r) { return {(int)r.x(), (int)r.y(), (int)r.width(), (int)r.height()}; }
-const QRect& toRect(const QRect& r) { return r; }
+inline QRectF operator *(const QRect& r, const qreal scale) { return {r.x() * scale, r.y() * scale, r.width() * scale, r.height() * scale}; }
+inline QRectF operator *(const QRectF& r, const qreal scale) { return {r.x() * scale, r.y() * scale, r.width() * scale, r.height() * scale}; }
+inline QRect toRect(const QRectF& r) { return {static_cast<int>(r.x()), static_cast<int>(r.y()), static_cast<int>(r.width()), static_cast<int>(r.height())}; }
+inline const QRect& toRect(const QRect& r) { return r; }
 
 void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
 {
@@ -110,7 +111,7 @@ void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePa
         return;
     }
 
-    auto size = isWindowActive(w) ? ShapeCornersConfig::size(): ShapeCornersConfig::inactiveCornerRadius();
+    const auto size = isWindowActive(w) ? ShapeCornersConfig::size(): ShapeCornersConfig::inactiveCornerRadius();
 
 #if KWIN_EFFECT_API_VERSION >= 234
     const auto geo = w->frameGeometry() * KWin::effects->renderTargetScale();
@@ -167,7 +168,7 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
 }
 
 bool ShapeCornersEffect::hasEffect(const KWin::EffectWindow *w) const {
-    auto name = w->windowClass().split(' ').first();
+    const auto name = w->windowClass().split(' ').first();
     return m_shaderManager.IsValid()
            && m_managed.contains(w)
            && (w->hasDecoration() || (w->isNormalWindow() && ShapeCornersConfig::inclusions().contains(name)))
@@ -175,10 +176,10 @@ bool ShapeCornersEffect::hasEffect(const KWin::EffectWindow *w) const {
            && !(ShapeCornersConfig::excludeMaximizedWindows() && isMaximized(w));
 }
 
-QString ShapeCornersEffect::get_window_titles() {
+QString ShapeCornersEffect::get_window_titles() const {
     QSet<QString> response;
     for (const auto& win: m_managed) {
-        auto name = win->windowClass().split(' ').first();
+        const auto name = win->windowClass().split(' ').first();
         if (name == "plasmashell")
             continue;
         response.insert(name);

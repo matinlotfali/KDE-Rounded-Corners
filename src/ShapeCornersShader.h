@@ -5,15 +5,15 @@
 #ifndef KWIN4_SHAPECORNERS_CONFIG_SHADERMANAGER_H
 #define KWIN4_SHAPECORNERS_CONFIG_SHADERMANAGER_H
 
-#include <kwinglutils.h>
-#include <memory>
-#include <QWidget>
-#include "ShapeCornersConfig.h"
-
 namespace KWin {
     class GLShader;
     class ShaderManager;
 }
+
+struct QVector2DSize final: QVector2D {
+    explicit QVector2DSize(const QSizeF s):
+      QVector2D(static_cast<float>(s.width()), static_cast<float>(s.height())) {}
+};
 
 class ShapeCornersShader {
 public:
@@ -68,7 +68,7 @@ private:
     /**
      * \brief Used only for its `palette()` function which holds the currently active highlight colors.
      */
-    QWidget m_widget;
+    std::shared_ptr<QWidget> m_widget;
 
     /**
      * \brief Reference to `uniform vec2 windowSize;`
