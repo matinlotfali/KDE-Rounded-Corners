@@ -28,6 +28,7 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 - Disable effect when window gets maximized - by [matinlotfali](https://github.com/matinlotfali)
 - Cleanups for the plugin logic, remove unneeded dependencies from CMakeLists.txt file - by [alex1701c](https://github.com/alex1701c)
 - Separate outline color for active and inactive windows - by [OrkenWhite](https://github.com/OrkenWhite)
+- Add natural shadows using parametric blend - by [paletteOvO](https://github.com/paletteOvO)
 
 # How to build from source code:
 

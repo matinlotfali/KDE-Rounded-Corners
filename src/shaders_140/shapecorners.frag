@@ -23,6 +23,11 @@ out vec4 fragColor;              // The RGBA color that can be rendered
 bool isDrawingShadows() { return  windowSize != windowExpandedSize && shadowColor.a > 0.0; }
 bool isDrawingOutline() { return  outlineColor.a > 0.0 && outlineThickness > 0.0; }
 
+float parametricBlend(float t) {
+    float sqt = t * t;
+    return sqt / (2.0 * (sqt - t) + 1.0);
+}
+
 /*
  *  \brief This function generates the shadow color based on the distance_from_center
  *  \param distance_from_center: Distance of the rendering point and the reference point that is being used for rounding corners.
@@ -32,6 +37,8 @@ vec4 getShadowColor(float distance_from_center) {
     if(!isDrawingShadows())
         return vec4(0,0,0,0);
     float percent = -distance_from_center/shadowSize + 1;
+    percent = clamp(percent, 0, 1);
+    percent = parametricBlend(percent);
     if(percent < 0)
         return vec4(0,0,0,0);
     else
