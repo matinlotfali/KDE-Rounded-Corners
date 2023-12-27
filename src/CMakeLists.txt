@@ -1,7 +1,9 @@
 add_subdirectory(kcm)
 
 set(effect_SRCS
+    ShapeCornersEffect.h
     ShapeCornersEffect.cpp
+    ShapeCornersShader.h
     ShapeCornersShader.cpp
     plugin.cpp
 )

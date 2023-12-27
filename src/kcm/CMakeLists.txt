@@ -1,4 +1,5 @@
 set(kcm_SRCS
+    ShapeCornersKCM.h
     ShapeCornersKCM.cpp
     plugin.cpp
 )

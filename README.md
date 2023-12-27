@@ -17,7 +17,7 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 ![](https://img.shields.io/badge/KWinEffects-v237-lightgrey)
 - [![Arch](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/arch.yml?branch=master&label=Arch%20Linux&logo=archlinux&logoColor=white) ![](https://img.shields.io/aur/maintainer/kwin-effect-rounded-corners-git?label=AUR%20Maintainer) ![](https://img.shields.io/aur/votes/kwin-effect-rounded-corners-git?label=AUR%20Votes)](https://aur.archlinux.org/packages/kwin-effect-rounded-corners-git)
 
-![After](screenshots/decoration-color.png)
+![After](screenshots/shadows2.png)
 
 # Contributions:
 
@@ -28,6 +28,7 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 - Disable effect when window gets maximized - by [matinlotfali](https://github.com/matinlotfali)
 - Cleanups for the plugin logic, remove unneeded dependencies from CMakeLists.txt file - by [alex1701c](https://github.com/alex1701c)
 - Separate outline color for active and inactive windows - by [OrkenWhite](https://github.com/OrkenWhite)
+- Add natural shadows using parametric blend - by [paletteOvO](https://github.com/paletteOvO)
 
 # How to build from source code:
 

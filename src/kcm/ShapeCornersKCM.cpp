@@ -1,11 +1,9 @@
 #include <QDialog>
 #include <QList>
-
 #include <kwineffects.h>
 #include "kwineffects_interface.h"
+#include "ui_ShapeCornersKCM.h"
 #include "ShapeCornersKCM.h"
-
-#include <QDBusConnection>
 
 ShapeCornersKCM::ShapeCornersKCM(QWidget* parent, const QVariantList& args)
     : KCModule(parent, args)
@@ -47,13 +45,13 @@ ShapeCornersKCM::ShapeCornersKCM(QWidget* parent, const QVariantList& args)
 
     connect(ui->refreshButton, &QPushButton::pressed, this, &ShapeCornersKCM::update_windows);
     connect(ui->includeButton, &QPushButton::pressed, [=, this]() {
-        auto s = ui->currentWindowList->currentItem();
-        if (s && ui->InclusionList->findItems(s->text(), Qt::MatchExactly).empty())
+        if (const auto s = ui->currentWindowList->currentItem();
+            s && ui->InclusionList->findItems(s->text(), Qt::MatchExactly).empty())
             ui->InclusionList->addItem(s->text());
     });
     connect(ui->excludeButton, &QPushButton::pressed, [=, this]() {
-        auto s = ui->currentWindowList->currentItem();
-        if (s && ui->ExclusionList->findItems(s->text(), Qt::MatchExactly).empty())
+        if (const auto s = ui->currentWindowList->currentItem();
+            s && ui->ExclusionList->findItems(s->text(), Qt::MatchExactly).empty())
             ui->ExclusionList->addItem(s->text());
     });
     connect(ui->deleteIncludeButton, &QPushButton::pressed, [=, this]() {
@@ -87,7 +85,7 @@ ShapeCornersKCM::~ShapeCornersKCM() {
     delete ui;
 }
 
-void ShapeCornersKCM::update_colors() {
+void ShapeCornersKCM::update_colors() const {
     QColor color;
     bool checked;
     int index;
@@ -113,23 +111,15 @@ void ShapeCornersKCM::update_colors() {
     ui->kcfg_InactiveShadowAlpha->setSecondColor(color);
 }
 
-void ShapeCornersKCM::update_windows() {
-    QList<QString> windowList;
-    ui->currentWindowList->clear();
-
-    auto connection = QDBusConnection::sessionBus();
-    if (connection.isConnected()) {
-        QDBusInterface interface("org.kde.ShapeCorners", "/ShapeCornersEffect");
-        if (interface.isValid()) {
-            QDBusReply<QString> reply = interface.call("get_window_titles");
-            if (reply.isValid())
+void ShapeCornersKCM::update_windows() const {
+    QStringList windowList;
+    if (const auto connection = QDBusConnection::sessionBus(); connection.isConnected())
+        if (QDBusInterface interface("org.kde.ShapeCorners", "/ShapeCornersEffect"); interface.isValid())
+            if (const QDBusReply<QString> reply = interface.call("get_window_titles"); reply.isValid())
                 windowList = reply.value().split("\n");
-        }
-    }
 
-    for (const auto& w: windowList)
-        if (!w.isEmpty())
-            ui->currentWindowList->addItem(w);
+    ui->currentWindowList->clear();
+    ui->currentWindowList->addItems(windowList);
 }
 
 void ShapeCornersKCM::load() {
