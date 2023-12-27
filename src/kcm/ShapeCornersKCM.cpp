@@ -1,6 +1,5 @@
 #include <QDialog>
 #include <QList>
-#include <kwineffects.h>
 #include "kwineffects_interface.h"
 #include "ui_ShapeCornersKCM.h"
 #include "ShapeCornersKCM.h"

@@ -4,9 +4,9 @@
 
 #include <QFile>
 #include <QWidget>
-#include <kwinglplatform.h>
-#include <kwineffects.h>
-#include <kwinglutils.h>
+#include <opengl/glplatform.h>
+#include <effect/effect.h>
+#include <opengl/glutils.h>
 #include "ShapeCornersEffect.h"
 #include "ShapeCornersConfig.h"
 #include "ShapeCornersShader.h"

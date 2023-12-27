@@ -12,16 +12,16 @@ kconfig_add_kcfg_files(effect_SRCS ShapeCornersConfig.kcfgc)
 add_library(kwin4_effect_shapecorners SHARED ${effect_SRCS})
 
 target_link_libraries(kwin4_effect_shapecorners
-    Qt5::Core
-    Qt5::Gui
-    Qt5::DBus
-    KWinEffects::kwineffects
-    KWinEffects::kwinglutils
+    Qt6::Core
+    Qt6::CorePrivate
+    Qt6::Gui
+    Qt6::DBus
+    KWin::kwin
     epoxy::epoxy
-    KF5::ConfigCore
-    KF5::ConfigGui
-    KF5::CoreAddons
-    KF5::WindowSystem
+    KF6::ConfigCore
+    KF6::ConfigGui
+    KF6::CoreAddons
+    KF6::WindowSystem
 )
 
 install(TARGETS kwin4_effect_shapecorners DESTINATION ${PLUGIN_INSTALL_DIR}/kwin/effects/plugins/)

@@ -19,7 +19,9 @@
 
 #include <QtDBus/QDBusConnection>
 #include <QDBusError>
-#include <kwinglutils.h>
+#include <opengl/glutils.h>
+#include <effect/effecthandler.h>
+#include <core/output.h>
 #include "ShapeCornersEffect.h"
 #include "ShapeCornersConfig.h"
 
@@ -141,13 +143,14 @@ bool ShapeCornersEffect::supported()
     return KWin::effects->isOpenGLCompositing();
 }
 
-void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion &region,
+void ShapeCornersEffect::drawWindow(const KWin::RenderTarget &renderTarget, const KWin::RenderViewport &viewport,
+                                    KWin::EffectWindow *w, int mask, const QRegion &region,
                                     KWin::WindowPaintData &data) {
     if (!hasEffect(w))
     {
         unredirect(w);
 #if KWIN_EFFECT_API_VERSION >= 236
-        OffscreenEffect::drawWindow(w, mask, region, data);
+        OffscreenEffect::drawWindow(renderTarget, viewport, w, mask, region, data);
 #else
         DeformEffect::drawWindow(w, mask, region, data);
 #endif
@@ -160,7 +163,7 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
     glActiveTexture(GL_TEXTURE0);
 
 #if KWIN_EFFECT_API_VERSION >= 236
-    OffscreenEffect::drawWindow(w, mask, region, data);
+    OffscreenEffect::drawWindow(renderTarget, viewport, w, mask, region, data);
 #else
     DeformEffect::drawWindow(w, mask, region, data);
 #endif
@@ -168,7 +171,7 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
 }
 
 bool ShapeCornersEffect::hasEffect(const KWin::EffectWindow *w) const {
-    const auto name = w->windowClass().split(' ').first();
+    const auto name = w->windowClass().split(QChar::Space).first();
     return m_shaderManager.IsValid()
            && m_managed.contains(w)
            && (w->hasDecoration() || (w->isNormalWindow() && ShapeCornersConfig::inclusions().contains(name)))
@@ -179,7 +182,7 @@ bool ShapeCornersEffect::hasEffect(const KWin::EffectWindow *w) const {
 QString ShapeCornersEffect::get_window_titles() const {
     QSet<QString> response;
     for (const auto& win: m_managed) {
-        const auto name = win->windowClass().split(' ').first();
+        const auto name = win->windowClass().split(QChar::Space).first();
         if (name == "plasmashell")
             continue;
         response.insert(name);

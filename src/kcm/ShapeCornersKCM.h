@@ -14,7 +14,7 @@ public:
     explicit ShapeCornersKCM(QWidget* parent = nullptr, const QVariantList& args = QVariantList());
     ~ShapeCornersKCM() override;
 
-public slots:
+public Q_SLOTS:
     void defaults() override;
     void load() override;
     void save() override;
