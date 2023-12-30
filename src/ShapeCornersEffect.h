@@ -47,6 +47,7 @@ public:
     void drawWindow(KWin::EffectWindow *w, int mask, const QRegion &region, KWin::WindowPaintData &data) override;
 
     [[nodiscard]] int requestedEffectChainPosition() const override { return 99; }
+    [[nodiscard]] bool blocksDirectScanout() const override { return false; }
 
 public Q_SLOTS:
     [[nodiscard]] QString get_window_titles() const;
