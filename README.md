@@ -81,10 +81,29 @@ You can now logout and log back in or run the command below to have it activated
 kwin --replace &
 ```
 
+> [!CAUTION]
+> Running the command above in **Wayland** restarts your session and closes all your current open windows.
+
 # Settings
 
-You can change corner radius, or disable the effect in:
+You can change the corner radius, or disable the effect in:
 
-> System Settings --> Workspace Behavior --> Desktop Effects --> ShapeCorners
+> [ System Settings ] --> [ Workspace Behavior ] --> [ Desktop Effects ] --> [ ShapeCorners ]
 
-To fully uninstall, simply run the command `sudo make uninstall` inside `build` directory
+To fully uninstall, simply run the command `sudo make uninstall` inside the `build` directory
+
+# Tips
+
+## Add shadow to windows without decoration (like Steam)
+
+You can add shadows for specific windows using the hack below. I don't know how to enforce it in my code.
+
+1. In [ System settings ] -> [ Window management ] -> [ Window rules ] -> [ Appearance & Fixes ]:
+
+   **Add [steam] and set [ No titlebar ] and frame to [ No ]**
+   
+3. In [ System settings ] -> [ Application Style ] -> [ Window decoration ] -> [ Breeze theme setting ] -> [ Window specific overrides ]:
+
+   **Add [steam] and set [ Hide Window title bar ] to [ Yes ].**
+
+After that, the Steam window gets its shadows back.
