@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(${SHAPECORNERS})
+project(kwin4_effect_shapecorners)
 
 set(KF_MIN_VERSION "5.240.0")
 set(QT_MIN_VERSION "6.4.0")
