@@ -4,7 +4,7 @@ This effect rounds the corners of your windows and adds an outline around them w
 
 This effect started as a fork of [shapecorners](https://sourceforge.net/projects/shapecorners/) with some additional contributions in [Alex47's project](https://github.com/alex47/KDE-Rounded-Corners), then I optimized and reimplemented the effect with shaders with influences from the [invert effect](https://github.com/KDE/kwin/tree/master/src/plugins/invert).
 
-#### Tested on:
+**Tested on:**
 - ![Kubuntu 22.04 Jammy](https://img.shields.io/badge/-not_supported-red?label=Kubuntu%2022.04%20Jammy&logo=kubuntu&branch=master) 
 ![](https://img.shields.io/badge/KWinEffects-v233-lightgrey)
 - ![Kubuntu 22.04 Jammy + Backports](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2204-backports.yml?label=Kubuntu%2022.04%20Jammy%20+%20Backports&logo=kubuntu&branch=master) 
@@ -81,10 +81,29 @@ You can now logout and log back in or run the command below to have it activated
 kwin --replace &
 ```
 
+> [!CAUTION]
+> Running the command above in **Wayland** restarts your session and closes all your current open windows.
+
 # Settings
 
-You can change corner radius, or disable the effect in:
+You can change the corner radius, or disable the effect in:
 
-> System Settings --> Workspace Behavior --> Desktop Effects --> ShapeCorners
+> [ System Settings ] --> [ Workspace Behavior ] --> [ Desktop Effects ] --> [ ShapeCorners ]
 
-To fully uninstall, simply run the command `sudo make uninstall` inside `build` directory
+To fully uninstall, simply run the command `sudo make uninstall` inside the `build` directory
+
+# Tips
+
+## Add shadow to windows without decoration (like Steam)
+
+You can add shadows for specific windows using the hack below. I don't know how to enforce it in my code.
+
+1. In [ System settings ] -> [ Window management ] -> [ Window rules ] -> [ Appearance & Fixes ]:
+
+   **Add [steam] and set [ No titlebar ] and frame to [ No ]**
+   
+3. In [ System settings ] -> [ Application Style ] -> [ Window decoration ] -> [ Breeze theme setting ] -> [ Window specific overrides ]:
+
+   **Add [steam] and set [ Hide Window title bar ] to [ Yes ].**
+
+After that, the Steam window gets its shadows back.
