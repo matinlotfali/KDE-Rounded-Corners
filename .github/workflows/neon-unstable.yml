@@ -38,7 +38,7 @@ jobs:
       continue-on-error: true
 
     - name: Third refresh KDE Neon Packages
-      run: apt update && apt -y --allow-downgrades dist-upgrade
+      run: apt update && apt -y --allow-downgrades autoremove
       continue-on-error: true
 
     - name: Install Dependencies
