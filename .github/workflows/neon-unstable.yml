@@ -33,6 +33,10 @@ jobs:
       run: apt update && apt -y dist-upgrade
       continue-on-error: true
 
+    - name: Second refresh KDE Neon Packages
+      run: apt update && apt -y dist-upgrade
+      continue-on-error: true
+
     - name: Install Dependencies
       run: apt -y install cmake g++ gettext extra-cmake-modules qt6-base-dev-tools libkf6-kcmutils-dev kwin-dev
     
