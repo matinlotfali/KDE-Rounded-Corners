@@ -2,28 +2,30 @@
 // Created by matin on 20/07/22.
 //
 
-#include <QFile>
-#include <QWidget>
-#include <opengl/glplatform.h>
-#include <effect/effect.h>
-#include <opengl/glutils.h>
+#include "ShapeCornersShader.h"
 #include "ShapeCornersEffect.h"
 #include "ShapeCornersConfig.h"
-#include "ShapeCornersShader.h"
+#include <QFile>
+#include <QWidget>
+
+#if QT_VERSION_MAJOR >= 6
+    #include <opengl/glutils.h>
+#else
+    #include <kwinglutils.h>
+#endif
 
 ShapeCornersShader::ShapeCornersShader():
         m_manager(KWin::ShaderManager::instance()),
         m_widget(new QWidget)
 {
-    const QString shadersDir = IsLegacy()? "kwin/shaders/1.10/": "kwin/shaders/1.40/";
-    const QString fragmentshader = QStandardPaths::locate(QStandardPaths::GenericDataLocation, shadersDir + QStringLiteral("shapecorners.frag"));
+    const QString fragmentshader = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kwin/shaders/shapecorners.frag"));
 //    m_shader = KWin::ShaderManager::instance()->loadFragmentShader(KWin::ShaderManager::GenericShader, fragmentshader);
     QFile file(fragmentshader);
     if (!file.open(QFile::ReadOnly))
         qCritical() << "ShapeCorners: no shaders found! Exiting...";
 
     const QByteArray frag = file.readAll();
-    auto shader = m_manager->generateCustomShader(KWin::ShaderTrait::MapTexture, QByteArray(), frag);
+    auto shader = m_manager->generateShaderFromFile(KWin::ShaderTrait::MapTexture, QStringLiteral(""), fragmentshader);
 #if KWIN_EFFECT_API_VERSION >= 235
     m_shader = std::move(shader);
 #else
@@ -104,13 +106,4 @@ ShapeCornersShader::Bind(const QMatrix4x4& mvp, KWin::EffectWindow *w) const {
 
 void ShapeCornersShader::Unbind() const {
     m_manager->popShader();
-}
-
-bool ShapeCornersShader::IsLegacy() {
-#ifdef KWIN_HAVE_OPENGLES
-    const qint64 version = KWin::kVersionNumber(3, 0);
-#else
-    const qint64 version = KWin::kVersionNumber(1, 40);
-#endif
-    return KWin::GLPlatform::instance()->glslVersion() < version;
 }

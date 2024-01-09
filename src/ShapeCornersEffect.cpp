@@ -17,18 +17,23 @@
  *   Boston, MA 02110-1301, USA.
  */
 
-#include <QtDBus/QDBusConnection>
-#include <QDBusError>
-#include <opengl/glutils.h>
-#include <effect/effecthandler.h>
-#include <core/output.h>
 #include "ShapeCornersEffect.h"
 #include "ShapeCornersConfig.h"
+#include <QtDBus/QDBusConnection>
+#include <QDBusError>
+
+#if QT_VERSION_MAJOR >= 6
+    #include <opengl/glutils.h>
+    #include <effect/effecthandler.h>
+    #include <core/output.h>
+#else
+    #include <kwinglutils.h>
+#endif
 
 #if KWIN_EFFECT_API_VERSION >= 235
-#include <KX11Extras>
+    #include <KX11Extras>
 #else
-#include <kwindowsystem.h>
+    #include <kwindowsystem.h>
 #endif
 
 ShapeCornersEffect::ShapeCornersEffect()
@@ -45,11 +50,11 @@ ShapeCornersEffect::ShapeCornersEffect()
         qWarning("ShapeCorners: Cannot connect to the D-Bus session bus.\n");
     }
     else {
-        if (!connection.registerService("org.kde.ShapeCorners")) {
+        if (!connection.registerService(QStringLiteral("org.kde.ShapeCorners"))) {
             qWarning("%s\n", qPrintable(connection.lastError().message()));
         }
         else {
-            if (!connection.registerObject("/ShapeCornersEffect",  this, QDBusConnection::ExportAllSlots)) {
+            if (!connection.registerObject(QStringLiteral("/ShapeCornersEffect"), this, QDBusConnection::ExportAllSlots)) {
                 qWarning("%s\n", qPrintable(connection.lastError().message()));
             }
         }
@@ -115,7 +120,10 @@ void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePa
 
     const auto size = isWindowActive(w) ? ShapeCornersConfig::size(): ShapeCornersConfig::inactiveCornerRadius();
 
-#if KWIN_EFFECT_API_VERSION >= 234
+#if QT_VERSION_MAJOR >= 6
+    const auto geo = w->frameGeometry() * w->screen()->scale();
+    data.setTranslucent();
+#elif KWIN_EFFECT_API_VERSION >= 234
     const auto geo = w->frameGeometry() * KWin::effects->renderTargetScale();
     data.setTranslucent();
 #else
@@ -143,14 +151,21 @@ bool ShapeCornersEffect::supported()
     return KWin::effects->isOpenGLCompositing();
 }
 
+#if QT_VERSION_MAJOR >= 6
 void ShapeCornersEffect::drawWindow(const KWin::RenderTarget &renderTarget, const KWin::RenderViewport &viewport,
                                     KWin::EffectWindow *w, int mask, const QRegion &region,
                                     KWin::WindowPaintData &data) {
+#else
+void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion &region,
+                                    KWin::WindowPaintData &data) {
+#endif
     if (!hasEffect(w))
     {
         unredirect(w);
-#if KWIN_EFFECT_API_VERSION >= 236
+#if QT_VERSION_MAJOR >= 6
         OffscreenEffect::drawWindow(renderTarget, viewport, w, mask, region, data);
+#elif KWIN_EFFECT_API_VERSION >= 236
+        OffscreenEffect::drawWindow(w, mask, region, data);
 #else
         DeformEffect::drawWindow(w, mask, region, data);
 #endif
@@ -162,8 +177,10 @@ void ShapeCornersEffect::drawWindow(const KWin::RenderTarget &renderTarget, cons
     m_shaderManager.Bind(w);
     glActiveTexture(GL_TEXTURE0);
 
-#if KWIN_EFFECT_API_VERSION >= 236
+#if QT_VERSION_MAJOR >= 6
     OffscreenEffect::drawWindow(renderTarget, viewport, w, mask, region, data);
+#elif KWIN_EFFECT_API_VERSION >= 236
+    OffscreenEffect::drawWindow(w, mask, region, data);
 #else
     DeformEffect::drawWindow(w, mask, region, data);
 #endif
@@ -183,9 +200,9 @@ QString ShapeCornersEffect::get_window_titles() const {
     QSet<QString> response;
     for (const auto& win: m_managed) {
         const auto name = win->windowClass().split(QChar::Space).first();
-        if (name == "plasmashell")
+        if (name == QStringLiteral("plasmashell"))
             continue;
         response.insert(name);
     }
-    return response.values().join("\n");
+    return response.values().join(QStringLiteral("\n"));
 }

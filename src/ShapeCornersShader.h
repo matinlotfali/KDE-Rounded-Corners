@@ -5,12 +5,19 @@
 #ifndef KWIN4_SHAPECORNERS_CONFIG_SHADERMANAGER_H
 #define KWIN4_SHAPECORNERS_CONFIG_SHADERMANAGER_H
 
+#include <qconfig.h>
+#if QT_VERSION_MAJOR >= 6
+    #include <effect/effect.h>
+#else
+    #include <kwineffects.h>
+#endif
+
 namespace KWin {
     class GLShader;
     class ShaderManager;
 }
 
-struct QVector2DSize final: QVector2D {
+struct QVector2DSize final: public QVector2D {
     explicit QVector2DSize(const QSizeF s):
       QVector2D(static_cast<float>(s.width()), static_cast<float>(s.height())) {}
 };
@@ -22,11 +29,6 @@ public:
      *        Then it assigns the location references for all its uniform variables so they could be written in.
      */
     explicit ShapeCornersShader();
-
-    /**
-     * \return True if the GL platform version used in KWin is older than 1.40.
-     */
-    static bool IsLegacy();
 
     /**
      * \return True if the shader is valid and loaded

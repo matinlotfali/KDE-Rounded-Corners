@@ -19,15 +19,23 @@
 
 #pragma once
 
-#include <effect/effecthandler.h>
-#include <set>
 #include "ShapeCornersShader.h"
+#include <set>
+
+#if QT_VERSION_MAJOR >= 6
+    #include <effect/effecthandler.h>
+    #include <effect/offscreeneffect.h>
+#elif KWIN_EFFECT_API_VERSION >= 236
+    #include <kwineffects.h>
+    #include <kwinoffscreeneffect.h>
+#else
+    #include <kwineffects.h>
+    #include <kwindeformeffect.h>
+#endif
 
 #if KWIN_EFFECT_API_VERSION >= 236
-#include <effect/offscreeneffect.h>
 class ShapeCornersEffect final: public KWin::OffscreenEffect
 #else
-#include <kwindeformeffect.h>
 class ShapeCornersEffect final: public KWin::DeformEffect
 #endif
 {
@@ -44,7 +52,7 @@ public:
     void reconfigure(ReconfigureFlags flags) override;
 
     void prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time) override;
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#if QT_VERSION_MAJOR >= 6
     void drawWindow(const KWin::RenderTarget &RenderTarget, const KWin::RenderViewport& viewport,
                     KWin::EffectWindow *w, int mask, const QRegion &region, KWin::WindowPaintData &data) override;
 #else

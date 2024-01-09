@@ -1,7 +1,14 @@
 name: KDE Neon (Unstable)
 
 on:
-    workflow_dispatch:
+  push:
+    branches: [ master ]
+    paths-ignore: [ '**.md', '**.png' ]
+  pull_request:
+    branches: [ master ]
+    paths-ignore: [ '**.md', '**.png' ]
+  schedule:
+    - cron: "0 0 * * *"
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -27,7 +34,7 @@ jobs:
       continue-on-error: true
 
     - name: Install Dependencies
-      run: apt -y install cmake g++ gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5globalaccel-dev libkf5notifications-dev kwin-dev
+      run: apt -y install cmake g++ gettext extra-cmake-modules qt6-base-dev-tools libkf6-kcmutils-dev kwin-dev
     
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.

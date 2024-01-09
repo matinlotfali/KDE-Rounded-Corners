@@ -2,8 +2,16 @@ cmake_minimum_required(VERSION 3.20)
 
 project(kwin4_effect_shapecorners)
 
-set(KF_MIN_VERSION "5.240.0")
-set(QT_MIN_VERSION "6.4.0")
+# kwin-dev qt6-base-dev-tools libkf6-kcmutils-dev
+
+find_package(QT NAMES Qt5 Qt6 REQUIRED)
+if(${QT_VERSION_MAJOR} EQUAL 6)
+    set(KF_MIN_VERSION "5.240.0")
+    set(QT_MIN_VERSION "6.4.0")
+else()
+    set(KF_MIN_VERSION "5.78.0")
+    set(QT_MIN_VERSION "5.15.0")
+endif()
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -26,7 +34,7 @@ include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 
-find_package(Qt6 ${QT_MIN_VERSION} REQUIRED COMPONENTS
+find_package(Qt${QT_VERSION_MAJOR} ${QT_MIN_VERSION} REQUIRED COMPONENTS
         Core
         Gui
         DBus
@@ -37,21 +45,30 @@ find_package(Qt6 ${QT_MIN_VERSION} REQUIRED COMPONENTS
 )
 
 # required frameworks by Core
-find_package(KF6 ${KF_MIN_VERSION} REQUIRED COMPONENTS
+find_package(KF${QT_VERSION_MAJOR} ${KF_MIN_VERSION} REQUIRED COMPONENTS
     Config
     ConfigWidgets
     CoreAddons
     GlobalAccel
     WindowSystem
-    KCMUtils
 )
+if(${QT_VERSION_MAJOR} EQUAL 6)
+    find_package(KF${QT_VERSION_MAJOR} ${KF_MIN_VERSION} REQUIRED COMPONENTS
+            KCMUtils
+    )
+
+    find_package(KWin REQUIRED COMPONENTS
+            kwineffects
+    )
+else()
+    find_package(KWinEffects REQUIRED COMPONENTS
+            kwineffects
+            kwinglutils
+    )
+endif ()
 
 find_package(epoxy REQUIRED)
 find_package(XCB REQUIRED COMPONENTS XCB)
-
-find_package(KWin REQUIRED COMPONENTS
-        kwineffects
-)
 
 find_package(KWinDBusInterface CONFIG REQUIRED)
 
