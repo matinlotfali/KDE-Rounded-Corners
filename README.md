@@ -5,16 +5,17 @@ This effect rounds the corners of your windows and adds an outline around them w
 This effect started as a fork of [shapecorners](https://sourceforge.net/projects/shapecorners/) with some additional contributions in [Alex47's project](https://github.com/alex47/KDE-Rounded-Corners), then I optimized and reimplemented the effect with shaders with influences from the [invert effect](https://github.com/KDE/kwin/tree/master/src/plugins/invert).
 
 **Tested on:**
+- ![Wayland](https://img.shields.io/badge/Wayland-supported-green?logo=wayland) ![Wayland](https://img.shields.io/badge/X11-supported-green?logo=X.org)
 - ![Kubuntu 22.04 Jammy](https://img.shields.io/badge/-not_supported-red?label=Kubuntu%2022.04%20Jammy&logo=kubuntu&branch=master) 
-![](https://img.shields.io/badge/KWinEffects-v233-lightgrey)
-- ![Kubuntu 22.04 Jammy + Backports](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2204-backports.yml?label=Kubuntu%2022.04%20Jammy%20+%20Backports&logo=kubuntu&branch=master) 
-![](https://img.shields.io/badge/KWinEffects-v234-lightgrey)
+![](https://img.shields.io/badge/KWinEffects-v233-red) ![](https://img.shields.io/badge/Plasma-5.24-red)
+- ![Kubuntu 22.04 Jammy + Backports](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2204-backports.yml?label=Kubuntu%2022.04%20Jammy%20%2b%20Backports&logo=kubuntu&branch=master) 
+![](https://img.shields.io/badge/KWinEffects-v236-lightgrey) ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)
 - ![Debian 12 Bookworm](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/debian12.yml?branch=master&label=Debian%2012%20Bookworm&logo=debian)
-    ![](https://img.shields.io/badge/KWinEffects-v236-lightgrey)
-- ![KDE Neon (Stable)](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/neon.yml?branch=master&label=KDE%20Neon%20%28Stable%29&logo=kde&logoColor=white)
-![](https://img.shields.io/badge/KWinEffects-v236-lightgrey)
+    ![](https://img.shields.io/badge/KWinEffects-v236-lightgrey) ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)
+- ![KDE Neon (Stable)](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/neon.yml?branch=master&label=KDE%20Neon%20%28Stable%29&logo=kde&logoColor=white) 
+![](https://img.shields.io/badge/KWinEffects-v236-lightgrey) ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)
 - ![KDE Neon (Unstable)](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/neon-unstable.yml?branch=master&label=KDE%20Neon%20%28Unstable%29&logo=kde&logoColor=white)
-![](https://img.shields.io/badge/KWinEffects-v237-lightgrey)
+![](https://img.shields.io/badge/KWinEffects-v237-lightgrey) ![](https://img.shields.io/badge/Plasma-6.0-lightgrey)
 - [![Arch](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/arch.yml?branch=master&label=Arch%20Linux&logo=archlinux&logoColor=white) ![](https://img.shields.io/aur/maintainer/kwin-effect-rounded-corners-git?label=AUR%20Maintainer) ![](https://img.shields.io/aur/votes/kwin-effect-rounded-corners-git?label=AUR%20Votes)](https://aur.archlinux.org/packages/kwin-effect-rounded-corners-git)
 
 ![After](screenshots/shadows2.png)
@@ -22,9 +23,9 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 # Contributions:
 
 - Compatibility of the effect with other effects like Wobbly windows - by [matinlotfali](https://github.com/matinlotfali)
+- Compatibility with KWin for Plasma versions 5.27 to 6.0 - by [matinlotfali](https://github.com/matinlotfali)
 - Optimize the effect to render once instead of 5 times - by [matinlotfali](https://github.com/matinlotfali) - see [#49](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/49)
 - Reimplementation with shaders to include shadows at corners and an outline - by [matinlotfali](https://github.com/matinlotfali)
-- Compatibility with KWin from versions 5.23 to 5.27 - by [matinlotfali](https://github.com/matinlotfali)
 - Disable effect when window gets maximized - by [matinlotfali](https://github.com/matinlotfali)
 - Cleanups for the plugin logic, remove unneeded dependencies from CMakeLists.txt file - by [alex1701c](https://github.com/alex1701c)
 - Separate outline color for active and inactive windows - by [OrkenWhite](https://github.com/OrkenWhite)
