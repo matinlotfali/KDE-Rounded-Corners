@@ -79,10 +79,16 @@ add_subdirectory(src)
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
 
 execute_process(
-        COMMAND sh -c "grep '#define KWIN_EFFECT_API_VERSION_MINOR' ${KWIN_EFFECT_INCLUDE_FILE} | awk '{print \$NF}'"
-        OUTPUT_VARIABLE KWIN_EFFECT_API_VERSION_MINOR
+    COMMAND sh -c "grep '#define KWIN_EFFECT_API_VERSION_MINOR' ${KWIN_EFFECT_INCLUDE_FILE} | awk '{print \$NF}'"
+    OUTPUT_VARIABLE KWIN_EFFECT_API_VERSION_MINOR OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+execute_process(
+    COMMAND sh -c "plasmashell --version | awk '{print \$NF}'"
+    OUTPUT_VARIABLE PLASMA_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 message("KWinEffect API Version: ${KWIN_EFFECT_API_VERSION_MINOR}")
+message("Plasma Version: ${PLASMA_VERSION}")
+message("")
 
 # these are cache variables, so they could be overwritten with -D,
 set(CPACK_PACKAGE_NAME kwin4-effect-shapecorners
