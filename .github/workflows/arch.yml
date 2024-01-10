@@ -27,10 +27,10 @@ jobs:
 
     steps:
     - name: Refresh Packages
-      run: yes | pacman -Syu
+      run: pacman -Syu --noconfirm
 
     - name: Install Dependencies
-      run: yes | pacman -S git cmake extra-cmake-modules qt5-tools kwin wireplumber
+      run: pacman -S --noconfirm git cmake extra-cmake-modules qt5-tools kwin wireplumber
 
     - name: Check out repository
       uses: actions/checkout@v3
