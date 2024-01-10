@@ -60,11 +60,13 @@ if(${QT_VERSION_MAJOR} EQUAL 6)
     find_package(KWin REQUIRED COMPONENTS
             kwineffects
     )
+    set(KWIN_EFFECT_INCLUDE_FILE "/usr/include/kwin/effect/effect.h")
 else()
     find_package(KWinEffects REQUIRED COMPONENTS
             kwineffects
             kwinglutils
     )
+    set(KWIN_EFFECT_INCLUDE_FILE "/usr/include/kwineffects.h")
 endif ()
 
 find_package(epoxy REQUIRED)
@@ -75,6 +77,12 @@ find_package(KWinDBusInterface CONFIG REQUIRED)
 add_subdirectory(src)
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
+
+execute_process(
+        COMMAND sh -c "grep '#define KWIN_EFFECT_API_VERSION_MINOR' ${KWIN_EFFECT_INCLUDE_FILE} | awk '{print \$NF}'"
+        OUTPUT_VARIABLE KWIN_EFFECT_API_VERSION_MINOR
+)
+message("KWinEffect API Version: ${KWIN_EFFECT_API_VERSION_MINOR}")
 
 # these are cache variables, so they could be overwritten with -D,
 set(CPACK_PACKAGE_NAME kwin4-effect-shapecorners

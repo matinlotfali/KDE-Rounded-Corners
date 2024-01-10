@@ -9,7 +9,8 @@ set(effect_SRCS
 )
 
 kconfig_add_kcfg_files(effect_SRCS ShapeCornersConfig.kcfgc)
-add_library(kwin4_effect_shapecorners SHARED ${effect_SRCS})
+kcoreaddons_add_plugin(kwin4_effect_shapecorners INSTALL_NAMESPACE "kwin/effects/plugins/")
+target_sources(kwin4_effect_shapecorners PRIVATE ${effect_SRCS})
 
 target_link_libraries(kwin4_effect_shapecorners
     Qt${QT_VERSION_MAJOR}::Core
@@ -33,8 +34,4 @@ else()
     )
 endif()
 
-install(TARGETS kwin4_effect_shapecorners DESTINATION ${PLUGIN_INSTALL_DIR}/kwin/effects/plugins/)
-
-execute_process(COMMAND kf${QT_VERSION_MAJOR}-config --install data OUTPUT_VARIABLE DATAPATH OUTPUT_STRIP_TRAILING_WHITESPACE)
-install(FILES shaders/shapecorners_core.frag DESTINATION ${DATAPATH}/kwin/shaders)
-install(FILES shaders/shapecorners.frag DESTINATION ${DATAPATH}/kwin/shaders)
+install(DIRECTORY shaders DESTINATION ${KDE_INSTALL_DATADIR}/kwin/shaders)
