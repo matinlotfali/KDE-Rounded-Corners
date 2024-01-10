@@ -28,4 +28,4 @@ jobs:
       run: sudo apt update && sudo apt install -y glslang-tools
 
     - name: Validate Shaders
-      run: glslangValidator src/shaders_110/shapecorners.frag src/shaders_140/shapecorners.frag
+      run: glslangValidator src/shaders/shapecorners.frag src/shaders/shapecorners_core.frag

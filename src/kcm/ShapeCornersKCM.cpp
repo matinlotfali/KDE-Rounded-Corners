@@ -1,16 +1,26 @@
+#include "ShapeCornersKCM.h"
+#include "ui_ShapeCornersKCM.h"
+#include "kwineffects_interface.h"
+#include "ShapeCornersConfig.h"
 #include <QDialog>
 #include <QList>
-#include <kwineffects.h>
-#include "kwineffects_interface.h"
-#include "ui_ShapeCornersKCM.h"
-#include "ShapeCornersKCM.h"
 
+#if (QT_VERSION_MAJOR >= 6)
+ShapeCornersKCM::ShapeCornersKCM(QObject* parent, const KPluginMetaData& args)
+    : KCModule(parent, args)
+    , ui(new Ui::Form)
+{
+    ui->setupUi(widget());
+    addConfig(ShapeCornersConfig::self(), widget());
+#else
 ShapeCornersKCM::ShapeCornersKCM(QWidget* parent, const QVariantList& args)
     : KCModule(parent, args)
     , ui(new Ui::Form)
 {
     ui->setupUi(this);
     addConfig(ShapeCornersConfig::self(), this);
+#endif
+
     update_colors();
     update_windows();
 
@@ -81,11 +91,7 @@ ShapeCornersKCM::save()
     interface.reconfigureEffect(QStringLiteral("kwin4_effect_shapecorners"));
 }
 
-ShapeCornersKCM::~ShapeCornersKCM() {
-    delete ui;
-}
-
-void ShapeCornersKCM::update_colors() const {
+void ShapeCornersKCM::update_colors() {
     QColor color;
     bool checked;
     int index;
@@ -114,9 +120,9 @@ void ShapeCornersKCM::update_colors() const {
 void ShapeCornersKCM::update_windows() const {
     QStringList windowList;
     if (const auto connection = QDBusConnection::sessionBus(); connection.isConnected())
-        if (QDBusInterface interface("org.kde.ShapeCorners", "/ShapeCornersEffect"); interface.isValid())
-            if (const QDBusReply<QString> reply = interface.call("get_window_titles"); reply.isValid())
-                windowList = reply.value().split("\n");
+        if (QDBusInterface interface(QStringLiteral("org.kde.ShapeCorners"), QStringLiteral("/ShapeCornersEffect")); interface.isValid())
+            if (const QDBusReply<QString> reply = interface.call(QStringLiteral("get_window_titles")); reply.isValid())
+                windowList = reply.value().split(QStringLiteral("\n"));
 
     ui->currentWindowList->clear();
     ui->currentWindowList->addItems(windowList);
