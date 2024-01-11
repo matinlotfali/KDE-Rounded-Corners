@@ -34,4 +34,4 @@ else()
     )
 endif()
 
-install(DIRECTORY shaders DESTINATION ${KDE_INSTALL_DATADIR}/kwin/shaders)
+install(DIRECTORY shaders DESTINATION ${KDE_INSTALL_DATADIR}/kwin)
