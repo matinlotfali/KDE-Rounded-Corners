@@ -30,7 +30,7 @@ vec2 pixel_to_tex(vec2 pixelcoord) {
 }
 bool isDrawingShadows() { return  windowSize != windowExpandedSize && shadowColor.a > 0.0; }
 bool isDrawingOutline() {
-    vec2 one_edge = vec2(windowSize.x/2, 0.0);
+    vec2 one_edge = vec2(windowSize.x/2.0, 0.0);
     return  texture2D(front, pixel_to_tex(one_edge)).a > 0.5 &&
             outlineColor.a > 0.0 && outlineThickness > 0.0;
 }
