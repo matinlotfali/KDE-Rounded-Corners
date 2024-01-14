@@ -20,8 +20,20 @@ uniform float saturation;        // This variable is assigned and used by KWinEf
 in vec2 texcoord0;               // The XY location of the rendering pixel. Starting from {0.0, 0.0} to {1.0, 1.0}
 out vec4 fragColor;              // The RGBA color that can be rendered
 
+vec2 tex_to_pixel(vec2 texcoord) {
+    return vec2(texcoord0.x * windowExpandedSize.x - windowTopLeft.x,
+                (1.0-texcoord0.y)* windowExpandedSize.y - windowTopLeft.y);
+}
+vec2 pixel_to_tex(vec2 pixelcoord) {
+    return vec2((pixelcoord.x + windowTopLeft.x) / windowExpandedSize.x,
+                1.0-(pixelcoord.y + windowTopLeft.y) / windowExpandedSize.y);
+}
 bool isDrawingShadows() { return  windowSize != windowExpandedSize && shadowColor.a > 0.0; }
-bool isDrawingOutline() { return  outlineColor.a > 0.0 && outlineThickness > 0.0; }
+bool isDrawingOutline() {
+    vec2 one_edge = vec2(windowSize.x/2.0, 0.0);
+    return  texture2D(front, pixel_to_tex(one_edge)).a > 0.5 &&
+            outlineColor.a > 0.0 && outlineThickness > 0.0;
+}
 
 float parametricBlend(float t) {
     float sqt = t * t;
@@ -57,7 +69,7 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 center) {
     vec4 c = getShadowColor(distance_from_center);
 
     if(isDrawingOutline()) {
-        vec4 outlineOverlay = vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), 1.0);
+        vec4 outlineOverlay = vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), tex.a);
 
         if (distance_from_center < radius - outlineThickness/2.0) {
             // from the window to the outline
@@ -80,13 +92,16 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 center) {
 void main(void)
 {
     vec4 tex = texture(front, texcoord0);  // The RGBA of the XY pixel for the painted window
+    if(tex.a == 0.0) {
+        fragColor = tex;
+        return;
+    }
 
     /* Since `texcoord0` is ranging from {0.0, 0.0} to {1.0, 1.0} is not pixel intuitive,
      * I am changing the range to become from {0.0, 0.0} to {width, height}
      * in a way that {0,0} is the top-left of the window and not its shadow.
      * This means areas with negative numbers and areas beyond windowSize is considered part of the shadow. */
-    vec2 coord0 = vec2(texcoord0.x * windowExpandedSize.x - windowTopLeft.x,
-                    (1-texcoord0.y)* windowExpandedSize.y - windowTopLeft.y);
+    vec2 coord0 = tex_to_pixel(texcoord0);
 
     /*
         Split the window into these sections below. They will have a different center of circle for rounding.
