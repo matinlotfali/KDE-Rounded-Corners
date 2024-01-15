@@ -2,10 +2,8 @@ cmake_minimum_required(VERSION 3.20)
 
 project(kwin4_effect_shapecorners)
 
-# kwin-dev qt6-base-dev-tools libkf6-kcmutils-dev
-
-set(KF_MIN_VERSION "5.78.0")
-set(QT_MIN_VERSION "5.15.0")
+set(KF_MIN_VERSION "5.78")
+set(QT_MIN_VERSION "5.15")
 set(QT_VERSION_MAJOR 5)
 
 set(CMAKE_CXX_STANDARD 20)

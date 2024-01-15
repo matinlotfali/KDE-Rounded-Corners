@@ -35,10 +35,16 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 
 You need to install development packages for your distribution first:
 
-- **Debian based (Ubuntu, Kubuntu, KDE Neon)** - by [alex47](https://github.com/alex47):
-  ```
-  sudo apt install git cmake g++ gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5globalaccel-dev libkf5notifications-dev kwin-dev 
-  ```
+- **Debian based (Ubuntu, Kubuntu, KDE Neon)**
+    
+  - Plasma 5 - by [alex47](https://github.com/alex47):
+    ```
+    sudo apt install git cmake g++ gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5globalaccel-dev libkf5notifications-dev kwin-dev 
+    ```
+  - Plasma 6 - by [matinlotfali](https://github.com/matinlotfali) 
+    ```
+    sudo apt install git cmake g++ kwin-dev qt6-base-dev-tools kf6-kcmutils-dev
+    ```
 - **Fedora** - by [matinlotfali](https://github.com/matinlotfali)
   ```
   sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttools-devel qt5-qttools-static qt5-qtx11extras-devel kf5-kconfigwidgets-devel kf5-kcrash-devel kf5-kguiaddons-devel kf5-kglobalaccel-devel kf5-kio-devel kf5-ki18n-devel kwin-devel qt5-qtbase-devel libepoxy-devel
