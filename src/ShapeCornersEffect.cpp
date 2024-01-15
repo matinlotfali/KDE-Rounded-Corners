@@ -52,10 +52,8 @@ ShapeCornersEffect::ShapeCornersEffect()
     }
 
     if(m_shaderManager.IsValid()) {
-        const auto& windowList = KX11Extras::windows();
-        for (const auto& id: windowList)
-            if (const auto win = KWin::effects->findWindow(id))
-                windowAdded(win);
+        for (const auto& win: KWin::effects->stackingOrder())
+            windowAdded(win);
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
         connect(KWin::effects, &KWin::EffectsHandler::windowDeleted, this, &ShapeCornersEffect::windowRemoved);
     }

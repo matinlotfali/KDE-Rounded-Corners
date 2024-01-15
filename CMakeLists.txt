@@ -47,7 +47,6 @@ find_package(KF${QT_VERSION_MAJOR} ${KF_MIN_VERSION} REQUIRED COMPONENTS
     ConfigWidgets
     CoreAddons
     GlobalAccel
-    WindowSystem
 )
 if(${QT_VERSION_MAJOR} EQUAL 6)
     find_package(KF${QT_VERSION_MAJOR} ${KF_MIN_VERSION} REQUIRED COMPONENTS
