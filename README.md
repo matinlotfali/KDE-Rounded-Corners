@@ -22,11 +22,11 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 
 # Contributions:
 
-- Compatibility of the effect with other effects like Wobbly windows - by [matinlotfali](https://github.com/matinlotfali)
-- Compatibility with KWin for Plasma versions 5.27 to 6.0 - by [matinlotfali](https://github.com/matinlotfali)
-- Optimize the effect to render once instead of 5 times - by [matinlotfali](https://github.com/matinlotfali) - see [#49](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/49)
-- Reimplementation with shaders to include shadows at corners and an outline - by [matinlotfali](https://github.com/matinlotfali)
-- Disable effect when window gets maximized - by [matinlotfali](https://github.com/matinlotfali)
+- Compatibility of the effect with other effects like Wobbly windows
+- Compatibility with KWin for Plasma versions 5.27 to 6.0
+- Optimize the effect to render once instead of 5 times - see [#49](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/49)
+- Reimplementation with shaders to include shadows at corners and an outline
+- Disable effect when windows get maximized
 - Cleanups for the plugin logic, remove unneeded dependencies from CMakeLists.txt file - by [alex1701c](https://github.com/alex1701c)
 - Separate outline color for active and inactive windows - by [OrkenWhite](https://github.com/OrkenWhite)
 - Add natural shadows using parametric blend - by [paletteOvO](https://github.com/paletteOvO)
@@ -35,21 +35,29 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 
 You need to install development packages for your distribution first:
 
-- **Debian based (Ubuntu, Kubuntu, KDE Neon)**
+<details>
+<summary>Debian based (Ubuntu, Kubuntu, KDE Neon)</summary>
+<br>
     
   - Plasma 5 - by [alex47](https://github.com/alex47):
     ```
     sudo apt install git cmake g++ gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5globalaccel-dev libkf5notifications-dev kwin-dev 
     ```
-  - Plasma 6 - by [matinlotfali](https://github.com/matinlotfali) 
+  - Plasma 6
     ```
     sudo apt install git cmake g++ kwin-dev qt6-base-dev-tools kf6-kcmutils-dev
     ```
-- **Fedora** - by [matinlotfali](https://github.com/matinlotfali)
-  ```
-  sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttools-devel qt5-qttools-static qt5-qtx11extras-devel kf5-kconfigwidgets-devel kf5-kcrash-devel kf5-kguiaddons-devel kf5-kglobalaccel-devel kf5-kio-devel kf5-ki18n-devel kwin-devel qt5-qtbase-devel libepoxy-devel
-  ```
-- **Arch** - by [hexa-one](https://github.com/hexa-one)
+</details>
+<details>
+<summary>Fedora</summary>
+
+   ```
+   sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttools-devel qt5-qttools-static qt5-qtx11extras-devel kf5-kconfigwidgets-devel kf5-kcrash-devel kf5-kguiaddons-devel kf5-kglobalaccel-devel kf5-kio-devel kf5-ki18n-devel kwin-devel qt5-qtbase-devel libepoxy-devel
+   ```
+</details>
+<details>
+<summary>Arch - by https://github.com/hexa-one</summary>
+
   ```
   sudo pacman -S git cmake extra-cmake-modules base-devel
   yay -S qt5-tools
@@ -58,22 +66,31 @@ You need to install development packages for your distribution first:
   ```
   sudo pamac build kwin-effect-rounded-corners-git
   ```
-- **OpenSUSE** - by [mathiasgredal](https://github.com/mathiasgredal) and [Richardsause](https://github.com/Richardsause)
+</details>
+<details>
+<summary>OpenSUSE - by https://github.com/mathiasgredal and https://github.com/Richardsause</summary>
+
   ```
   sudo zypper install git cmake gcc-c++ extra-cmake-modules libqt5-qttools-devel libqt5-qtx11extras-devel kconfigwidgets-devel kguiaddons-devel kglobalaccel-devel ki18n-devel knotifications-devel kwin5-devel libQt5Gui-devel libQt5OpenGL-devel libepoxy-devel kwindowsystem-devel libqt5-qtnetworkauth-devel
   ```
-- **Void** - by [lay-by](https://github.com/lay-by)
+</details>
+<details>
+<summary>Void - by https://github.com/lay-by</summary>
+
   ```
   xbps-install git cmake make qt5-tools-devel extra-cmake-modules qt5-x11extras-devel gettext-devel kwin-devel
   ```
-- **NixOS** - by [Pavel Zolotarevskiy](https://github.com/flexagoon)
+</details>
+<details>
+<summary>NixOS - by https://github.com/flexagoon</summary>
+
    ```
    nix-env -iA nixos.kde-rounded-corners
    ```
-    
+</details>
 
-Then get the source code and compile:
-```
+Then clone the source code and compile it:
+```bash
 git clone https://github.com/matinlotfali/KDE-Rounded-Corners
 cd KDE-Rounded-Corners
 mkdir build
@@ -83,7 +100,7 @@ make
 sudo make install
 ```
 
-You can now logout and log back in or run the command below to have it activated.
+You can now log out and log back in or run the command below to have it activated.
 ```
 kwin --replace &
 ```
