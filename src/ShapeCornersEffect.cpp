@@ -30,12 +30,6 @@
     #include <kwinglutils.h>
 #endif
 
-#if KWIN_EFFECT_API_VERSION >= 235
-    #include <KX11Extras>
-#else
-    #include <kwindowsystem.h>
-#endif
-
 ShapeCornersEffect::ShapeCornersEffect()
 #if KWIN_EFFECT_API_VERSION >= 236
     : KWin::OffscreenEffect()
@@ -61,14 +55,8 @@ ShapeCornersEffect::ShapeCornersEffect()
     }
 
     if(m_shaderManager.IsValid()) {
-#if KWIN_EFFECT_API_VERSION >= 235
-        const auto& windowList = KX11Extras::windows();
-#else
-        const auto& windowList = KWindowSystem::windows();
-#endif
-        for (const auto& id: windowList)
-            if (const auto win = KWin::effects->findWindow(id))
-                windowAdded(win);
+        for (const auto& win: KWin::effects->stackingOrder())
+            windowAdded(win);
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
         connect(KWin::effects, &KWin::EffectsHandler::windowDeleted, this, &ShapeCornersEffect::windowRemoved);
     }
