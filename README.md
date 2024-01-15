@@ -41,7 +41,7 @@ You need to install development packages for your distribution first:
     
   - Plasma 5 - by [alex47](https://github.com/alex47):
     ```
-    sudo apt install git cmake g++ gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5globalaccel-dev libkf5notifications-dev kwin-dev 
+    sudo apt install git cmake g++ gettext extra-cmake-modules qttools5-dev libkf5configwidgets-dev libkf5globalaccel-dev libkf5notifications-dev kwin-dev 
     ```
   - Plasma 6
     ```
@@ -52,7 +52,7 @@ You need to install development packages for your distribution first:
 <summary>Fedora</summary>
 
    ```
-   sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttools-devel qt5-qttools-static qt5-qtx11extras-devel kf5-kconfigwidgets-devel kf5-kcrash-devel kf5-kguiaddons-devel kf5-kglobalaccel-devel kf5-kio-devel kf5-ki18n-devel kwin-devel qt5-qtbase-devel libepoxy-devel
+   sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttools-devel qt5-qttools-static kf5-kconfigwidgets-devel kf5-kcrash-devel kf5-kguiaddons-devel kf5-kglobalaccel-devel kf5-kio-devel kf5-ki18n-devel kwin-devel qt5-qtbase-devel libepoxy-devel
    ```
 </details>
 <details>
@@ -71,14 +71,14 @@ You need to install development packages for your distribution first:
 <summary>OpenSUSE - by https://github.com/mathiasgredal and https://github.com/Richardsause</summary>
 
   ```
-  sudo zypper install git cmake gcc-c++ extra-cmake-modules libqt5-qttools-devel libqt5-qtx11extras-devel kconfigwidgets-devel kguiaddons-devel kglobalaccel-devel ki18n-devel knotifications-devel kwin5-devel libQt5Gui-devel libQt5OpenGL-devel libepoxy-devel kwindowsystem-devel libqt5-qtnetworkauth-devel
+  sudo zypper install git cmake gcc-c++ extra-cmake-modules libqt5-qttools-devel kconfigwidgets-devel kguiaddons-devel kglobalaccel-devel ki18n-devel knotifications-devel kwin5-devel libQt5Gui-devel libQt5OpenGL-devel libepoxy-devel kwindowsystem-devel libqt5-qtnetworkauth-devel
   ```
 </details>
 <details>
 <summary>Void - by https://github.com/lay-by</summary>
 
   ```
-  xbps-install git cmake make qt5-tools-devel extra-cmake-modules qt5-x11extras-devel gettext-devel kwin-devel
+  xbps-install git cmake make qt5-tools-devel extra-cmake-modules gettext-devel kwin-devel
   ```
 </details>
 <details>
