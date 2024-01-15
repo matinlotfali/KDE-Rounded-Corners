@@ -22,10 +22,6 @@ else()
 endif ()
 
 target_link_libraries(kwin_shapecorners_config
-    Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::DBus
-    Qt${QT_VERSION_MAJOR}::Gui
     KF${QT_VERSION_MAJOR}::ConfigWidgets
-    KF${QT_VERSION_MAJOR}::ConfigGui
-    KF${QT_VERSION_MAJOR}::GlobalAccel
 )

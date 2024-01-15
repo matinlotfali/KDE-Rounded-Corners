@@ -31,22 +31,9 @@ include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 
-find_package(Qt${QT_VERSION_MAJOR} ${QT_MIN_VERSION} REQUIRED COMPONENTS
-        Core
-        Gui
-        DBus
-        Widgets
-        OpenGL
-        Network
-        Xml
-)
-
 # required frameworks by Core
 find_package(KF${QT_VERSION_MAJOR} ${KF_MIN_VERSION} REQUIRED COMPONENTS
-    Config
     ConfigWidgets
-    CoreAddons
-    GlobalAccel
 )
 if(${QT_VERSION_MAJOR} EQUAL 6)
     find_package(KF${QT_VERSION_MAJOR} ${KF_MIN_VERSION} REQUIRED COMPONENTS
