@@ -20,7 +20,6 @@ target_link_libraries(kwin4_effect_shapecorners
     KF${QT_VERSION_MAJOR}::ConfigCore
     KF${QT_VERSION_MAJOR}::ConfigGui
     KF${QT_VERSION_MAJOR}::CoreAddons
-    KF${QT_VERSION_MAJOR}::WindowSystem
 )
 if(${QT_VERSION_MAJOR} EQUAL 6)
     target_link_libraries(kwin4_effect_shapecorners
