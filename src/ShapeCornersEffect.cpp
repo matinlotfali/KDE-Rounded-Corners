@@ -21,6 +21,7 @@
 #include "ShapeCornersConfig.h"
 #include <QtDBus/QDBusConnection>
 #include <QDBusError>
+#include <KX11Extras>
 
 #if QT_VERSION_MAJOR >= 6
     #include <opengl/glutils.h>
@@ -30,18 +31,8 @@
     #include <kwinglutils.h>
 #endif
 
-#if KWIN_EFFECT_API_VERSION >= 235
-    #include <KX11Extras>
-#else
-    #include <kwindowsystem.h>
-#endif
-
 ShapeCornersEffect::ShapeCornersEffect()
-#if KWIN_EFFECT_API_VERSION >= 236
     : KWin::OffscreenEffect()
-#else
-    : KWin::DeformEffect()
-#endif
 {
     reconfigure(ReconfigureAll);
 
@@ -61,11 +52,7 @@ ShapeCornersEffect::ShapeCornersEffect()
     }
 
     if(m_shaderManager.IsValid()) {
-#if KWIN_EFFECT_API_VERSION >= 235
         const auto& windowList = KX11Extras::windows();
-#else
-        const auto& windowList = KWindowSystem::windows();
-#endif
         for (const auto& id: windowList)
             if (const auto win = KWin::effects->findWindow(id))
                 windowAdded(win);
@@ -123,27 +110,19 @@ void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePa
 #if QT_VERSION_MAJOR >= 6
     const auto geo = w->frameGeometry() * w->screen()->scale();
     data.setTranslucent();
-#elif KWIN_EFFECT_API_VERSION >= 234
+#else
     const auto geo = w->frameGeometry() * KWin::effects->renderTargetScale();
     data.setTranslucent();
-#else
-    const auto& geo = w->expandedGeometry();
 #endif
     QRegion reg {};
     reg += QRect(geo.x(), geo.y(), size, size);
     reg += QRect(geo.x()+geo.width()-size, geo.y(), size, size);
     reg += QRect(geo.x(), geo.y()+geo.height()-size, size, size);
     reg += QRect(geo.x()+geo.width()-size, geo.y()+geo.height()-size, size, size);
-#if KWIN_EFFECT_API_VERSION >= 234
     data.opaque -= reg;
-#endif
     data.paint += reg;
 
-#if KWIN_EFFECT_API_VERSION >= 236
     OffscreenEffect::prePaintWindow(w, data, time);
-#else
-    DeformEffect::prePaintWindow(w, data, time);
-#endif
 }
 
 bool ShapeCornersEffect::supported()
@@ -164,10 +143,8 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
         unredirect(w);
 #if QT_VERSION_MAJOR >= 6
         OffscreenEffect::drawWindow(renderTarget, viewport, w, mask, region, data);
-#elif KWIN_EFFECT_API_VERSION >= 236
-        OffscreenEffect::drawWindow(w, mask, region, data);
 #else
-        DeformEffect::drawWindow(w, mask, region, data);
+        OffscreenEffect::drawWindow(w, mask, region, data);
 #endif
         return;
     }
@@ -179,10 +156,8 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
 
 #if QT_VERSION_MAJOR >= 6
     OffscreenEffect::drawWindow(renderTarget, viewport, w, mask, region, data);
-#elif KWIN_EFFECT_API_VERSION >= 236
-    OffscreenEffect::drawWindow(w, mask, region, data);
 #else
-    DeformEffect::drawWindow(w, mask, region, data);
+    OffscreenEffect::drawWindow(w, mask, region, data);
 #endif
     m_shaderManager.Unbind();
 }

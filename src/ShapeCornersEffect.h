@@ -25,19 +25,12 @@
 #if QT_VERSION_MAJOR >= 6
     #include <effect/effecthandler.h>
     #include <effect/offscreeneffect.h>
-#elif KWIN_EFFECT_API_VERSION >= 236
+#else
     #include <kwineffects.h>
     #include <kwinoffscreeneffect.h>
-#else
-    #include <kwineffects.h>
-    #include <kwindeformeffect.h>
 #endif
 
-#if KWIN_EFFECT_API_VERSION >= 236
 class ShapeCornersEffect final: public KWin::OffscreenEffect
-#else
-class ShapeCornersEffect final: public KWin::DeformEffect
-#endif
 {
     Q_OBJECT
 public:
