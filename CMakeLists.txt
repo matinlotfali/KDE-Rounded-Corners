@@ -81,6 +81,9 @@ execute_process(
 message("KWinEffect API Version: ${KWIN_EFFECT_API_VERSION_MINOR}")
 message("")
 
+add_test (NAME KWinEffectSupport COMMAND dbus-send --dest=org.kde.KWin --print-reply /Effects org.kde.kwin.Effects.isEffectSupported string:kwin4_effect_shapecorners)
+set_property (TEST KWinEffectSupport PROPERTY PASS_REGULAR_EXPRESSION "( *)(boolean true)(.*)")
+
 # these are cache variables, so they could be overwritten with -D,
 set(CPACK_PACKAGE_NAME kwin4-effect-shapecorners
     CACHE STRING kwin4-effect-shapecorners

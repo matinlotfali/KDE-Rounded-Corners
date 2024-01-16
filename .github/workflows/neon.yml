@@ -2,11 +2,20 @@ name: KDE Neon (Stable)
 
 on:
   push:
+  push:
     branches: [ master ]
-    paths-ignore: [ '**.md', '**.png' ]
+    paths:
+      - '!**.md'
+      - '!**.md'
+      - '!**.yml'
+      - 'neon.yml'
   pull_request:
     branches: [ master ]
-    paths-ignore: [ '**.md', '**.png' ]
+    paths:
+      - '!**.md'
+      - '!**.md'
+      - '!**.yml'
+      - 'neon.yml'
   schedule:
     - cron: "0 0 * * *"
 
@@ -45,9 +54,8 @@ jobs:
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
-#     - name: Test
-#       working-directory: ${{github.workspace}}/build
-#       # Execute tests defined by the CMake configuration.  
-#       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-#       run: ctest -C ${{env.BUILD_TYPE}}
-      
+    - name: Install
+      run: cmake --install ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Test
+      run: ctest --test-dir ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --verbose
