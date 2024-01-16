@@ -51,4 +51,6 @@ jobs:
     - name: Test
       run: |
         export $(dbus-launch)
+        dbus-run-session /usr/bin/kwin &
+        sleep 1
         ctest --test-dir ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --verbose
