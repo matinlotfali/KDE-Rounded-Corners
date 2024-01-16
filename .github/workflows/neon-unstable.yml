@@ -3,18 +3,10 @@ name: KDE Neon (Unstable)
 on:
   push:
     branches: [ master ]
-    paths:
-      - '!**.md'
-      - '!**.md'
-      - '!**.yml'
-      - 'neon-unstable.yml'
+    paths: [ '!**.md', '!**.md', '!**.yml', 'neon-unstable.yml' ]
   pull_request:
     branches: [ master ]
-    paths:
-      - '!**.md'
-      - '!**.md'
-      - '!**.yml'
-      - 'neon-unstable.yml'
+    paths: [ '!**.md', '!**.md', '!**.yml', 'neon-unstable.yml' ]
   schedule:
     - cron: "0 0 * * *"
 

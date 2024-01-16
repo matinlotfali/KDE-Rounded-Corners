@@ -3,19 +3,10 @@ name: ArchLinux
 on:
   push:
     branches: [ master ]
-    paths:
-      - '!**.md'
-      - '!**.md'
-      - '!**.yml'
-      - 'arch.yml'
+    paths: [ '!**.md', '!**.md', '!**.yml', 'arch.yml' ]
   pull_request:
     branches: [ master ]
-    paths:
-      - '!**.md'
-      - '!**.md'
-      - '!**.yml'
-      - 'arch.yml'
-
+    paths: [ '!**.md', '!**.md', '!**.yml', 'arch.yml' ]
   schedule:
     - cron: "0 0 * * *"
 
