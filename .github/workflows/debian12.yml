@@ -3,10 +3,10 @@ name: Debian 12
 on:
   push:
     branches: [ master ]
-    paths: [ '!**.md', '!**.md', '!**.yml', 'debian12.yml' ]
+    paths: [ '!**.md', '!**.md', '!**.yml', '**/debian12.yml' ]
   pull_request:
     branches: [ master ]
-    paths: [ '!**.md', '!**.md', '!**.yml', 'debian12.yml' ]
+    paths: [ '!**.md', '!**.md', '!**.yml', '**/debian12.yml' ]
   schedule:
     - cron: "0 0 * * *"
 

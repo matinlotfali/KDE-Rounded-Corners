@@ -3,10 +3,10 @@ name: Kubuntu 22.04 Backports
 on:
   push:
     branches: [ master ]
-    paths: [ '!**.md', '!**.md', '!**.yml', 'kubuntu2204-backports.yml' ]
+    paths: [ '!**.md', '!**.md', '!**.yml', '**/kubuntu2204-backports.yml' ]
   pull_request:
     branches: [ master ]
-    paths: [ '!**.md', '!**.md', '!**.yml', 'kubuntu2204-backports.yml' ]
+    paths: [ '!**.md', '!**.md', '!**.yml', '**/kubuntu2204-backports.yml' ]
   schedule:
       - cron: "0 0 * * *"
 

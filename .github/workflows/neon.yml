@@ -3,10 +3,10 @@ name: KDE Neon (Stable)
 on:
   push:
     branches: [ master ]
-    paths: [ '!**.md', '!**.md', '!**.yml', 'neon.yml' ]
+    paths: [ '!**.md', '!**.md', '!**.yml', '**/neon.yml' ]
   pull_request:
     branches: [ master ]
-    paths: [ '!**.md', '!**.md', '!**.yml', 'neon.yml' ]
+    paths: [ '!**.md', '!**.md', '!**.yml', '**/neon.yml' ]
   schedule:
     - cron: "0 0 * * *"
 

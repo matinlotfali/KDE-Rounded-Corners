@@ -3,10 +3,10 @@ name: GLSL Validator
 on:
   push:
     branches: [ master ]
-    paths: [ '**.frag' ]
+    paths: [ '**.frag', '**/glslangValidator.yml' ]
   pull_request:
     branches: [ master ]
-    paths: [ '**.frag' ]
+    paths: [ '**.frag', '**/glslangValidator.yml' ]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
