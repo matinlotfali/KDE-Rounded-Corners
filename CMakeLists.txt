@@ -31,22 +31,9 @@ include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 
-find_package(Qt${QT_VERSION_MAJOR} ${QT_MIN_VERSION} REQUIRED COMPONENTS
-        Core
-        Gui
-        DBus
-        Widgets
-        OpenGL
-        Network
-        Xml
-)
-
 # required frameworks by Core
 find_package(KF${QT_VERSION_MAJOR} ${KF_MIN_VERSION} REQUIRED COMPONENTS
-    Config
     ConfigWidgets
-    CoreAddons
-    GlobalAccel
 )
 if(${QT_VERSION_MAJOR} EQUAL 6)
     find_package(KF${QT_VERSION_MAJOR} ${KF_MIN_VERSION} REQUIRED COMPONENTS
@@ -80,6 +67,10 @@ execute_process(
 )
 message("KWinEffect API Version: ${KWIN_EFFECT_API_VERSION_MINOR}")
 message("")
+
+add_test (NAME KWinEffectSupport COMMAND ${CMAKE_CURRENT_LIST_DIR}/tools/isSupported.sh)
+set_property (TEST KWinEffectSupport PROPERTY PASS_REGULAR_EXPRESSION "true")
+
 
 # these are cache variables, so they could be overwritten with -D,
 set(CPACK_PACKAGE_NAME kwin4-effect-shapecorners

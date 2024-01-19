@@ -26,13 +26,8 @@ ShapeCornersShader::ShapeCornersShader():
 
     const QByteArray frag = file.readAll();
     auto shader = m_manager->generateShaderFromFile(KWin::ShaderTrait::MapTexture, QStringLiteral(""), fragmentshader);
-#if KWIN_EFFECT_API_VERSION >= 235
     m_shader = std::move(shader);
-#else
-    m_shader.reset(shader);
-#endif
     file.close();
-//        qDebug() << frag;        
     if (!m_shader->isValid())
         qCritical() << "ShapeCorners: no valid shaders found! ShapeCorners will not work.";
 

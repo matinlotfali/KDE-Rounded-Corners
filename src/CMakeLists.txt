@@ -13,13 +13,8 @@ kcoreaddons_add_plugin(kwin4_effect_shapecorners INSTALL_NAMESPACE "kwin/effects
 target_sources(kwin4_effect_shapecorners PRIVATE ${effect_SRCS})
 
 target_link_libraries(kwin4_effect_shapecorners
-    Qt${QT_VERSION_MAJOR}::Core
-    Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::DBus
-    epoxy::epoxy
-    KF${QT_VERSION_MAJOR}::ConfigCore
     KF${QT_VERSION_MAJOR}::ConfigGui
-    KF${QT_VERSION_MAJOR}::CoreAddons
 )
 if(${QT_VERSION_MAJOR} EQUAL 6)
     target_link_libraries(kwin4_effect_shapecorners
