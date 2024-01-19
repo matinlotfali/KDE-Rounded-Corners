@@ -6,7 +6,7 @@ else
     cmake --build . -j
     kdialog --password "Enter password to install KDE-Rounded-Corners: " | sudo -S cmake --install .
 
-    ../tools/load.sh
+    sh ../tools/load.sh
     if ctest > /dev/null; then
       kdialog --msgbox "KDE-Rounded-Corners is now installed and loaded."
     else

@@ -104,13 +104,13 @@ sudo make install
 
 To activate the effect, you can now log out and log back in, or run the command below inside the `build` directory:
 ```bash
-../tools/load.sh
+sh ../tools/load.sh
 ```
 
 To fully uninstall the effect, run the following commands inside the `build` directory:
 
 ```bash
-../tools/unload.sh
+sh ../tools/unload.sh
 sudo make uninstall
 ```
 
@@ -123,7 +123,7 @@ As long as the effect is not part of the `kwin` yet (being discussed
 below inside the `build` directory:
 
 ```bash
-../tools/autorun-test-install.sh
+sh ../tools/autorun-test-install.sh
 ```
 
 The command above adds a `desktop` file inside the `autorun` directory which checks if the effect is still supported,
