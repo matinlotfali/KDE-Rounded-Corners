@@ -41,7 +41,7 @@ You need to install development packages for your distribution first:
     
   - Plasma 5 - by [alex47](https://github.com/alex47):
     ```
-    sudo apt install git cmake g++ gettext extra-cmake-modules qttools5-dev libkf5configwidgets-dev libkf5globalaccel-dev libkf5notifications-dev kwin-dev 
+    sudo apt install git cmake g++ extra-cmake-modules kwin-dev libkf5configwidgets-dev 
     ```
   - Plasma 6
     ```
@@ -52,7 +52,7 @@ You need to install development packages for your distribution first:
 <summary>Fedora</summary>
 
    ```
-   sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttools-devel qt5-qttools-static kf5-kconfigwidgets-devel kf5-kcrash-devel kf5-kguiaddons-devel kf5-kglobalaccel-devel kf5-kio-devel kf5-ki18n-devel kwin-devel qt5-qtbase-devel libepoxy-devel
+   sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttools-devel qt5-qttools-static kf5-kconfigwidgets-devel kf5-kcrash-devel kf5-kguiaddons-devel kf5-kio-devel kf5-ki18n-devel kwin-devel qt5-qtbase-devel libepoxy-devel
    ```
 </details>
 <details>
@@ -71,7 +71,7 @@ You need to install development packages for your distribution first:
 <summary>OpenSUSE - by https://github.com/mathiasgredal and https://github.com/Richardsause</summary>
 
   ```
-  sudo zypper install git cmake gcc-c++ extra-cmake-modules libqt5-qttools-devel kconfigwidgets-devel kguiaddons-devel kglobalaccel-devel ki18n-devel knotifications-devel kwin5-devel libQt5Gui-devel libQt5OpenGL-devel libepoxy-devel kwindowsystem-devel libqt5-qtnetworkauth-devel
+  sudo zypper install git cmake gcc-c++ extra-cmake-modules libqt5-qttools-devel kconfigwidgets-devel kguiaddons-devel ki18n-devel knotifications-devel kwin5-devel libQt5Gui-devel libQt5OpenGL-devel libepoxy-devel libqt5-qtnetworkauth-devel
   ```
 </details>
 <details>
@@ -100,21 +100,40 @@ make
 sudo make install
 ```
 
-You can now log out and log back in or run the command below to have it activated.
-```
-kwin --replace &
+# Load & Unload
+
+To activate the effect, you can now log out and log back in, or run the command below inside the `build` directory:
+```bash
+../tools/load.sh
 ```
 
-> [!CAUTION]
-> Running the command above in **Wayland** restarts your session and closes all your current open windows.
+To fully uninstall the effect, run the following commands inside the `build` directory:
+
+```bash
+../tools/unload.sh
+sudo make uninstall
+```
+
+# Auto install after KWin update
+
+After each `kwin` package update, the effect becomes incompatible. So it won't load without a rebuild.
+
+As long as the effect is not part of the `kwin` yet (being discussed 
+[here](https://invent.kde.org/plasma/kwin/-/issues/198)), you can automate the re-installation by running the command
+below inside the `build` directory:
+
+```bash
+../tools/autorun-test-install.sh
+```
+
+The command above adds a `desktop` file inside the `autorun` directory which checks if the effect is still supported,
+if it is not supported, it would automatically rebuild and reinstall the effect.
 
 # Settings
 
 You can change the corner radius, or disable the effect in:
 
 > [ System Settings ] --> [ Workspace Behavior ] --> [ Desktop Effects ] --> [ ShapeCorners ]
-
-To fully uninstall, simply run the command `sudo make uninstall` inside the `build` directory
 
 # Tips
 

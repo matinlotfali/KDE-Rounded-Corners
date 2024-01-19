@@ -1,0 +1,14 @@
+[Desktop Entry]
+Comment=
+Exec=tools/test-install.sh
+GenericName=
+MimeType=
+Name=Test & Install KDE-Rounded-Corners
+NoDisplay=false
+Path=build/
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=

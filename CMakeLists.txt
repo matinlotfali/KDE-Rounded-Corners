@@ -68,6 +68,10 @@ execute_process(
 message("KWinEffect API Version: ${KWIN_EFFECT_API_VERSION_MINOR}")
 message("")
 
+add_test (NAME KWinEffectSupport COMMAND ${CMAKE_CURRENT_LIST_DIR}/tools/isSupported.sh)
+set_property (TEST KWinEffectSupport PROPERTY PASS_REGULAR_EXPRESSION "true")
+
+
 # these are cache variables, so they could be overwritten with -D,
 set(CPACK_PACKAGE_NAME kwin4-effect-shapecorners
     CACHE STRING kwin4-effect-shapecorners
