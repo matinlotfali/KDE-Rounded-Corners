@@ -9,8 +9,7 @@ set(effect_SRCS
 )
 
 kconfig_add_kcfg_files(effect_SRCS ShapeCornersConfig.kcfgc)
-kcoreaddons_add_plugin(kwin4_effect_shapecorners INSTALL_NAMESPACE "kwin/effects/plugins/")
-target_sources(kwin4_effect_shapecorners PRIVATE ${effect_SRCS})
+kcoreaddons_add_plugin(kwin4_effect_shapecorners SOURCES ${effect_SRCS} INSTALL_NAMESPACE "kwin/effects/plugins/")
 
 target_link_libraries(kwin4_effect_shapecorners
     Qt${QT_VERSION_MAJOR}::DBus
