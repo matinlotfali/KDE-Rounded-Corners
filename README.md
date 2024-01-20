@@ -50,9 +50,15 @@ You need to install development packages for your distribution first:
 </details>
 <details>
 <summary>Fedora</summary>
+<br>
 
+ - Plasma 5 (Fedora 39)
+   ```bash
+   sudo dnf install git cmake gcc-c++ extra-cmake-modules kwin-devel kf5-kconfigwidgets-devel libepoxy-devel
    ```
-   sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttools-devel qt5-qttools-static kf5-kconfigwidgets-devel kf5-kcrash-devel kf5-kguiaddons-devel kf5-kio-devel kf5-ki18n-devel kwin-devel qt5-qtbase-devel libepoxy-devel
+ - Plasma 6 (Fedora 40 and later)
+   ```bash
+   sudo dnf install git cmake gcc-c++ extra-cmake-modules kwin-devel kf6-kconfigwidgets-devel libepoxy-devel kf6-kcmutils-devel qt6-qtbase-private-devel wayland-devel
    ```
 </details>
 <details>
