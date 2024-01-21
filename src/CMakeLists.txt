@@ -12,13 +12,13 @@ kconfig_add_kcfg_files(effect_SRCS ShapeCornersConfig.kcfgc)
 kcoreaddons_add_plugin(kwin4_effect_shapecorners SOURCES ${effect_SRCS} INSTALL_NAMESPACE "kwin/effects/plugins/")
 
 target_link_libraries(kwin4_effect_shapecorners
-    Qt${QT_VERSION_MAJOR}::DBus
-    KF${QT_VERSION_MAJOR}::ConfigGui
+    Qt${QT_MAJOR_VERSION}::DBus
+    KF${QT_MAJOR_VERSION}::ConfigGui
 )
-if(${QT_VERSION_MAJOR} EQUAL 6)
+if(${QT_MAJOR_VERSION} EQUAL 6)
     target_link_libraries(kwin4_effect_shapecorners
             KWin::kwin
-            Qt${QT_VERSION_MAJOR}::CorePrivate
+            Qt${QT_MAJOR_VERSION}::CorePrivate
     )
 else()
     target_link_libraries(kwin4_effect_shapecorners
