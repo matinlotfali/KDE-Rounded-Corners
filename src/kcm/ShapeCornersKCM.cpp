@@ -53,6 +53,11 @@ ShapeCornersKCM::ShapeCornersKCM(QWidget* parent, const QVariantList& args)
     connect(ui->kcfg_ActiveShadowUsePalette, &QRadioButton::toggled, this, &ShapeCornersKCM::update_colors);
     connect(ui->kcfg_InactiveShadowUsePalette, &QRadioButton::toggled, this, &ShapeCornersKCM::update_colors);
 
+    connect(ui->kcfg_ActiveShadowAlpha, &KGradientSelector::sliderMoved, this, &ShapeCornersKCM::markAsChanged);
+    connect(ui->kcfg_InactiveShadowAlpha, &KGradientSelector::sliderMoved, this, &ShapeCornersKCM::markAsChanged);
+    connect(ui->kcfg_ActiveOutlineAlpha, &KGradientSelector::sliderMoved, this, &ShapeCornersKCM::markAsChanged);
+    connect(ui->kcfg_InactiveOutlineAlpha, &KGradientSelector::sliderMoved, this, &ShapeCornersKCM::markAsChanged);
+
     connect(ui->refreshButton, &QPushButton::pressed, this, &ShapeCornersKCM::update_windows);
     connect(ui->includeButton, &QPushButton::pressed, [=, this]() {
         if (const auto s = ui->currentWindowList->currentItem();
