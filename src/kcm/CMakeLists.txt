@@ -12,8 +12,8 @@ if(${QT_MAJOR_VERSION} EQUAL 6)
     kcoreaddons_add_plugin(kwin_shapecorners_config INSTALL_NAMESPACE "kwin/effects/configs" SOURCES ${kcm_SRCS})
 
     target_link_libraries(kwin_shapecorners_config
-            Qt${QT_VERSION_MAJOR}::CorePrivate
-            KF${QT_VERSION_MAJOR}::KCMUtils
+            Qt${QT_MAJOR_VERSION}::CorePrivate
+            KF${QT_MAJOR_VERSION}::KCMUtils
     )
 else()
     qt5_wrap_ui(kcm_SRCS ShapeCornersKCM.ui)
