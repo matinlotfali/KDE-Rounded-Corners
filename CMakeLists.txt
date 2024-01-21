@@ -4,7 +4,7 @@ project(kwin4_effect_shapecorners)
 
 set(KF_MIN_VERSION "5.78")
 set(QT_MIN_VERSION "5.15")
-set(QT_VERSION_MAJOR 5)
+set(QT_MAJOR_VERSION 5)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -23,7 +23,7 @@ set(CMAKE_MODULE_PATH
 )
 if(ECM_VERSION VERSION_GREATER "5.200.0")
     set(QT_MIN_VERSION "6.4.0")
-    set(QT_VERSION_MAJOR 6)
+    set(QT_MAJOR_VERSION 6)
 endif()
 
 include(FeatureSummary)
@@ -32,11 +32,11 @@ include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 
 # required frameworks by Core
-find_package(KF${QT_VERSION_MAJOR} ${KF_MIN_VERSION} REQUIRED COMPONENTS
+find_package(KF${QT_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED COMPONENTS
     ConfigWidgets
 )
-if(${QT_VERSION_MAJOR} EQUAL 6)
-    find_package(KF${QT_VERSION_MAJOR} ${KF_MIN_VERSION} REQUIRED COMPONENTS
+if(${QT_MAJOR_VERSION} EQUAL 6)
+    find_package(KF${QT_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED COMPONENTS
             KCMUtils
     )
 
