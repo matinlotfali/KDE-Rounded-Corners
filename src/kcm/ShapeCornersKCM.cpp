@@ -53,6 +53,8 @@ ShapeCornersKCM::ShapeCornersKCM(QWidget* parent, const QVariantList& args)
     connect(ui->kcfg_ActiveShadowUsePalette, &QRadioButton::toggled, this, &ShapeCornersKCM::update_colors);
     connect(ui->kcfg_InactiveShadowUsePalette, &QRadioButton::toggled, this, &ShapeCornersKCM::update_colors);
 
+    // It was expected that the Apply button would get enabled automatically as the gradient sliders move, but it doesn't.
+    // Maybe it is a bug on the KCM side. Need to check and delete these lines later.
     connect(ui->kcfg_ActiveShadowAlpha, &KGradientSelector::sliderMoved, this, &ShapeCornersKCM::markAsChanged);
     connect(ui->kcfg_InactiveShadowAlpha, &KGradientSelector::sliderMoved, this, &ShapeCornersKCM::markAsChanged);
     connect(ui->kcfg_ActiveOutlineAlpha, &KGradientSelector::sliderMoved, this, &ShapeCornersKCM::markAsChanged);
