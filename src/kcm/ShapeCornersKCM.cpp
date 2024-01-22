@@ -92,10 +92,18 @@ ShapeCornersKCM::save()
     ShapeCornersConfig::setExclusions(exclusions);
     ShapeCornersConfig::self()->save();
     KCModule::save();
+
+    const auto dbusName = QStringLiteral("kwin4_effect_shapecorners");
     OrgKdeKwinEffectsInterface interface(QStringLiteral("org.kde.KWin"),
                                          QStringLiteral("/Effects"),
                                          QDBusConnection::sessionBus());
-    interface.reconfigureEffect(QStringLiteral("kwin4_effect_shapecorners"));
+    interface.reconfigureEffect(dbusName);
+
+    // It was expected that the Apply button would repaint the whole screen, but it doesn't.
+    // Even calling KWin::effects->addRepaintFull(); didn't do the trick.
+    // Maybe it is a bug on the KWin side. Need to check and delete these lines later.
+    interface.unloadEffect(dbusName);
+    interface.loadEffect(dbusName);
 }
 
 void ShapeCornersKCM::update_colors() {
