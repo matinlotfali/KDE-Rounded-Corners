@@ -27,6 +27,7 @@
     #include <opengl/glutils.h>
     #include <effect/effecthandler.h>
     #include <core/output.h>
+    #include <core/renderviewport.h>
 #else
     #include <kwinglutils.h>
 #endif
