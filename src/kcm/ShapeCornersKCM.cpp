@@ -1,18 +1,26 @@
+#include "ShapeCornersKCM.h"
+#include "ui_ShapeCornersKCM.h"
+#include "kwineffects_interface.h"
+#include "ShapeCornersConfig.h"
 #include <QDialog>
 #include <QList>
 
-#include <kwineffects.h>
-#include "kwineffects_interface.h"
-#include "ShapeCornersKCM.h"
-
-#include <QDBusConnection>
-
+#if (QT_VERSION_MAJOR >= 6)
+ShapeCornersKCM::ShapeCornersKCM(QObject* parent, const KPluginMetaData& args)
+    : KCModule(parent, args)
+    , ui(new Ui::Form)
+{
+    ui->setupUi(widget());
+    addConfig(ShapeCornersConfig::self(), widget());
+#else
 ShapeCornersKCM::ShapeCornersKCM(QWidget* parent, const QVariantList& args)
     : KCModule(parent, args)
     , ui(new Ui::Form)
 {
     ui->setupUi(this);
     addConfig(ShapeCornersConfig::self(), this);
+#endif
+
     update_colors();
     update_windows();
 
@@ -45,15 +53,22 @@ ShapeCornersKCM::ShapeCornersKCM(QWidget* parent, const QVariantList& args)
     connect(ui->kcfg_ActiveShadowUsePalette, &QRadioButton::toggled, this, &ShapeCornersKCM::update_colors);
     connect(ui->kcfg_InactiveShadowUsePalette, &QRadioButton::toggled, this, &ShapeCornersKCM::update_colors);
 
+    // It was expected that the Apply button would get enabled automatically as the gradient sliders move, but it doesn't.
+    // Maybe it is a bug on the KCM side. Need to check and delete these lines later.
+    connect(ui->kcfg_ActiveShadowAlpha, &KGradientSelector::sliderMoved, this, &ShapeCornersKCM::markAsChanged);
+    connect(ui->kcfg_InactiveShadowAlpha, &KGradientSelector::sliderMoved, this, &ShapeCornersKCM::markAsChanged);
+    connect(ui->kcfg_ActiveOutlineAlpha, &KGradientSelector::sliderMoved, this, &ShapeCornersKCM::markAsChanged);
+    connect(ui->kcfg_InactiveOutlineAlpha, &KGradientSelector::sliderMoved, this, &ShapeCornersKCM::markAsChanged);
+
     connect(ui->refreshButton, &QPushButton::pressed, this, &ShapeCornersKCM::update_windows);
     connect(ui->includeButton, &QPushButton::pressed, [=, this]() {
-        auto s = ui->currentWindowList->currentItem();
-        if (s && ui->InclusionList->findItems(s->text(), Qt::MatchExactly).empty())
+        if (const auto s = ui->currentWindowList->currentItem();
+            s && ui->InclusionList->findItems(s->text(), Qt::MatchExactly).empty())
             ui->InclusionList->addItem(s->text());
     });
     connect(ui->excludeButton, &QPushButton::pressed, [=, this]() {
-        auto s = ui->currentWindowList->currentItem();
-        if (s && ui->ExclusionList->findItems(s->text(), Qt::MatchExactly).empty())
+        if (const auto s = ui->currentWindowList->currentItem();
+            s && ui->ExclusionList->findItems(s->text(), Qt::MatchExactly).empty())
             ui->ExclusionList->addItem(s->text());
     });
     connect(ui->deleteIncludeButton, &QPushButton::pressed, [=, this]() {
@@ -77,14 +92,18 @@ ShapeCornersKCM::save()
     ShapeCornersConfig::setExclusions(exclusions);
     ShapeCornersConfig::self()->save();
     KCModule::save();
+
+    const auto dbusName = QStringLiteral("kwin4_effect_shapecorners");
     OrgKdeKwinEffectsInterface interface(QStringLiteral("org.kde.KWin"),
                                          QStringLiteral("/Effects"),
                                          QDBusConnection::sessionBus());
-    interface.reconfigureEffect(QStringLiteral("kwin4_effect_shapecorners"));
-}
+    interface.reconfigureEffect(dbusName);
 
-ShapeCornersKCM::~ShapeCornersKCM() {
-    delete ui;
+    // It was expected that the Apply button would repaint the whole screen, but it doesn't.
+    // Even calling KWin::effects->addRepaintFull(); didn't do the trick.
+    // Maybe it is a bug on the KWin side. Need to check and delete these lines later.
+    interface.unloadEffect(dbusName);
+    interface.loadEffect(dbusName);
 }
 
 void ShapeCornersKCM::update_colors() {
@@ -113,23 +132,15 @@ void ShapeCornersKCM::update_colors() {
     ui->kcfg_InactiveShadowAlpha->setSecondColor(color);
 }
 
-void ShapeCornersKCM::update_windows() {
-    QList<QString> windowList;
+void ShapeCornersKCM::update_windows() const {
+    QStringList windowList;
+    if (const auto connection = QDBusConnection::sessionBus(); connection.isConnected())
+        if (QDBusInterface interface(QStringLiteral("org.kde.ShapeCorners"), QStringLiteral("/ShapeCornersEffect")); interface.isValid())
+            if (const QDBusReply<QString> reply = interface.call(QStringLiteral("get_window_titles")); reply.isValid())
+                windowList = reply.value().split(QStringLiteral("\n"));
+
     ui->currentWindowList->clear();
-
-    auto connection = QDBusConnection::sessionBus();
-    if (connection.isConnected()) {
-        QDBusInterface interface("org.kde.ShapeCorners", "/ShapeCornersEffect");
-        if (interface.isValid()) {
-            QDBusReply<QString> reply = interface.call("get_window_titles");
-            if (reply.isValid())
-                windowList = reply.value().split("\n");
-        }
-    }
-
-    for (const auto& w: windowList)
-        if (!w.isEmpty())
-            ui->currentWindowList->addItem(w);
+    ui->currentWindowList->addItems(windowList);
 }
 
 void ShapeCornersKCM::load() {

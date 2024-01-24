@@ -97,15 +97,15 @@
         <entry name="InactiveShadowUseCustom" type="Bool">
             <default>false</default>
         </entry>
+        <entry name="Inclusions" type="StringList">
+        </entry>
+        <entry name="Exclusions" type="StringList">
+        </entry>
         <entry name="DisableRoundTile" type="Bool">
             <default>true</default>
         </entry>
         <entry name="DisableOutlineTile" type="Bool">
             <default>true</default>
-        </entry>
-        <entry name="Inclusions" type="StringList">
-        </entry>
-        <entry name="Exclusions" type="StringList">
         </entry>
     </group>
 </kcfg>

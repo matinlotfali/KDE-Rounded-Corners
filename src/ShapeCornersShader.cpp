@@ -2,54 +2,46 @@
 // Created by matin on 20/07/22.
 //
 
-#include <kwinglplatform.h>
-#include <QFile>
-#include <QStandardPaths>
-#include <kwineffects.h>
-#include <QWidget>
-#include "ShapeCornersEffect.h"
 #include "ShapeCornersShader.h"
+#include "ShapeCornersEffect.h"
+#include "ShapeCornersConfig.h"
+#include <QFile>
+#include <QWidget>
+
+#if QT_VERSION_MAJOR >= 6
+    #include <opengl/glutils.h>
+#else
+    #include <kwinglutils.h>
+#endif
 
 ShapeCornersShader::ShapeCornersShader():
         m_manager(KWin::ShaderManager::instance()),
-        m_palette(QWidget().palette())
+        m_widget(new QWidget)
 {
-    const QString shadersDir = IsLegacy()? "kwin/shaders/1.10/": "kwin/shaders/1.40/";
-    const QString fragmentshader = QStandardPaths::locate(QStandardPaths::GenericDataLocation, shadersDir + QStringLiteral("shapecorners.frag"));
+    const QString fragmentshader = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kwin/shaders/shapecorners.frag"));
 //    m_shader = KWin::ShaderManager::instance()->loadFragmentShader(KWin::ShaderManager::GenericShader, fragmentshader);
     QFile file(fragmentshader);
-    if (file.open(QFile::ReadOnly))
-    {
-        QByteArray frag = file.readAll();
-        auto shader = m_manager->generateCustomShader(KWin::ShaderTrait::MapTexture, QByteArray(), frag);
-#if KWIN_EFFECT_API_VERSION >= 235
-        m_shader = std::move(shader);
-#else
-        m_shader.reset(shader);
-#endif
-        file.close();
-//        qDebug() << frag;        
-        if (m_shader->isValid())
-        {
-            m_shader_disableRoundedTile = m_shader->uniformLocation("disableRoundedTile");
-            m_shader_windowSize = m_shader->uniformLocation("windowSize");
-            m_shader_windowExpandedSize = m_shader->uniformLocation("windowExpandedSize");
-            m_shader_windowTopLeft = m_shader->uniformLocation("windowTopLeft");
-            m_shader_shadowColor = m_shader->uniformLocation("shadowColor");
-            m_shader_shadowSize = m_shader->uniformLocation("shadowSize");
-            m_shader_radius = m_shader->uniformLocation("radius");
-            m_shader_outlineColor = m_shader->uniformLocation("outlineColor");
-            m_shader_outlineThickness = m_shader->uniformLocation("outlineThickness");
-            m_shader_front = m_shader->uniformLocation("front");
-            qInfo() << "ShapeCorners: shaders loaded.";
-        }
-        else
-            qCritical() << "ShapeCorners: no valid shaders found! ShapeCorners will not work.";
-    }
-    else
-    {
+    if (!file.open(QFile::ReadOnly))
         qCritical() << "ShapeCorners: no shaders found! Exiting...";
-    }
+
+    const QByteArray frag = file.readAll();
+    auto shader = m_manager->generateShaderFromFile(KWin::ShaderTrait::MapTexture, QStringLiteral(""), fragmentshader);
+    m_shader = std::move(shader);
+    file.close();
+    if (!m_shader->isValid())
+        qCritical() << "ShapeCorners: no valid shaders found! ShapeCorners will not work.";
+
+    m_shader_disableRoundedTile = m_shader->uniformLocation("disableRoundedTile");
+    m_shader_windowSize = m_shader->uniformLocation("windowSize");
+    m_shader_windowExpandedSize = m_shader->uniformLocation("windowExpandedSize");
+    m_shader_windowTopLeft = m_shader->uniformLocation("windowTopLeft");
+    m_shader_shadowColor = m_shader->uniformLocation("shadowColor");
+    m_shader_shadowSize = m_shader->uniformLocation("shadowSize");
+    m_shader_radius = m_shader->uniformLocation("radius");
+    m_shader_outlineColor = m_shader->uniformLocation("outlineColor");
+    m_shader_outlineThickness = m_shader->uniformLocation("outlineThickness");
+    m_shader_front = m_shader->uniformLocation("front");
+    qInfo() << "ShapeCorners: shaders loaded.";
 }
 
 bool ShapeCornersShader::IsValid() const {
@@ -57,20 +49,24 @@ bool ShapeCornersShader::IsValid() const {
 }
 
 const std::unique_ptr<KWin::GLShader>&
-ShapeCornersShader::Bind(KWin::EffectWindow *w, bool isTiled) const {
+ShapeCornersShader::Bind(KWin::EffectWindow *w, qreal scale, bool isTiled) const {
     QColor outlineColor, shadowColor;
-    auto xy = QVector2D((w->frameGeometry().left() - w->expandedGeometry().left()),
-                        (w->frameGeometry().top() - w->expandedGeometry().top()));
+    qreal shadowSize;
+    auto& m_palette = m_widget->palette();
+    auto frameGeometry = w->frameGeometry() * scale;
+    auto expandedGeometry = w->expandedGeometry() * scale;
+    auto xy = QVector2D(frameGeometry.topLeft() - expandedGeometry.topLeft());
+    qreal max_shadow_size = xy.length();
     m_manager->pushShader(m_shader.get());
-    m_shader->setUniform(m_shader_windowSize, QVector2D(w->frameGeometry().width(), w->frameGeometry().height()));
-    m_shader->setUniform(m_shader_windowExpandedSize, QVector2D(w->expandedGeometry().width(), w->expandedGeometry().height()));
+    m_shader->setUniform(m_shader_windowSize, toVector2D(frameGeometry.size()));
+    m_shader->setUniform(m_shader_windowExpandedSize, toVector2D(expandedGeometry.size()));
     m_shader->setUniform(m_shader_windowTopLeft, xy);
     m_shader->setUniform(m_shader_disableRoundedTile, isTiled && ShapeCornersConfig::disableRoundTile());
     m_shader->setUniform(m_shader_front, 0);
     if (ShapeCornersEffect::isWindowActive(w)) {
-        m_shader->setUniform(m_shader_shadowSize, (float)ShapeCornersConfig::shadowSize());
-        m_shader->setUniform(m_shader_radius, (float)ShapeCornersConfig::size());
-        m_shader->setUniform(m_shader_outlineThickness, (float)ShapeCornersConfig::outlineThickness());
+        shadowSize = std::min(ShapeCornersConfig::shadowSize() * scale, max_shadow_size);
+        m_shader->setUniform(m_shader_radius, static_cast<float>(ShapeCornersConfig::size() * scale));
+        m_shader->setUniform(m_shader_outlineThickness, static_cast<float>(ShapeCornersConfig::outlineThickness() * scale));
 
         outlineColor = ShapeCornersConfig::activeOutlineUsePalette() ?
             m_palette.color(QPalette::Active, static_cast<QPalette::ColorRole>(ShapeCornersConfig::activeOutlinePalette())):
@@ -81,19 +77,20 @@ ShapeCornersShader::Bind(KWin::EffectWindow *w, bool isTiled) const {
         outlineColor.setAlpha(isTiled && ShapeCornersConfig::disableOutlineTile() ? 0: ShapeCornersConfig::activeOutlineAlpha());
         shadowColor.setAlpha(ShapeCornersConfig::activeShadowAlpha());
     } else {
-        m_shader->setUniform(m_shader_shadowSize, (float)ShapeCornersConfig::inactiveShadowSize());
-        m_shader->setUniform(m_shader_radius, (float)ShapeCornersConfig::inactiveCornerRadius());
-        m_shader->setUniform(m_shader_outlineThickness, (float)ShapeCornersConfig::inactiveOutlineThickness());
+        shadowSize = std::min(ShapeCornersConfig::inactiveShadowSize() * scale, max_shadow_size);
+        m_shader->setUniform(m_shader_radius, static_cast<float>(ShapeCornersConfig::inactiveCornerRadius() * scale));
+        m_shader->setUniform(m_shader_outlineThickness, static_cast<float>(ShapeCornersConfig::inactiveOutlineThickness() * scale));
 
         outlineColor = ShapeCornersConfig::inactiveOutlineUsePalette() ?
-                       m_palette.color(QPalette::Active, static_cast<QPalette::ColorRole>(ShapeCornersConfig::inactiveOutlinePalette())):
+                       m_palette.color(QPalette::Inactive, static_cast<QPalette::ColorRole>(ShapeCornersConfig::inactiveOutlinePalette())):
                        ShapeCornersConfig::inactiveOutlineColor();
         shadowColor = ShapeCornersConfig::inactiveShadowUsePalette() ?
-                      m_palette.color(QPalette::Active, static_cast<QPalette::ColorRole>(ShapeCornersConfig::inactiveShadowPalette())):
+                      m_palette.color(QPalette::Inactive, static_cast<QPalette::ColorRole>(ShapeCornersConfig::inactiveShadowPalette())):
                       ShapeCornersConfig::inactiveShadowColor();
         outlineColor.setAlpha(isTiled && ShapeCornersConfig::disableOutlineTile() ? 0: ShapeCornersConfig::inactiveOutlineAlpha());
         shadowColor.setAlpha(ShapeCornersConfig::inactiveShadowAlpha());
     }
+    m_shader->setUniform(m_shader_shadowSize, static_cast<float>(shadowSize));
     m_shader->setUniform(m_shader_outlineColor, outlineColor);
     m_shader->setUniform(m_shader_shadowColor, shadowColor);
     return m_shader;
@@ -101,13 +98,4 @@ ShapeCornersShader::Bind(KWin::EffectWindow *w, bool isTiled) const {
 
 void ShapeCornersShader::Unbind() const {
     m_manager->popShader();
-}
-
-bool ShapeCornersShader::IsLegacy() {
-#ifdef KWIN_HAVE_OPENGLES
-    const qint64 coreVersionNumber = kVersionNumber(3, 0);
-#else
-    const qint64 version = KWin::kVersionNumber(1, 40);
-#endif
-    return (KWin::GLPlatform::instance()->glslVersion() < version);
 }
