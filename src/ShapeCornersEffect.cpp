@@ -27,6 +27,7 @@
     #include <opengl/glutils.h>
     #include <effect/effecthandler.h>
     #include <core/output.h>
+    #include <core/renderviewport.h>
 #else
     #include <kwinglutils.h>
 #endif
@@ -90,11 +91,6 @@ bool ShapeCornersEffect::isMaximized(const KWin::EffectWindow *w) {
            (w->y() == screenGeometry.y() && w->height() == screenGeometry.height());
 }
 
-inline QRectF operator *(const QRect& r, const qreal scale) { return {r.x() * scale, r.y() * scale, r.width() * scale, r.height() * scale}; }
-inline QRectF operator *(const QRectF& r, const qreal scale) { return {r.x() * scale, r.y() * scale, r.width() * scale, r.height() * scale}; }
-inline QRect toRect(const QRectF& r) { return {static_cast<int>(r.x()), static_cast<int>(r.y()), static_cast<int>(r.width()), static_cast<int>(r.height())}; }
-inline const QRect& toRect(const QRect& r) { return r; }
-
 void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
 {
     if (!hasEffect(w))
@@ -147,9 +143,15 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
         return;
     }
 
+#if QT_VERSION_MAJOR >= 6
+    const auto scale = viewport.scale();
+#else
+    const auto scale = KWin::effects->renderTargetScale();
+#endif
+
     redirect(w);
     setShader(w, m_shaderManager.GetShader().get());
-    m_shaderManager.Bind(w);
+    m_shaderManager.Bind(w, scale);
     glActiveTexture(GL_TEXTURE0);
 
 #if QT_VERSION_MAJOR >= 6

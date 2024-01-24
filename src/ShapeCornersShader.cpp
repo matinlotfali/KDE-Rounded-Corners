@@ -48,21 +48,23 @@ bool ShapeCornersShader::IsValid() const {
 }
 
 const std::unique_ptr<KWin::GLShader>&
-ShapeCornersShader::Bind(KWin::EffectWindow *w) const {
+ShapeCornersShader::Bind(KWin::EffectWindow *w, qreal scale) const {
     QColor outlineColor, shadowColor;
-    float shadowSize;
+    qreal shadowSize;
     auto& m_palette = m_widget->palette();
-    auto xy = QVector2D(w->frameGeometry().topLeft() - w->expandedGeometry().topLeft());
-    auto max_shadow_size = xy.length();
+    auto frameGeometry = w->frameGeometry() * scale;
+    auto expandedGeometry = w->expandedGeometry() * scale;
+    auto xy = QVector2D(frameGeometry.topLeft() - expandedGeometry.topLeft());
+    qreal max_shadow_size = xy.length();
     m_manager->pushShader(m_shader.get());
-    m_shader->setUniform(m_shader_windowSize, QVector2DSize(w->frameGeometry().size()));
-    m_shader->setUniform(m_shader_windowExpandedSize, QVector2DSize(w->expandedGeometry().size()));
+    m_shader->setUniform(m_shader_windowSize, toVector2D(frameGeometry.size()));
+    m_shader->setUniform(m_shader_windowExpandedSize, toVector2D(expandedGeometry.size()));
     m_shader->setUniform(m_shader_windowTopLeft, xy);
     m_shader->setUniform(m_shader_front, 0);
     if (ShapeCornersEffect::isWindowActive(w)) {
-        shadowSize = std::min(static_cast<float>(ShapeCornersConfig::shadowSize()), max_shadow_size);
-        m_shader->setUniform(m_shader_radius, static_cast<float>(ShapeCornersConfig::size()));
-        m_shader->setUniform(m_shader_outlineThickness, static_cast<float>(ShapeCornersConfig::outlineThickness()));
+        shadowSize = std::min(ShapeCornersConfig::shadowSize() * scale, max_shadow_size);
+        m_shader->setUniform(m_shader_radius, static_cast<float>(ShapeCornersConfig::size() * scale));
+        m_shader->setUniform(m_shader_outlineThickness, static_cast<float>(ShapeCornersConfig::outlineThickness() * scale));
 
         outlineColor = ShapeCornersConfig::activeOutlineUsePalette() ?
             m_palette.color(QPalette::Active, static_cast<QPalette::ColorRole>(ShapeCornersConfig::activeOutlinePalette())):
@@ -73,9 +75,9 @@ ShapeCornersShader::Bind(KWin::EffectWindow *w) const {
         outlineColor.setAlpha(ShapeCornersConfig::activeOutlineAlpha());
         shadowColor.setAlpha(ShapeCornersConfig::activeShadowAlpha());
     } else {
-        shadowSize = std::min(static_cast<float>(ShapeCornersConfig::inactiveShadowSize()), max_shadow_size);
-        m_shader->setUniform(m_shader_radius, static_cast<float>(ShapeCornersConfig::inactiveCornerRadius()));
-        m_shader->setUniform(m_shader_outlineThickness, static_cast<float>(ShapeCornersConfig::inactiveOutlineThickness()));
+        shadowSize = std::min(ShapeCornersConfig::inactiveShadowSize() * scale, max_shadow_size);
+        m_shader->setUniform(m_shader_radius, static_cast<float>(ShapeCornersConfig::inactiveCornerRadius() * scale));
+        m_shader->setUniform(m_shader_outlineThickness, static_cast<float>(ShapeCornersConfig::inactiveOutlineThickness() * scale));
 
         outlineColor = ShapeCornersConfig::inactiveOutlineUsePalette() ?
                        m_palette.color(QPalette::Inactive, static_cast<QPalette::ColorRole>(ShapeCornersConfig::inactiveOutlinePalette())):
@@ -86,15 +88,15 @@ ShapeCornersShader::Bind(KWin::EffectWindow *w) const {
         outlineColor.setAlpha(ShapeCornersConfig::inactiveOutlineAlpha());
         shadowColor.setAlpha(ShapeCornersConfig::inactiveShadowAlpha());
     }
-    m_shader->setUniform(m_shader_shadowSize, shadowSize);
+    m_shader->setUniform(m_shader_shadowSize, static_cast<float>(shadowSize));
     m_shader->setUniform(m_shader_outlineColor, outlineColor);
     m_shader->setUniform(m_shader_shadowColor, shadowColor);
     return m_shader;
 }
 
 const std::unique_ptr<KWin::GLShader>&
-ShapeCornersShader::Bind(const QMatrix4x4& mvp, KWin::EffectWindow *w) const {
-    Bind(w);
+ShapeCornersShader::Bind(const QMatrix4x4& mvp, KWin::EffectWindow *w, qreal scale) const {
+    Bind(w, scale);
     m_shader->setUniform(KWin::GLShader::ModelViewProjectionMatrix, mvp);
     return m_shader;
 }

@@ -17,10 +17,9 @@ namespace KWin {
     class ShaderManager;
 }
 
-struct QVector2DSize final: public QVector2D {
-    explicit QVector2DSize(const QSizeF s):
-      QVector2D(static_cast<float>(s.width()), static_cast<float>(s.height())) {}
-};
+inline QRectF operator *(const QRect& r, const qreal scale) { return {r.x() * scale, r.y() * scale, r.width() * scale, r.height() * scale}; }
+inline QRectF operator *(const QRectF& r, const qreal scale) { return {r.x() * scale, r.y() * scale, r.width() * scale, r.height() * scale}; }
+inline QVector2D toVector2D(const QSizeF& s) { return {static_cast<float>(s.width()), static_cast<float>(s.height())}; }
 
 class ShapeCornersShader {
 public:
@@ -42,8 +41,8 @@ public:
      * \param w The window that the effect will be rendering on
      * \return A reference to the unique pointer of the loaded shader.
      */
-    const std::unique_ptr<KWin::GLShader>& Bind(KWin::EffectWindow *w) const;
-    const std::unique_ptr<KWin::GLShader>& Bind(const QMatrix4x4& mvp, KWin::EffectWindow *w) const;
+    const std::unique_ptr<KWin::GLShader>& Bind(KWin::EffectWindow *w, qreal scale) const;
+    const std::unique_ptr<KWin::GLShader>& Bind(const QMatrix4x4& mvp, KWin::EffectWindow *w, qreal scale) const;
 
     /**
      * \brief Pop the shader from the stack of rendering.
