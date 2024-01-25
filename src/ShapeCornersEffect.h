@@ -59,7 +59,7 @@ public Q_SLOTS:
 private Q_SLOTS:
     void windowAdded(KWin::EffectWindow *window);
     void windowRemoved(KWin::EffectWindow *window);
-    void windowResized(KWin::EffectWindow *) { checkTiled(); }
+    void windowResized(KWin::EffectWindow *, const QRectF &) { checkTiled(); }
 
 private:
     std::map<const KWin::EffectWindow*, bool> m_managed; // Pair of Window pointers and their maximized/tiled state.
@@ -68,6 +68,6 @@ private:
     bool hasEffect(const KWin::EffectWindow *w) const;
     bool isTiled(const KWin::EffectWindow *w) const { return m_managed.at(w); }
     void checkTiled();
-    bool checkTiled(const bool& horizontal, double window_start, double gap, const double& screen_size);
+    bool checkTiled(const bool& horizontal, double window_start, const double& screen_size, double gap = -1);
 };
 

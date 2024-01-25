@@ -57,8 +57,9 @@ ShapeCornersEffect::ShapeCornersEffect()
             windowAdded(win);
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
         connect(KWin::effects, &KWin::EffectsHandler::windowDeleted, this, &ShapeCornersEffect::windowRemoved);
-        connect(KWin::effects, &KWin::EffectsHandler::windowFinishUserMovedResized, this, &ShapeCornersEffect::windowResized);
-        connect(KWin::effects, &KWin::EffectsHandler::windowMaximizedStateChanged, this, &ShapeCornersEffect::windowResized);
+#if QT_VERSION_MAJOR < 6
+        connect(KWin::effects, &KWin::EffectsHandler::windowFrameGeometryChanged, this, &ShapeCornersEffect::windowResized);
+#endif
     }
 }
 
@@ -69,6 +70,9 @@ ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
 {
     qDebug() << w->windowRole() << w->windowType() << w->windowClass();
     if (const auto& [w2, r] = m_managed.insert({w, false}); r) {
+#if QT_VERSION_MAJOR >= 6
+        connect(w, &KWin::EffectWindow::windowFrameGeometryChanged, this, &ShapeCornersEffect::windowResized);
+#endif
         redirect(w);
         setShader(w, m_shaderManager.GetShader().get());
         if (w->width() >= 300 && w->height() >= 300)
@@ -182,18 +186,18 @@ QString ShapeCornersEffect::get_window_titles() const {
     return response.join("\n");
 }
 
-bool ShapeCornersEffect::checkTiled(const bool& horizontal, double window_start, double gap, const double& screen_size) {
-    if (window_start == screen_size)
+bool ShapeCornersEffect::checkTiled(const bool& horizontal, double window_start, const double& screen_size, double gap) {
+    if (window_start == screen_size) {
         return true;    // Found the last chain of tiles
+    } else if (window_start > screen_size) {
+        return false;
+    }
 
-    bool firstGap = gap == -1;
+    const bool firstGap = (gap == -1);
     #define DIM(a,b) (a*horizontal + b*!horizontal)
 
     bool r = false;
     for (auto& [w, tiled]: m_managed) {
-
-        if (w->isDock())        // Don't check panels.
-            continue;
 
         if (firstGap) {
             gap = DIM(w->x(), w->y()) - window_start;
@@ -203,7 +207,7 @@ bool ShapeCornersEffect::checkTiled(const bool& horizontal, double window_start,
         }
 
         if (DIM(w->x(), w->y()) == window_start) {
-            if (checkTiled(horizontal, window_start + DIM(w->width(), w->height()) + gap, gap, screen_size)) {
+            if (checkTiled(horizontal, window_start + DIM(w->width(), w->height()) + gap, screen_size, gap)) {
                 tiled = true;   // Mark every tile as you go back to the first.
                 r = true;
             }
@@ -225,7 +229,7 @@ void ShapeCornersEffect::checkTiled() {
     }
     for (const auto& screen: KWin::effects->screens()) {        // Per every screen
         const auto& geometry = screen->geometry();
-        checkTiled(true, geometry.x(), -1, geometry.width());   // Check horizontally
-        checkTiled(false, geometry.y(), -1, geometry.height()); // Check vertically
+        checkTiled(true, geometry.x(), geometry.width());   // Check horizontally
+        checkTiled(false, geometry.y(), geometry.height()); // Check vertically
     }
 }
