@@ -86,7 +86,14 @@ ShapeCornersEffect::reconfigure(const ReconfigureFlags flags)
 }
 
 bool ShapeCornersEffect::isMaximized(const KWin::EffectWindow *w) {
-    const auto& screenGeometry = KWin::effects->findScreen(w->screen()->name())->geometry();
+    if (w == nullptr)
+        return false;
+
+    const auto& screen = KWin::effects->findScreen(w->screen()->name());
+    if (screen == nullptr)
+        return false;
+
+    const auto& screenGeometry = screen->geometry();
     return (w->x() == screenGeometry.x() && w->width() == screenGeometry.width()) ||
            (w->y() == screenGeometry.y() && w->height() == screenGeometry.height());
 }
@@ -165,6 +172,7 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
 bool ShapeCornersEffect::hasEffect(const KWin::EffectWindow *w) const {
     const auto name = w->windowClass().split(QChar::Space).first();
     return m_shaderManager.IsValid()
+           && enabled()
            && m_managed.contains(w)
            && (w->isNormalWindow() || ShapeCornersConfig::inclusions().contains(name))
            && !ShapeCornersConfig::exclusions().contains(name)
@@ -180,4 +188,10 @@ QString ShapeCornersEffect::get_window_titles() const {
         response.insert(name);
     }
     return response.values().join(QStringLiteral("\n"));
+}
+
+bool ShapeCornersEffect::enabled() {
+    if (ShapeCornersConfig::gameMode() && isMaximized(KWin::effects->activeWindow()))
+        return false;
+    return true;
 }

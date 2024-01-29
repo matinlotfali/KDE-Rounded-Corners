@@ -39,6 +39,7 @@ public:
 
     static bool supported();
     static bool enabledByDefault() { return supported(); }
+    static bool enabled();
     static bool isMaximized(const KWin::EffectWindow *w);
     static bool isWindowActive(const KWin::EffectWindow *w) { return KWin::effects->activeWindow() == w; }
 
