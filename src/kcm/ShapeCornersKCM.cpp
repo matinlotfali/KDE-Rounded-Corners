@@ -63,19 +63,25 @@ ShapeCornersKCM::ShapeCornersKCM(QWidget* parent, const QVariantList& args)
     connect(ui->refreshButton, &QPushButton::pressed, this, &ShapeCornersKCM::update_windows);
     connect(ui->includeButton, &QPushButton::pressed, [=, this]() {
         if (const auto s = ui->currentWindowList->currentItem();
-            s && ui->InclusionList->findItems(s->text(), Qt::MatchExactly).empty())
+            s && ui->InclusionList->findItems(s->text(), Qt::MatchExactly).empty()) {
             ui->InclusionList->addItem(s->text());
+            markAsChanged();
+        }
     });
     connect(ui->excludeButton, &QPushButton::pressed, [=, this]() {
         if (const auto s = ui->currentWindowList->currentItem();
-            s && ui->ExclusionList->findItems(s->text(), Qt::MatchExactly).empty())
+            s && ui->ExclusionList->findItems(s->text(), Qt::MatchExactly).empty()) {
             ui->ExclusionList->addItem(s->text());
+            markAsChanged();
+        }
     });
     connect(ui->deleteIncludeButton, &QPushButton::pressed, [=, this]() {
         ui->InclusionList->takeItem(ui->InclusionList->currentRow());
+        markAsChanged();
     });
     connect(ui->deleteExcludeButton, &QPushButton::pressed, [=, this]() {
         ui->ExclusionList->takeItem(ui->ExclusionList->currentRow());
+        markAsChanged();
     });
 }
 
