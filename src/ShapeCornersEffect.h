@@ -20,7 +20,6 @@
 #pragma once
 
 #include "ShapeCornersShader.h"
-#include <set>
 
 #if QT_VERSION_MAJOR >= 6
     #include <effect/effecthandler.h>
@@ -39,12 +38,11 @@ public:
 
     static bool supported();
     static bool enabledByDefault() { return supported(); }
-    static bool isMaximized(const KWin::EffectWindow *w);
     static bool isWindowActive(const KWin::EffectWindow *w) { return KWin::effects->activeWindow() == w; }
 
     void reconfigure(ReconfigureFlags flags) override;
-
     void prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time) override;
+
 #if QT_VERSION_MAJOR >= 6
     void drawWindow(const KWin::RenderTarget &RenderTarget, const KWin::RenderViewport& viewport,
                     KWin::EffectWindow *w, int mask, const QRegion &region, KWin::WindowPaintData &data) override;
@@ -58,14 +56,18 @@ public:
 public Q_SLOTS:
     [[nodiscard]] QString get_window_titles() const;
 
-protected Q_SLOTS:
-    void windowAdded(KWin::EffectWindow *w);
-    void windowRemoved(KWin::EffectWindow *w);
+private Q_SLOTS:
+    void windowAdded(KWin::EffectWindow *window);
+    void windowRemoved(KWin::EffectWindow *window);
+    void windowResized(KWin::EffectWindow *, const QRectF &) { checkTiled(); }
 
 private:
-    std::set<const KWin::EffectWindow*> m_managed;
+    std::map<const KWin::EffectWindow*, bool> m_managed; // Pair of Window pointers and their maximized/tiled state.
     ShapeCornersShader m_shaderManager;
 
     bool hasEffect(const KWin::EffectWindow *w) const;
+    bool isTiled(const KWin::EffectWindow *w) const { return m_managed.at(w); }
+    void checkTiled();
+    bool checkTiled(const bool& horizontal, double window_start, const double& screen_size, double gap = -1);
 };
 

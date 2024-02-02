@@ -57,6 +57,9 @@ ShapeCornersEffect::ShapeCornersEffect()
             windowAdded(win);
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
         connect(KWin::effects, &KWin::EffectsHandler::windowDeleted, this, &ShapeCornersEffect::windowRemoved);
+#if QT_VERSION_MAJOR < 6
+        connect(KWin::effects, &KWin::EffectsHandler::windowFrameGeometryChanged, this, &ShapeCornersEffect::windowResized);
+#endif
     }
 }
 
@@ -66,9 +69,14 @@ void
 ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
 {
     qDebug() << w->windowRole() << w->windowType() << w->windowClass();
-    if (const auto& [w2, r] = m_managed.insert(w); r) {
+    if (const auto& [w2, r] = m_managed.insert({w, false}); r) {
+#if QT_VERSION_MAJOR >= 6
+        connect(w, &KWin::EffectWindow::windowFrameGeometryChanged, this, &ShapeCornersEffect::windowResized);
+#endif
         redirect(w);
         setShader(w, m_shaderManager.GetShader().get());
+        if (w->width() >= 300 && w->height() >= 300)
+            checkTiled();
     }
 }
 
@@ -76,6 +84,8 @@ void ShapeCornersEffect::windowRemoved(KWin::EffectWindow *w)
 {
     m_managed.erase(w);
     unredirect(w);
+    if (w->width() >= 300 && w->height() >= 300)
+        checkTiled();
 }
 
 void
@@ -85,15 +95,9 @@ ShapeCornersEffect::reconfigure(const ReconfigureFlags flags)
     ShapeCornersConfig::self()->read();
 }
 
-bool ShapeCornersEffect::isMaximized(const KWin::EffectWindow *w) {
-    const auto& screenGeometry = KWin::effects->findScreen(w->screen()->name())->geometry();
-    return (w->x() == screenGeometry.x() && w->width() == screenGeometry.width()) ||
-           (w->y() == screenGeometry.y() && w->height() == screenGeometry.height());
-}
-
 void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
 {
-    if (!hasEffect(w))
+    if (!hasEffect(w) || (isTiled(w) && ShapeCornersConfig::disableRoundTile()))
     {
         Effect::prePaintWindow(w, data, time);
         return;
@@ -151,7 +155,7 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
 
     redirect(w);
     setShader(w, m_shaderManager.GetShader().get());
-    m_shaderManager.Bind(w, scale);
+    m_shaderManager.Bind(w, scale, isTiled(w));
     glActiveTexture(GL_TEXTURE0);
 
 #if QT_VERSION_MAJOR >= 6
@@ -167,17 +171,65 @@ bool ShapeCornersEffect::hasEffect(const KWin::EffectWindow *w) const {
     return m_shaderManager.IsValid()
            && m_managed.contains(w)
            && (w->isNormalWindow() || ShapeCornersConfig::inclusions().contains(name))
-           && !ShapeCornersConfig::exclusions().contains(name)
-           && !(ShapeCornersConfig::excludeMaximizedWindows() && isMaximized(w));
+           && !ShapeCornersConfig::exclusions().contains(name);
 }
 
 QString ShapeCornersEffect::get_window_titles() const {
-    QSet<QString> response;
-    for (const auto& win: m_managed) {
+    QList<QString> response;
+    for (const auto& [win, tiled]: m_managed) {
         const auto name = win->windowClass().split(QChar::Space).first();
         if (name == QStringLiteral("plasmashell"))
             continue;
-        response.insert(name);
+        if (!response.contains(name))
+            response.push_back(name);
     }
-    return response.values().join(QStringLiteral("\n"));
+    return response.join("\n");
+}
+
+bool ShapeCornersEffect::checkTiled(const bool& horizontal, double window_start, const double& screen_size, double gap) {
+    if (window_start == screen_size) {
+        return true;    // Found the last chain of tiles
+    } else if (window_start > screen_size) {
+        return false;
+    }
+
+    const bool firstGap = (gap == -1);
+    #define DIM(a,b) (a*horizontal + b*!horizontal)
+
+    bool r = false;
+    for (auto& [w, tiled]: m_managed) {
+
+        if (firstGap) {
+            gap = DIM(w->x(), w->y()) - window_start;
+            if(gap > 40)        // There is no way that a window is tiled and has such a big gap.
+                continue;
+            window_start += gap;
+        }
+
+        if (DIM(w->x(), w->y()) == window_start) {
+            if (checkTiled(horizontal, window_start + DIM(w->width(), w->height()) + gap, screen_size, gap)) {
+                tiled = true;   // Mark every tile as you go back to the first.
+                r = true;
+            }
+        }
+
+        if(firstGap) {
+            window_start -= gap;    // Revert changes.
+        }
+    }
+    return r;
+}
+
+void ShapeCornersEffect::checkTiled() {
+    if (!ShapeCornersConfig::disableRoundTile() && !ShapeCornersConfig::disableOutlineTile())
+        return;
+
+    for (auto& [w, tiled]: m_managed) {     // Delete tile memory.
+        tiled = false;
+    }
+    for (const auto& screen: KWin::effects->screens()) {        // Per every screen
+        const auto& geometry = screen->geometry();
+        checkTiled(true, geometry.x(), geometry.width());   // Check horizontally
+        checkTiled(false, geometry.y(), geometry.height()); // Check vertically
+    }
 }

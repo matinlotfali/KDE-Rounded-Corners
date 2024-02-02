@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>658</width>
-    <height>568</height>
+    <height>592</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -79,6 +79,16 @@
           </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="kcfg_DisableRoundTile">
+         <property name="text">
+          <string>Disable Roundness on Tile/Maximize</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -515,6 +525,16 @@
           </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="kcfg_DisableOutlineTile">
+         <property name="text">
+          <string>Disable Outline on Tile/Maximize</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -1095,13 +1115,6 @@
             </property>
             <property name="text">
              <string>Excluded Windows:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="kcfg_ExcludeMaximizedWindows">
-            <property name="text">
-             <string>Maximized Windows</string>
             </property>
            </widget>
           </item>

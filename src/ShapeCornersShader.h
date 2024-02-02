@@ -41,8 +41,7 @@ public:
      * \param w The window that the effect will be rendering on
      * \return A reference to the unique pointer of the loaded shader.
      */
-    const std::unique_ptr<KWin::GLShader>& Bind(KWin::EffectWindow *w, qreal scale) const;
-    const std::unique_ptr<KWin::GLShader>& Bind(const QMatrix4x4& mvp, KWin::EffectWindow *w, qreal scale) const;
+    const std::unique_ptr<KWin::GLShader>& Bind(KWin::EffectWindow *w, qreal scale, bool isTiled) const;
 
     /**
      * \brief Pop the shader from the stack of rendering.
@@ -90,6 +89,8 @@ private:
      * \note  When `windowTopLeft = {0,0}`, it means `expandedGeometry = frameGeometry` and there is no shadow.
      */
     int m_shader_windowTopLeft = 0;
+
+    int m_shader_disableRoundedTile = 0;
 
     /**
      * \brief Reference to `uniform vec4 shadowColor;`

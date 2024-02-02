@@ -101,7 +101,10 @@
         </entry>
         <entry name="Exclusions" type="StringList">
         </entry>
-        <entry name="ExcludeMaximizedWindows" type="Bool">
+        <entry name="DisableRoundTile" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="DisableOutlineTile" type="Bool">
             <default>true</default>
         </entry>
     </group>
