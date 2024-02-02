@@ -170,7 +170,7 @@ bool ShapeCornersEffect::hasEffect(const KWin::EffectWindow *w) const {
     const auto name = w->windowClass().split(QChar::Space).first();
     return m_shaderManager.IsValid()
            && m_managed.contains(w)
-           && (w->isNormalWindow() || ShapeCornersConfig::inclusions().contains(name))
+           && (w->isNormalWindow() || w->isDialog() || ShapeCornersConfig::inclusions().contains(name))
            && !ShapeCornersConfig::exclusions().contains(name);
 }
 
