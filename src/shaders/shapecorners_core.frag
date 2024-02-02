@@ -131,25 +131,25 @@ void main(void)
     */
     if (coord0.y < r) {
         if (coord0.x < r)
-            tex = shapeCorner(coord0, tex, vec2(0, 0), radians(45));                   // Section TL
+            tex = shapeCorner(coord0, tex, vec2(0, 0), radians(45.0));                        // Section TL
         else if (coord0.x > windowSize.x - r)
-            tex = shapeCorner(coord0, tex, vec2(windowSize.x, 0), radians(135));    // Section TR
+            tex = shapeCorner(coord0, tex, vec2(windowSize.x, 0), radians(135.0));            // Section TR
         else if (coord0.y < outlineThickness)
-            tex = shapeCorner(coord0, tex, vec2(coord0.x, 0), radians(90));                 // Section T
+            tex = shapeCorner(coord0, tex, vec2(coord0.x, 0), radians(90.0));                 // Section T
     }
     else if (coord0.y > windowSize.y - r) {
         if (coord0.x < r)
-            tex = shapeCorner(coord0, tex, vec2(0, windowSize.y), radians(315));    // Section BL
+            tex = shapeCorner(coord0, tex, vec2(0, windowSize.y), radians(315.0));            // Section BL
         else if (coord0.x > windowSize.x - r)
-            tex = shapeCorner(coord0, tex, vec2(windowSize.x, windowSize.y), radians(225)); // Section BR
+            tex = shapeCorner(coord0, tex, vec2(windowSize.x, windowSize.y), radians(225.0)); // Section BR
         else if (coord0.y > windowSize.y - outlineThickness)
-            tex = shapeCorner(coord0, tex, vec2(coord0.x, windowSize.y), radians(270));  // Section B
+            tex = shapeCorner(coord0, tex, vec2(coord0.x, windowSize.y), radians(270.0));     // Section B
     }
     else {
         if (coord0.x < r)
-            tex = shapeCorner(coord0, tex, vec2(0, coord0.y), radians(0));                 // Section L
+            tex = shapeCorner(coord0, tex, vec2(0, coord0.y), radians(0.0));                  // Section L
         else if (coord0.x > windowSize.x - r)
-            tex = shapeCorner(coord0, tex, vec2(windowSize.x, coord0.y), radians(180));  // Section R
+            tex = shapeCorner(coord0, tex, vec2(windowSize.x, coord0.y), radians(180.0));     // Section R
 
         // For section x, the tex is not changing
     }

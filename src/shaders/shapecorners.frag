@@ -6,7 +6,7 @@ uniform vec2 windowSize;         // Containing `window->frameGeometry().size()`
 uniform vec2 windowExpandedSize; // Containing `window->expandedGeometry().size()`
 uniform bool disableRoundedTile;
 
-uniform vec2 windowTopLeft;      /* Containing the distance between the top-left of `expandedGeometry` and
+uniform vec2 windowTopLeft;      /* The distance between the top-left of `expandedGeometry` and
                                   * the top-left of `frameGeometry`. When `windowTopLeft = {0,0}`, it means
                                   * `expandedGeometry = frameGeometry` and there is no shadow. */
 
