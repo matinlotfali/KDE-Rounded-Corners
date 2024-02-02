@@ -178,7 +178,8 @@ QString ShapeCornersEffect::get_window_titles() const {
     QList<QString> response;
     for (const auto& [win, tiled]: m_managed) {
         const auto name = win->windowClass().split(QChar::Space).first();
-        if (name == QStringLiteral("plasmashell"))
+        QStringList hardExceptions { "plasmashell", "kscreenlocker_greet", "ksmserver" };
+        if (hardExceptions.contains(name))
             continue;
         if (!response.contains(name))
             response.push_back(name);
