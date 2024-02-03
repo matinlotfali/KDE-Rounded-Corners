@@ -69,6 +69,10 @@ void
 ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
 {
     qDebug() << w->windowRole() << w->windowType() << w->windowClass();
+    const QSet<QString> hardExceptions { "plasmashell", "kscreenlocker_greet", "ksmserver", "krunner" };
+    const auto name = w->windowClass().split(QChar::Space).first();
+    if (hardExceptions.contains(name))
+        return;
     if (const auto& [w2, r] = m_managed.insert({w, false}); r) {
 #if QT_VERSION_MAJOR >= 6
         connect(w, &KWin::EffectWindow::windowFrameGeometryChanged, this, &ShapeCornersEffect::windowResized);
@@ -175,12 +179,9 @@ bool ShapeCornersEffect::hasEffect(const KWin::EffectWindow *w) const {
 }
 
 QString ShapeCornersEffect::get_window_titles() const {
-    QList<QString> response;
+    QStringList response;
     for (const auto& [win, tiled]: m_managed) {
         const auto name = win->windowClass().split(QChar::Space).first();
-        QStringList hardExceptions { "plasmashell", "kscreenlocker_greet", "ksmserver" };
-        if (hardExceptions.contains(name))
-            continue;
         if (!response.contains(name))
             response.push_back(name);
     }

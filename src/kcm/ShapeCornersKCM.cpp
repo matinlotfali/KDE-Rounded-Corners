@@ -3,7 +3,6 @@
 #include "kwineffects_interface.h"
 #include "ShapeCornersConfig.h"
 #include <QDialog>
-#include <QList>
 
 #if (QT_VERSION_MAJOR >= 6)
 ShapeCornersKCM::ShapeCornersKCM(QObject* parent, const KPluginMetaData& args)
