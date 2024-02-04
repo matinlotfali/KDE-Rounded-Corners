@@ -27,7 +27,7 @@ jobs:
 
     steps:
     - name: Check out repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Refresh KDE Neon Packages
       run: apt update && apt -y --allow-downgrades dist-upgrade
@@ -42,7 +42,7 @@ jobs:
       continue-on-error: true
 
     - name: Install Dependencies
-      run: apt -y install cmake g++ gettext extra-cmake-modules qt6-base-dev-tools kf6-kcmutils-dev kwin-dev
+      run: apt -y --allow-downgrades install cmake g++ gettext extra-cmake-modules qt6-base-dev-tools kf6-kcmutils-dev kwin-dev
     
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
