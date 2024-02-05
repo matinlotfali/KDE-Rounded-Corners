@@ -207,9 +207,11 @@ bool ShapeCornersEffect::checkTiled(const bool& horizontal, double window_start,
         }
 
         if (DIM(w->x(), w->y()) == window_start) {
-            if (checkTiled(horizontal, window_start + DIM(w->width(), w->height()) + gap, screen_size, gap)) {
-                tiled = true;   // Mark every tile as you go back to the first.
-                r = true;
+            if (DIM(w->width(), w->height()) + gap > 0) {
+                if (checkTiled(horizontal, window_start + DIM(w->width(), w->height()) + gap, screen_size, gap)) {
+                    tiled = true;   // Mark every tile as you go back to the first.
+                    r = true;
+                }
             }
         }
 
