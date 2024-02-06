@@ -56,7 +56,7 @@ ShapeCornersEffect::ShapeCornersEffect()
         for (const auto& win: KWin::effects->stackingOrder())
             windowAdded(win);
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
-        connect(KWin::effects, &KWin::EffectsHandler::windowDeleted, this, &ShapeCornersEffect::windowRemoved);
+        connect(KWin::effects, &KWin::EffectsHandler::windowClosed, this, &ShapeCornersEffect::windowRemoved);
 #if QT_VERSION_MAJOR < 6
         connect(KWin::effects, &KWin::EffectsHandler::windowFrameGeometryChanged, this, &ShapeCornersEffect::windowResized);
 #endif
@@ -209,9 +209,11 @@ bool ShapeCornersEffect::checkTiled(const bool& horizontal, double window_start,
         }
 
         if (DIM(w->x(), w->y()) == window_start) {
-            if (checkTiled(horizontal, window_start + DIM(w->width(), w->height()) + gap, screen_size, gap)) {
-                tiled = true;   // Mark every tile as you go back to the first.
-                r = true;
+            if (DIM(w->width(), w->height()) + gap > 0) {
+                if (checkTiled(horizontal, window_start + DIM(w->width(), w->height()) + gap, screen_size, gap)) {
+                    tiled = true;   // Mark every tile as you go back to the first.
+                    r = true;
+                }
             }
         }
 
