@@ -56,7 +56,7 @@ ShapeCornersEffect::ShapeCornersEffect()
         for (const auto& win: KWin::effects->stackingOrder())
             windowAdded(win);
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
-        connect(KWin::effects, &KWin::EffectsHandler::windowClosed, this, &ShapeCornersEffect::windowRemoved);
+        connect(KWin::effects, &KWin::EffectsHandler::windowDeleted, this, &ShapeCornersEffect::windowRemoved);
 #if QT_VERSION_MAJOR < 6
         connect(KWin::effects, &KWin::EffectsHandler::windowFrameGeometryChanged, this, &ShapeCornersEffect::windowResized);
 #endif
@@ -223,12 +223,13 @@ bool ShapeCornersEffect::checkTiled(const bool& horizontal, double window_start,
 }
 
 void ShapeCornersEffect::checkTiled() {
-    if (!ShapeCornersConfig::disableRoundTile() && !ShapeCornersConfig::disableOutlineTile())
-        return;
-
     for (auto& [w, tiled]: m_managed) {     // Delete tile memory.
         tiled = false;
     }
+    if (!ShapeCornersConfig::disableRoundTile() && !ShapeCornersConfig::disableOutlineTile()) {
+        return;
+    }
+
     for (const auto& screen: KWin::effects->screens()) {        // Per every screen
         const auto& geometry = screen->geometry();
         checkTiled(true, geometry.x(), geometry.width());   // Check horizontally
