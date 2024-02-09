@@ -5,7 +5,6 @@
 #include "ShapeCornersShader.h"
 #include "ShapeCornersEffect.h"
 #include "ShapeCornersConfig.h"
-#include <QWindow>
 #include <QFile>
 #include <QWidget>
 
@@ -57,13 +56,12 @@ ShapeCornersShader::Bind(KWin::EffectWindow *w, qreal scale, bool isTiled) const
     auto frameGeometry = w->frameGeometry() * scale;
     auto expandedGeometry = w->expandedGeometry() * scale;
     auto xy = QVector2D(frameGeometry.topLeft() - expandedGeometry.topLeft());
-    auto tiled = (isTiled || (w->internalWindow()->windowStates() & (Qt::WindowMaximized | Qt::WindowFullScreen)));
     qreal max_shadow_size = xy.length();
     m_manager->pushShader(m_shader.get());
     m_shader->setUniform(m_shader_windowSize, toVector2D(frameGeometry.size()));
     m_shader->setUniform(m_shader_windowExpandedSize, toVector2D(expandedGeometry.size()));
     m_shader->setUniform(m_shader_windowTopLeft, xy);
-    m_shader->setUniform(m_shader_disableRoundedTile, tiled && ShapeCornersConfig::disableRoundTile());
+    m_shader->setUniform(m_shader_disableRoundedTile, isTiled && ShapeCornersConfig::disableRoundTile());
     m_shader->setUniform(m_shader_front, 0);
     if (ShapeCornersEffect::isWindowActive(w)) {
         shadowSize = std::min(ShapeCornersConfig::shadowSize() * scale, max_shadow_size);
@@ -76,7 +74,7 @@ ShapeCornersShader::Bind(KWin::EffectWindow *w, qreal scale, bool isTiled) const
         shadowColor = ShapeCornersConfig::activeShadowUsePalette() ?
             m_palette.color(QPalette::Active, static_cast<QPalette::ColorRole>(ShapeCornersConfig::activeShadowPalette())):
             ShapeCornersConfig::shadowColor();
-        outlineColor.setAlpha(tiled && ShapeCornersConfig::disableOutlineTile() ? 0: ShapeCornersConfig::activeOutlineAlpha());
+        outlineColor.setAlpha(isTiled && ShapeCornersConfig::disableOutlineTile() ? 0: ShapeCornersConfig::activeOutlineAlpha());
         shadowColor.setAlpha(ShapeCornersConfig::activeShadowAlpha());
     } else {
         shadowSize = std::min(ShapeCornersConfig::inactiveShadowSize() * scale, max_shadow_size);
@@ -89,7 +87,7 @@ ShapeCornersShader::Bind(KWin::EffectWindow *w, qreal scale, bool isTiled) const
         shadowColor = ShapeCornersConfig::inactiveShadowUsePalette() ?
                       m_palette.color(QPalette::Inactive, static_cast<QPalette::ColorRole>(ShapeCornersConfig::inactiveShadowPalette())):
                       ShapeCornersConfig::inactiveShadowColor();
-        outlineColor.setAlpha(tiled && ShapeCornersConfig::disableOutlineTile() ? 0: ShapeCornersConfig::inactiveOutlineAlpha());
+        outlineColor.setAlpha(isTiled && ShapeCornersConfig::disableOutlineTile() ? 0: ShapeCornersConfig::inactiveOutlineAlpha());
         shadowColor.setAlpha(ShapeCornersConfig::inactiveShadowAlpha());
     }
     m_shader->setUniform(m_shader_shadowSize, static_cast<float>(shadowSize));
