@@ -79,16 +79,14 @@ ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
 #endif
         redirect(w);
         setShader(w, m_shaderManager.GetShader().get());
-        if (w->width() >= 300 && w->height() >= 300)
-            checkTiled();
+        checkTiled();
     }
 }
 
 void ShapeCornersEffect::windowRemoved(KWin::EffectWindow *w)
 {
     m_managed.erase(w);
-    if (w->width() >= 300 && w->height() >= 300)
-        checkTiled();
+    checkTiled();
 }
 
 void
