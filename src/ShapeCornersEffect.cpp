@@ -87,7 +87,6 @@ ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
 void ShapeCornersEffect::windowRemoved(KWin::EffectWindow *w)
 {
     m_managed.erase(w);
-    unredirect(w);
     if (w->width() >= 300 && w->height() >= 300)
         checkTiled();
 }
