@@ -185,29 +185,29 @@ QString ShapeCornersEffect::get_window_titles() const {
     return response.join("\n");
 }
 
-bool ShapeCornersEffect::checkTiled(const bool& horizontal, double window_start, const double& screen_size, double gap) {
-    if (window_start == screen_size) {
+template<bool vertical>
+bool ShapeCornersEffect::checkTiled(double window_start, const double& screen_end, double gap) {
+    if (window_start == screen_end) {
         return true;    // Found the last chain of tiles
-    } else if (window_start > screen_size) {
+    } else if (window_start > screen_end) {
         return false;
     }
 
     const bool firstGap = (gap == -1);
-    #define DIM(a,b) (a*horizontal + b*!horizontal)
 
     bool r = false;
     for (auto& [w, tiled]: m_managed) {
 
         if (firstGap) {
-            gap = DIM(w->x(), w->y()) - window_start;
+            gap = std::get<vertical>(std::make_pair(w->x(), w->y())) - window_start;
             if(gap > 40)        // There is no way that a window is tiled and has such a big gap.
                 continue;
             window_start += gap;
         }
 
-        if (DIM(w->x(), w->y()) == window_start) {
-            if (DIM(w->width(), w->height()) + gap > 0) {
-                if (checkTiled(horizontal, window_start + DIM(w->width(), w->height()) + gap, screen_size, gap)) {
+        if (std::get<vertical>(std::make_pair(w->x(), w->y())) == window_start) {
+            if (std::get<vertical>(std::make_pair(w->width(), w->height())) + gap > 0) {
+                if (checkTiled<vertical>(window_start + std::get<vertical>(std::make_pair(w->width(), w->height())) + gap, screen_end, gap)) {
                     tiled = true;   // Mark every tile as you go back to the first.
                     r = true;
                 }
@@ -231,7 +231,7 @@ void ShapeCornersEffect::checkTiled() {
 
     for (const auto& screen: KWin::effects->screens()) {        // Per every screen
         const auto& geometry = screen->geometry();
-        checkTiled(true, geometry.x(), geometry.width());   // Check horizontally
-        checkTiled(false, geometry.y(), geometry.height()); // Check vertically
+        checkTiled<false>(geometry.x(), geometry.x() + geometry.width()); // Check horizontally
+        checkTiled<true>(geometry.y(), geometry.y() + geometry.height()); // Check vertically
     }
 }
