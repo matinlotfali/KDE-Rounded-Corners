@@ -30,11 +30,11 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Refresh KDE Neon Packages
-      run: apt update && apt -y --allow-downgrades dist-upgrade
+      run: apt update && apt -y --allow-downgrades dist-upgrade -o DPkg::options::="--force-overwrite"
       continue-on-error: true
 
     - name: Second refresh KDE Neon Packages
-      run: apt update && apt -y --allow-downgrades dist-upgrade
+      run: apt update && apt -y --allow-downgrades dist-upgrade -o DPkg::options::="--force-overwrite"
       continue-on-error: true
 
     - name: Third refresh KDE Neon Packages
