@@ -13,7 +13,7 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 - ![Debian 12 Bookworm](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/debian12.yml?branch=master&label=Debian%2012%20Bookworm&logo=debian)
     ![](https://img.shields.io/badge/KWinEffects-v236-lightgrey) ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)
 - ![KDE Neon (Stable)](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/neon.yml?branch=master&label=KDE%20Neon%20%28Stable%29&logo=kde&logoColor=white) 
-![](https://img.shields.io/badge/KWinEffects-v236-lightgrey) ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)
+![](https://img.shields.io/badge/KWinEffects-v237-lightgrey) ![](https://img.shields.io/badge/Plasma-6.0-lightgrey)
 - ![KDE Neon (Unstable)](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/neon-unstable.yml?branch=master&label=KDE%20Neon%20%28Unstable%29&logo=kde&logoColor=white)
 ![](https://img.shields.io/badge/KWinEffects-v237-lightgrey) ![](https://img.shields.io/badge/Plasma-6.0-lightgrey)
 - [![Arch](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/arch.yml?branch=master&label=Arch%20Linux&logo=archlinux&logoColor=white) ![](https://img.shields.io/aur/maintainer/kwin-effect-rounded-corners-git?label=AUR%20Maintainer) ![](https://img.shields.io/aur/votes/kwin-effect-rounded-corners-git?label=AUR%20Votes)](https://aur.archlinux.org/packages/kwin-effect-rounded-corners-git)
