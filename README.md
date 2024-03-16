@@ -74,10 +74,16 @@ You need to install development packages for your distribution first:
   ```
 </details>
 <details>
-<summary>OpenSUSE - by https://github.com/mathiasgredal and https://github.com/Richardsause</summary>
+<summary>OpenSUSE - by https://github.com/mathiasgredal, https://github.com/Richardsause, and https://github.com/aaronkirschen</summary>
+<br>
 
+ - Plasma 5 (by https://github.com/mathiasgredal, https://github.com/Richardsause)
   ```
   sudo zypper install git cmake gcc-c++ extra-cmake-modules libqt5-qttools-devel kconfigwidgets-devel kwindowsystem-devel kguiaddons-devel ki18n-devel knotifications-devel kwin5-devel libQt5Gui-devel libQt5OpenGL-devel libepoxy-devel libqt5-qtnetworkauth-devel
+  ```
+ - Plasma 6 (by https://github.com/aaronkirschen)
+  ```
+  sudo zypper in git cmake gcc-c++ kf6-kconfigwidgets-devel kf6-kcmutils-devel kwin6-devel kf6-kwindowsystem-devel qt6-quick-devel qt6-core-private-devel
   ```
 </details>
 <details>
