@@ -129,11 +129,11 @@ As long as the effect is not part of the `kwin` yet (being discussed
 below inside the `build` directory:
 
 ```bash
-sh ../tools/autorun-test-install.sh
+sh ../tools/install-autorun-test.sh
 ```
 
 The command above adds a `desktop` file inside the `autorun` directory which checks if the effect is still supported,
-if it is not supported, it would automatically rebuild and reinstall the effect.
+if it is not supported, it will automatically rebuild and reinstall the effect.
 
 # Settings
 
