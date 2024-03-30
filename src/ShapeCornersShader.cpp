@@ -16,18 +16,33 @@
 
 ShapeCornersShader::ShapeCornersShader():
         m_manager(KWin::ShaderManager::instance()),
-        m_widget(new QWidget)
-{
-    const QString fragmentshader = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kwin/shaders/shapecorners.frag"));
-//    m_shader = KWin::ShaderManager::instance()->loadFragmentShader(KWin::ShaderManager::GenericShader, fragmentshader);
-    QFile file(fragmentshader);
-    if (!file.open(QFile::ReadOnly))
-        qCritical() << "ShapeCorners: no shaders found! Exiting...";
+        m_widget(new QWidget) {
 
-    const QByteArray frag = file.readAll();
-    auto shader = m_manager->generateShaderFromFile(KWin::ShaderTrait::MapTexture, QStringLiteral(""), fragmentshader);
+    QString fragmentShaderSource;
+
+    {
+        const QString shaderFilePath = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
+                                                              QStringLiteral("kwin/shaders/shapecorners.frag"));
+        // m_shader = KWin::ShaderManager::instance()->loadFragmentShader(KWin::ShaderManager::GenericShader, shaderFilePath);
+        QFile file(shaderFilePath);
+        if (!file.open(QFile::ReadOnly))
+            qCritical() << "ShapeCorners: no shaders found! Exiting...";
+        fragmentShaderSource = QString::fromUtf8(file.readAll());
+    }
+
+    {
+        const QString shaderFilePath = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
+                                                              QStringLiteral("kwin/shaders/shapecorners.glsl"));
+        QFile file(shaderFilePath);
+        if (!file.open(QFile::ReadOnly))
+            qCritical() << "ShapeCorners: no shaders found! Exiting...";
+        const auto shaderSource = QString::fromUtf8(file.readAll());
+        fragmentShaderSource.replace(QStringLiteral("#include \"shapecorners.glsl\""), shaderSource);
+    }
+
+    auto shader = m_manager->generateCustomShader(KWin::ShaderTrait::MapTexture,
+                                                  QByteArray(), fragmentShaderSource.toUtf8());
     m_shader = std::move(shader);
-    file.close();
     if (!m_shader->isValid())
         qCritical() << "ShapeCorners: no valid shaders found! ShapeCorners will not work.";
 

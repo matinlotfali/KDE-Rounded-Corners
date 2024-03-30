@@ -1,6 +1,3 @@
-#version 110
-
-uniform sampler2D front;         // The painted contents of the window.
 uniform float radius;            // The thickness of the outline in pixels specified in settings.
 uniform vec2 windowSize;         // Containing `window->frameGeometry().size()`
 uniform vec2 windowExpandedSize; // Containing `window->expandedGeometry().size()`
@@ -15,13 +12,6 @@ uniform float shadowSize;        // The shadow size specified in settings.
 uniform vec4 outlineColor;       // The RGBA of the outline color specified in settings.
 uniform float outlineThickness;  // The thickness of the outline in pixels specified in settings.
 
-uniform vec4 modulation;         // This variable is assigned and used by KWinEffects used for proper fading.
-uniform float saturation;        // This variable is assigned and used by KWinEffects used for proper fading.
-
-varying vec2 texcoord0;          // The XY location of the rendering pixel. Starting from {0.0, 0.0} to {1.0, 1.0}
-
-// Note: This version of GLSL uses the built-in variable `gl_FragColor` instead of `out vec4 fragColor;`
-
 vec2 tex_to_pixel(vec2 texcoord) {
     return vec2(texcoord0.x * windowExpandedSize.x - windowTopLeft.x,
                 (1.0-texcoord0.y)* windowExpandedSize.y - windowTopLeft.y);
@@ -33,8 +23,8 @@ vec2 pixel_to_tex(vec2 pixelcoord) {
 bool isDrawingShadows() { return  windowSize != windowExpandedSize && shadowColor.a > 0.0; }
 bool isDrawingOutline() {
     vec2 one_edge = vec2(windowSize.x/2.0, 0.0);
-    return  texture2D(front, pixel_to_tex(one_edge)).a > 0.5 &&
-            outlineColor.a > 0.0 && outlineThickness > 0.0;
+    return  texture2D(sampler, pixel_to_tex(one_edge)).a > 0.5 &&
+    outlineColor.a > 0.0 && outlineThickness > 0.0;
 }
 
 float parametricBlend(float t) {
@@ -106,12 +96,9 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle) {
     }
 }
 
-void main(void)
-{
-    vec4 tex = texture2D(front, texcoord0);  // The RGBA of the XY pixel for the painted window
+vec4 run(vec4 tex) {
     if(tex.a == 0.0) {
-        gl_FragColor = tex;
-        return;
+        return tex;
     }
 
     float r = disableRoundedTile? outlineThickness: radius;
@@ -132,37 +119,27 @@ void main(void)
     */
     if (coord0.y < r) {
         if (coord0.x < r)
-        tex = shapeCorner(coord0, tex, vec2(0.0, 0.0), radians(45.0));                   // Section TL
+            tex = shapeCorner(coord0, tex, vec2(0.0, 0.0), radians(45.0));                   // Section TL
         else if (coord0.x > windowSize.x - r)
-        tex = shapeCorner(coord0, tex, vec2(windowSize.x, 0.0), radians(135.0));         // Section TR
+            tex = shapeCorner(coord0, tex, vec2(windowSize.x, 0.0), radians(135.0));         // Section TR
         else if (coord0.y < outlineThickness)
-        tex = shapeCorner(coord0, tex, vec2(coord0.x, 0.0), radians(90.0));              // Section T
+            tex = shapeCorner(coord0, tex, vec2(coord0.x, 0.0), radians(90.0));              // Section T
     }
     else if (coord0.y > windowSize.y - r) {
         if (coord0.x < r)
-        tex = shapeCorner(coord0, tex, vec2(0.0, windowSize.y), radians(315.0));          // Section BL
+            tex = shapeCorner(coord0, tex, vec2(0.0, windowSize.y), radians(315.0));          // Section BL
         else if (coord0.x > windowSize.x - r)
-        tex = shapeCorner(coord0, tex, vec2(windowSize.x, windowSize.y), radians(225.0)); // Section BR
+            tex = shapeCorner(coord0, tex, vec2(windowSize.x, windowSize.y), radians(225.0)); // Section BR
         else if (coord0.y > windowSize.y - outlineThickness)
-        tex = shapeCorner(coord0, tex, vec2(coord0.x, windowSize.y), radians(270.0));     // Section B
+            tex = shapeCorner(coord0, tex, vec2(coord0.x, windowSize.y), radians(270.0));     // Section B
     }
     else {
         if (coord0.x < r)
-        tex = shapeCorner(coord0, tex, vec2(0.0, coord0.y), radians(0.0));                 // Section L
+            tex = shapeCorner(coord0, tex, vec2(0.0, coord0.y), radians(0.0));                 // Section L
         else if (coord0.x > windowSize.x - r)
-        tex = shapeCorner(coord0, tex, vec2(windowSize.x, coord0.y), radians(180.0));      // Section R
+            tex = shapeCorner(coord0, tex, vec2(windowSize.x, coord0.y), radians(180.0));      // Section R
 
         // For section x, the tex is not changing
     }
-
-    // Apply the saturation and modulation. This is essential for proper fades in other KWin effects.
-    if (saturation != 1.0) {
-        vec3 desaturated = tex.rgb * vec3( 0.30, 0.59, 0.11 );
-        desaturated = vec3( dot( desaturated, tex.rgb ));
-        tex.rgb = tex.rgb * vec3( saturation ) + desaturated * vec3( 1.0 - saturation );
-    }
-    tex *= modulation;
-
-    // Send to output
-    gl_FragColor = tex;
+    return tex;
 }
