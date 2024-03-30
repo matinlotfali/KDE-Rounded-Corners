@@ -143,6 +143,12 @@ You can change the corner radius, or disable the effect in:
 
 # Tips
 
+## Disable conflicting native window outline
+
+If using Breeze (default) window decorations with Plasma 5.27 or higher you may wish to disable the native window outline, to prevent it from overlapping and causing visual glitches.
+
+- System settings -> Themes -> Window Decorations -> Breeze -> Edit icon -> Shadows and Outline tab -> Outline intensity (Off)
+
 ## Add shadow to windows without decoration (like Steam)
 
 You can add shadows for specific windows using the hack below. I don't know how to enforce it in my code.
