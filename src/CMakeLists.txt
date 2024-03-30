@@ -20,14 +20,14 @@ if(${QT_MAJOR_VERSION} EQUAL 6)
             KWin::kwin
             Qt${QT_MAJOR_VERSION}::CorePrivate
     )
-    install(FILES shaders/shapecorners_qt6.frag DESTINATION ${KDE_INSTALL_DATADIR}/kwin/shaders RENAME shaders/shapecorners.frag)
-    install(FILES shaders/shapecorners_qt6_core.frag DESTINATION ${KDE_INSTALL_DATADIR}/kwin/shaders RENAME shaders/shapecorners_core.frag)
+    install(FILES shaders/shapecorners_qt6.frag DESTINATION ${KDE_INSTALL_DATADIR}/kwin/shaders RENAME shapecorners.frag)
+    install(FILES shaders/shapecorners_qt6_core.frag DESTINATION ${KDE_INSTALL_DATADIR}/kwin/shaders RENAME shapecorners_core.frag)
 else()
     target_link_libraries(kwin4_effect_shapecorners
             KWinEffects::kwineffects
             KWinEffects::kwinglutils
     )
-    install(FILES shaders/shapecorners_qt5.frag DESTINATION ${KDE_INSTALL_DATADIR}/kwin/shaders RENAME shaders/shapecorners.frag)
-    install(FILES shaders/shapecorners_qt5_core.frag DESTINATION ${KDE_INSTALL_DATADIR}/kwin/shaders RENAME shaders/shapecorners_core.frag)
+    install(FILES shaders/shapecorners_qt5.frag DESTINATION ${KDE_INSTALL_DATADIR}/kwin/shaders RENAME shapecorners.frag)
+    install(FILES shaders/shapecorners_qt5_core.frag DESTINATION ${KDE_INSTALL_DATADIR}/kwin/shaders RENAME shapecorners_core.frag)
 endif()
 install(FILES shaders/shapecorners.glsl DESTINATION ${KDE_INSTALL_DATADIR}/kwin/shaders)
