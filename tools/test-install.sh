@@ -1,3 +1,10 @@
+#!/bin/bash
+
+if [ -z "$KDE_SESSION_VERSION" ]; then
+    echo "Not in a KDE Plasma environment to check the KDE-Rounded-Corners support"
+    exit 1;
+fi
+
 if ctest > /dev/null; then
     echo "KDE-Rounded-Corners is supported by KWin and doesn't need re-installation."
 else
@@ -14,7 +21,6 @@ else
         count=$(( $(tail -n 1 CMakeFiles/Progress/count.txt 2>/dev/null) + 2))
         if [ "$count" -gt "0" ]; then
           value=$(find CMakeFiles/Progress/ | wc -l)
-          echo $value $count
           qdbus $p Set "" value "$value"
           qdbus $p Set "" maximum "$count"
         fi
