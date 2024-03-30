@@ -69,7 +69,7 @@ void
 ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
 {
     qDebug() << w->windowRole() << w->windowType() << w->windowClass();
-    const QSet<QString> hardExceptions { "plasmashell", "kscreenlocker_greet", "ksmserver", "krunner" };
+    const QSet<QString> hardExceptions { "kscreenlocker_greet", "ksmserver", "krunner" };
     const auto name = w->windowClass().split(QChar::Space).first();
     if (hardExceptions.contains(name))
         return;
