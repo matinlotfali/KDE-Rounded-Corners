@@ -22,6 +22,8 @@ ShapeCornersShader::ShapeCornersShader():
 
     {
         const QString shaderFilePath = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
+                                                              KWin::hasGLVersion(1,40) ?
+                                                              QStringLiteral("kwin/shaders/shapecorners_core.frag") :
                                                               QStringLiteral("kwin/shaders/shapecorners.frag"));
         // m_shader = KWin::ShaderManager::instance()->loadFragmentShader(KWin::ShaderManager::GenericShader, shaderFilePath);
         QFile file(shaderFilePath);
