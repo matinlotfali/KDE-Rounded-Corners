@@ -10,6 +10,7 @@ if ctest > /dev/null; then
 else
     kdialog --msgbox "KDE-Rounded-Corners is not supported by KWin anymore.\n\nThis can probably be for an update.\nWe will now rebuild and reinstall the effect."
     make clean
+    cmake .. --install-prefix /usr
     cmake --build . -j &
     pid=$!
 
