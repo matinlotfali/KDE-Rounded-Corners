@@ -30,4 +30,15 @@ else()
     install(FILES shaders/shapecorners_qt5.frag DESTINATION ${KDE_INSTALL_DATADIR}/kwin/shaders RENAME shapecorners.frag)
     install(FILES shaders/shapecorners_qt5_core.frag DESTINATION ${KDE_INSTALL_DATADIR}/kwin/shaders RENAME shapecorners_core.frag)
 endif()
-install(FILES shaders/shapecorners.glsl DESTINATION ${KDE_INSTALL_DATADIR}/kwin/shaders)
+
+install(CODE "
+    set(SED_COMMAND sed -e \"/#include \\\"shapecorners.glsl\\\"/ {\" -e \"r ${CMAKE_SOURCE_DIR}/src/shaders/shapecorners.glsl\" -e \"d\" -e \"}\" -i)
+    execute_process(
+        COMMAND \${SED_COMMAND} shapecorners.frag
+        WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${KDE_INSTALL_DATADIR}/kwin/shaders
+    )
+    execute_process(
+        COMMAND \${SED_COMMAND} shapecorners_core.frag
+        WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${KDE_INSTALL_DATADIR}/kwin/shaders
+    )
+")
