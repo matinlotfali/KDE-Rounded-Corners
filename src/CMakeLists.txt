@@ -1,5 +1,3 @@
-add_subdirectory(kcm)
-
 set(effect_SRCS
     ShapeCornersEffect.h
     ShapeCornersEffect.cpp
@@ -20,25 +18,12 @@ if(${QT_MAJOR_VERSION} EQUAL 6)
             KWin::kwin
             Qt${QT_MAJOR_VERSION}::CorePrivate
     )
-    install(FILES shaders/shapecorners_qt6.frag DESTINATION ${KDE_INSTALL_DATADIR}/kwin/shaders RENAME shapecorners.frag)
-    install(FILES shaders/shapecorners_qt6_core.frag DESTINATION ${KDE_INSTALL_DATADIR}/kwin/shaders RENAME shapecorners_core.frag)
 else()
     target_link_libraries(kwin4_effect_shapecorners
             KWinEffects::kwineffects
             KWinEffects::kwinglutils
     )
-    install(FILES shaders/shapecorners_qt5.frag DESTINATION ${KDE_INSTALL_DATADIR}/kwin/shaders RENAME shapecorners.frag)
-    install(FILES shaders/shapecorners_qt5_core.frag DESTINATION ${KDE_INSTALL_DATADIR}/kwin/shaders RENAME shapecorners_core.frag)
 endif()
 
-install(CODE "
-    set(SED_COMMAND sed -e \"/#include \\\"shapecorners.glsl\\\"/ {\" -e \"r ${CMAKE_SOURCE_DIR}/src/shaders/shapecorners.glsl\" -e \"d\" -e \"}\" -i)
-    execute_process(
-        COMMAND \${SED_COMMAND} shapecorners.frag
-        WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${KDE_INSTALL_DATADIR}/kwin/shaders
-    )
-    execute_process(
-        COMMAND \${SED_COMMAND} shapecorners_core.frag
-        WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${KDE_INSTALL_DATADIR}/kwin/shaders
-    )
-")
+add_subdirectory(kcm)
+add_subdirectory(shaders)
