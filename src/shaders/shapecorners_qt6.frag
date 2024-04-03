@@ -11,10 +11,10 @@ uniform vec4 modulation;         // This variable is assigned and used by KWinEf
 void main(void)
 {
     vec4 tex = texture2D(sampler, texcoord0);
+    tex = run(tex);
+
     tex = sourceEncodingToNitsInDestinationColorspace(tex);
     tex = adjustSaturation(tex);
-
-    tex = run(tex);
     tex *= modulation;
 
     gl_FragColor = nitsToDestinationEncoding(tex);
