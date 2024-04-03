@@ -1,5 +1,3 @@
-add_subdirectory(kcm)
-
 set(effect_SRCS
     ShapeCornersEffect.h
     ShapeCornersEffect.cpp
@@ -27,4 +25,5 @@ else()
     )
 endif()
 
-install(DIRECTORY shaders DESTINATION ${KDE_INSTALL_DATADIR}/kwin)
+add_subdirectory(kcm)
+add_subdirectory(shaders)

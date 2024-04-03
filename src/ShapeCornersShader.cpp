@@ -16,18 +16,11 @@
 
 ShapeCornersShader::ShapeCornersShader():
         m_manager(KWin::ShaderManager::instance()),
-        m_widget(new QWidget)
-{
-    const QString fragmentshader = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kwin/shaders/shapecorners.frag"));
-//    m_shader = KWin::ShaderManager::instance()->loadFragmentShader(KWin::ShaderManager::GenericShader, fragmentshader);
-    QFile file(fragmentshader);
-    if (!file.open(QFile::ReadOnly))
-        qCritical() << "ShapeCorners: no shaders found! Exiting...";
+        m_widget(new QWidget) {
 
-    const QByteArray frag = file.readAll();
-    auto shader = m_manager->generateShaderFromFile(KWin::ShaderTrait::MapTexture, QStringLiteral(""), fragmentshader);
-    m_shader = std::move(shader);
-    file.close();
+    const QString shaderFilePath = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
+                                                          QStringLiteral("kwin/shaders/shapecorners.frag"));
+    m_shader = m_manager->generateShaderFromFile(KWin::ShaderTrait::MapTexture, QString(), shaderFilePath);
     if (!m_shader->isValid())
         qCritical() << "ShapeCorners: no valid shaders found! ShapeCorners will not work.";
 
