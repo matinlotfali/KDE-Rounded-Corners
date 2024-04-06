@@ -97,6 +97,12 @@ ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
         return;
     }
 
+#ifdef QT_DEBUG
+    if (ShapeCornersConfig::exclusions().contains(name)) {
+        qWarning() << "ShapeCorners: window is excluded in configurations.";
+    }
+#endif
+
 #if QT_VERSION_MAJOR >= 6
     connect(w, &KWin::EffectWindow::windowFrameGeometryChanged, this, &ShapeCornersEffect::windowResized);
 #endif
