@@ -18,6 +18,7 @@ ShapeCornersShader::ShapeCornersShader():
         m_manager(KWin::ShaderManager::instance()),
         m_widget(new QWidget) {
 
+    qInfo() << "ShapeCorners: loading shaders...";
     const QString shaderFilePath = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
                                                           QStringLiteral("kwin/shaders/shapecorners.frag"));
     m_shader = m_manager->generateShaderFromFile(KWin::ShaderTrait::MapTexture, QString(), shaderFilePath);

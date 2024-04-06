@@ -39,15 +39,15 @@ ShapeCornersEffect::ShapeCornersEffect()
 
     if (auto connection = QDBusConnection::sessionBus();
         !connection.isConnected()) {
-        qWarning("ShapeCorners: Cannot connect to the D-Bus session bus.\n");
+        qWarning() << "ShapeCorners: Cannot connect to the D-Bus session bus.";
     }
     else {
         if (!connection.registerService(QStringLiteral("org.kde.ShapeCorners"))) {
-            qWarning("%s\n", qPrintable(connection.lastError().message()));
+            qWarning() << "ShapeCorners:" << connection.lastError().message();
         }
         else {
             if (!connection.registerObject(QStringLiteral("/ShapeCornersEffect"), this, QDBusConnection::ExportAllSlots)) {
-                qWarning("%s\n", qPrintable(connection.lastError().message()));
+                qWarning() << "ShapeCorners:" << connection.lastError().message();
             }
         }
     }
@@ -68,21 +68,41 @@ ShapeCornersEffect::~ShapeCornersEffect() = default;
 void
 ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
 {
-    qDebug() << w->windowRole() << w->windowType() << w->windowClass();
+#ifdef QT_DEBUG
+    qInfo() << "ShapeCorners: window added" << w->windowClass() << "type" << w->windowType() << "role" << w->windowRole();
+#endif
+    
+    if (w->windowClass().trimmed().isEmpty()) {
+#ifdef QT_DEBUG
+        qWarning() << "ShapeCorners: window doesn't have a valid class name.";
+#endif
+        return;
+    }
+
     const QSet<QString> hardExceptions {
-        "", "kwin", "kwin_x11", "kwin_wayland", "kscreenlocker_greet", "ksmserver", "krunner"
+        "kwin", "kwin_x11", "kwin_wayland", "kscreenlocker_greet", "ksmserver", "krunner"
     };
     const auto name = w->windowClass().split(QChar::Space).first();
-    if (hardExceptions.contains(name))
-        return;
-    if (const auto& [w2, r] = m_managed.insert({w, false}); r) {
-#if QT_VERSION_MAJOR >= 6
-        connect(w, &KWin::EffectWindow::windowFrameGeometryChanged, this, &ShapeCornersEffect::windowResized);
+    if (hardExceptions.contains(name)) {
+#ifdef QT_DEBUG
+        qWarning() << "ShapeCorners: ignoring window explicitly.";
 #endif
-        redirect(w);
-        setShader(w, m_shaderManager.GetShader().get());
-        checkTiled();
+        return;
     }
+
+    if (const auto& [w2, r] = m_managed.insert({w, false}); !r) {
+#ifdef QT_DEBUG
+        qWarning() << "ShapeCorners: ignoring duplicate window.";
+#endif
+        return;
+    }
+
+#if QT_VERSION_MAJOR >= 6
+    connect(w, &KWin::EffectWindow::windowFrameGeometryChanged, this, &ShapeCornersEffect::windowResized);
+#endif
+    redirect(w);
+    setShader(w, m_shaderManager.GetShader().get());
+    checkTiled();
 }
 
 void ShapeCornersEffect::windowRemoved(KWin::EffectWindow *w)
