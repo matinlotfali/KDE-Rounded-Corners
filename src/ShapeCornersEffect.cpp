@@ -74,7 +74,7 @@ ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
     
     if (w->windowClass().trimmed().isEmpty()) {
 #ifdef QT_DEBUG
-        qWarning() << "ShapeCorners: window doesn't have a valid class name.";
+        qWarning() << "ShapeCorners: window does not have a valid class name.";
 #endif
         return;
     }

@@ -107,8 +107,8 @@ git clone https://github.com/matinlotfali/KDE-Rounded-Corners
 cd KDE-Rounded-Corners
 mkdir build
 cd build
-cmake .. --install-prefix /usr
-make
+cmake ..
+cmake --build . -j
 sudo make install
 ```
 
@@ -168,3 +168,24 @@ You can add shadows for specific windows using the hack below. I don't know how 
    **Add [steam] and set [ Hide Window title bar ] to [ Yes ].**
 
 After that, the Steam window gets its shadows back.
+
+## Add Debug Messages
+
+When troubleshooting or reporting an issue, it might be useful to enable Debug logs during the build time using:
+
+```bash
+cmake .. --DCMAKE_BUILD_TYPE=Debug
+cmake --build . -j
+```
+
+After the installation and loading the effect, debug messages would appear in `journalctl`:
+
+```bash
+journalctl -f | grep kwin
+```
+
+or have some colorful logs with
+
+```bash
+sh ../tools/show-kwin-logs.sh
+```
