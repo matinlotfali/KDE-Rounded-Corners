@@ -1,7 +1,7 @@
 uniform float radius;            // The thickness of the outline in pixels specified in settings.
 uniform vec2 windowSize;         // Containing `window->frameGeometry().size()`
 uniform vec2 windowExpandedSize; // Containing `window->expandedGeometry().size()`
-uniform bool disableRoundedTile;
+uniform bool hasRoundCorners;
 
 uniform vec2 windowTopLeft;      /* The distance between the top-left of `expandedGeometry` and
                                   * the top-left of `frameGeometry`. When `windowTopLeft = {0,0}`, it means
@@ -62,7 +62,7 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle) {
     float distance_from_center;
     vec4 c;
     float r;
-    if (disableRoundedTile) {
+    if (!hasRoundCorners) {
         r = outlineThickness;
         center = start + r * vec2(cos(angle), sin(angle));
         distance_from_center = distance(coord0, center);
@@ -101,7 +101,7 @@ vec4 run(vec4 tex) {
         return tex;
     }
 
-    float r = disableRoundedTile? outlineThickness: radius;
+    float r = hasRoundCorners? radius: outlineThickness;
 
     /* Since `texcoord0` is ranging from {0.0, 0.0} to {1.0, 1.0} is not pixel intuitive,
      * I am changing the range to become from {0.0, 0.0} to {width, height}
