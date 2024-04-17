@@ -8,6 +8,7 @@
 #include "ShapeCornersWindow.h"
 #include <QRectF>
 #include <QVector2D>
+#include <memory>
 
 class QWidget;
 
