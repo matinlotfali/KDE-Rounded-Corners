@@ -5,12 +5,12 @@
 #ifndef KWIN4_SHAPECORNERS_CONFIG_SHADERMANAGER_H
 #define KWIN4_SHAPECORNERS_CONFIG_SHADERMANAGER_H
 
-#include <qconfig.h>
-#if QT_VERSION_MAJOR >= 6
-    #include <effect/effect.h>
-#else
-    #include <kwineffects.h>
-#endif
+#include "ShapeCornersWindow.h"
+#include <QRectF>
+#include <QVector2D>
+#include <memory>
+
+class QWidget;
 
 namespace KWin {
     class GLShader;
@@ -41,7 +41,7 @@ public:
      * \param w The window that the effect will be rendering on
      * \return A reference to the unique pointer of the loaded shader.
      */
-    const std::unique_ptr<KWin::GLShader>& Bind(KWin::EffectWindow *w, qreal scale, bool isTiled) const;
+    const std::unique_ptr<KWin::GLShader>& Bind(const ShapeCornersWindow &window, qreal scale) const;
 
     /**
      * \brief Pop the shader from the stack of rendering.
@@ -90,7 +90,7 @@ private:
      */
     int m_shader_windowTopLeft = 0;
 
-    int m_shader_disableRoundedTile = 0;
+    int m_shader_hasRoundCorners = 0;
 
     /**
      * \brief Reference to `uniform vec4 shadowColor;`

@@ -107,5 +107,11 @@
         <entry name="DisableOutlineTile" type="Bool">
             <default>true</default>
         </entry>
+        <entry name="DisableRoundMaximize" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="DisableOutlineMaximize" type="Bool">
+            <default>true</default>
+        </entry>
     </group>
 </kcfg>

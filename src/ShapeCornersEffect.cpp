@@ -25,12 +25,14 @@
 
 #if QT_VERSION_MAJOR >= 6
     #include <opengl/glutils.h>
+    #include <effect/effectwindow.h>
     #include <effect/effecthandler.h>
-    #include <core/output.h>
     #include <core/renderviewport.h>
 #else
+    #include <kwineffects.h>
     #include <kwinglutils.h>
 #endif
+
 
 ShapeCornersEffect::ShapeCornersEffect()
     : KWin::OffscreenEffect()
@@ -90,7 +92,7 @@ ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
         return;
     }
 
-    if (const auto& [w2, r] = m_managed.insert({w, false}); !r) {
+    if (const auto& [w2, r] = m_managed.insert({w, ShapeCornersWindow(w, name)}); !r) {
 #ifdef QT_DEBUG
         qWarning() << "ShapeCorners: ignoring duplicate window.";
 #endif
@@ -109,11 +111,18 @@ ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
     redirect(w);
     setShader(w, m_shaderManager.GetShader().get());
     checkTiled();
+    checkMaximized(w);
 }
 
 void ShapeCornersEffect::windowRemoved(KWin::EffectWindow *w)
 {
-    m_managed.erase(w);
+    auto window_iterator = m_managed.find(w);
+    if (window_iterator != m_managed.end()) {
+        qDebug() << "ShapeCorners: window removed" << window_iterator->second.name;
+        m_managed.erase(window_iterator);
+    } else {
+        qDebug() << "ShapeCorners: window removed";
+    }
     checkTiled();
 }
 
@@ -126,21 +135,24 @@ ShapeCornersEffect::reconfigure(const ReconfigureFlags flags)
 
 void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
 {
-    if (!hasEffect(w) || (isTiled(w) && ShapeCornersConfig::disableRoundTile()))
+    auto window_iterator = m_managed.find(w);
+    if (!m_shaderManager.IsValid()
+        || window_iterator == m_managed.end()
+        || !window_iterator->second.hasEffect()
+        || !window_iterator->second.hasRoundCorners())
     {
         Effect::prePaintWindow(w, data, time);
         return;
     }
 
-    const auto size = isWindowActive(w) ? ShapeCornersConfig::size(): ShapeCornersConfig::inactiveCornerRadius();
+    const auto size = window_iterator->second.isActive() ? ShapeCornersConfig::size(): ShapeCornersConfig::inactiveCornerRadius();
 
 #if QT_VERSION_MAJOR >= 6
     const auto geo = w->frameGeometry() * w->screen()->scale();
-    data.setTranslucent();
 #else
     const auto geo = w->frameGeometry() * KWin::effects->renderTargetScale();
-    data.setTranslucent();
 #endif
+
     QRegion reg {};
     reg += QRect(geo.x(), geo.y(), size, size);
     reg += QRect(geo.x()+geo.width()-size, geo.y(), size, size);
@@ -148,6 +160,7 @@ void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePa
     reg += QRect(geo.x()+geo.width()-size, geo.y()+geo.height()-size, size, size);
     data.opaque -= reg;
     data.paint += reg;
+    data.setTranslucent();
 
     OffscreenEffect::prePaintWindow(w, data, time);
 }
@@ -165,7 +178,10 @@ void ShapeCornersEffect::drawWindow(const KWin::RenderTarget &renderTarget, cons
 void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion &region,
                                     KWin::WindowPaintData &data) {
 #endif
-    if (!hasEffect(w))
+    auto window_iterator = m_managed.find(w);
+    if (!m_shaderManager.IsValid()
+        || window_iterator == m_managed.end()
+        || !window_iterator->second.hasEffect())
     {
         unredirect(w);
 #if QT_VERSION_MAJOR >= 6
@@ -184,7 +200,7 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
 
     redirect(w);
     setShader(w, m_shaderManager.GetShader().get());
-    m_shaderManager.Bind(w, scale, isTiled(w));
+    m_shaderManager.Bind(window_iterator->second, scale);
     glActiveTexture(GL_TEXTURE0);
 
 #if QT_VERSION_MAJOR >= 6
@@ -195,20 +211,11 @@ void ShapeCornersEffect::drawWindow(KWin::EffectWindow *w, int mask, const QRegi
     m_shaderManager.Unbind();
 }
 
-bool ShapeCornersEffect::hasEffect(const KWin::EffectWindow *w) const {
-    const auto name = w->windowClass().split(QChar::Space).first();
-    return m_shaderManager.IsValid()
-           && m_managed.contains(w)
-           && (w->isNormalWindow() || w->isDialog() || ShapeCornersConfig::inclusions().contains(name))
-           && !ShapeCornersConfig::exclusions().contains(name);
-}
-
 QString ShapeCornersEffect::get_window_titles() const {
     QStringList response;
-    for (const auto& [win, tiled]: m_managed) {
-        const auto name = win->windowClass().split(QChar::Space).first();
-        if (!response.contains(name))
-            response.push_back(name);
+    for (const auto& [w, window]: m_managed) {
+        if (!response.contains(window.name))
+            response.push_back(window.name);
     }
     return response.join("\n");
 }
@@ -224,7 +231,7 @@ bool ShapeCornersEffect::checkTiled(double window_start, const double& screen_en
     const bool firstGap = (gap == -1);
 
     bool r = false;
-    for (auto& [w, tiled]: m_managed) {
+    for (auto& [w, window]: m_managed) {
 
         if (firstGap) {
             gap = std::get<vertical>(std::make_pair(w->x(), w->y())) - window_start;
@@ -236,7 +243,7 @@ bool ShapeCornersEffect::checkTiled(double window_start, const double& screen_en
         if (std::get<vertical>(std::make_pair(w->x(), w->y())) == window_start) {
             if (std::get<vertical>(std::make_pair(w->width(), w->height())) + gap > 0) {
                 if (checkTiled<vertical>(window_start + std::get<vertical>(std::make_pair(w->width(), w->height())) + gap, screen_end, gap)) {
-                    tiled = true;   // Mark every tile as you go back to the first.
+                    window.isTiled = true;   // Mark every tile as you go back to the first.
                     r = true;
                 }
             }
@@ -250,8 +257,8 @@ bool ShapeCornersEffect::checkTiled(double window_start, const double& screen_en
 }
 
 void ShapeCornersEffect::checkTiled() {
-    for (auto& [w, tiled]: m_managed) {     // Delete tile memory.
-        tiled = false;
+    for (auto& [ptr, window]: m_managed) {     // Delete tile memory.
+        window.isTiled = false;
     }
     if (!ShapeCornersConfig::disableRoundTile() && !ShapeCornersConfig::disableOutlineTile()) {
         return;
@@ -262,4 +269,39 @@ void ShapeCornersEffect::checkTiled() {
         checkTiled<false>(geometry.x(), geometry.x() + geometry.width()); // Check horizontally
         checkTiled<true>(geometry.y(), geometry.y() + geometry.height()); // Check vertically
     }
+}
+
+void ShapeCornersEffect::checkMaximized(KWin::EffectWindow *w) {
+    auto window_iterator = m_managed.find(w);
+    if (window_iterator == m_managed.end())
+        return;
+
+    window_iterator->second.isMaximized = false;
+
+    auto screen_region = QRegion(w->screen()->geometry());
+    qDebug() << "ShapeCorners: screen region" << screen_region;
+
+    // subtract all menus
+    for (auto& [ptr, window]: m_managed)
+        if (ptr->isDock()) {
+            qDebug() << "ShapeCorners: menu is" << ptr->frameGeometry();
+            screen_region -= ptr->frameGeometry().toRect();
+        }
+    qDebug() << "ShapeCorners: screen region without menus" << screen_region;
+
+    // check if window and screen match
+    auto remaining = screen_region - w->frameGeometry().toRect();
+    qDebug() << "ShapeCorners: active window remaining region" << remaining;
+    if (remaining.isEmpty()) {
+        window_iterator->second.isMaximized = true;
+#ifdef QT_DEBUG
+        qInfo() << "ShapeCorners: window maximized" << window_iterator->second.name;
+#endif
+    }
+}
+
+void ShapeCornersEffect::windowResized(KWin::EffectWindow *window, const QRectF &)
+{
+    checkTiled();
+    checkMaximized(window);
 }
