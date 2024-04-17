@@ -25,12 +25,14 @@
 
 #if QT_VERSION_MAJOR >= 6
     #include <opengl/glutils.h>
+    #include <effect/effectwindow.h>
     #include <effect/effecthandler.h>
-    #include <core/output.h>
     #include <core/renderviewport.h>
 #else
+    #include <kwineffects.h>
     #include <kwinglutils.h>
 #endif
+
 
 ShapeCornersEffect::ShapeCornersEffect()
     : KWin::OffscreenEffect()
@@ -116,14 +118,10 @@ void ShapeCornersEffect::windowRemoved(KWin::EffectWindow *w)
 {
     auto window_iterator = m_managed.find(w);
     if (window_iterator != m_managed.end()) {
-#ifdef QT_DEBUG
-        qInfo() << "ShapeCorners: window removed" << window_iterator->second.name;
-#endif
+        qDebug() << "ShapeCorners: window removed" << window_iterator->second.name;
         m_managed.erase(window_iterator);
     } else {
-#ifdef QT_DEBUG
-        qInfo() << "ShapeCorners: window removed";
-#endif
+        qDebug() << "ShapeCorners: window removed";
     }
     checkTiled();
 }
@@ -151,11 +149,10 @@ void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePa
 
 #if QT_VERSION_MAJOR >= 6
     const auto geo = w->frameGeometry() * w->screen()->scale();
-    data.setTranslucent();
 #else
     const auto geo = w->frameGeometry() * KWin::effects->renderTargetScale();
-    data.setTranslucent();
 #endif
+
     QRegion reg {};
     reg += QRect(geo.x(), geo.y(), size, size);
     reg += QRect(geo.x()+geo.width()-size, geo.y(), size, size);
@@ -163,6 +160,7 @@ void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePa
     reg += QRect(geo.x()+geo.width()-size, geo.y()+geo.height()-size, size, size);
     data.opaque -= reg;
     data.paint += reg;
+    data.setTranslucent();
 
     OffscreenEffect::prePaintWindow(w, data, time);
 }
@@ -280,33 +278,20 @@ void ShapeCornersEffect::checkMaximized(KWin::EffectWindow *w) {
 
     window_iterator->second.isMaximized = false;
 
-    if (!ShapeCornersConfig::disableRoundMaximize() && !ShapeCornersConfig::disableOutlineMaximize()) {
-        return;
-    }
-
     auto screen_region = QRegion(w->screen()->geometry());
-#ifdef QT_DEBUG
-    qInfo() << "ShapeCorners: screen region" << screen_region;
-#endif
+    qDebug() << "ShapeCorners: screen region" << screen_region;
 
     // subtract all menus
     for (auto& [ptr, window]: m_managed)
         if (ptr->isDock()) {
-#ifdef QT_DEBUG
-            qInfo() << "ShapeCorners: menu is" << ptr->frameGeometry();
-#endif
+            qDebug() << "ShapeCorners: menu is" << ptr->frameGeometry();
             screen_region -= ptr->frameGeometry().toRect();
         }
-
-#ifdef QT_DEBUG
-    qInfo() << "ShapeCorners: screen region without menus" << screen_region;
-#endif
+    qDebug() << "ShapeCorners: screen region without menus" << screen_region;
 
     // check if window and screen match
     auto remaining = screen_region - w->frameGeometry().toRect();
-#ifdef QT_DEBUG
-    qInfo() << "ShapeCorners: active window remaining region" << remaining;
-#endif
+    qDebug() << "ShapeCorners: active window remaining region" << remaining;
     if (remaining.isEmpty()) {
         window_iterator->second.isMaximized = true;
 #ifdef QT_DEBUG

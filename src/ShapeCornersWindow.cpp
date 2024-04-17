@@ -29,11 +29,11 @@ bool ShapeCornersWindow::hasEffect() const {
 }
 
 bool ShapeCornersWindow::hasRoundCorners() const {
-    return !(isTiled && ShapeCornersConfig::disableRoundTile())
+    return !(isTiled && ShapeCornersConfig::disableRoundTile() && !isMaximized)
         && !(isMaximized && ShapeCornersConfig::disableRoundMaximize());
 }
 
 bool ShapeCornersWindow::hasOutline() const {
-    return !(isTiled && ShapeCornersConfig::disableOutlineTile())
+    return !(isTiled && ShapeCornersConfig::disableOutlineTile() && !isMaximized)
         && !(isMaximized && ShapeCornersConfig::disableOutlineMaximize());
 }

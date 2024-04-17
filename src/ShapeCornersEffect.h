@@ -22,10 +22,8 @@
 #include "ShapeCornersShader.h"
 
 #if QT_VERSION_MAJOR >= 6
-    #include <effect/effecthandler.h>
     #include <effect/offscreeneffect.h>
 #else
-    #include <kwineffects.h>
     #include <kwinoffscreeneffect.h>
 #endif
 

@@ -3,14 +3,15 @@
 //
 
 #include "ShapeCornersShader.h"
-#include "ShapeCornersEffect.h"
 #include "ShapeCornersConfig.h"
 #include <QFile>
 #include <QWidget>
 
 #if QT_VERSION_MAJOR >= 6
+    #include <effect/effectwindow.h>
     #include <opengl/glutils.h>
 #else
+    #include <kwineffects.h>
     #include <kwinglutils.h>
 #endif
 

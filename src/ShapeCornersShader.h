@@ -6,13 +6,10 @@
 #define KWIN4_SHAPECORNERS_CONFIG_SHADERMANAGER_H
 
 #include "ShapeCornersWindow.h"
+#include <QRectF>
+#include <QVector2D>
 
-#include <qconfig.h>
-#if QT_VERSION_MAJOR >= 6
-    #include <effect/effect.h>
-#else
-    #include <kwineffects.h>
-#endif
+class QWidget;
 
 namespace KWin {
     class GLShader;
