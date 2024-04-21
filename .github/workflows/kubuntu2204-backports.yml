@@ -52,9 +52,14 @@ jobs:
 
     - id: package
       name: Package
+      if: github.event_name != 'schedule'
       run: |
         cd ${{github.workspace}}/build
-        cpack -V -G DEB -P kwin_effect_shapecorners_$${github.action}}_$(git rev-parse --short HEAD).deb
+        cpack -V -G DEB
+        DEB_NAME=kwin4_effect_shapecorners
+        SHORT_SHA=$(echo $GITHUB_SHA | head -c 5)
+        mv ${DEB_NAME}.deb ${DEB_NAME}_${GITHUB_JOB}_${SHORT_SHA}.debmv ${DEB_NAME}.deb ../${DEB_NAME}_${GITHUB_JOB}_${SHORT_SHA}.deb
+        cd ..
         (echo "file=$(ls *.deb)" >> $GITHUB_OUTPUT)
 
     - name: Upload Artifact
@@ -62,7 +67,7 @@ jobs:
       if: github.event_name != 'schedule'
       with:
         name: Debian Package
-        path: build/${{steps.package.outputs.file}}
+        path: ${{steps.package.outputs.file}}
         compression-level: 0
         if-no-files-found: error
 
