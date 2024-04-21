@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(kwin4_effect_shapecorners)
+project(kwin4_effect_shapecorners VERSION 0.6.2)
 
 set(KF_MIN_VERSION "5.78")
 set(QT_MIN_VERSION "5.15")
@@ -59,16 +59,6 @@ find_package(epoxy REQUIRED)
 find_package(XCB REQUIRED COMPONENTS XCB)
 
 find_package(KWinDBusInterface CONFIG REQUIRED)
-find_package(Git REQUIRED)
-execute_process(
-    COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
-    OUTPUT_VARIABLE GIT_HASH
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-execute_process (
-    COMMAND bash -c "awk -F= '/^ID=/{print $2}' /etc/os-release |tr -d '\n' | tr -d '\"'"
-    OUTPUT_VARIABLE OS_ID
-)
 
 add_subdirectory(src)
 
@@ -90,8 +80,8 @@ set(CPACK_PACKAGE_NAME ${CMAKE_PROJECT_NAME}
     CACHE STRING ${CMAKE_PROJECT_NAME}
 )
 set(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
-set(CPACK_DEBIAN_PACKAGE_VERSION "${CMAKE_PROJECT_VERSION}.${GIT_HASH}")
-set(CPACK_DEBIAN_FILE_NAME "${CMAKE_PROJECT_NAME}_${CPACK_DEBIAN_PACKAGE_VERSION}_${OS_ID}.deb")
+set(CPACK_DEBIAN_PACKAGE_VERSION "${CMAKE_PROJECT_VERSION}")
+set(CPACK_DEBIAN_FILE_NAME "${CMAKE_PROJECT_NAME}.deb")
 set(CPACK_PACKAGE_CONTACT "matinlotfali@gmail.com")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Matin Lotfaliei")
 

@@ -27,7 +27,7 @@ jobs:
 
     steps:
     - name: Check out repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Refresh Debian Packages
       run: apt update && apt -y dist-upgrade
@@ -36,7 +36,7 @@ jobs:
     - name: Install Dependencies
       run: |
         apt -y install cmake g++ gettext extra-cmake-modules qttools5-dev libkf5configwidgets-dev kwin-dev
-        apt -y install dpkg-dev file 
+        apt -y install dpkg-dev file
     
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -45,18 +45,22 @@ jobs:
 
     - name: Build
       # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -j
 
     - id: package
       name: Package
-      run: cd ${{github.workspace}}/build && cpack -G DEB && (echo "file=$(ls *.deb)" >> $GITHUB_OUTPUT)
+      run: |
+        cd ${{github.workspace}}/build
+        cpack -V -G DEB -P kwin_effect_shapecorners_$${github.action}}_$(git rev-parse --short HEAD).deb
+        (echo "file=$(ls *.deb)" >> $GITHUB_OUTPUT)
 
     - name: Upload Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: github.event_name != 'schedule'
       with:
-        name: Debian Package
+        name: Deb Package
         path: build/${{steps.package.outputs.file}}
+        compression-level: 0
         if-no-files-found: error
 
 #     - name: Test
