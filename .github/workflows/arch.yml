@@ -2,9 +2,11 @@ name: ArchLinux
 
 on:
   push:
-    branches: [ master, latest-shapecorners-code, kwin_5.23, kwin_5.24, kwin_5.25 ]
+    branches: [ master ]
+    paths-ignore: [ '**.md', '**.png' ]
   pull_request:
     branches: [ master ]
+    paths-ignore: [ '**.md', '**.png' ]
   schedule:
     - cron: "0 0 * * *"
 
@@ -25,12 +27,10 @@ jobs:
 
     steps:
     - name: Refresh Packages
-      run: yes | pacman -Syu
+      run: pacman -Syu --noconfirm
 
     - name: Install Dependencies
-      run: |
-        yes | pacman -S git cmake extra-cmake-modules qt5-tools kwin wireplumber
-        git config --global --add safe.directory '*'
+      run: pacman -S --noconfirm git cmake extra-cmake-modules qt5-tools kwin wireplumber
 
     - name: Check out repository
       uses: actions/checkout@v3

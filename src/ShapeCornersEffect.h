@@ -19,16 +19,15 @@
 
 #pragma once
 
-#include <kwineffects.h>
 #include "ShapeCornersShader.h"
 
-#if KWIN_EFFECT_API_VERSION >= 236
-#include <kwinoffscreeneffect.h>
-class ShapeCornersEffect : public KWin::OffscreenEffect
+#if QT_VERSION_MAJOR >= 6
+    #include <effect/offscreeneffect.h>
 #else
-#include <kwindeformeffect.h>
-class ShapeCornersEffect : public KWin::DeformEffect
+    #include <kwinoffscreeneffect.h>
 #endif
+
+class ShapeCornersEffect final: public KWin::OffscreenEffect
 {
     Q_OBJECT
 public:
@@ -39,18 +38,32 @@ public:
     static bool enabledByDefault() { return supported(); }
 
     void reconfigure(ReconfigureFlags flags) override;
-
     void prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time) override;
-    void drawWindow(KWin::EffectWindow *window, int mask, const QRegion &region, KWin::WindowPaintData &data) override;
 
-    int requestedEffectChainPosition() const override { return 99; }
+#if QT_VERSION_MAJOR >= 6
+    void drawWindow(const KWin::RenderTarget &RenderTarget, const KWin::RenderViewport& viewport,
+                    KWin::EffectWindow *w, int mask, const QRegion &region, KWin::WindowPaintData &data) override;
+#else
+    void drawWindow(KWin::EffectWindow *w, int mask, const QRegion &region, KWin::WindowPaintData &data) override;
+#endif
 
-protected Q_SLOTS:
+    [[nodiscard]] int requestedEffectChainPosition() const override { return 99; }
+    [[nodiscard]] bool blocksDirectScanout() const override { return false; }
+
+public Q_SLOTS:
+    [[nodiscard]] QString get_window_titles() const;
+
+private Q_SLOTS:
     void windowAdded(KWin::EffectWindow *window);
     void windowRemoved(KWin::EffectWindow *window);
+    void checkMaximized(KWin::EffectWindow *window);
+    void windowResized(KWin::EffectWindow *window, const QRectF &);
 
 private:
-    QSet<KWin::EffectWindow*> m_managed;
+    std::unordered_map<const KWin::EffectWindow*, ShapeCornersWindow> m_managed; // Pair of Window pointers and their maximized/tiled state.
     ShapeCornersShader m_shaderManager;
+
+    void checkTiled();
+    template<bool vertical> bool checkTiled(double window_start, const double& screen_end, double gap = -1);
 };
 

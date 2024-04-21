@@ -8,6 +8,9 @@
         <entry name="Size" type="UInt">
             <default>10</default>
         </entry>
+        <entry name="InactiveCornerRadius" type="UInt">
+            <default>10</default>
+        </entry>
         <entry name="ShadowSize" type="UInt">
             <default>25</default>
             <min>1</min>
@@ -24,12 +27,91 @@
         </entry>
         <entry name="OutlineThickness" type="Double">
             <default>1</default>
+            <min>0</min>
+            <max>20</max>
+        </entry>
+        <entry name="InactiveOutlineThickness" type="Double">
+            <default>1</default>
+            <min>0</min>
+            <max>20</max>
         </entry>
         <entry name="OutlineColor" type="Color">
             <default>black</default>
         </entry>
         <entry name="InactiveOutlineColor" type="Color">
             <default>black</default>
+        </entry>
+        <entry name="ActiveOutlineAlpha" type="Int">
+            <default>255</default>
+            <min>0</min>
+            <max>255</max>
+        </entry>
+        <entry name="InactiveOutlineAlpha" type="Int">
+            <default>255</default>
+            <min>0</min>
+            <max>255</max>
+        </entry>
+        <entry name="ActiveOutlinePalette" type="UInt">
+            <default>12</default>
+        </entry>
+        <entry name="InactiveOutlinePalette" type="UInt">
+            <default>12</default>
+        </entry>
+        <entry name="ActiveOutlineUsePalette" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="InactiveOutlineUsePalette" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="ActiveOutlineUseCustom" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="InactiveOutlineUseCustom" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="ActiveShadowAlpha" type="Int">
+            <default>255</default>
+            <min>0</min>
+            <max>255</max>
+        </entry>
+        <entry name="InactiveShadowAlpha" type="Int">
+            <default>255</default>
+            <min>0</min>
+            <max>255</max>
+        </entry>
+        <entry name="ActiveShadowPalette" type="UInt">
+            <default>11</default>
+        </entry>
+        <entry name="InactiveShadowPalette" type="UInt">
+            <default>11</default>
+        </entry>
+        <entry name="ActiveShadowUsePalette" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="InactiveShadowUsePalette" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="ActiveShadowUseCustom" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="InactiveShadowUseCustom" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="Inclusions" type="StringList">
+        </entry>
+        <entry name="Exclusions" type="StringList">
+        </entry>
+        <entry name="DisableRoundTile" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="DisableOutlineTile" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="DisableRoundMaximize" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="DisableOutlineMaximize" type="Bool">
+            <default>true</default>
         </entry>
     </group>
 </kcfg>
