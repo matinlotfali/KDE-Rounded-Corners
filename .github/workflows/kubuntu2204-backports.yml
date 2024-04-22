@@ -63,7 +63,7 @@ jobs:
         (echo "file=$(ls *.deb)" >> $GITHUB_OUTPUT)
 
     - name: Upload Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v4.3.2
       if: github.event_name != 'schedule'
       with:
         name: Debian Package
