@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(kwin4_effect_shapecorners)
+project(kwin4_effect_shapecorners VERSION 0.6.2)
 
 set(KF_MIN_VERSION "5.78")
 set(QT_MIN_VERSION "5.15")
@@ -76,13 +76,14 @@ set_property (TEST KWinEffectSupport PROPERTY PASS_REGULAR_EXPRESSION "true")
 
 
 # these are cache variables, so they could be overwritten with -D,
-set(CPACK_PACKAGE_NAME kwin4-effect-shapecorners
-    CACHE STRING kwin4-effect-shapecorners
+set(CPACK_PACKAGE_NAME ${CMAKE_PROJECT_NAME}
+    CACHE STRING ${CMAKE_PROJECT_NAME}
 )
-set(CPACK_DEBIAN_FILE_NAME "kwin4-effect-shapecorners-kubuntu2204-amd64.deb")
+set(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
+set(CPACK_DEBIAN_PACKAGE_VERSION "${CMAKE_PROJECT_VERSION}")
+set(CPACK_DEBIAN_FILE_NAME "${CMAKE_PROJECT_NAME}.deb")
 set(CPACK_PACKAGE_CONTACT "matinlotfali@gmail.com")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Matin Lotfaliei")
-set(CPACK_DEBIAN_PACKAGE_VERSION "0.3.0")
 
 # autogenerate dependency information
 set (CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
