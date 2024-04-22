@@ -56,15 +56,13 @@ jobs:
         DEB_NAME=kwin4_effect_shapecorners
         SHORT_SHA=$(echo $GITHUB_SHA | head -c 5)
         mv ${DEB_NAME}.deb ../${DEB_NAME}_${GITHUB_JOB}_${SHORT_SHA}.deb
-        cd ..
-        (echo "file=$(ls *.deb)" >> $GITHUB_OUTPUT)
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4.3.2
       if: github.event_name != 'schedule'
       with:
         name: Deb Package
-        path: ${{steps.package.outputs.file}}
+        path: ${{ github.workspace }}/*.deb
         compression-level: 0
         if-no-files-found: error
 
