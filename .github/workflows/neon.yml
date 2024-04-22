@@ -15,7 +15,7 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  neon-user:
+  neon:
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
     # cross-platform coverage.
@@ -39,28 +39,28 @@ jobs:
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cmake . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build
       # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -j
+      run: cmake --build . --config ${{env.BUILD_TYPE}} -j
 
     - id: package
       name: Package
       if: github.event_name != 'schedule'
       run: |
-        cd ${{github.workspace}}/build
         cpack -V -G DEB
         DEB_NAME=kwin4_effect_shapecorners
         SHORT_SHA=$(echo $GITHUB_SHA | head -c 5)
-        mv ${DEB_NAME}.deb ../${DEB_NAME}_${GITHUB_JOB}_${SHORT_SHA}.deb
+        mkdir artifacts
+        mv ${DEB_NAME}.deb artifacts/${DEB_NAME}_${GITHUB_JOB}_${SHORT_SHA}.deb
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4.3.2
       if: github.event_name != 'schedule'
       with:
-        name: Debian Package
-        path: ${{ github.workspace }}/*.deb
+        name: Deb Package
+        path: ./artifacts/
         compression-level: 0
         if-no-files-found: error
 
