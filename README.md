@@ -6,19 +6,24 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 
 **Tested on:**
 - ![Wayland](https://img.shields.io/badge/Wayland-supported-green?logo=wayland) ![Wayland](https://img.shields.io/badge/X11-supported-green?logo=X.org)
-- ![Kubuntu 22.04 Jammy](https://img.shields.io/badge/-not_supported-red?label=Kubuntu%2022.04%20Jammy&logo=kubuntu&branch=master) 
+* ![Kubuntu 22.04 Jammy](https://img.shields.io/badge/-not_supported-red?label=Kubuntu%2022.04&logo=kubuntu&branch=master) 
 ![](https://img.shields.io/badge/KWinEffects-v233-red) ![](https://img.shields.io/badge/Plasma-5.24-red)
-- ![Kubuntu 22.04 Jammy + Backports](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2204-backports.yml?label=Kubuntu%2022.04%20Jammy%20%2b%20Backports&logo=kubuntu&branch=master) 
+- ![Kubuntu 22.04 Jammy + Backports](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2204-backports.yml?label=Kubuntu%2022.04%20%2b%20Backports%20PPA&logo=kubuntu&branch=master) 
 ![](https://img.shields.io/badge/KWinEffects-v236-lightgrey) ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)
-- ![Debian 12 Bookworm](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/debian12.yml?branch=master&label=Debian%2012%20Bookworm&logo=debian)
+- ![Debian 12 Bookworm](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/debian12.yml?branch=master&label=Debian%2012&logo=debian)
     ![](https://img.shields.io/badge/KWinEffects-v236-lightgrey) ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)
-- ![Fedora 39](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/fedora.yml?branch=master&label=Fedora%2039&logo=fedora&logoColor=white)
+- ![Fedora 39](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/fedora39.yml?branch=master&label=Fedora%2039&logo=fedora&logoColor=white)
     ![](https://img.shields.io/badge/KWinEffects-v236-lightgrey) ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)  
+- ![Fedora 40](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/fedora40.yml?branch=master&label=Fedora%2040&logo=fedora&logoColor=white)
+    ![](https://img.shields.io/badge/KWinEffects-v237-lightgreen) ![](https://img.shields.io/badge/Plasma-6.0-lightgreen)
 - ![KDE Neon (Stable)](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/neon.yml?branch=master&label=KDE%20Neon%20%28Stable%29&logo=kde&logoColor=white) 
-![](https://img.shields.io/badge/KWinEffects-v237-lightgrey) ![](https://img.shields.io/badge/Plasma-6.0-lightgrey)
+![](https://img.shields.io/badge/KWinEffects-v237-lightgreen) ![](https://img.shields.io/badge/Plasma-6.0-lightgreen)
 - ![KDE Neon (Unstable)](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/neon-unstable.yml?branch=master&label=KDE%20Neon%20%28Unstable%29&logo=kde&logoColor=white)
-![](https://img.shields.io/badge/KWinEffects-v237-lightgrey) ![](https://img.shields.io/badge/Plasma-6.0-lightgrey)
-- [![Arch](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/arch.yml?branch=master&label=Arch%20Linux&logo=archlinux&logoColor=white) ![](https://img.shields.io/aur/maintainer/kwin-effect-rounded-corners-git?label=AUR%20Maintainer) ![](https://img.shields.io/aur/votes/kwin-effect-rounded-corners-git?label=AUR%20Votes)](https://aur.archlinux.org/packages/kwin-effect-rounded-corners-git)
+![](https://img.shields.io/badge/KWinEffects-v237-lightgreen) ![](https://img.shields.io/badge/Plasma-6.0-lightgreen)
+
+- ![Arch](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/arch.yml?branch=master&label=Arch%20Linux&logo=archlinux&logoColor=white)
+![](https://img.shields.io/badge/KWinEffects-v237-lightgreen) ![](https://img.shields.io/badge/Plasma-6.0-lightgreen)
+  - [![](https://img.shields.io/aur/maintainer/kwin-effect-rounded-corners-git?label=AUR%20Maintainer) ![](https://img.shields.io/aur/votes/kwin-effect-rounded-corners-git?label=AUR%20Votes)](https://aur.archlinux.org/packages/kwin-effect-rounded-corners-git)
 
 ![After](screenshots/shadows2.png)
 
