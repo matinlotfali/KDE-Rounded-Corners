@@ -35,7 +35,7 @@ jobs:
     - name: Install Dependencies
       run: |
         apt -y install --no-install-recommends aptitude
-        aptitude -y install --without-recommends cmake g++ gettext extra-cmake-modules qt6-base-dev-tools kf6-kcmutils-dev kwin-dev
+        aptitude -y install --without-recommends cmake g++ gettext extra-cmake-modules qt6-base-dev-tools libkf6configwidgets-dev kf6-kcmutils-dev kwin-dev
         aptitude -y install --without-recommends dpkg-dev file
     
     - name: Configure CMake
