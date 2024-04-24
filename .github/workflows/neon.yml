@@ -34,8 +34,8 @@ jobs:
 
     - name: Add Neon Repository
       run: |
-        sudo add-apt-repository -y 'deb http://archive.neon.kde.org/user jammy main'
         wget -qO - 'http://archive.neon.kde.org/public.key' | sudo apt-key add -
+        sudo add-apt-repository -y 'deb http://archive.neon.kde.org/user jammy main'        
 
     - name: Install Dependencies
       run: |
