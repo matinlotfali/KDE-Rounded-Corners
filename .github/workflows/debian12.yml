@@ -57,16 +57,17 @@ jobs:
     - name: Upload Workflow Artifact
       uses: actions/upload-artifact@v4.3.2
       with:
-        name: Deb Package
+        name: ${{ env.DEB_NAME }}
         path: ${{ env.DEB_FILE }}
         compression-level: 0
         if-no-files-found: error
 
-    - name: Upload Release
+    - name: Upload Release Asset
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: ${{ env.DEB_FILE }}
+        overwrite: true
         tag: nightly
 
 #     - name: Test

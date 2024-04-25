@@ -13,6 +13,7 @@ on:
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
+  RPM_NAME: kwin4_effect_shapecorners
 
 jobs:
   fedora40:
@@ -47,24 +48,29 @@ jobs:
       # Build your program with the given configuration
       run: cmake --build . --config ${{env.BUILD_TYPE}} -j
 
-    - id: package
-      name: Package
-      if: github.event_name != 'schedule'
+    - name: Package
       run: |
         cpack -V -G RPM
-        RPM_NAME=kwin4_effect_shapecorners
-        SHORT_SHA=$(echo $GITHUB_SHA | head -c 5)
+        RPM_FILE=artifacts/${RPM_NAME}_${GITHUB_JOB}.rpm
         mkdir artifacts
-        mv ${RPM_NAME}.rpm artifacts/${RPM_NAME}_${GITHUB_JOB}_${SHORT_SHA}.rpm
+        mv ${RPM_NAME}.rpm ${RPM_FILE}
+        echo "RPM_FILE=${RPM_FILE}" >> $GITHUB_ENV
 
-    - name: Upload Artifact
+    - name: Upload Workflow Artifact
       uses: actions/upload-artifact@v4.3.2
-      if: github.event_name != 'schedule'
       with:
-        name: RPM Package
-        path: ./artifacts/
+        name: ${{ env.RPM_NAME }}
+        path: ${{ env.RPM_FILE }}
         compression-level: 0
         if-no-files-found: error
+
+    - name: Upload Release Asset
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: ${{ env.RPM_FILE }}
+        overwrite: true
+        tag: nightly
 
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build
