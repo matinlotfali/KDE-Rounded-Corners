@@ -1,4 +1,4 @@
-name: KDE Neon (Unstable)
+name: Fedora 40
 
 on:
   push:
@@ -15,41 +15,56 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  neon-unstable:
+  fedora40:
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
     # cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:40
+      options: --user root
 
     steps:
     - name: Check out repository
       uses: actions/checkout@v4
 
-    - name: Refresh Ubuntu Packages
-      run: sudo apt update
-
-    - name: Add PPA support
-      run: sudo apt install -y --no-install-recommends software-properties-common gpg-agent aptitude
-
-    - name: Add Neon Repository
-      run: |        
-        wget -qO - 'http://archive.neon.kde.org/public.key' | sudo apt-key add -
-        sudo add-apt-repository -y 'deb http://archive.neon.kde.org/unstable jammy main'
+    - name: Refresh Fedora Packages
+      run: dnf -y refresh
+      continue-on-error: true
 
     - name: Install Dependencies
       run: |
-        sudo aptitude -y install --without-recommends cmake g++ gettext extra-cmake-modules qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev
-        sudo aptitude -y install --without-recommends dpkg-dev file
+        dnf -y install cmake gcc-c++ extra-cmake-modules kwin-devel kf6-kconfigwidgets-devel libepoxy-devel kf6-kcmutils-devel qt6-qtbase-private-devel wayland-devel
+        dnf -y install rpm-build
     
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cmake . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build
       # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -j
+      run: cmake --build . --config ${{env.BUILD_TYPE}} -j
+
+    - id: package
+      name: Package
+      if: github.event_name != 'schedule'
+      run: |
+        cpack -V -G RPM
+        RPM_NAME=kwin4_effect_shapecorners
+        SHORT_SHA=$(echo $GITHUB_SHA | head -c 5)
+        mkdir artifacts
+        mv ${RPM_NAME}.rpm artifacts/${RPM_NAME}_${GITHUB_JOB}_${SHORT_SHA}.rpm
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4.3.2
+      if: github.event_name != 'schedule'
+      with:
+        name: RPM Package
+        path: ./artifacts/
+        compression-level: 0
+        if-no-files-found: error
 
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build

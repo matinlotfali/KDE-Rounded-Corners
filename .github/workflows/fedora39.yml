@@ -30,7 +30,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Refresh Fedora Packages
-      run: dnf -y update
+      run: dnf -y refresh
       continue-on-error: true
 
     - name: Install Dependencies
