@@ -64,6 +64,7 @@ jobs:
 
     - name: Upload Release Asset
       uses: svenstaro/upload-release-action@v2
+      if: github.ref == 'refs/heads/master'
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: ${{ env.DEB_FILE }}

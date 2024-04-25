@@ -3,8 +3,6 @@ name: Push Nightly Tag
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 jobs:
   push-nightly-tag:
