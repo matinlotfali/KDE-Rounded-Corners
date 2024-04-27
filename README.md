@@ -11,6 +11,9 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 - ![Kubuntu 22.04 Jammy + Backports](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2204-backports.yml?label=Kubuntu%2022.04%20%2b%20Backports%20PPA&logo=kubuntu&branch=master)
       ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)
       [![](https://img.shields.io/github/downloads/matinlotfali/KDE-Rounded-Corners/nightly/kwin4_effect_shapecorners_kubuntu2204.deb?label=Download)](https://github.com/matinlotfali/KDE-Rounded-Corners/releases/download/nightly/kwin4_effect_shapecorners_kubuntu2204.deb)
+- ![Kubuntu 24.04 Noble](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2404.yml?label=Kubuntu%2024.04&logo=kubuntu&branch=master)
+      ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)
+      [![](https://img.shields.io/github/downloads/matinlotfali/KDE-Rounded-Corners/nightly/kwin4_effect_shapecorners_kubuntu2404.deb?label=Download)](https://github.com/matinlotfali/KDE-Rounded-Corners/releases/download/nightly/kwin4_effect_shapecorners_kubuntu2404.deb)
 - ![Debian 12 Bookworm](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/debian12.yml?branch=master&label=Debian%2012&logo=debian)
       ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)
       [![](https://img.shields.io/github/downloads/matinlotfali/KDE-Rounded-Corners/nightly/kwin4_effect_shapecorners_debian12.deb?label=Download)](https://github.com/matinlotfali/KDE-Rounded-Corners/releases/download/nightly/kwin4_effect_shapecorners_debian12.deb)
@@ -174,7 +177,7 @@ You can add shadows for specific windows using the hack below. I don't know how 
 
    **Add [steam] and set [ No titlebar ] and frame to [ No ]**
    
-3. In [ System settings ] -> [ Application Style ] -> [ Window decoration ] -> [ Breeze theme setting ] -> [ Window specific overrides ]:
+2. In [ System settings ] -> [ Application Style ] -> [ Window decoration ] -> [ Breeze theme setting ] -> [ Window specific overrides ]:
 
    **Add [steam] and set [ Hide Window title bar ] to [ Yes ].**
 
