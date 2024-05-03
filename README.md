@@ -38,9 +38,10 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 
 - Compatibility of the effect with other effects like Wobbly windows
 - Compatibility with KWin for Plasma versions 5.27 to 6.0
+- Compatibility with HDR in Plasma 6.0
 - Optimize the effect to render once instead of 5 times - see [#49](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/49)
 - Reimplementation with shaders to include shadows at corners and an outline
-- Disable effect when windows get maximized
+- Ability to disable effect when windows get maximized or tiled
 - Cleanups for the plugin logic, remove unneeded dependencies from CMakeLists.txt file - by [alex1701c](https://github.com/alex1701c)
 - Separate outline color for active and inactive windows - by [OrkenWhite](https://github.com/OrkenWhite)
 - Add natural shadows using parametric blend - by [paletteOvO](https://github.com/paletteOvO)
