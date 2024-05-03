@@ -66,12 +66,13 @@ jobs:
 
     - name: Upload Release Asset
       if: github.ref == 'refs/heads/master'
-      uses: svenstaro/upload-release-action@v2
+      uses: appleboy/scp-action@v0.1.7
       with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: ${{ env.RPM_FILE }}
-        overwrite: true
-        tag: nightly
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        source: ${{ env.DEB_FILE }}
+        target: /home/frs/project/kde-rounded-corners/nightly/fedora39/
 
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build
