@@ -53,8 +53,10 @@ jobs:
         mkdir artifacts
         mv ${DEB_NAME}.deb ${DEB_FILE}
         echo "DEB_FILE=${DEB_FILE}" >> $GITHUB_ENV
+        echo "USERNAME: $USERNAME"
+        echo "HOST: $HOST"
 
-    - name: Upload Workflow Artifact
+    - name: Upload Package to Workflow Artifact
       uses: actions/upload-artifact@v4.3.2
       with:
         name: ${{ env.DEB_NAME }}
@@ -62,14 +64,17 @@ jobs:
         compression-level: 0
         if-no-files-found: error
 
-    - name: Upload Release Asset
-      uses: appleboy/scp-action@v0.1.7
+    - name: Upload Package to SourceForge
+      if: github.ref == 'refs/heads/master'
+      uses: nicklasfrahm/scp-action@main
       with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
+        direction: upload
+        host: ${{ secrets.SOURCEFORGE_HOST }}
+        username: ${{ secrets.SOURCEFORGE_USERNAME }}
+        key: ${{ secrets.SOURCEFORGE_KEY }}
+        fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
         source: ${{ env.DEB_FILE }}
-        target: /home/frs/project/kde-rounded-corners/nightly/debian/
+        target: /home/frs/project/kde-rounded-corners/nightly/debian/${{ env.DEB_NAME }}_${{ github.job }}.deb
 
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build

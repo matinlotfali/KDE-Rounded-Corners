@@ -66,13 +66,15 @@ jobs:
 
     - name: Upload Release Asset
       if: github.ref == 'refs/heads/master'
-      uses: appleboy/scp-action@v0.1.7
+      uses: nicklasfrahm/scp-action@main
       with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
+        direction: upload
+        host: ${{ secrets.SOURCEFORGE_HOST }}
+        username: ${{ secrets.SOURCEFORGE_USERNAME }}
+        key: ${{ secrets.SOURCEFORGE_KEY }}
+        fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
         source: ${{ env.DEB_FILE }}
-        target: /home/frs/project/kde-rounded-corners/nightly/kubuntu2204/
+        target: /home/frs/project/kde-rounded-corners/nightly/kubuntu2204/${{ env.DEB_NAME }}_${{ github.job }}.deb
 
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build
