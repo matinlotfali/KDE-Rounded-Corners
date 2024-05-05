@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>658</width>
-    <height>592</height>
+    <height>594</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -161,7 +161,7 @@
                  <bool>true</bool>
                 </property>
                 <property name="arrowDirection">
-                 <enum>Qt::UpArrow</enum>
+                 <enum>Qt::ArrowType::UpArrow</enum>
                 </property>
                 <property name="firstColor">
                  <color alpha="0">
@@ -303,7 +303,7 @@
               <item row="2" column="0">
                <widget class="QRadioButton" name="kcfg_ActiveOutlineUsePalette">
                 <property name="text">
-                 <string>Use Decoration Color</string>
+                 <string>&amp;Use Decoration Color</string>
                 </property>
                </widget>
               </item>
@@ -313,7 +313,7 @@
               <item row="3" column="0">
                <widget class="QRadioButton" name="kcfg_ActiveOutlineUseCustom">
                 <property name="text">
-                 <string>Use Custom Color</string>
+                 <string>Use Custom Co&amp;lor</string>
                 </property>
                </widget>
               </item>
@@ -377,7 +377,7 @@
                  <bool>true</bool>
                 </property>
                 <property name="arrowDirection">
-                 <enum>Qt::UpArrow</enum>
+                 <enum>Qt::ArrowType::UpArrow</enum>
                 </property>
                 <property name="firstColor">
                  <color alpha="0">
@@ -618,7 +618,7 @@
                  <number>255</number>
                 </property>
                 <property name="arrowDirection">
-                 <enum>Qt::UpArrow</enum>
+                 <enum>Qt::ArrowType::UpArrow</enum>
                 </property>
                 <property name="firstColor">
                  <color alpha="0">
@@ -832,7 +832,7 @@
                  <number>255</number>
                 </property>
                 <property name="arrowDirection">
-                 <enum>Qt::UpArrow</enum>
+                 <enum>Qt::ArrowType::UpArrow</enum>
                 </property>
                 <property name="firstColor">
                  <color alpha="0">
@@ -999,7 +999,7 @@
        <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -1016,35 +1016,16 @@
        <string>Inclusions &amp;&amp; Exclusions</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="1" column="1">
-        <widget class="QPushButton" name="includeButton">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Include &gt;</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
+       <item row="10" column="0">
+        <widget class="QPushButton" name="refreshButton">
          <property name="maximumSize">
           <size>
-           <width>16777215</width>
-           <height>20</height>
+           <width>100</width>
+           <height>16777215</height>
           </size>
          </property>
          <property name="text">
-          <string>List of Current Open Windows:</string>
+          <string>Refresh</string>
          </property>
         </widget>
        </item>
@@ -1067,49 +1048,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
-        <widget class="QPushButton" name="deleteIncludeButton">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>&lt;</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QPushButton" name="refreshButton">
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Refresh</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="2" rowspan="2">
-        <widget class="QListWidget" name="InclusionList">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
-         <property name="showDropIndicator" stdset="0">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="2">
+       <item row="5" column="2">
         <widget class="QWidget" name="widget" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
@@ -1149,7 +1088,36 @@
          </layout>
         </widget>
        </item>
-       <item row="4" column="1">
+       <item row="1" column="0" rowspan="7">
+        <widget class="QListWidget" name="currentWindowList">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+         </property>
+         <property name="showDropIndicator" stdset="0">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QPushButton" name="includeButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Include &gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
         <widget class="QPushButton" name="excludeButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -1162,7 +1130,49 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
+       <item row="6" column="2" rowspan="2">
+        <widget class="QListWidget" name="ExclusionList">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+         </property>
+         <property name="showDropIndicator" stdset="0">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QCheckBox" name="kcfg_IncludeNormalWindow">
+         <property name="text">
+          <string>Include all normal windows</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2" rowspan="2">
+        <widget class="QListWidget" name="InclusionList">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+         </property>
+         <property name="showDropIndicator" stdset="0">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
         <widget class="QPushButton" name="deleteExcludeButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -1175,35 +1185,45 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="2" rowspan="2">
-        <widget class="QListWidget" name="ExclusionList">
+       <item row="4" column="1">
+        <widget class="QPushButton" name="deleteIncludeButton">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
-         <property name="showDropIndicator" stdset="0">
-          <bool>false</bool>
+         <property name="text">
+          <string>&lt;</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="0" rowspan="5">
-        <widget class="QListWidget" name="currentWindowList">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>20</height>
+          </size>
          </property>
-         <property name="showDropIndicator" stdset="0">
-          <bool>false</bool>
+         <property name="text">
+          <string>List of Current Open Windows:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QCheckBox" name="kcfg_IncludeDialogs">
+         <property name="text">
+          <string>Include all dialogs</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -1221,7 +1241,7 @@
   </customwidget>
   <customwidget>
    <class>KGradientSelector</class>
-   <extends>QWidget</extends>
+   <extends>QAbstractSlider</extends>
    <header>kselector.h</header>
   </customwidget>
  </customwidgets>
