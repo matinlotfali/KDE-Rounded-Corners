@@ -22,10 +22,14 @@ bool ShapeCornersWindow::isActive() const {
 }
 
 bool ShapeCornersWindow::hasEffect() const {
-    return (w->isNormalWindow()
-            || w->isDialog()
-            || ShapeCornersConfig::inclusions().contains(name))
-           && !ShapeCornersConfig::exclusions().contains(name);
+    return (
+        (
+            (w->isNormalWindow() && ShapeCornersConfig::includeNormalWindows())
+            || (w->isDialog() && ShapeCornersConfig::includeDialogs())
+            || ShapeCornersConfig::inclusions().contains(name)
+        )
+        && !ShapeCornersConfig::exclusions().contains(name)
+    );
 }
 
 bool ShapeCornersWindow::hasRoundCorners() const {

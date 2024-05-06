@@ -25,6 +25,8 @@
         <entry name="InactiveShadowColor" type="Color">
             <default>black</default>
         </entry>
+
+
         <entry name="OutlineThickness" type="Double">
             <default>1</default>
             <min>0</min>
@@ -69,6 +71,8 @@
         <entry name="InactiveOutlineUseCustom" type="Bool">
             <default>true</default>
         </entry>
+
+
         <entry name="ActiveShadowAlpha" type="Int">
             <default>255</default>
             <min>0</min>
@@ -97,10 +101,20 @@
         <entry name="InactiveShadowUseCustom" type="Bool">
             <default>false</default>
         </entry>
+
+
         <entry name="Inclusions" type="StringList">
         </entry>
         <entry name="Exclusions" type="StringList">
         </entry>
+        <entry name="IncludeNormalWindows" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="IncludeDialogs" type="Bool">
+            <default>true</default>
+        </entry>
+
+
         <entry name="DisableRoundTile" type="Bool">
             <default>true</default>
         </entry>
