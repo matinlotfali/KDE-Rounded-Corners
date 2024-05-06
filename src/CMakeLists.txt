@@ -14,6 +14,7 @@ kcoreaddons_add_plugin(kwin4_effect_shapecorners SOURCES ${effect_SRCS} INSTALL_
 target_link_libraries(kwin4_effect_shapecorners
     Qt${QT_MAJOR_VERSION}::DBus
     KF${QT_MAJOR_VERSION}::ConfigGui
+    KDecoration2::KDecoration
 )
 if(${QT_MAJOR_VERSION} EQUAL 6)
     target_link_libraries(kwin4_effect_shapecorners

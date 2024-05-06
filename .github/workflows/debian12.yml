@@ -34,7 +34,7 @@ jobs:
       run: |
         apt update 
         apt -y install --no-install-recommends aptitude
-        aptitude -y install --without-recommends cmake g++ gettext extra-cmake-modules qttools5-dev libkf5configwidgets-dev kwin-dev
+        aptitude -y install --without-recommends cmake g++ gettext extra-cmake-modules qttools5-dev libkf5configwidgets-dev kwin-dev libkdecorations2-dev
         aptitude -y install --without-recommends dpkg-dev file
     
     - name: Configure CMake

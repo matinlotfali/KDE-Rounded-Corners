@@ -11,6 +11,9 @@
 #else
 #include <kwineffects.h>
 #endif
+#include <KDecoration2/KDecoration2/Decoration>
+#include <KDecoration2/KDecoration2/DecorationShadow>
+#include <QImage>
 
 ShapeCornersWindow::ShapeCornersWindow(KWin::EffectWindow *w, const QString& name)
         : w(w), name(name)
@@ -40,4 +43,15 @@ bool ShapeCornersWindow::hasRoundCorners() const {
 bool ShapeCornersWindow::hasOutline() const {
     return !(isTiled && ShapeCornersConfig::disableOutlineTile() && !isMaximized)
         && !(isMaximized && ShapeCornersConfig::disableOutlineMaximize());
+}
+
+QColor ShapeCornersWindow::getShadowColor() const {
+    KDecoration2::Decoration* decoration = w->decoration();
+    if(decoration) {
+        KDecoration2::DecorationShadow* shadow = decoration->shadow().get();
+        if(shadow) {
+            return shadow->shadow().pixelColor(static_cast<int>(w->width() / 2), 10);
+        }
+    }
+    return {Qt::red};
 }

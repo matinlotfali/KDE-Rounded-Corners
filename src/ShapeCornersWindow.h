@@ -5,7 +5,8 @@
 #ifndef KWIN4_EFFECT_SHAPECORNERS_SHAPECORNERSWINDOW_H
 #define KWIN4_EFFECT_SHAPECORNERS_SHAPECORNERSWINDOW_H
 
-#include "QString"
+#include <QString>
+#include <QColor>
 
 namespace KWin
 {
@@ -25,6 +26,7 @@ struct ShapeCornersWindow
     [[nodiscard]] bool hasRoundCorners() const;
     [[nodiscard]] bool hasOutline() const;
     [[nodiscard]] bool hasEffect() const;
+    [[nodiscard]] QColor getShadowColor() const;
 };
 
 #endif //KWIN4_EFFECT_SHAPECORNERS_SHAPECORNERSWINDOW_H

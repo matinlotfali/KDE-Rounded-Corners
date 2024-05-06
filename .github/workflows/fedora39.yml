@@ -36,7 +36,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        dnf -y install cmake gcc-c++ extra-cmake-modules kwin-devel kf5-kconfigwidgets-devel libepoxy-devel
+        dnf -y install cmake gcc-c++ extra-cmake-modules kwin-devel kf5-kconfigwidgets-devel libepoxy-devel libkdecorations2-devel
         dnf -y install rpm-build
     
     - name: Configure CMake

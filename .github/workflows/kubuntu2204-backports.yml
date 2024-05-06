@@ -37,7 +37,7 @@ jobs:
       run: sudo add-apt-repository -y ppa:kubuntu-ppa/backports-extra
 
     - name: Install Dependencies
-      run: sudo aptitude install -y --without-recommends gettext extra-cmake-modules qttools5-dev libkf5configwidgets-dev kwin-dev
+      run: sudo aptitude install -y --without-recommends gettext extra-cmake-modules qttools5-dev libkf5configwidgets-dev kwin-dev libkdecorations2-dev
     
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
