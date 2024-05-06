@@ -36,7 +36,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        dnf -y install cmake gcc-c++ extra-cmake-modules kwin-devel kf6-kconfigwidgets-devel libepoxy-devel kf6-kcmutils-devel qt6-qtbase-private-devel wayland-devel libkdecorations2-devel
+        dnf -y install cmake gcc-c++ extra-cmake-modules kwin-devel kf6-kconfigwidgets-devel libepoxy-devel kf6-kcmutils-devel qt6-qtbase-private-devel wayland-devel kdecoration-devel
         dnf -y install rpm-build
     
     - name: Configure CMake
