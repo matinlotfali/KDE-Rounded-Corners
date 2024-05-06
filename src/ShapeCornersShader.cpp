@@ -46,6 +46,7 @@ bool ShapeCornersShader::IsValid() const {
 const std::unique_ptr<KWin::GLShader>&
 ShapeCornersShader::Bind(const ShapeCornersWindow &window, qreal scale) const {
     QColor outlineColor;
+    QColor shadowColor = window.getShadowColor();
     qreal shadowSize;
     auto& m_palette = m_widget->palette();
     auto frameGeometry = window.w->frameGeometry() * scale;
@@ -67,6 +68,7 @@ ShapeCornersShader::Bind(const ShapeCornersWindow &window, qreal scale) const {
             m_palette.color(QPalette::Active, static_cast<QPalette::ColorRole>(ShapeCornersConfig::activeOutlinePalette())):
             ShapeCornersConfig::outlineColor();
         outlineColor.setAlpha(window.hasOutline() ? ShapeCornersConfig::activeOutlineAlpha(): 0);
+        shadowColor.setAlpha(ShapeCornersConfig::activeShadowAlpha());
     } else {
         shadowSize = std::min(ShapeCornersConfig::inactiveShadowSize() * scale, max_shadow_size);
         m_shader->setUniform(m_shader_radius, static_cast<float>(ShapeCornersConfig::inactiveCornerRadius() * scale));
@@ -76,10 +78,11 @@ ShapeCornersShader::Bind(const ShapeCornersWindow &window, qreal scale) const {
                        m_palette.color(QPalette::Inactive, static_cast<QPalette::ColorRole>(ShapeCornersConfig::inactiveOutlinePalette())):
                        ShapeCornersConfig::inactiveOutlineColor();
         outlineColor.setAlpha(window.hasOutline() ? ShapeCornersConfig::inactiveOutlineAlpha(): 0);
+        shadowColor.setAlpha(ShapeCornersConfig::inactiveShadowAlpha());
     }
     m_shader->setUniform(m_shader_shadowSize, static_cast<float>(shadowSize));
     m_shader->setUniform(m_shader_outlineColor, outlineColor);
-    m_shader->setUniform(m_shader_shadowColor, window.getShadowColor());
+    m_shader->setUniform(m_shader_shadowColor, shadowColor);
     return m_shader;
 }
 
