@@ -11,17 +11,14 @@
             }
         ],
         "Category": "Appearance",
-        "Description": "An effect that shapes/rounds corners of windows.",
+        "Description": "An effect that shapes/rounds corners of windows with adjusted outlines and shadows.",
         "EnabledByDefault": true,
         "License": "GPL",
-        "Name": "ShapeCorners",
+        "Name": "Rounded Corners (formerly ShapeCorners)",
         "ServiceTypes": [
             "KWin/Effect"
         ],
         "Version": "git"
-    },
-    "org.kde.kwin.effect": {
-        "enabledByDefaultMethod": true
     },
     "X-KDE-Ordering": "5",
     "X-KDE-ConfigModule": "kwin_shapecorners_config"
