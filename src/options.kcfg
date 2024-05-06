@@ -19,12 +19,6 @@
             <default>20</default>
             <min>1</min>
         </entry>
-        <entry name="ShadowColor" type="Color">
-            <default>black</default>
-        </entry>
-        <entry name="InactiveShadowColor" type="Color">
-            <default>black</default>
-        </entry>
 
 
         <entry name="OutlineThickness" type="Double">
@@ -82,24 +76,6 @@
             <default>255</default>
             <min>0</min>
             <max>255</max>
-        </entry>
-        <entry name="ActiveShadowPalette" type="UInt">
-            <default>11</default>
-        </entry>
-        <entry name="InactiveShadowPalette" type="UInt">
-            <default>11</default>
-        </entry>
-        <entry name="ActiveShadowUsePalette" type="Bool">
-            <default>true</default>
-        </entry>
-        <entry name="InactiveShadowUsePalette" type="Bool">
-            <default>true</default>
-        </entry>
-        <entry name="ActiveShadowUseCustom" type="Bool">
-            <default>false</default>
-        </entry>
-        <entry name="InactiveShadowUseCustom" type="Bool">
-            <default>false</default>
         </entry>
 
 
