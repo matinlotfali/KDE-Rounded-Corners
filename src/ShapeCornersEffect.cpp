@@ -149,8 +149,10 @@ void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePa
 
 #if QT_VERSION_MAJOR >= 6
     const auto geo = w->frameGeometry() * w->screen()->scale();
+    const auto geoExp = w->expandedGeometry() * w->screen()->scale();
 #else
     const auto geo = w->frameGeometry() * KWin::effects->renderTargetScale();
+    const auto geoExp = w->expandedGeometry() * KWin::effects->renderTargetScale();
 #endif
 
     QRegion reg {};
@@ -161,6 +163,10 @@ void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePa
     data.opaque -= reg;
     data.paint += reg;
     data.setTranslucent();
+
+    auto needsRepaint = window_iterator->second.animateProperties(time);
+    if (needsRepaint)
+        data.paint += geoExp.toRect();
 
     OffscreenEffect::prePaintWindow(w, data, time);
 }

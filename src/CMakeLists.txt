@@ -5,6 +5,7 @@ set(effect_SRCS
     ShapeCornersShader.cpp
     ShapeCornersWindow.h
     ShapeCornersWindow.cpp
+    ShapeCornersColor.h
     plugin.cpp
 )
 

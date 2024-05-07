@@ -5,7 +5,12 @@
 #ifndef KWIN4_EFFECT_SHAPECORNERS_SHAPECORNERSWINDOW_H
 #define KWIN4_EFFECT_SHAPECORNERS_SHAPECORNERSWINDOW_H
 
-#include "QString"
+#include "ShapeCornersColor.h"
+
+#include <QString>
+#include <chrono>
+
+class QWidget;
 
 namespace KWin
 {
@@ -19,12 +24,26 @@ struct ShapeCornersWindow
     bool isTiled = false;
     bool isMaximized = false;
 
+    float shadowSize = 0;
+    ShapeCornersColor shadowColor = QColor(Qt::transparent);
+    ShapeCornersColor outlineColor = QColor(Qt::transparent);
+
     explicit ShapeCornersWindow(KWin::EffectWindow *w, const QString& name);
+
+    [[nodiscard]] bool animateProperties(std::chrono::milliseconds time);
 
     [[nodiscard]] bool isActive() const;
     [[nodiscard]] bool hasRoundCorners() const;
     [[nodiscard]] bool hasOutline() const;
     [[nodiscard]] bool hasEffect() const;
+
+private:
+    std::chrono::milliseconds m_last_time;
+
+    /**
+     * \brief Used only for its `palette()` function which holds the currently active highlight colors.
+     */
+    std::shared_ptr<QWidget> m_widget;
 };
 
 #endif //KWIN4_EFFECT_SHAPECORNERS_SHAPECORNERSWINDOW_H
