@@ -4,6 +4,7 @@
 
 #include "ShapeCornersShader.h"
 #include <QFile>
+#include <QStandardPaths>
 
 #if QT_VERSION_MAJOR >= 6
     #include <effect/effectwindow.h>
