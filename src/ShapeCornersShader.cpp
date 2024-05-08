@@ -3,9 +3,7 @@
 //
 
 #include "ShapeCornersShader.h"
-#include "ShapeCornersConfig.h"
 #include <QFile>
-#include <QWidget>
 
 #if QT_VERSION_MAJOR >= 6
     #include <effect/effectwindow.h>
@@ -54,13 +52,8 @@ ShapeCornersShader::Bind(const ShapeCornersWindow &window, qreal scale) const {
     m_shader->setUniform(m_shader_windowTopLeft, xy);
     m_shader->setUniform(m_shader_hasRoundCorners, window.hasRoundCorners());
     m_shader->setUniform(m_shader_front, 0);
-    if (window.isActive()) {
-        m_shader->setUniform(m_shader_radius, static_cast<float>(ShapeCornersConfig::size() * scale));
-        m_shader->setUniform(m_shader_outlineThickness, static_cast<float>(ShapeCornersConfig::outlineThickness() * scale));
-    } else {
-        m_shader->setUniform(m_shader_radius, static_cast<float>(ShapeCornersConfig::inactiveCornerRadius() * scale));
-        m_shader->setUniform(m_shader_outlineThickness, static_cast<float>(ShapeCornersConfig::inactiveOutlineThickness() * scale));
-    }
+    m_shader->setUniform(m_shader_radius, static_cast<float>(window.cornerRadius * scale));
+    m_shader->setUniform(m_shader_outlineThickness, static_cast<float>(window.outlineSize * scale));
     auto shadowSize = std::min(window.shadowSize * scale, max_shadow_size);
     m_shader->setUniform(m_shader_shadowSize, static_cast<float>(shadowSize));
     m_shader->setUniform(m_shader_outlineColor, window.outlineColor.toQColor());

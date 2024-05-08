@@ -43,21 +43,29 @@ bool ShapeCornersWindow::hasOutline() const {
         && !(isMaximized && ShapeCornersConfig::disableOutlineMaximize());
 }
 
+constexpr void clamp(float& value, const float& delta, const float& config) {
+    if (delta > 0)
+        value = std::min(value, config);
+    else if (delta < 0)
+        value = std::max(value, 0.0f);
+}
+
 bool ShapeCornersWindow::animateProperties(std::chrono::milliseconds time) {
     auto deltaTime = static_cast<float>((time - m_last_time).count());
-    auto& m_palette = m_widget.palette();
     m_last_time = time;
 
-    float deltaShadowSize;
-    ShapeCornersColor deltaShadowColor;
-    ShapeCornersColor deltaOutlineColor;
-
+    // find the destination value
+    float configCornerRadius;
     float configShadowSize;
+    float configOutlineSize;
     ShapeCornersColor configShadowColor;
     ShapeCornersColor configOutlineColor;
-
+    auto& m_palette = m_widget.palette();
     if (isActive()) {
+        configCornerRadius = static_cast<float>(ShapeCornersConfig::size());
         configShadowSize = static_cast<float>(ShapeCornersConfig::shadowSize());
+        configOutlineSize = static_cast<float>(ShapeCornersConfig::outlineThickness());
+
         configShadowColor = ShapeCornersColor(ShapeCornersConfig::activeShadowUsePalette() ?
           m_palette.color(QPalette::Active, static_cast<QPalette::ColorRole>(ShapeCornersConfig::activeShadowPalette())):
           ShapeCornersConfig::shadowColor());
@@ -68,7 +76,10 @@ bool ShapeCornersWindow::animateProperties(std::chrono::milliseconds time) {
                        ShapeCornersConfig::outlineColor());
         configOutlineColor.setAlpha(hasOutline() ? ShapeCornersConfig::activeOutlineAlpha(): 0);
     } else {
+        configCornerRadius = static_cast<float>(ShapeCornersConfig::inactiveCornerRadius());
         configShadowSize = static_cast<float>(ShapeCornersConfig::inactiveShadowSize());
+        configOutlineSize = static_cast<float>(ShapeCornersConfig::inactiveOutlineThickness());
+
         configShadowColor = ShapeCornersColor(ShapeCornersConfig::inactiveShadowUsePalette() ?
                       m_palette.color(QPalette::Inactive, static_cast<QPalette::ColorRole>(ShapeCornersConfig::inactiveShadowPalette())):
                       ShapeCornersConfig::inactiveShadowColor());
@@ -80,19 +91,31 @@ bool ShapeCornersWindow::animateProperties(std::chrono::milliseconds time) {
         configOutlineColor.setAlpha(hasOutline() ? ShapeCornersConfig::inactiveOutlineAlpha(): 0);
     }
 
-    deltaShadowSize = (configShadowSize - shadowSize)*5 / deltaTime;
-    deltaShadowColor = (configShadowColor - shadowColor) / deltaTime;
-    deltaOutlineColor = (configOutlineColor - outlineColor) / deltaTime;
+    // calculate the animation step
+    auto deltaCornerRadius = (configCornerRadius - cornerRadius)*5 / deltaTime;
+    auto deltaShadowSize = (configShadowSize - shadowSize)*5 / deltaTime;
+    auto deltaOutlineSize = (configOutlineSize - outlineSize)*5 / deltaTime;
+    auto deltaShadowColor = (configShadowColor - shadowColor) / deltaTime;
+    auto deltaOutlineColor = (configOutlineColor - outlineColor) / deltaTime;
 
+    // adjust decimal precision
+    deltaCornerRadius = std::round(deltaCornerRadius * 100) / 100;
     deltaShadowSize = std::round(deltaShadowSize * 100) / 100;
+    deltaOutlineSize = std::round(deltaOutlineSize * 100) / 100;
     deltaShadowColor.round(3);
     deltaOutlineColor.round(3);
 
+    // adjust properties
+    cornerRadius += deltaCornerRadius;
     shadowSize += deltaShadowSize;
+    outlineSize += deltaOutlineSize;
     shadowColor += deltaShadowColor;
     outlineColor += deltaOutlineColor;
 
-    shadowSize = std::clamp(shadowSize, 0.0f, configShadowSize);
+    // check boundaries after adjusting
+    clamp(cornerRadius, deltaCornerRadius, configCornerRadius);
+    clamp(shadowSize, deltaShadowSize, configShadowSize);
+    clamp(outlineSize, deltaOutlineSize, configOutlineSize);
     shadowColor.clamp();
     outlineColor.clamp();
 

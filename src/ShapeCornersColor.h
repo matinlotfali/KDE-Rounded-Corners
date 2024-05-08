@@ -11,20 +11,31 @@
 
 struct ShapeCornersColor {
 
-    float r,g,b,a;
+    float r;
+    float g;
+    float b;
+    float a;
 
-    constexpr ShapeCornersColor() : r(0), g(0), b(0), a(0) { };
-    explicit ShapeCornersColor(const QColor& color):
-        r(color.redF()),
-        g(color.greenF()),
-        b(color.blueF()),
-        a(color.alphaF()) { }
+    constexpr ShapeCornersColor() :
+        r(0),
+        g(0),
+        b(0),
+        a(0) { };
+    explicit ShapeCornersColor(const QColor& color) :
+        r(static_cast<float>(color.redF())),
+        g(static_cast<float>(color.greenF())),
+        b(static_cast<float>(color.blueF())),
+        a(static_cast<float>(color.alphaF())) { }
     constexpr ShapeCornersColor(int r, int g, int b, int a = 255) :
         r(static_cast<float>(r)/255.0f),
         g(static_cast<float>(g)/255.0f),
         b(static_cast<float>(b)/255.0f),
         a(static_cast<float>(a)/255.0f) { }
-    constexpr ShapeCornersColor(float r, float g, float b, float a = 1.0f): r(r), g(g), b(b), a(a) { }
+    constexpr ShapeCornersColor(float r, float g, float b, float a = 1.0f) :
+        r(r),
+        g(g),
+        b(b),
+        a(a) { }
 
     constexpr ShapeCornersColor operator- (const ShapeCornersColor& c) const {
         return {
@@ -42,7 +53,6 @@ struct ShapeCornersColor {
             a + c.b
         };
     }
-
     template<typename T>
     constexpr ShapeCornersColor operator* (const T& f) const {
         return {
@@ -61,7 +71,14 @@ struct ShapeCornersColor {
             a / f
         };
     }
-    [[nodiscard]] constexpr bool isZero() const { return r==0 && g==0 && b==0 && a==0; }
+    [[nodiscard]] constexpr bool isZero() const {
+        return (
+            r==0 &&
+            g==0 &&
+            b==0 &&
+            a==0
+        );
+    }
     [[nodiscard]] QColor toQColor() const {
         QColor result = {};
         result.setRedF(r);
@@ -75,14 +92,12 @@ struct ShapeCornersColor {
         ss << "[ "<< r << " , " << g << " , " << b << " , " << a << " ]";
         return ss.str();
     }
-
     constexpr void operator+= (const ShapeCornersColor& c) {
         r += c.r;
         g += c.g;
         b += c.g;
         a += c.a;
     }
-
     constexpr void round(uint8_t decimals) {
         double d = std::pow(10,decimals);
         r = static_cast<float>(std::round(r * d)/ d);
@@ -96,10 +111,18 @@ struct ShapeCornersColor {
         b = std::clamp(b, 0.0f, 1.0f);
         a = std::clamp(a, 0.0f, 1.0f);
     }
-
-    constexpr void setAlpha(int alpha) { a = static_cast<float>(alpha)/255.0f; }
-
-
+    constexpr void setAlpha(int alpha){
+        a = static_cast<float>(alpha)/255.0f;
+    }
+    constexpr void setRed(int red){
+        a = static_cast<float>(red)/255.0f;
+    }
+    constexpr void setGreen(int green){
+        a = static_cast<float>(green)/255.0f;
+    }
+    constexpr void setBlue(int blue){
+        a = static_cast<float>(blue)/255.0f;
+    }
 };
 
 #endif //KWIN4_EFFECT_SHAPECORNERS_SHAPECORNERSCOLOR_H
