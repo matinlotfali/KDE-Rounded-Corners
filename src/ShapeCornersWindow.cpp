@@ -11,11 +11,11 @@
 #else
 #include <kwineffects.h>
 #endif
-#include <QWidget>
+
+QWidget ShapeCornersWindow::m_widget {};
 
 ShapeCornersWindow::ShapeCornersWindow(KWin::EffectWindow *w, const QString& name)
-        : w(w), name(name),
-          m_widget(new QWidget)
+        : w(w), name(name)
 { }
 
 bool ShapeCornersWindow::isActive() const {
@@ -45,7 +45,7 @@ bool ShapeCornersWindow::hasOutline() const {
 
 bool ShapeCornersWindow::animateProperties(std::chrono::milliseconds time) {
     auto deltaTime = static_cast<float>((time - m_last_time).count());
-    auto& m_palette = m_widget->palette();
+    auto& m_palette = m_widget.palette();
     m_last_time = time;
 
     float deltaShadowSize;

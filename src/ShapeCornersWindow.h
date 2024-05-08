@@ -7,8 +7,10 @@
 
 #include "ShapeCornersColor.h"
 
+#include <QWidget>
 #include <QString>
 #include <chrono>
+#include <memory>
 
 class QWidget;
 
@@ -43,7 +45,7 @@ private:
     /**
      * \brief Used only for its `palette()` function which holds the currently active highlight colors.
      */
-    std::shared_ptr<QWidget> m_widget;
+    static QWidget m_widget;
 };
 
 #endif //KWIN4_EFFECT_SHAPECORNERS_SHAPECORNERSWINDOW_H
