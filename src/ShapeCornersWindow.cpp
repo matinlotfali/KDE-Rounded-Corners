@@ -16,8 +16,7 @@
 ShapeCornersWindow::ShapeCornersWindow(KWin::EffectWindow *w, const QString& name)
         : w(w), name(name),
           m_widget(new QWidget)
-{
-}
+{ }
 
 bool ShapeCornersWindow::isActive() const {
     return KWin::effects->activeWindow() == w;
@@ -53,45 +52,53 @@ bool ShapeCornersWindow::animateProperties(std::chrono::milliseconds time) {
     ShapeCornersColor deltaShadowColor;
     ShapeCornersColor deltaOutlineColor;
 
-    uint configShadowSize;
+    float configShadowSize;
     ShapeCornersColor configShadowColor;
     ShapeCornersColor configOutlineColor;
 
     if (isActive()) {
-        configShadowSize = ShapeCornersConfig::shadowSize();
-        configShadowColor = ShapeCornersConfig::activeShadowUsePalette() ?
+        configShadowSize = static_cast<float>(ShapeCornersConfig::shadowSize());
+        configShadowColor = ShapeCornersColor(ShapeCornersConfig::activeShadowUsePalette() ?
           m_palette.color(QPalette::Active, static_cast<QPalette::ColorRole>(ShapeCornersConfig::activeShadowPalette())):
-          ShapeCornersConfig::shadowColor();
+          ShapeCornersConfig::shadowColor());
         configShadowColor.setAlpha(ShapeCornersConfig::activeShadowAlpha());
 
-        configOutlineColor = ShapeCornersConfig::activeOutlineUsePalette() ?
+        configOutlineColor = ShapeCornersColor(ShapeCornersConfig::activeOutlineUsePalette() ?
                        m_palette.color(QPalette::Active, static_cast<QPalette::ColorRole>(ShapeCornersConfig::activeOutlinePalette())):
-                       ShapeCornersConfig::outlineColor();
+                       ShapeCornersConfig::outlineColor());
         configOutlineColor.setAlpha(hasOutline() ? ShapeCornersConfig::activeOutlineAlpha(): 0);
     } else {
-        configShadowSize = ShapeCornersConfig::inactiveShadowSize();
-        configShadowColor = ShapeCornersConfig::inactiveShadowUsePalette() ?
+        configShadowSize = static_cast<float>(ShapeCornersConfig::inactiveShadowSize());
+        configShadowColor = ShapeCornersColor(ShapeCornersConfig::inactiveShadowUsePalette() ?
                       m_palette.color(QPalette::Inactive, static_cast<QPalette::ColorRole>(ShapeCornersConfig::inactiveShadowPalette())):
-                      ShapeCornersConfig::inactiveShadowColor();
+                      ShapeCornersConfig::inactiveShadowColor());
         configShadowColor.setAlpha(ShapeCornersConfig::inactiveShadowAlpha());
 
-        configOutlineColor = ShapeCornersConfig::inactiveOutlineUsePalette() ?
+        configOutlineColor = ShapeCornersColor(ShapeCornersConfig::inactiveOutlineUsePalette() ?
                        m_palette.color(QPalette::Inactive, static_cast<QPalette::ColorRole>(ShapeCornersConfig::inactiveOutlinePalette())):
-                       ShapeCornersConfig::inactiveOutlineColor();
+                       ShapeCornersConfig::inactiveOutlineColor());
         configOutlineColor.setAlpha(hasOutline() ? ShapeCornersConfig::inactiveOutlineAlpha(): 0);
     }
 
-    deltaShadowSize = (static_cast<float>(configShadowSize) - shadowSize)*5 / deltaTime;
+    deltaShadowSize = (configShadowSize - shadowSize)*5 / deltaTime;
     deltaShadowColor = (configShadowColor - shadowColor) / deltaTime;
     deltaOutlineColor = (configOutlineColor - outlineColor) / deltaTime;
+
+    deltaShadowSize = std::round(deltaShadowSize * 100) / 100;
+    deltaShadowColor.round(3);
+    deltaOutlineColor.round(3);
 
     shadowSize += deltaShadowSize;
     shadowColor += deltaShadowColor;
     outlineColor += deltaOutlineColor;
 
+    shadowSize = std::clamp(shadowSize, 0.0f, configShadowSize);
+    shadowColor.clamp();
+    outlineColor.clamp();
+
     return (
-        std::round(deltaShadowSize*100) != 0
-        && deltaShadowColor.isZero()
-        && deltaOutlineColor.isZero()
+        deltaShadowSize != 0
+        || !deltaShadowColor.isZero()
+        || !deltaOutlineColor.isZero()
     );
 }

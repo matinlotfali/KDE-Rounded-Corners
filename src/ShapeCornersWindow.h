@@ -25,8 +25,8 @@ struct ShapeCornersWindow
     bool isMaximized = false;
 
     float shadowSize = 0;
-    ShapeCornersColor shadowColor = QColor(Qt::transparent);
-    ShapeCornersColor outlineColor = QColor(Qt::transparent);
+    ShapeCornersColor shadowColor = {};
+    ShapeCornersColor outlineColor = {};
 
     explicit ShapeCornersWindow(KWin::EffectWindow *w, const QString& name);
 
