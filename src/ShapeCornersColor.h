@@ -7,6 +7,7 @@
 
 #include <QColor>
 #include <sstream>
+#include <cmath>
 
 struct ShapeCornersColor {
 
