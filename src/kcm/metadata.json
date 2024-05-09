@@ -1,6 +1,6 @@
 {
     "KPlugin": {
-        "Name": "ShapeCorners",
+        "Name": "Rounded Corners (formerly ShapeCorners)",
         "ServiceTypes": [
             "KCModule"
         ]

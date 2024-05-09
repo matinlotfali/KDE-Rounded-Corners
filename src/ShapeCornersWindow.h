@@ -26,9 +26,9 @@ struct ShapeCornersWindow
     bool isTiled = false;
     bool isMaximized = false;
 
-    float cornerRadius = 0;
-    float shadowSize = 0;
-    float outlineSize = 0;
+    float cornerRadius = -1;
+    float shadowSize = -1;
+    float outlineSize = -1;
     ShapeCornersColor shadowColor = {};
     ShapeCornersColor outlineColor = {};
 

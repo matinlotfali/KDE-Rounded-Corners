@@ -91,10 +91,23 @@ bool ShapeCornersWindow::animateProperties(std::chrono::milliseconds time) {
         configOutlineColor.setAlpha(hasOutline() ? ShapeCornersConfig::inactiveOutlineAlpha(): 0);
     }
 
+    // if the properties are not initialized yet, don't animate them.
+    if (!ShapeCornersConfig::animationEnabled()
+        || cornerRadius == -1
+        || shadowSize == -1
+        || outlineSize == -1) {
+            cornerRadius = configCornerRadius;
+            shadowSize = configShadowSize;
+            outlineSize = configOutlineSize;
+            shadowColor = configShadowColor;
+            outlineColor = configOutlineColor;
+            return false;
+    }
+
     // calculate the animation step
-    auto deltaCornerRadius = (configCornerRadius - cornerRadius)*5 / deltaTime;
-    auto deltaShadowSize = (configShadowSize - shadowSize)*5 / deltaTime;
-    auto deltaOutlineSize = (configOutlineSize - outlineSize)*5 / deltaTime;
+    auto deltaCornerRadius = (configCornerRadius - cornerRadius) / deltaTime;
+    auto deltaShadowSize = (configShadowSize - shadowSize) / deltaTime;
+    auto deltaOutlineSize = (configOutlineSize - outlineSize) / deltaTime;
     auto deltaShadowColor = (configShadowColor - shadowColor) / deltaTime;
     auto deltaOutlineColor = (configOutlineColor - outlineColor) / deltaTime;
 
@@ -104,6 +117,15 @@ bool ShapeCornersWindow::animateProperties(std::chrono::milliseconds time) {
     deltaOutlineSize = std::round(deltaOutlineSize * 100) / 100;
     deltaShadowColor.round(3);
     deltaOutlineColor.round(3);
+
+    // return false if the animation is over
+    if (deltaCornerRadius == 0
+        && deltaShadowSize == 0
+        && deltaOutlineSize == 0
+        && deltaShadowColor.isZero()
+        && deltaOutlineColor.isZero()) {
+            return false;
+    }
 
     // adjust properties
     cornerRadius += deltaCornerRadius;
@@ -119,9 +141,6 @@ bool ShapeCornersWindow::animateProperties(std::chrono::milliseconds time) {
     shadowColor.clamp();
     outlineColor.clamp();
 
-    return (
-        deltaShadowSize != 0
-        || !deltaShadowColor.isZero()
-        || !deltaOutlineColor.isZero()
-    );
+    // return True if the animation is still in progress
+    return true;
 }
