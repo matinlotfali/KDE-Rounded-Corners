@@ -51,7 +51,7 @@ constexpr void clamp(float& value, const float& delta, const float& config) {
 }
 
 bool ShapeCornersWindow::animateProperties(std::chrono::milliseconds time) {
-    auto deltaTime = static_cast<float>((time - m_last_time).count());
+    auto deltaTime = std::clamp(static_cast<float>((time - m_last_time).count()), 1.0f, 1000.0f);
     m_last_time = time;
 
     // find the destination value
