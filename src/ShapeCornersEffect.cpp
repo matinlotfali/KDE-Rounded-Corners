@@ -137,33 +137,34 @@ void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePa
     auto window_iterator = m_managed.find(w);
     if (!m_shaderManager.IsValid()
         || window_iterator == m_managed.end()
-        || !window_iterator->second.hasEffect()
-        || !window_iterator->second.hasRoundCorners())
+        || !window_iterator->second.hasEffect())
     {
         Effect::prePaintWindow(w, data, time);
         return;
     }
 
-    const auto size = window_iterator->second.isActive() ? ShapeCornersConfig::size(): ShapeCornersConfig::inactiveCornerRadius();
-
-#if QT_VERSION_MAJOR >= 6
-    const auto geo = w->frameGeometry() * w->screen()->scale();
-#else
-    const auto geo = w->frameGeometry() * KWin::effects->renderTargetScale();
-#endif
-
-    QRegion reg {};
-    reg += QRect(geo.x(), geo.y(), size, size);
-    reg += QRect(geo.x()+geo.width()-size, geo.y(), size, size);
-    reg += QRect(geo.x(), geo.y()+geo.height()-size, size, size);
-    reg += QRect(geo.x()+geo.width()-size, geo.y()+geo.height()-size, size, size);
-    data.opaque -= reg;
-    data.paint += reg;
-    data.setTranslucent();
-
     auto needsRepaint = window_iterator->second.animateProperties(time);
     if (needsRepaint)
         w->addRepaintFull();
+
+    if(window_iterator->second.hasRoundCorners()) {
+#if QT_VERSION_MAJOR >= 6
+        const auto geo = w->frameGeometry() * w->screen()->scale();
+        const auto size = window_iterator->second.cornerRadius * w->screen()->scale();
+#else
+        const auto geo = w->frameGeometry() * KWin::effects->renderTargetScale();
+        const auto size = window_iterator->second.cornerRadius * KWin::effects->renderTargetScale();
+#endif
+
+        QRegion reg{};
+        reg += QRect(geo.x(), geo.y(), size, size);
+        reg += QRect(geo.x() + geo.width() - size, geo.y(), size, size);
+        reg += QRect(geo.x(), geo.y() + geo.height() - size, size, size);
+        reg += QRect(geo.x() + geo.width() - size, geo.y() + geo.height() - size, size, size);
+        data.opaque -= reg;
+        data.paint += reg;
+        data.setTranslucent();
+    }
 
     OffscreenEffect::prePaintWindow(w, data, time);
 }
