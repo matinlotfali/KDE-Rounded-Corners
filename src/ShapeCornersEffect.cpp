@@ -59,9 +59,6 @@ ShapeCornersEffect::ShapeCornersEffect()
             windowAdded(win);
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &ShapeCornersEffect::windowAdded);
         connect(KWin::effects, &KWin::EffectsHandler::windowDeleted, this, &ShapeCornersEffect::windowRemoved);
-#if QT_VERSION_MAJOR < 6
-        connect(KWin::effects, &KWin::EffectsHandler::windowFrameGeometryChanged, this, &ShapeCornersEffect::windowResized);
-#endif
     }
 }
 
@@ -107,6 +104,8 @@ ShapeCornersEffect::windowAdded(KWin::EffectWindow *w)
 
 #if QT_VERSION_MAJOR >= 6
     connect(w, &KWin::EffectWindow::windowFrameGeometryChanged, this, &ShapeCornersEffect::windowResized);
+#else
+    connect(KWin::effects, &KWin::EffectsHandler::windowFrameGeometryChanged, this, &ShapeCornersEffect::windowResized);
 #endif
     redirect(w);
     setShader(w, m_shaderManager.GetShader().get());
@@ -161,6 +160,10 @@ void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePa
     data.opaque -= reg;
     data.paint += reg;
     data.setTranslucent();
+
+    auto needsRepaint = window_iterator->second.animateProperties(time);
+    if (needsRepaint)
+        w->addRepaintFull();
 
     OffscreenEffect::prePaintWindow(w, data, time);
 }

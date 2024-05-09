@@ -8,9 +8,6 @@
 #include "ShapeCornersWindow.h"
 #include <QRectF>
 #include <QVector2D>
-#include <memory>
-
-class QWidget;
 
 namespace KWin {
     class GLShader;
@@ -64,11 +61,6 @@ private:
      * \brief An instance of `ShaderManager` used to load shader from file and push/pop the shader for each render.
      */
     KWin::ShaderManager* m_manager;
-
-    /**
-     * \brief Used only for its `palette()` function which holds the currently active highlight colors.
-     */
-    std::shared_ptr<QWidget> m_widget;
 
     /**
      * \brief Reference to `uniform vec2 windowSize;`
