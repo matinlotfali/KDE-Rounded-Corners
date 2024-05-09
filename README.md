@@ -32,7 +32,7 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
       ![](https://img.shields.io/badge/Plasma-6.0-lightgreen)
       [![](https://img.shields.io/aur/maintainer/kwin-effect-rounded-corners-git?label=AUR%20Maintainer) ![](https://img.shields.io/aur/votes/kwin-effect-rounded-corners-git?label=AUR%20Votes)](https://aur.archlinux.org/packages/kwin-effect-rounded-corners-git)
 
-![After](screenshots/shadows2.png)
+https://github.com/matinlotfali/KDE-Rounded-Corners/assets/7337168/7081f1c8-9fa5-440f-90b5-28b2fb04546a
 
 # Contributions:
 
@@ -40,6 +40,7 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 - Compatibility with KWin for Plasma versions 5.27 to 6.0
 - Compatibility with HDR in Plasma 6.0
 - Optimize the effect to render once instead of 5 times - see [#49](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/49)
+- Smooth animation when a window moves to an active state
 - Reimplementation with shaders to include shadows at corners and an outline
 - Ability to disable effect when windows get maximized or tiled
 - Cleanups for the plugin logic, remove unneeded dependencies from CMakeLists.txt file - by [alex1701c](https://github.com/alex1701c)
