@@ -50,7 +50,7 @@ constexpr void clamp(float& value, const float& delta, const float& config) {
         value = std::max(value, 0.0f);
 }
 
-bool ShapeCornersWindow::animateProperties(std::chrono::milliseconds time) {
+void ShapeCornersWindow::animateProperties(std::chrono::milliseconds time) {
     auto deltaTime = std::clamp(static_cast<float>((time - m_last_time).count()), 1.0f, 1000.0f);
     m_last_time = time;
 
@@ -101,7 +101,7 @@ bool ShapeCornersWindow::animateProperties(std::chrono::milliseconds time) {
             outlineSize = configOutlineSize;
             shadowColor = configShadowColor;
             outlineColor = configOutlineColor;
-            return false;
+            return;
     }
 
     // calculate the animation step
@@ -124,7 +124,7 @@ bool ShapeCornersWindow::animateProperties(std::chrono::milliseconds time) {
         && deltaOutlineSize == 0
         && deltaShadowColor.isZero()
         && deltaOutlineColor.isZero()) {
-            return false;
+            return;
     }
 
     // adjust properties
@@ -141,6 +141,6 @@ bool ShapeCornersWindow::animateProperties(std::chrono::milliseconds time) {
     shadowColor.clamp();
     outlineColor.clamp();
 
-    // return True if the animation is still in progress
-    return true;
+    // the animation is still in progress
+    w->addRepaintFull();
 }

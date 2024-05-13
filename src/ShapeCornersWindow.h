@@ -34,7 +34,7 @@ struct ShapeCornersWindow
 
     explicit ShapeCornersWindow(KWin::EffectWindow *w, const QString& name);
 
-    [[nodiscard]] bool animateProperties(std::chrono::milliseconds time);
+    void animateProperties(std::chrono::milliseconds time);
 
     [[nodiscard]] bool isActive() const;
     [[nodiscard]] bool hasRoundCorners() const;

@@ -143,9 +143,7 @@ void ShapeCornersEffect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePa
         return;
     }
 
-    auto needsRepaint = window_iterator->second.animateProperties(time);
-    if (needsRepaint)
-        w->addRepaintFull();
+    window_iterator->second.animateProperties(time);
 
     if(window_iterator->second.hasRoundCorners()) {
 #if QT_VERSION_MAJOR >= 6
