@@ -27,8 +27,11 @@ sequenceDiagram
             ShapeCornersWindow-)EffectWindow: addFullRepaint()
         end
         ShapeCornersWindow-->>-ShapeCornersEffect: done
-        Note over ShapeCornersEffect: Adjust painting<br>at corners
+        alt window has round corners
+            ShapeCornersEffect-)EffectWindow: add paint / remove opaque / set translucent
+        end
         ShapeCornersEffect->>+OffscreenEffect: OffscreenEffect::<br>prePaintWindow()
+        EffectWindow-->>OffscreenEffect: notifies painting parameters 
         OffscreenEffect-->>-ShapeCornersEffect: done
         ShapeCornersEffect-->>-KWin: done prePaint
         
