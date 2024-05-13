@@ -2,13 +2,13 @@
 
 ```mermaid
 sequenceDiagram
-    Box gray KWin
+    Box beige KWin
         participant KWin
         participant EffectWindow
         participant ShaderManager
         participant OffscreenEffect
     end
-    Box darkred kwin4_shapecorners_effect
+    Box kwin4_shapecorners_effect
         participant ShapeCornersEffect
         participant ShapeCornersShader
         participant shapecorners.frag
@@ -47,7 +47,7 @@ sequenceDiagram
                 ShaderManager->>+shapecorners.frag: render shader
                 shapecorners.frag-->>-ShaderManager: done
             end
-            ShaderManager-->>-OffscreenEffect: render window
+            ShaderManager-->>-OffscreenEffect: done
             OffscreenEffect-->>-ShapeCornersEffect: done
             ShapeCornersEffect->>+ShapeCornersShader: Unbind()
             ShapeCornersShader-)ShaderManager: popShader()
