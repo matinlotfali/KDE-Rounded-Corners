@@ -42,7 +42,7 @@ struct ShapeCornersColor {
             r - c.r,
             g - c.g,
             b - c.b,
-            a - c.b
+            a - c.a
         };
     }
     constexpr ShapeCornersColor operator+ (const ShapeCornersColor& c) const {
@@ -50,7 +50,7 @@ struct ShapeCornersColor {
             r + c.r,
             g + c.g,
             b + c.b,
-            a + c.b
+            a + c.a
         };
     }
     template<typename T>
@@ -95,7 +95,7 @@ struct ShapeCornersColor {
     constexpr void operator+= (const ShapeCornersColor& c) {
         r += c.r;
         g += c.g;
-        b += c.g;
+        b += c.b;
         a += c.a;
     }
     constexpr void round(uint8_t decimals) {
