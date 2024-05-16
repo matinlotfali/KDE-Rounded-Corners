@@ -50,9 +50,7 @@ constexpr void clamp(float& value, const float& delta, const float& config) {
         value = std::max(value, 0.0f);
 }
 
-void ShapeCornersWindow::animateProperties(std::chrono::milliseconds time) {
-    auto deltaTime = std::clamp(static_cast<float>((time - m_last_time).count()), 1.0f, 1000.0f);
-    m_last_time = time;
+void ShapeCornersWindow::animateProperties(const std::chrono::milliseconds& time) {
 
     // find the destination value
     float configCornerRadius;
@@ -60,7 +58,7 @@ void ShapeCornersWindow::animateProperties(std::chrono::milliseconds time) {
     float configOutlineSize;
     ShapeCornersColor configShadowColor;
     ShapeCornersColor configOutlineColor;
-    auto& m_palette = m_widget.palette();
+    const QPalette& m_palette = m_widget.palette();
     if (isActive()) {
         configCornerRadius = static_cast<float>(ShapeCornersConfig::size());
         configShadowSize = static_cast<float>(ShapeCornersConfig::shadowSize());
@@ -104,6 +102,11 @@ void ShapeCornersWindow::animateProperties(std::chrono::milliseconds time) {
             return;
     }
 
+    auto deltaTime = static_cast<float>((time - m_last_time).count());
+    m_last_time = time;
+    if (deltaTime <= 0)
+        return;
+
     // calculate the animation step
     auto deltaCornerRadius = (configCornerRadius - cornerRadius) / deltaTime;
     auto deltaShadowSize = (configShadowSize - shadowSize) / deltaTime;
@@ -112,11 +115,11 @@ void ShapeCornersWindow::animateProperties(std::chrono::milliseconds time) {
     auto deltaOutlineColor = (configOutlineColor - outlineColor) / deltaTime;
 
     // adjust decimal precision
-    deltaCornerRadius = std::round(deltaCornerRadius * 100) / 100;
-    deltaShadowSize = std::round(deltaShadowSize * 100) / 100;
-    deltaOutlineSize = std::round(deltaOutlineSize * 100) / 100;
-    deltaShadowColor.round(3);
-    deltaOutlineColor.round(3);
+    deltaCornerRadius = std::round(deltaCornerRadius * 10) / 10;
+    deltaShadowSize = std::round(deltaShadowSize * 10) / 10;
+    deltaOutlineSize = std::round(deltaOutlineSize * 10) / 10;
+    deltaShadowColor.round(2);
+    deltaOutlineColor.round(2);
 
     // return false if the animation is over
     if (deltaCornerRadius == 0
@@ -124,6 +127,11 @@ void ShapeCornersWindow::animateProperties(std::chrono::milliseconds time) {
         && deltaOutlineSize == 0
         && deltaShadowColor.isZero()
         && deltaOutlineColor.isZero()) {
+#ifdef QT_DEBUG
+            if (repaintCount > 0)
+                qDebug() << "ShapeCorners: repainted" << name << repaintCount << "times for animation.";
+            repaintCount = 0;
+#endif
             return;
     }
 
@@ -142,5 +150,8 @@ void ShapeCornersWindow::animateProperties(std::chrono::milliseconds time) {
     outlineColor.clamp();
 
     // the animation is still in progress
+#ifdef QT_DEBUG
+    repaintCount++;
+#endif
     w->addRepaintFull();
 }

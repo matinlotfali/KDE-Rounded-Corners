@@ -32,9 +32,13 @@ struct ShapeCornersWindow
     ShapeCornersColor shadowColor = {};
     ShapeCornersColor outlineColor = {};
 
+#ifdef QT_DEBUG
+    uint32_t repaintCount = 0;
+#endif
+
     explicit ShapeCornersWindow(KWin::EffectWindow *w, const QString& name);
 
-    void animateProperties(std::chrono::milliseconds time);
+    void animateProperties(const std::chrono::milliseconds& time);
 
     [[nodiscard]] bool isActive() const;
     [[nodiscard]] bool hasRoundCorners() const;
