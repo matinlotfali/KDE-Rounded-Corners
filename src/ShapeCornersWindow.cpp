@@ -118,8 +118,8 @@ void ShapeCornersWindow::animateProperties(const std::chrono::milliseconds& time
     deltaCornerRadius = std::round(deltaCornerRadius * 10) / 10;
     deltaShadowSize = std::round(deltaShadowSize * 10) / 10;
     deltaOutlineSize = std::round(deltaOutlineSize * 10) / 10;
-    deltaShadowColor.round(2);
-    deltaOutlineColor.round(2);
+    deltaShadowColor.round();
+    deltaOutlineColor.round();
 
     // return false if the animation is over
     if (deltaCornerRadius == 0
