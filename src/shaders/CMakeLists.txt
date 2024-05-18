@@ -5,17 +5,17 @@ set(SED_COMMAND sed -e "/#include \"shapecorners.glsl\"/ { r ${CMAKE_SOURCE_DIR}
 
 add_custom_target(
     shaders ALL
-    DEPENDS shapecorners.frag shapecorners_core.frag
-)
-add_custom_command(
-    OUTPUT
-        shapecorners.frag
-        shapecorners_core.frag
     COMMAND ${SED_COMMAND} "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_SHADER}" > "${CMAKE_CURRENT_BINARY_DIR}/shapecorners.frag"
     COMMAND ${SED_COMMAND} "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_SHADER_CORE}" > "${CMAKE_CURRENT_BINARY_DIR}/shapecorners_core.frag"
     DEPENDS
-        "${SOURCE_SHADER}"
-        "${SOURCE_SHADER_CORE}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_SHADER}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_SHADER_CORE}"
+    SOURCES
+        "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_SHADER}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_SHADER_CORE}"
+    BYPRODUCTS
+        "${CMAKE_CURRENT_BINARY_DIR}/shapecorners.frag"
+        "${CMAKE_CURRENT_BINARY_DIR}/shapecorners_core.frag"
     VERBATIM
     COMMENT "Merging shapecorners.glsl: shapecorners.frag and shapecorners_core.frag"
 )
