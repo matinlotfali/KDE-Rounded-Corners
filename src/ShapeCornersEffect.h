@@ -35,7 +35,6 @@ public:
     ~ShapeCornersEffect() override;
 
     static bool supported();
-    static bool enabledByDefault() { return supported(); }
 
     void reconfigure(ReconfigureFlags flags) override;
     void prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time) override;
