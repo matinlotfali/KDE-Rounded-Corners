@@ -2,7 +2,8 @@
 // Created by matin on 20/07/22.
 //
 
-#include "ShapeCornersShader.h"
+#include "Shader.h"
+#include "Window.h"
 #include <QFile>
 #include <QStandardPaths>
 
@@ -14,7 +15,7 @@
     #include <kwinglutils.h>
 #endif
 
-ShapeCornersShader::ShapeCornersShader():
+ShapeCorners::Shader::Shader():
         m_manager(KWin::ShaderManager::instance()) {
 
     qInfo() << "ShapeCorners: loading shaders...";
@@ -37,12 +38,11 @@ ShapeCornersShader::ShapeCornersShader():
     qInfo() << "ShapeCorners: shaders loaded.";
 }
 
-bool ShapeCornersShader::IsValid() const {
+bool ShapeCorners::Shader::IsValid() const {
     return m_shader && m_shader->isValid();
 }
 
-const std::unique_ptr<KWin::GLShader>&
-ShapeCornersShader::Bind(const ShapeCornersWindow &window, qreal scale) const {
+void ShapeCorners::Shader::Bind(const ShapeCorners::Window &window, qreal scale) const {
     auto frameGeometry = window.w->frameGeometry() * scale;
     auto expandedGeometry = window.w->expandedGeometry() * scale;
     auto xy = QVector2D(frameGeometry.topLeft() - expandedGeometry.topLeft());
@@ -59,9 +59,8 @@ ShapeCornersShader::Bind(const ShapeCornersWindow &window, qreal scale) const {
     m_shader->setUniform(m_shader_shadowSize, static_cast<float>(shadowSize));
     m_shader->setUniform(m_shader_outlineColor, window.outlineColor.toQColor());
     m_shader->setUniform(m_shader_shadowColor, window.shadowColor.toQColor());
-    return m_shader;
 }
 
-void ShapeCornersShader::Unbind() const {
+void ShapeCorners::Shader::Unbind() const {
     m_manager->popShader();
 }

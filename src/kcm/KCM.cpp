@@ -1,23 +1,23 @@
-#include "ShapeCornersKCM.h"
-#include "ui_ShapeCornersKCM.h"
+#include "KCM.h"
+#include "ui_KCM.h"
 #include "kwineffects_interface.h"
-#include "ShapeCornersConfig.h"
 #include <QDialog>
 
 #if (QT_VERSION_MAJOR >= 6)
-ShapeCornersKCM::ShapeCornersKCM(QObject* parent, const KPluginMetaData& args)
+ShapeCorners::KCM::KCM(QObject* parent, const KPluginMetaData& args)
     : KCModule(parent, args)
     , ui(new Ui::Form)
+    , config()
 {
     ui->setupUi(widget());
-    addConfig(ShapeCornersConfig::self(), widget());
+    addConfig(&config, widget());
 #else
-ShapeCornersKCM::ShapeCornersKCM(QWidget* parent, const QVariantList& args)
+ShapeCorners::KCM::KCM(QWidget* parent, const QVariantList& args)
     : KCModule(parent, args)
     , ui(new Ui::Form)
 {
     ui->setupUi(this);
-    addConfig(ShapeCornersConfig::self(), this);
+    addConfig(&config, this);
 #endif
 
     update_colors();
@@ -38,28 +38,28 @@ ShapeCornersKCM::ShapeCornersKCM(QWidget* parent, const QVariantList& args)
         ui->kcfg_InactiveShadowPalette->setItemIcon(index, icon2);
     }
 
-    connect(ui->kcfg_ActiveOutlinePalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &ShapeCornersKCM::update_colors);
-    connect(ui->kcfg_InactiveOutlinePalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &ShapeCornersKCM::update_colors);
-    connect(ui->kcfg_OutlineColor, &KColorButton::changed, this, &ShapeCornersKCM::update_colors);
-    connect(ui->kcfg_InactiveOutlineColor, &KColorButton::changed, this, &ShapeCornersKCM::update_colors);
-    connect(ui->kcfg_ActiveOutlineUsePalette, &QRadioButton::toggled, this, &ShapeCornersKCM::update_colors);
-    connect(ui->kcfg_InactiveOutlineUsePalette, &QRadioButton::toggled, this, &ShapeCornersKCM::update_colors);
+    connect(ui->kcfg_ActiveOutlinePalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &KCM::update_colors);
+    connect(ui->kcfg_InactiveOutlinePalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &KCM::update_colors);
+    connect(ui->kcfg_OutlineColor, &KColorButton::changed, this, &KCM::update_colors);
+    connect(ui->kcfg_InactiveOutlineColor, &KColorButton::changed, this, &KCM::update_colors);
+    connect(ui->kcfg_ActiveOutlineUsePalette, &QRadioButton::toggled, this, &KCM::update_colors);
+    connect(ui->kcfg_InactiveOutlineUsePalette, &QRadioButton::toggled, this, &KCM::update_colors);
 
-    connect(ui->kcfg_ActiveShadowPalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &ShapeCornersKCM::update_colors);
-    connect(ui->kcfg_ActiveShadowPalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &ShapeCornersKCM::update_colors);
-    connect(ui->kcfg_ShadowColor, &KColorButton::changed, this, &ShapeCornersKCM::update_colors);
-    connect(ui->kcfg_InactiveShadowColor, &KColorButton::changed, this, &ShapeCornersKCM::update_colors);
-    connect(ui->kcfg_ActiveShadowUsePalette, &QRadioButton::toggled, this, &ShapeCornersKCM::update_colors);
-    connect(ui->kcfg_InactiveShadowUsePalette, &QRadioButton::toggled, this, &ShapeCornersKCM::update_colors);
+    connect(ui->kcfg_ActiveShadowPalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &KCM::update_colors);
+    connect(ui->kcfg_ActiveShadowPalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &KCM::update_colors);
+    connect(ui->kcfg_ShadowColor, &KColorButton::changed, this, &KCM::update_colors);
+    connect(ui->kcfg_InactiveShadowColor, &KColorButton::changed, this, &KCM::update_colors);
+    connect(ui->kcfg_ActiveShadowUsePalette, &QRadioButton::toggled, this, &KCM::update_colors);
+    connect(ui->kcfg_InactiveShadowUsePalette, &QRadioButton::toggled, this, &KCM::update_colors);
 
     // It was expected that the Apply button would get enabled automatically as the gradient sliders move, but it doesn't.
     // Maybe it is a bug on the KCM side. Need to check and delete these lines later.
-    connect(ui->kcfg_ActiveShadowAlpha, &KGradientSelector::sliderMoved, this, &ShapeCornersKCM::markAsChanged);
-    connect(ui->kcfg_InactiveShadowAlpha, &KGradientSelector::sliderMoved, this, &ShapeCornersKCM::markAsChanged);
-    connect(ui->kcfg_ActiveOutlineAlpha, &KGradientSelector::sliderMoved, this, &ShapeCornersKCM::markAsChanged);
-    connect(ui->kcfg_InactiveOutlineAlpha, &KGradientSelector::sliderMoved, this, &ShapeCornersKCM::markAsChanged);
+    connect(ui->kcfg_ActiveShadowAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
+    connect(ui->kcfg_InactiveShadowAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
+    connect(ui->kcfg_ActiveOutlineAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
+    connect(ui->kcfg_InactiveOutlineAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
 
-    connect(ui->refreshButton, &QPushButton::pressed, this, &ShapeCornersKCM::update_windows);
+    connect(ui->refreshButton, &QPushButton::pressed, this, &KCM::update_windows);
     connect(ui->includeButton, &QPushButton::pressed, [=, this]() {
         if (const auto s = ui->currentWindowList->currentItem();
             s && ui->InclusionList->findItems(s->text(), Qt::MatchExactly).empty()) {
@@ -85,7 +85,7 @@ ShapeCornersKCM::ShapeCornersKCM(QWidget* parent, const QVariantList& args)
 }
 
 void
-ShapeCornersKCM::save()
+ShapeCorners::KCM::save()
 {
     QStringList inclusions, exclusions;
     for (int i = 0; i < ui->InclusionList->count(); ++i)
@@ -93,9 +93,9 @@ ShapeCornersKCM::save()
     for (int i = 0; i < ui->ExclusionList->count(); ++i)
         exclusions.push_back(ui->ExclusionList->item(i)->text());
 
-    ShapeCornersConfig::setInclusions(inclusions);
-    ShapeCornersConfig::setExclusions(exclusions);
-    ShapeCornersConfig::self()->save();
+    config.setInclusions(inclusions);
+    config.setExclusions(exclusions);
+    config.save();
     KCModule::save();
 
     const auto dbusName = QStringLiteral("kwin4_effect_shapecorners");
@@ -111,7 +111,7 @@ ShapeCornersKCM::save()
     interface.loadEffect(dbusName);
 }
 
-void ShapeCornersKCM::update_colors() {
+void ShapeCorners::KCM::update_colors() {
     QColor color;
     bool checked;
     int index;
@@ -137,7 +137,7 @@ void ShapeCornersKCM::update_colors() {
     ui->kcfg_InactiveShadowAlpha->setSecondColor(color);
 }
 
-void ShapeCornersKCM::update_windows() const {
+void ShapeCorners::KCM::update_windows() const {
     QStringList windowList;
     if (const auto connection = QDBusConnection::sessionBus(); connection.isConnected())
         if (QDBusInterface interface(QStringLiteral("org.kde.ShapeCorners"), QStringLiteral("/ShapeCornersEffect")); interface.isValid())
@@ -148,18 +148,18 @@ void ShapeCornersKCM::update_windows() const {
     ui->currentWindowList->addItems(windowList);
 }
 
-void ShapeCornersKCM::load() {
+void ShapeCorners::KCM::load() {
     KCModule::load();
-    ShapeCornersConfig::self()->load();
-    ui->InclusionList->addItems(ShapeCornersConfig::inclusions());
-    ui->ExclusionList->addItems(ShapeCornersConfig::exclusions());
+    config.load();
+    ui->InclusionList->addItems(config.inclusions());
+    ui->ExclusionList->addItems(config.exclusions());
 }
 
-void ShapeCornersKCM::defaults() {
+void ShapeCorners::KCM::defaults() {
     KCModule::defaults();
-    ShapeCornersConfig::self()->setDefaults();
+    config.setDefaults();
     ui->InclusionList->clear();
-    ui->InclusionList->addItems(ShapeCornersConfig::inclusions());
+    ui->InclusionList->addItems(config.inclusions());
     ui->ExclusionList->clear();
-    ui->ExclusionList->addItems(ShapeCornersConfig::exclusions());
+    ui->ExclusionList->addItems(config.exclusions());
 }
