@@ -74,7 +74,7 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle) {
         c = getShadowColor(distance_from_center);
     }
 
-    if(isDrawingOutline()) {
+    if(tex.a > 0.0 && isDrawingOutline()) {
         vec4 outlineOverlay = vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), 1.0);
 
         if (distance_from_center < r - outlineThickness + 0.5) {
