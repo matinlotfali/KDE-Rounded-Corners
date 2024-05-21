@@ -3,7 +3,7 @@
 classDiagram
     
     namespace KWin {
-        class Effect {
+        class KWinEffect {
             prePaintWindow()
         }
         
@@ -36,7 +36,7 @@ classDiagram
     }
     
     namespace kwin4_shapecorners_effect {
-        class ShapeCornersEffect {
+        class Effect {
             m_shader_manager
             m_managed
             +prePaintWindow()
@@ -49,7 +49,7 @@ classDiagram
             windowResized()
         }
         
-        class ShapeCornersWindow {
+        class Window {
             name: QString
             isTiled: bool
             isMaximized: bool
@@ -64,7 +64,7 @@ classDiagram
             hasEffect()
         }
         
-        class ShapeCornersShader {
+        class Shader {
             m_shader: GLShader
             IsValid()
             GetShader()
@@ -72,7 +72,7 @@ classDiagram
             UnBind()
         }
         
-        class ShapeCornersColor {
+        class Color {
             r: float
             g: float
             b: float
@@ -86,7 +86,7 @@ classDiagram
     }
     
     namespace kwin4_shapecorners_config {
-        class ShapeCornersKCM {
+        class KCM {
             ui: UI::Form
             +defaults()
             +load()
@@ -94,7 +94,7 @@ classDiagram
             update_windows()
         }
         
-        class ShapeCornersConfig {
+        class Config {
             Size: UInt
             ShadowSize: UInt
             ShadowColor: Color
@@ -127,23 +127,23 @@ classDiagram
         +save()
     }
     
-    Effect <|-- OffscreenEffect
-    OffscreenEffect <|-- ShapeCornersEffect
-    ShapeCornersWindow o-- ShapeCornersColor
+    KWinEffect <|-- OffscreenEffect
+    OffscreenEffect <|-- Effect
+    Window o-- Color
 
     GLShader --o ShaderManager
-    ShapeCornersEffect o-- ShapeCornersWindow
-    EffectWindow <-- ShapeCornersWindow 
-    ShapeCornersEffect --> ShapeCornersShader
-    EffectWindow <.. ShapeCornersEffect
-    QDBusConnection <.. ShapeCornersEffect
-    ShapeCornersWindow --> ShapeCornersConfig
+    Effect o-- Window
+    EffectWindow <-- Window 
+    Effect --> Shader
+    EffectWindow <.. Effect
+    QDBusConnection <.. Effect
+    Window --> Config
     
-    KCModule <|-- ShapeCornersKCM
-    QDBusConnection <.. ShapeCornersKCM
-    ShapeCornersKCM --> ShapeCornersConfig
+    KCModule <|-- KCM
+    QDBusConnection <.. KCM
+    KCM --> Config
 
-    ShapeCornersShader ..> ShapeCornersWindow
-    GLShader <-- ShapeCornersShader
-    ShaderManager <-- ShapeCornersShader
+    Shader ..> Window
+    GLShader <-- Shader
+    ShaderManager <-- Shader
 ```

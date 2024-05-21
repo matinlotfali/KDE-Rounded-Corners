@@ -9,53 +9,53 @@ sequenceDiagram
         participant OffscreenEffect
     end
     Box kwin4_shapecorners_effect
-        participant ShapeCornersEffect
-        participant ShapeCornersShader
+        participant Effect
+        participant Shader
         participant shapecorners.frag
-        participant ShapeCornersWindow
-        participant ShapeCornersConfig
+        participant Window
+        participant Config
     end
 
     loop approximately 60 frames per second
-        KWin->>+ShapeCornersEffect: prePaintWindow()
-        ShapeCornersEffect->>+ShapeCornersWindow: animateProperties()
-        ShapeCornersWindow->>+ShapeCornersConfig: read config
-        ShapeCornersConfig-->>-ShapeCornersWindow: values
-        Note over ShapeCornersWindow: calculates<br>animation
-        Note over ShapeCornersWindow: stores window<br>properties
+        KWin->>+Effect: prePaintWindow()
+        Effect->>+Window: animateProperties()
+        Window->>+Config: read config
+        Config-->>-Window: values
+        Note over Window: calculates<br>animation
+        Note over Window: stores window<br>properties
         alt animation not finished
-            ShapeCornersWindow-)EffectWindow: addFullRepaint()
+            Window-)EffectWindow: addFullRepaint()
         end
-        ShapeCornersWindow-->>-ShapeCornersEffect: done
+        Window-->>-Effect: done
         alt window has round corners
-            ShapeCornersEffect-)EffectWindow: add paint / remove opaque / set translucent
+            Effect-)EffectWindow: add paint / remove opaque / set translucent
         end
-        ShapeCornersEffect->>+OffscreenEffect: OffscreenEffect::<br>prePaintWindow()
+        Effect->>+OffscreenEffect: OffscreenEffect::<br>prePaintWindow()
         EffectWindow-->>OffscreenEffect: notifies painting parameters 
-        OffscreenEffect-->>-ShapeCornersEffect: done
-        ShapeCornersEffect-->>-KWin: done prePaint
+        OffscreenEffect-->>-Effect: done
+        Effect-->>-KWin: done prePaint
         
         alt if painting is required
-            KWin->>+ShapeCornersEffect: drawWindow()
-            ShapeCornersEffect->>+ShapeCornersShader: Bind()
-            ShapeCornersShader->>+ShapeCornersWindow: read properties
-            ShapeCornersWindow-->>-ShapeCornersShader: values
-            ShapeCornersShader->>+shapecorners.frag: setUniform()
-            shapecorners.frag-->>-ShapeCornersShader: done
-            ShapeCornersShader-)ShaderManager: pushShader()
-            ShapeCornersShader-->>-ShapeCornersEffect: done
-            ShapeCornersEffect->>+OffscreenEffect: OffscreenEffect::<br>drawWindow()
+            KWin->>+Effect: drawWindow()
+            Effect->>+Shader: Bind()
+            Shader->>+Window: read properties
+            Window-->>-Shader: values
+            Shader->>+shapecorners.frag: setUniform()
+            shapecorners.frag-->>-Shader: done
+            Shader-)ShaderManager: pushShader()
+            Shader-->>-Effect: done
+            Effect->>+OffscreenEffect: OffscreenEffect::<br>drawWindow()
             OffscreenEffect->>+ShaderManager: render window
             par parallel render each pixel
                 ShaderManager->>+shapecorners.frag: render shader
                 shapecorners.frag-->>-ShaderManager: done
             end
             ShaderManager-->>-OffscreenEffect: done
-            OffscreenEffect-->>-ShapeCornersEffect: done
-            ShapeCornersEffect->>+ShapeCornersShader: Unbind()
-            ShapeCornersShader-)ShaderManager: popShader()
-            ShapeCornersShader-->>-ShapeCornersEffect: done
-            ShapeCornersEffect-->>-KWin: done draw
+            OffscreenEffect-->>-Effect: done
+            Effect->>+Shader: Unbind()
+            Shader-)ShaderManager: popShader()
+            Shader-->>-Effect: done
+            Effect-->>-KWin: done draw
         end
     end
 ```
