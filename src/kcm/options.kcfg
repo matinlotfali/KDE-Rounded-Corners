@@ -4,7 +4,8 @@
       xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
                           http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
     <kcfgfile name="kwinrc"/>
-    <group name="Effect-ًRound-Corners">
+
+    <group name="ًRound-Corners">
         <entry name="Size" type="UInt">
             <default>10</default>
         </entry>
@@ -28,8 +29,9 @@
         <entry name="AnimationEnabled" type="Bool">
             <default>true</default>
         </entry>
+    </group>
 
-
+    <group name="PrimaryOutline">
         <entry name="OutlineThickness" type="Double">
             <default>1</default>
             <min>0</min>
@@ -74,8 +76,9 @@
         <entry name="InactiveOutlineUseCustom" type="Bool">
             <default>true</default>
         </entry>
+    </group>
 
-
+    <group name="Shadow">
         <entry name="ActiveShadowAlpha" type="Int">
             <default>255</default>
             <min>0</min>
@@ -104,8 +107,56 @@
         <entry name="InactiveShadowUseCustom" type="Bool">
             <default>false</default>
         </entry>
+    </group>
 
+    <group name="SecondOutline">
+        <entry name="SecondOutlineThickness" type="Double">
+            <default>0.75</default>
+            <min>0</min>
+            <max>20</max>
+        </entry>
+        <entry name="InactiveSecondOutlineThickness" type="Double">
+            <default>0.75</default>
+            <min>0</min>
+            <max>20</max>
+        </entry>
+        <entry name="SecondOutlineColor" type="Color">
+            <default>black</default>
+        </entry>
+        <entry name="InactiveSecondOutlineColor" type="Color">
+            <default>black</default>
+        </entry>
+        <entry name="ActiveSecondOutlineAlpha" type="Int">
+            <default>255</default>
+            <min>0</min>
+            <max>255</max>
+        </entry>
+        <entry name="InactiveSecondOutlineAlpha" type="Int">
+            <default>255</default>
+            <min>0</min>
+            <max>255</max>
+        </entry>
+        <entry name="ActiveSecondOutlinePalette" type="UInt">
+            <default>12</default>
+        </entry>
+        <entry name="InactiveSecondOutlinePalette" type="UInt">
+            <default>12</default>
+        </entry>
+        <entry name="ActiveSecondOutlineUsePalette" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="InactiveSecondOutlineUsePalette" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="ActiveSecondOutlineUseCustom" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="InactiveSecondOutlineUseCustom" type="Bool">
+            <default>true</default>
+        </entry>
+    </group>
 
+    <group name="IncludeExclude">
         <entry name="Inclusions" type="StringList">
         </entry>
         <entry name="Exclusions" type="StringList">
@@ -116,8 +167,9 @@
         <entry name="IncludeDialogs" type="Bool">
             <default>true</default>
         </entry>
+    </group>
 
-
+    <group name="MaximizeTile">
         <entry name="DisableRoundTile" type="Bool">
             <default>true</default>
         </entry>
