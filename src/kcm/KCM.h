@@ -8,8 +8,6 @@ namespace Ui {
 }
 
 namespace ShapeCorners {
-    class Config;
-
     class KCM final : public KCModule {
     Q_OBJECT
 
@@ -31,8 +29,11 @@ namespace ShapeCorners {
         std::shared_ptr<Ui::Form> ui;
         Config config;
 
+        void load_ui();
+
 #if (QT_VERSION_MAJOR >= 6)
-        const QPalette &palette() { return widget()->palette(); };
+        inline QWidget* widget() final { return KCModule::widget(); }
+        const QPalette& palette() { return widget()->palette(); };
 #endif
     };
 }

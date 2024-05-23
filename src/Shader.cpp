@@ -61,7 +61,7 @@ void ShapeCorners::Shader::Bind(const ShapeCorners::Window &window, qreal scale)
     auto shadowSize = std::min(window.shadowSize * scale, max_shadow_size);
     m_shader->setUniform(m_shader_shadowSize, static_cast<float>(shadowSize));
     m_shader->setUniform(m_shader_outlineColor, window.outlineColor.toQColor());
-    m_shader->setUniform(m_shader_outlineColor, window.secondOutlineColor.toQColor());
+    m_shader->setUniform(m_shader_secondOutlineColor, window.secondOutlineColor.toQColor());
     m_shader->setUniform(m_shader_shadowColor, window.shadowColor.toQColor());
 }
 

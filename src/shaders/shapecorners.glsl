@@ -24,7 +24,7 @@ vec2 pixel_to_tex(vec2 pixelcoord) {
 }
 bool isDrawingShadows() { return  windowSize != windowExpandedSize && shadowColor.a > 0.0; }
 bool isDrawingOutline() { return outlineColor.a > 0.0 && outlineThickness > 0.0; }
-bool hasSecondOutline() { return secondOutlineColor.a > 0.0; }
+bool hasSecondOutline() { return secondOutlineColor.a > 0.0 && secondOutlineThickness > 0.0; }
 
 float parametricBlend(float t) {
     float sqt = t * t;
@@ -82,15 +82,21 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle) {
             float antialiasing = clamp(r - outlineThickness + 0.5 - distance_from_center, 0.0, 1.0);
             return mix(outlineOverlay, tex, antialiasing);
         }
-        else if (distance_from_center < r + 0.5) {
-            // from the second outline to the shadow
-            float antialiasing = clamp(r + 0.5 - distance_from_center, 0.0, 1.0);
-            return mix(secondOutlineColor, outlineOverlay, antialiasing);
-        }
-        else {
-            // from the second outline to the shadow
-            float antialiasing = clamp(distance_from_center - r - secondOutlineThickness + 0.5, 0.0, 1.0);
-            return mix(secondOutlineColor, c, antialiasing);
+        else if(hasSecondOutline()) {
+            if (distance_from_center < r + 0.5) {
+                // from the second outline to the shadow
+                float antialiasing = clamp(r + 0.5 - distance_from_center, 0.0, 1.0);
+                return mix(secondOutlineColor, outlineOverlay, antialiasing);
+            }
+            else {
+                // from the second outline to the shadow
+                float antialiasing = clamp(distance_from_center - r - secondOutlineThickness + 0.5, 0.0, 1.0);
+                return mix(secondOutlineColor, c, antialiasing);
+            }
+        } else {
+            // from the first outline to the shadow
+            float antialiasing = clamp(distance_from_center - r + 0.5, 0.0, 1.0);
+            return mix(outlineOverlay, c, antialiasing);
         }
     }
     else {

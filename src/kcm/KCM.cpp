@@ -70,6 +70,9 @@ ShapeCorners::KCM::KCM(QWidget* parent, const QVariantList& args)
     connect(ui->kcfg_ActiveSecondOutlineAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
     connect(ui->kcfg_InactiveSecondOutlineAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
 
+    connect(ui->primaryOutline, &QGroupBox::toggled, this, &KCM::markAsChanged);
+    connect(ui->secondaryOutline, &QGroupBox::toggled, this, &KCM::markAsChanged);
+
     connect(ui->refreshButton, &QPushButton::pressed, this, &KCM::update_windows);
     connect(ui->includeButton, &QPushButton::pressed, [=, this]() {
         if (const auto s = ui->currentWindowList->currentItem();
@@ -101,11 +104,21 @@ ShapeCorners::KCM::save()
     QStringList inclusions, exclusions;
     for (int i = 0; i < ui->InclusionList->count(); ++i)
         inclusions.push_back(ui->InclusionList->item(i)->text());
+    config.setInclusions(inclusions);
     for (int i = 0; i < ui->ExclusionList->count(); ++i)
         exclusions.push_back(ui->ExclusionList->item(i)->text());
-
-    config.setInclusions(inclusions);
     config.setExclusions(exclusions);
+
+    if (!ui->primaryOutline->isChecked()) {
+        config.setOutlineThickness(0);
+        config.setInactiveOutlineThickness(0);
+    }
+    if (!ui->secondaryOutline->isChecked()) {
+        config.setSecondOutlineThickness(0);
+        config.setInactiveSecondOutlineThickness(0);
+    }
+
+    qDebug() << "ShapeCorners: Saving configurations";
     config.save();
     KCModule::save();
 
@@ -120,6 +133,8 @@ ShapeCorners::KCM::save()
     // Maybe it is a bug on the KWin side. Need to check and delete these lines later.
     interface.unloadEffect(dbusName);
     interface.loadEffect(dbusName);
+
+    load();
 }
 
 void ShapeCorners::KCM::update_colors() {
@@ -172,15 +187,22 @@ void ShapeCorners::KCM::update_windows() const {
 void ShapeCorners::KCM::load() {
     KCModule::load();
     config.load();
-    ui->InclusionList->addItems(config.inclusions());
-    ui->ExclusionList->addItems(config.exclusions());
+    load_ui();
 }
 
 void ShapeCorners::KCM::defaults() {
     KCModule::defaults();
     config.setDefaults();
+    load_ui();
+}
+
+void ShapeCorners::KCM::load_ui() {
     ui->InclusionList->clear();
-    ui->InclusionList->addItems(config.inclusions());
     ui->ExclusionList->clear();
+
+    ui->InclusionList->addItems(config.inclusions());
     ui->ExclusionList->addItems(config.exclusions());
+
+    ui->primaryOutline->setChecked(config.outlineThickness() > 0);
+    ui->secondaryOutline->setChecked(config.secondOutlineThickness() > 0);
 }
