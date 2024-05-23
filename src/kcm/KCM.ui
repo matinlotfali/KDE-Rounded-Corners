@@ -23,7 +23,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="roundnessTab">
       <attribute name="title">
@@ -171,7 +171,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Use Decoration Color</string>
+                 <string>&amp;Use Decoration Color</string>
                 </property>
                </widget>
               </item>
@@ -302,7 +302,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Use Custom Color</string>
+                 <string>Use Custom Co&amp;lor</string>
                 </property>
                </widget>
               </item>
@@ -589,7 +589,7 @@
        <item>
         <widget class="QGroupBox" name="primaryOutline">
          <property name="title">
-          <string>Primary Outline</string>
+          <string>Primar&amp;y Outline</string>
          </property>
          <property name="checkable">
           <bool>true</bool>

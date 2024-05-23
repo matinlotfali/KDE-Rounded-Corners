@@ -1,13 +1,11 @@
 #include "KCM.h"
 #include "ui_KCM.h"
 #include "kwineffects_interface.h"
-#include <QDialog>
 
 #if (QT_VERSION_MAJOR >= 6)
 ShapeCorners::KCM::KCM(QObject* parent, const KPluginMetaData& args)
     : KCModule(parent, args)
     , ui(new Ui::Form)
-    , config()
 {
     ui->setupUi(widget());
     addConfig(&config, widget());
@@ -70,8 +68,8 @@ ShapeCorners::KCM::KCM(QWidget* parent, const QVariantList& args)
     connect(ui->kcfg_ActiveSecondOutlineAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
     connect(ui->kcfg_InactiveSecondOutlineAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
 
-    connect(ui->primaryOutline, &QGroupBox::toggled, this, &KCM::markAsChanged);
-    connect(ui->secondaryOutline, &QGroupBox::toggled, this, &KCM::markAsChanged);
+    connect(ui->primaryOutline, &QGroupBox::toggled, this, &KCM::outline_group_toggled);
+    connect(ui->secondaryOutline, &QGroupBox::toggled, this, &KCM::outline_group_toggled);
 
     connect(ui->refreshButton, &QPushButton::pressed, this, &KCM::update_windows);
     connect(ui->includeButton, &QPushButton::pressed, [=, this]() {
@@ -108,15 +106,6 @@ ShapeCorners::KCM::save()
     for (int i = 0; i < ui->ExclusionList->count(); ++i)
         exclusions.push_back(ui->ExclusionList->item(i)->text());
     config.setExclusions(exclusions);
-
-    if (!ui->primaryOutline->isChecked()) {
-        config.setOutlineThickness(0);
-        config.setInactiveOutlineThickness(0);
-    }
-    if (!ui->secondaryOutline->isChecked()) {
-        config.setSecondOutlineThickness(0);
-        config.setInactiveSecondOutlineThickness(0);
-    }
 
     qDebug() << "ShapeCorners: Saving configurations";
     config.save();
@@ -184,6 +173,16 @@ void ShapeCorners::KCM::update_windows() const {
     ui->currentWindowList->addItems(windowList);
 }
 
+void ShapeCorners::KCM::outline_group_toggled(bool value) const {
+    if (sender() == ui->primaryOutline) {
+        ui->kcfg_OutlineThickness->setValue(value ? 0.75 : 0);
+        ui->kcfg_InactiveOutlineThickness->setValue(value ? 0.75 : 0);
+    } else if (sender() == ui->secondaryOutline) {
+        ui->kcfg_SecondOutlineThickness->setValue(value ? 0.75 : 0);
+        ui->kcfg_InactiveSecondOutlineThickness->setValue(value ? 0.75 : 0);
+    }
+}
+
 void ShapeCorners::KCM::load() {
     KCModule::load();
     config.load();
@@ -196,13 +195,13 @@ void ShapeCorners::KCM::defaults() {
     load_ui();
 }
 
-void ShapeCorners::KCM::load_ui() {
+void ShapeCorners::KCM::load_ui() const {
     ui->InclusionList->clear();
     ui->ExclusionList->clear();
 
     ui->InclusionList->addItems(config.inclusions());
     ui->ExclusionList->addItems(config.exclusions());
 
-    ui->primaryOutline->setChecked(config.outlineThickness() > 0);
-    ui->secondaryOutline->setChecked(config.secondOutlineThickness() > 0);
+    ui->primaryOutline->setChecked(ui->kcfg_OutlineThickness->value() > 0);
+    ui->secondaryOutline->setChecked(ui->kcfg_SecondOutlineThickness->value() > 0);
 }

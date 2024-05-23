@@ -24,15 +24,16 @@ namespace ShapeCorners {
         void save() override;
         void update_colors();
         void update_windows() const;
+        void outline_group_toggled(bool value) const;
 
     private:
         std::shared_ptr<Ui::Form> ui;
         Config config;
 
-        void load_ui();
+        void load_ui() const;
 
 #if (QT_VERSION_MAJOR >= 6)
-        inline QWidget* widget() final { return KCModule::widget(); }
+        QWidget* widget() final override { return KCModule::widget(); }
         const QPalette& palette() { return widget()->palette(); };
 #endif
     };
