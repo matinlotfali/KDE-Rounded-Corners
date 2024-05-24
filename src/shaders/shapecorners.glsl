@@ -22,9 +22,10 @@ vec2 pixel_to_tex(vec2 pixelcoord) {
     return vec2((pixelcoord.x + windowTopLeft.x) / windowExpandedSize.x,
                 1.0-(pixelcoord.y + windowTopLeft.y) / windowExpandedSize.y);
 }
-bool isDrawingShadows() { return  windowSize != windowExpandedSize && shadowColor.a > 0.0; }
+bool hasExpandedSize() { return windowSize != windowExpandedSize; }
+bool isDrawingShadows() { return hasExpandedSize() && shadowColor.a > 0.0; }
 bool isDrawingOutline() { return outlineColor.a > 0.0 && outlineThickness > 0.0; }
-bool hasSecondOutline() { return secondOutlineColor.a > 0.0 && secondOutlineThickness > 0.0; }
+bool hasSecondOutline() { return hasExpandedSize() && secondOutlineColor.a > 0.0 && secondOutlineThickness > 0.0; }
 
 float parametricBlend(float t) {
     float sqt = t * t;
