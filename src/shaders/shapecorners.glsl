@@ -75,6 +75,7 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle) {
         c = getShadowColor(distance_from_center);
     }
 
+    vec4 secondaryOutlineOverlay = vec4(mix(c.rgb,  secondOutlineColor.rgb, secondOutlineColor.a), shadowColor.a);
     if(tex.a > 0.1 && hasPrimaryOutline()) {
         vec4 outlineOverlay = vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), 1.0);
 
@@ -84,15 +85,16 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle) {
             return mix(outlineOverlay, tex, antialiasing);
         }
         else if(hasSecondOutline()) {
+
             if (distance_from_center < r + 0.5) {
                 // from the second outline to the shadow
                 float antialiasing = clamp(r + 0.5 - distance_from_center, 0.0, 1.0);
-                return mix(secondOutlineColor, outlineOverlay, antialiasing);
+                return mix(secondaryOutlineOverlay, outlineOverlay, antialiasing);
             }
             else {
                 // from the second outline to the shadow
                 float antialiasing = clamp(distance_from_center - r - secondOutlineThickness + 0.5, 0.0, 1.0);
-                return mix(secondOutlineColor, c, antialiasing);
+                return mix(secondaryOutlineOverlay, c, antialiasing);
             }
         } else {
             // from the first outline to the shadow
@@ -104,12 +106,12 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle) {
         if (distance_from_center < r + 0.5) {
             // from window to the second outline
             float antialiasing = clamp(r + 0.5 - distance_from_center, 0.0, 1.0);
-            return mix(secondOutlineColor, tex, antialiasing);
+            return mix(secondaryOutlineOverlay, tex, antialiasing);
         }
         else {
             // from the second outline to the shadow
             float antialiasing = clamp(distance_from_center - r - secondOutlineThickness + 0.5, 0.0, 1.0);
-            return mix(secondOutlineColor, c, antialiasing);
+            return mix(secondaryOutlineOverlay, c, antialiasing);
         }
     }
     else {

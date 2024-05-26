@@ -51,6 +51,8 @@ namespace ShapeCorners {
 
         [[nodiscard]] int requestedEffectChainPosition() const override { return 99; }
         [[nodiscard]] bool blocksDirectScanout() const override { return false; }
+        [[nodiscard]] bool isActive() const override { return m_shaderManager.IsValid(); }
+        [[nodiscard]] bool provides(Feature feature) override { return feature == Feature::Nothing; }
 
     public Q_SLOTS:
         [[nodiscard]] QString get_window_titles() const;

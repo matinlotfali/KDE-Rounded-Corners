@@ -22,8 +22,10 @@ ShapeCorners::Shader::Shader():
     const QString shaderFilePath = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
                                                           QStringLiteral("kwin/shaders/shapecorners.frag"));
     m_shader = m_manager->generateShaderFromFile(KWin::ShaderTrait::MapTexture, QString(), shaderFilePath);
-    if (!m_shader->isValid())
+    if (!m_shader->isValid()) {
         qCritical() << "ShapeCorners: no valid shaders found! ShapeCorners will not work.";
+        return;
+    }
 
     m_shader_hasRoundCorners = m_shader->uniformLocation("hasRoundCorners");
     m_shader_windowSize = m_shader->uniformLocation("windowSize");
