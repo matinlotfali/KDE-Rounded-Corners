@@ -29,8 +29,10 @@ namespace ShapeCorners {
         float cornerRadius = -1;
         float shadowSize = -1;
         float outlineSize = -1;
+        float secondOutlineSize = -1;
         Color shadowColor = {};
         Color outlineColor = {};
+        Color secondOutlineColor = {};
 
 #ifdef QT_DEBUG
         uint32_t repaintCount = 0;

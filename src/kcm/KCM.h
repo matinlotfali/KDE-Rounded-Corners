@@ -8,8 +8,6 @@ namespace Ui {
 }
 
 namespace ShapeCorners {
-    class Config;
-
     class KCM final : public KCModule {
     Q_OBJECT
 
@@ -26,13 +24,17 @@ namespace ShapeCorners {
         void save() override;
         void update_colors();
         void update_windows() const;
+        void outline_group_toggled(bool value) const;
 
     private:
         std::shared_ptr<Ui::Form> ui;
         Config config;
 
+        void load_ui() const;
+
 #if (QT_VERSION_MAJOR >= 6)
-        const QPalette &palette() { return widget()->palette(); };
+        QWidget* widget() final override { return KCModule::widget(); }
+        const QPalette& palette() { return widget()->palette(); };
 #endif
     };
 }

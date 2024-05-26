@@ -22,8 +22,10 @@ ShapeCorners::Shader::Shader():
     const QString shaderFilePath = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
                                                           QStringLiteral("kwin/shaders/shapecorners.frag"));
     m_shader = m_manager->generateShaderFromFile(KWin::ShaderTrait::MapTexture, QString(), shaderFilePath);
-    if (!m_shader->isValid())
+    if (!m_shader->isValid()) {
         qCritical() << "ShapeCorners: no valid shaders found! ShapeCorners will not work.";
+        return;
+    }
 
     m_shader_hasRoundCorners = m_shader->uniformLocation("hasRoundCorners");
     m_shader_windowSize = m_shader->uniformLocation("windowSize");
@@ -34,6 +36,8 @@ ShapeCorners::Shader::Shader():
     m_shader_radius = m_shader->uniformLocation("radius");
     m_shader_outlineColor = m_shader->uniformLocation("outlineColor");
     m_shader_outlineThickness = m_shader->uniformLocation("outlineThickness");
+    m_shader_secondOutlineColor = m_shader->uniformLocation("secondOutlineColor");
+    m_shader_secondOutlineThickness = m_shader->uniformLocation("secondOutlineThickness");
     m_shader_front = m_shader->uniformLocation("front");
     qInfo() << "ShapeCorners: shaders loaded.";
 }
@@ -55,9 +59,11 @@ void ShapeCorners::Shader::Bind(const ShapeCorners::Window &window, qreal scale)
     m_shader->setUniform(m_shader_front, 0);
     m_shader->setUniform(m_shader_radius, static_cast<float>(window.cornerRadius * scale));
     m_shader->setUniform(m_shader_outlineThickness, static_cast<float>(window.outlineSize * scale));
+    m_shader->setUniform(m_shader_secondOutlineThickness, static_cast<float>(window.secondOutlineSize * scale));
     auto shadowSize = std::min(window.shadowSize * scale, max_shadow_size);
     m_shader->setUniform(m_shader_shadowSize, static_cast<float>(shadowSize));
     m_shader->setUniform(m_shader_outlineColor, window.outlineColor.toQColor());
+    m_shader->setUniform(m_shader_secondOutlineColor, window.secondOutlineColor.toQColor());
     m_shader->setUniform(m_shader_shadowColor, window.shadowColor.toQColor());
 }
 

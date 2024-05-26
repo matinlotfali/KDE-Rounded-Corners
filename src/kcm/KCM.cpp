@@ -1,13 +1,11 @@
 #include "KCM.h"
 #include "ui_KCM.h"
 #include "kwineffects_interface.h"
-#include <QDialog>
 
 #if (QT_VERSION_MAJOR >= 6)
 ShapeCorners::KCM::KCM(QObject* parent, const KPluginMetaData& args)
     : KCModule(parent, args)
     , ui(new Ui::Form)
-    , config()
 {
     ui->setupUi(widget());
     addConfig(&config, widget());
@@ -29,12 +27,14 @@ ShapeCorners::KCM::KCM(QWidget* parent, const QVariantList& args)
         pix.fill(c);
         QIcon icon (pix);
         ui->kcfg_ActiveOutlinePalette->setItemIcon(index, icon);
+        ui->kcfg_ActiveSecondOutlinePalette->setItemIcon(index, icon);
         ui->kcfg_ActiveShadowPalette->setItemIcon(index, icon);
 
         c = palette().color(QPalette::Inactive, static_cast<QPalette::ColorRole>(index));
         pix.fill(c);
         QIcon icon2 (pix);
         ui->kcfg_InactiveOutlinePalette->setItemIcon(index, icon2);
+        ui->kcfg_InactiveSecondOutlinePalette->setItemIcon(index, icon2);
         ui->kcfg_InactiveShadowPalette->setItemIcon(index, icon2);
     }
 
@@ -44,6 +44,13 @@ ShapeCorners::KCM::KCM(QWidget* parent, const QVariantList& args)
     connect(ui->kcfg_InactiveOutlineColor, &KColorButton::changed, this, &KCM::update_colors);
     connect(ui->kcfg_ActiveOutlineUsePalette, &QRadioButton::toggled, this, &KCM::update_colors);
     connect(ui->kcfg_InactiveOutlineUsePalette, &QRadioButton::toggled, this, &KCM::update_colors);
+
+    connect(ui->kcfg_ActiveSecondOutlinePalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &KCM::update_colors);
+    connect(ui->kcfg_InactiveSecondOutlinePalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &KCM::update_colors);
+    connect(ui->kcfg_SecondOutlineColor, &KColorButton::changed, this, &KCM::update_colors);
+    connect(ui->kcfg_InactiveSecondOutlineColor, &KColorButton::changed, this, &KCM::update_colors);
+    connect(ui->kcfg_ActiveSecondOutlineUsePalette, &QRadioButton::toggled, this, &KCM::update_colors);
+    connect(ui->kcfg_InactiveSecondOutlineUsePalette, &QRadioButton::toggled, this, &KCM::update_colors);
 
     connect(ui->kcfg_ActiveShadowPalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &KCM::update_colors);
     connect(ui->kcfg_ActiveShadowPalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &KCM::update_colors);
@@ -58,6 +65,11 @@ ShapeCorners::KCM::KCM(QWidget* parent, const QVariantList& args)
     connect(ui->kcfg_InactiveShadowAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
     connect(ui->kcfg_ActiveOutlineAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
     connect(ui->kcfg_InactiveOutlineAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
+    connect(ui->kcfg_ActiveSecondOutlineAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
+    connect(ui->kcfg_InactiveSecondOutlineAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
+
+    connect(ui->primaryOutline, &QGroupBox::toggled, this, &KCM::outline_group_toggled);
+    connect(ui->secondaryOutline, &QGroupBox::toggled, this, &KCM::outline_group_toggled);
 
     connect(ui->refreshButton, &QPushButton::pressed, this, &KCM::update_windows);
     connect(ui->includeButton, &QPushButton::pressed, [=, this]() {
@@ -90,11 +102,12 @@ ShapeCorners::KCM::save()
     QStringList inclusions, exclusions;
     for (int i = 0; i < ui->InclusionList->count(); ++i)
         inclusions.push_back(ui->InclusionList->item(i)->text());
+    config.setInclusions(inclusions);
     for (int i = 0; i < ui->ExclusionList->count(); ++i)
         exclusions.push_back(ui->ExclusionList->item(i)->text());
-
-    config.setInclusions(inclusions);
     config.setExclusions(exclusions);
+
+    qDebug() << "ShapeCorners: Saving configurations";
     config.save();
     KCModule::save();
 
@@ -109,6 +122,8 @@ ShapeCorners::KCM::save()
     // Maybe it is a bug on the KWin side. Need to check and delete these lines later.
     interface.unloadEffect(dbusName);
     interface.loadEffect(dbusName);
+
+    load();
 }
 
 void ShapeCorners::KCM::update_colors() {
@@ -125,6 +140,16 @@ void ShapeCorners::KCM::update_colors() {
     index = ui->kcfg_InactiveOutlinePalette->currentIndex();
     color = checked ? palette().color(QPalette::Inactive, static_cast<QPalette::ColorRole>(index)): ui->kcfg_InactiveOutlineColor->color();
     ui->kcfg_InactiveOutlineAlpha->setSecondColor(color);
+
+    checked = ui->kcfg_ActiveSecondOutlineUsePalette->isChecked();
+    index = ui->kcfg_ActiveSecondOutlinePalette->currentIndex();
+    color = checked ? palette().color(QPalette::Active, static_cast<QPalette::ColorRole>(index)): ui->kcfg_SecondOutlineColor->color();
+    ui->kcfg_ActiveSecondOutlineAlpha->setSecondColor(color);
+
+    checked = ui->kcfg_InactiveSecondOutlineUsePalette->isChecked();
+    index = ui->kcfg_InactiveSecondOutlinePalette->currentIndex();
+    color = checked ? palette().color(QPalette::Inactive, static_cast<QPalette::ColorRole>(index)): ui->kcfg_InactiveSecondOutlineColor->color();
+    ui->kcfg_InactiveSecondOutlineAlpha->setSecondColor(color);
 
     checked = ui->kcfg_ActiveShadowUsePalette->isChecked();
     index = ui->kcfg_ActiveShadowPalette->currentIndex();
@@ -148,18 +173,35 @@ void ShapeCorners::KCM::update_windows() const {
     ui->currentWindowList->addItems(windowList);
 }
 
+void ShapeCorners::KCM::outline_group_toggled(bool value) const {
+    if (sender() == ui->primaryOutline) {
+        ui->kcfg_OutlineThickness->setValue(value ? 0.75 : 0);
+        ui->kcfg_InactiveOutlineThickness->setValue(value ? 0.75 : 0);
+    } else if (sender() == ui->secondaryOutline) {
+        ui->kcfg_SecondOutlineThickness->setValue(value ? 0.75 : 0);
+        ui->kcfg_InactiveSecondOutlineThickness->setValue(value ? 0.75 : 0);
+    }
+}
+
 void ShapeCorners::KCM::load() {
     KCModule::load();
     config.load();
-    ui->InclusionList->addItems(config.inclusions());
-    ui->ExclusionList->addItems(config.exclusions());
+    load_ui();
 }
 
 void ShapeCorners::KCM::defaults() {
     KCModule::defaults();
     config.setDefaults();
+    load_ui();
+}
+
+void ShapeCorners::KCM::load_ui() const {
     ui->InclusionList->clear();
-    ui->InclusionList->addItems(config.inclusions());
     ui->ExclusionList->clear();
+
+    ui->InclusionList->addItems(config.inclusions());
     ui->ExclusionList->addItems(config.exclusions());
+
+    ui->primaryOutline->setChecked(ui->kcfg_OutlineThickness->value() > 0);
+    ui->secondaryOutline->setChecked(ui->kcfg_SecondOutlineThickness->value() > 0);
 }
