@@ -10,29 +10,29 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
       ![](https://img.shields.io/badge/Plasma-5.24-red)
 - ![Kubuntu 22.04 Jammy + Backports](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2204-backports.yml?label=Kubuntu%2022.04%20%2b%20Backports%20PPA&logo=kubuntu&branch=master)
       ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)
-      [![](https://img.shields.io/sourceforge/dt/kde-rounded-corners/nightly%2Fkubuntu2204?label=Download%20%5Bkwin4_effect_shapecorners_kubuntu2204.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/kubuntu2204/kwin4_effect_shapecorners_kubuntu2204.deb/download)
+      [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Fkubuntu2204?label=Download%20%5Bkwin4_effect_shapecorners_kubuntu2204.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/kubuntu2204/kwin4_effect_shapecorners_kubuntu2204.deb/download)
 - ![Kubuntu 24.04 Noble](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2404.yml?label=Kubuntu%2024.04&logo=kubuntu&branch=master)
       ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)
-      [![](https://img.shields.io/sourceforge/dt/kde-rounded-corners/nightly%2Fkubuntu?label=Download%20%5Bkwin4_effect_shapecorners_kubuntu2404.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/kubuntu/kwin4_effect_shapecorners_kubuntu2404.deb/download)
+      [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Fkubuntu?label=Download%20%5Bkwin4_effect_shapecorners_kubuntu2404.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/kubuntu/kwin4_effect_shapecorners_kubuntu2404.deb/download)
 - ![Debian 12 Bookworm](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/debian12.yml?branch=master&label=Debian%2012&logo=debian)
       ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)
-      [![](https://img.shields.io/sourceforge/dt/kde-rounded-corners/nightly%2Fdebian?label=Download%20%5Bkwin4_effect_shapecorners_debian12.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/debian/kwin4_effect_shapecorners_debian12.deb/download)
+      [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Fdebian?label=Download%20%5Bkwin4_effect_shapecorners_debian12.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/debian/kwin4_effect_shapecorners_debian12.deb/download)
 - ![Fedora 39](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/fedora39.yml?branch=master&label=Fedora%2039&logo=fedora&logoColor=white)
       ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)
-      [![](https://img.shields.io/sourceforge/dt/kde-rounded-corners/nightly%2Ffedora39?label=Download%20%5Bkwin4_effect_shapecorners_fedora39.rpm%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/fedora39/kwin4_effect_shapecorners_fedora39.rpm/download)
+      [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Ffedora39?label=Download%20%5Bkwin4_effect_shapecorners_fedora39.rpm%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/fedora39/kwin4_effect_shapecorners_fedora39.rpm/download)
 - ![Fedora 40](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/fedora40.yml?branch=master&label=Fedora%2040&logo=fedora&logoColor=white)
       ![](https://img.shields.io/badge/Plasma-6.0-lightgreen)
-      [![](https://img.shields.io/sourceforge/dt/kde-rounded-corners/nightly%2Ffedora?label=Download%20%5Bkwin4_effect_shapecorners_fedora40.rpm%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/fedora/kwin4_effect_shapecorners_fedora40.rpm/download)
+      [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Ffedora?label=Download%20%5Bkwin4_effect_shapecorners_fedora40.rpm%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/fedora/kwin4_effect_shapecorners_fedora40.rpm/download)
 - ![KDE Neon (Stable)](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/neon.yml?branch=master&label=KDE%20Neon%20%28Stable%29&logo=kde&logoColor=white)
       ![](https://img.shields.io/badge/Plasma-6.0-lightgreen)
-      [![](https://img.shields.io/sourceforge/dt/kde-rounded-corners/nightly%2Fneon?label=Download%20%5Bkwin4_effect_shapecorners_neon.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/neon/kwin4_effect_shapecorners_neon.deb/download)
+      [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Fneon?label=Download%20%5Bkwin4_effect_shapecorners_neon.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/neon/kwin4_effect_shapecorners_neon.deb/download)
 - ![KDE Neon (Unstable)](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/neon-unstable.yml?branch=master&label=KDE%20Neon%20%28Unstable%29&logo=kde&logoColor=white)
       ![](https://img.shields.io/badge/Plasma-6.0-lightgreen)
 - ![Arch](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/arch.yml?branch=master&label=Arch%20Linux&logo=archlinux&logoColor=white)
       ![](https://img.shields.io/badge/Plasma-6.0-lightgreen)
       [![](https://img.shields.io/aur/maintainer/kwin-effect-rounded-corners-git?label=AUR%20Maintainer) ![](https://img.shields.io/aur/votes/kwin-effect-rounded-corners-git?label=AUR%20Votes)](https://aur.archlinux.org/packages/kwin-effect-rounded-corners-git)
 
-![After](screenshots/shadows2.png)
+https://github.com/matinlotfali/KDE-Rounded-Corners/assets/7337168/7081f1c8-9fa5-440f-90b5-28b2fb04546a
 
 # Contributions:
 
@@ -40,6 +40,7 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 - Compatibility with KWin for Plasma versions 5.27 to 6.0
 - Compatibility with HDR in Plasma 6.0
 - Optimize the effect to render once instead of 5 times - see [#49](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/49)
+- Smooth animation when a window moves to an active state
 - Reimplementation with shaders to include shadows at corners and an outline
 - Ability to disable effect when windows get maximized or tiled
 - Cleanups for the plugin logic, remove unneeded dependencies from CMakeLists.txt file - by [alex1701c](https://github.com/alex1701c)

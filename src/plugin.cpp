@@ -1,8 +1,11 @@
-#include "ShapeCornersEffect.h"
+#include "Effect.h"
 
-KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(  ShapeCornersEffect,
-                                        "metadata.json",
-                                        return ShapeCornersEffect::supported();,
-                                        return ShapeCornersEffect::enabledByDefault();)
+namespace ShapeCorners {
+    Q_NAMESPACE
+    
+    KWIN_EFFECT_FACTORY_SUPPORTED(Effect,
+                                  "metadata.json",
+                                  return Effect::supported();)
+}
 
 #include "plugin.moc"

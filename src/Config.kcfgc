@@ -1,0 +1,5 @@
+File=kcm/options.kcfg
+NameSpace=ShapeCorners
+ClassName=Config
+Singleton=true
+Mutators=false

@@ -1,14 +1,15 @@
 set(effect_SRCS
-    ShapeCornersEffect.h
-    ShapeCornersEffect.cpp
-    ShapeCornersShader.h
-    ShapeCornersShader.cpp
-    ShapeCornersWindow.h
-    ShapeCornersWindow.cpp
+    Effect.h
+    Effect.cpp
+    Shader.h
+    Shader.cpp
+    Window.h
+    Window.cpp
+    Color.h
     plugin.cpp
 )
 
-kconfig_add_kcfg_files(effect_SRCS ShapeCornersConfig.kcfgc)
+kconfig_add_kcfg_files(effect_SRCS Config.kcfgc)
 kcoreaddons_add_plugin(kwin4_effect_shapecorners SOURCES ${effect_SRCS} INSTALL_NAMESPACE "kwin/effects/plugins/")
 
 target_include_directories(kwin4_effect_shapecorners PUBLIC
