@@ -154,6 +154,9 @@ sh ../tools/install-autorun-test.sh
 The command above adds a `desktop` file inside the `autorun` directory which checks if the effect is still supported,
 if it is not supported, it will automatically rebuild and reinstall the effect.
 
+> [!NOTE]
+> The script uses `qdbus` to show a progress bar. On Plasma 6, it is not installed by default. You need to manually install the package `qtchooser`.
+
 # Settings
 
 You can change the corner radius, or disable the effect in:
