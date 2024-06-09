@@ -22,7 +22,7 @@ jobs:
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-latest
     container:
-      image: ubuntu:24:04
+      image: ubuntu:24.04
       options: --user root
 
     steps:
