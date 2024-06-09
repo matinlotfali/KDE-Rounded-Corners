@@ -22,7 +22,7 @@ jobs:
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-latest
     container:
-      image: kdeneon/plasma:unstable
+      image: ubuntu:24:04
       options: --user root
 
     steps:
@@ -32,9 +32,16 @@ jobs:
     - name: Refresh Ubuntu Packages
       run: sudo apt update
 
+    - name: Add PPA support
+      run: sudo apt install -y --no-install-recommends software-properties-common gpg-agent aptitude
+
+    - name: Add Neon Repository
+      run: |        
+        wget -qO - 'http://archive.neon.kde.org/public.key' | sudo apt-key add -
+        sudo add-apt-repository -y 'deb http://archive.neon.kde.org/unstable jammy main'
+
     - name: Install Dependencies
       run: |
-        sudo apt -y full-upgrade
         sudo apt -y install cmake g++ gettext extra-cmake-modules qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev
         sudo apt -y install dpkg-dev file
     
