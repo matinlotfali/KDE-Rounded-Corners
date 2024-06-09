@@ -34,6 +34,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
+        sudo apt -y full-upgrade
         sudo apt -y install cmake g++ gettext extra-cmake-modules qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev
         sudo apt -y install dpkg-dev file
     
