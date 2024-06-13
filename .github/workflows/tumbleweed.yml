@@ -31,13 +31,13 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Refresh Fedora Packages
-      run: zypper ref --non-interactive
+      run: zypper ref
       continue-on-error: true
 
     - name: Install Dependencies
       run: |
-        zypper --non-interactive in git cmake gcc-c++ kf6-kconfigwidgets-devel kf6-kcmutils-devel kwin6-devel kf6-kwindowsystem-devel qt6-quick-devel qt6-core-private-devel
-        zypper --non-interactive in rpm-build
+        zypper in -y --no-recommends --force-resolution git cmake gcc-c++ kf6-kconfigwidgets-devel kf6-kcmutils-devel kwin6-devel kf6-kwindowsystem-devel qt6-quick-devel qt6-core-private-devel
+        zypper in -y --no-recommends --force-resolution rpm-build
     
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
