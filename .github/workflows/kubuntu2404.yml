@@ -6,7 +6,7 @@ on:
     paths-ignore: [ '**.md', '**.png' ]
   pull_request:
     branches: [ master ]
-    paths-ignore: [ '**.md', '**.png' ]
+    paths: [ '**', '!**.md', '!**.png', '!**.yml', 'kubuntu2404.yml' ]
   schedule:
       - cron: "0 0 * * *"
 
