@@ -6,7 +6,7 @@ on:
     paths-ignore: [ '**.md', '**.png' ]
   pull_request:
     branches: [ master ]
-    paths: [ '**', '!**.md', '!**.png', '!**.yml', 'fedora40.yml' ]
+    paths: [ '**', '!**/**.md', '!**/**.png', '!**/**.yml', '**/fedora40.yml' ]
   schedule:
     - cron: "0 0 * * *"
 
