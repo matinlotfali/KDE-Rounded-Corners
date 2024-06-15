@@ -236,6 +236,9 @@ bool ShapeCorners::Effect::checkTiled(double window_start, const double& screen_
     bool r = false;
     for (auto& [w, window]: m_managed) {
 
+        if (!window.hasEffect())
+            continue;
+
         if (firstGap) {
             gap = std::get<vertical>(std::make_pair(w->x(), w->y())) - window_start;
             if(gap > 40)        // There is no way that a window is tiled and has such a big gap.
@@ -244,7 +247,7 @@ bool ShapeCorners::Effect::checkTiled(double window_start, const double& screen_
         }
 
         if (std::get<vertical>(std::make_pair(w->x(), w->y())) == window_start) {
-            if (std::get<vertical>(std::make_pair(w->width(), w->height())) + gap > 0) {
+            if (std::get<vertical>(std::make_pair(w->width(), w->height())) > 0) {
                 if (checkTiled<vertical>(window_start + std::get<vertical>(std::make_pair(w->width(), w->height())) + gap, screen_end, gap)) {
                     window.isTiled = true;   // Mark every tile as you go back to the first.
                     r = true;
