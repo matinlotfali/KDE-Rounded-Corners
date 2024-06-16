@@ -6,7 +6,8 @@ on:
     paths-ignore: [ '**.md', '**.png' ]
   pull_request:
     branches: [ master ]
-    paths: [ '**', '!**/**.md', '!**/**.png', '!**/**.yml', '**/kubuntu2404.yml' ]
+    paths: [ '**/kubuntu2404.yml' ]
+  workflow_dispatch:
   schedule:
       - cron: "0 0 * * *"
 
