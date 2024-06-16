@@ -6,7 +6,8 @@ on:
     paths-ignore: [ '**.md', '**.png' ]
   pull_request:
     branches: [ master ]
-    paths: [ '**', '!**/**.md', '!**/**.png', '!**/**.yml', '**/fedora40.yml' ]
+    paths: [ '**/fedora40.yml' ]
+  workflow_dispatch:
   schedule:
     - cron: "0 0 * * *"
 
@@ -29,10 +30,6 @@ jobs:
     steps:
     - name: Check out repository
       uses: actions/checkout@v4
-
-    - name: Refresh Fedora Packages
-      run: dnf -y refresh
-      continue-on-error: true
 
     - name: Install Dependencies
       run: |
