@@ -21,6 +21,7 @@
 
 #include "Shader.h"
 #include "Window.h"
+#include "TileChecker.h"
 
 #if QT_VERSION_MAJOR >= 6
     #include <effect/offscreeneffect.h>
@@ -69,8 +70,5 @@ namespace ShapeCorners {
         Shader m_shaderManager;
 
         void checkTiled();
-
-        template<bool vertical>
-        bool checkTiled(double window_start, const double &screen_end, double gap = -1);
     };
 }
