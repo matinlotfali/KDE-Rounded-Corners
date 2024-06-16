@@ -5,6 +5,8 @@ set(effect_SRCS
     Shader.cpp
     Window.h
     Window.cpp
+    TileChecker.h
+    TileChecker.cpp
     Color.h
     plugin.cpp
 )
