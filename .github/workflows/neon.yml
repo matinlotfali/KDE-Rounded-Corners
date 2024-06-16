@@ -7,6 +7,7 @@ on:
   pull_request:
     branches: [ master ]
     paths: [ '**', '!**/**.md', '!**/**.png', '!**/**.yml', '**/neon.yml' ]
+  workflow_dispatch:
   schedule:
     - cron: "0 0 * * *"
 
