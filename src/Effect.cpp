@@ -223,54 +223,17 @@ QString ShapeCorners::Effect::get_window_titles() const {
     return response.join("\n");
 }
 
-template<bool vertical>
-bool ShapeCorners::Effect::checkTiled(double window_start, const double& screen_end, double gap) {
-    if (window_start == screen_end) {
-        return true;    // Found the last chain of tiles
-    } else if (window_start > screen_end) {
-        return false;
-    }
-
-    const bool firstGap = (gap == -1);
-
-    bool r = false;
-    for (auto& [w, window]: m_managed) {
-
-        if (firstGap) {
-            gap = std::get<vertical>(std::make_pair(w->x(), w->y())) - window_start;
-            if(gap > 40)        // There is no way that a window is tiled and has such a big gap.
-                continue;
-            window_start += gap;
-        }
-
-        if (std::get<vertical>(std::make_pair(w->x(), w->y())) == window_start) {
-            if (std::get<vertical>(std::make_pair(w->width(), w->height())) + gap > 0) {
-                if (checkTiled<vertical>(window_start + std::get<vertical>(std::make_pair(w->width(), w->height())) + gap, screen_end, gap)) {
-                    window.isTiled = true;   // Mark every tile as you go back to the first.
-                    r = true;
-                }
-            }
-        }
-
-        if(firstGap) {
-            window_start -= gap;    // Revert changes.
-        }
-    }
-    return r;
-}
-
 void ShapeCorners::Effect::checkTiled() {
-    for (auto& [ptr, window]: m_managed) {     // Delete tile memory.
-        window.isTiled = false;
-    }
+    TileChecker tileChecker (m_managed);
+    tileChecker.clearTiles();
+
     if (!Config::disableRoundTile() && !Config::disableOutlineTile()) {
         return;
     }
 
     for (const auto& screen: KWin::effects->screens()) {        // Per every screen
         const auto& geometry = screen->geometry();
-        checkTiled<false>(geometry.x(), geometry.x() + geometry.width()); // Check horizontally
-        checkTiled<true>(geometry.y(), geometry.y() + geometry.height()); // Check vertically
+        tileChecker.checkTiles(geometry);
     }
 }
 

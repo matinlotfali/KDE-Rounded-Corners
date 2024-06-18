@@ -17,12 +17,12 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 - ![Debian 12 Bookworm](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/debian12.yml?branch=master&label=Debian%2012&logo=debian)
       ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)
       [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Fdebian?label=Download%20%5Bkwin4_effect_shapecorners_debian12.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/debian/kwin4_effect_shapecorners_debian12.deb/download)
-- ![Fedora 39](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/fedora39.yml?branch=master&label=Fedora%2039&logo=fedora&logoColor=white)
-      ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)
-      [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Ffedora39?label=Download%20%5Bkwin4_effect_shapecorners_fedora39.rpm%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/fedora39/kwin4_effect_shapecorners_fedora39.rpm/download)
 - ![Fedora 40](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/fedora40.yml?branch=master&label=Fedora%2040&logo=fedora&logoColor=white)
       ![](https://img.shields.io/badge/Plasma-6.0-lightgreen)
       [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Ffedora?label=Download%20%5Bkwin4_effect_shapecorners_fedora40.rpm%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/fedora/kwin4_effect_shapecorners_fedora40.rpm/download)
+- ![openSUSE Tumbleweed](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/fedora40.yml?branch=master&label=openSUSE%20Tumbleweed&logo=opensuse&logoColor=white)
+  ![](https://img.shields.io/badge/Plasma-6.0-lightgreen)
+  [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Ftumbleweed?label=Download%20%5Bkwin4_effect_shapecorners_tumbleweed.rpm%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/tumbleweed/kwin4_effect_shapecorners_tumbleweed.rpm/download)
 - ![KDE Neon (Stable)](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/neon.yml?branch=master&label=KDE%20Neon%20%28Stable%29&logo=kde&logoColor=white)
       ![](https://img.shields.io/badge/Plasma-6.0-lightgreen)
       [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Fneon?label=Download%20%5Bkwin4_effect_shapecorners_neon.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/neon/kwin4_effect_shapecorners_neon.deb/download)
@@ -156,6 +156,9 @@ sh ../tools/install-autorun-test.sh
 
 The command above adds a `desktop` file inside the `autorun` directory which checks if the effect is still supported,
 if it is not supported, it will automatically rebuild and reinstall the effect.
+
+> [!NOTE]
+> The script uses `qdbus` to show a progress bar. On Plasma 6, it is not installed by default. You need to manually install the package `qtchooser`.
 
 # Settings
 
