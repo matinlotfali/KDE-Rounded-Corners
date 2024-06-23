@@ -89,7 +89,7 @@ vec4 getShadow(vec2 coord0, float r) {
         }
     }
     else {
-        if (coord0.x < 0) {
+        if (coord0.x < 0.0) {
             return getShadowByDistance(coord0, vec2(r+shadowShiftX, coord0.y));                   // Section L
         } else if (coord0.x > windowSize.x) {
             return getShadowByDistance(coord0, vec2(windowSize.x -r-shadowShiftX, coord0.y));     // Section R
