@@ -34,19 +34,69 @@ float parametricBlend(float t) {
 
 /*
  *  \brief This function generates the shadow color based on the distance_from_center
- *  \param distance_from_center: Distance of the rendering point and the reference point that is being used for rounding corners.
- *  \return The RGBA color to be used for shadow.
+ *  \param coord0: The XY point
+ *  \param center: The origin XY point that is being used as a reference for the center of shadow darkness.
+ *  \return The RGBA color to be used for the shadow.
  */
-vec4 getShadowColor(float distance_from_center) {
-    if(!isDrawingShadows())
-        return vec4(0.0, 0.0, 0.0, 0.0);
-    float percent = -distance_from_center/shadowSize + 1.0;
+vec4 getShadowByDistance(vec2 coord0, vec2 center) {
+    float distance_from_center = distance(coord0, center);
+    float percent = 1.0 - distance_from_center/shadowSize;
     percent = clamp(percent, 0.0, 1.0);
     percent = parametricBlend(percent);
-    if (percent < 0.0)
+    if (percent < 0.0) {
         return vec4(0.0, 0.0, 0.0, 0.0);
-    else
-        return vec4(shadowColor.rgb * shadowColor.a * percent, shadowColor.a * percent);
+    }
+    return vec4(shadowColor.rgb * shadowColor.a * percent, shadowColor.a * percent);
+}
+
+/*
+ *  \brief This function is used to choose the pixel shadow color based on the XY pixel and corner radius.
+ *  \param coord0: The XY point
+ *  \param r: The radius of corners in pixel.
+ *  \return The RGBA color to be used for the shadow.
+ */
+vec4 getShadow(vec2 coord0, float r) {
+    if(!isDrawingShadows()) {
+        return vec4(0.0, 0.0, 0.0, 0.0);
+    }
+    float shadowShiftX = sqrt(r);
+    float shadowShiftTop = r;
+
+    /*
+        Split the window into these sections below. They will have a different center of circle for rounding.
+
+        TL  T   T   TR
+        L   x   x   R
+        L   x   x   R
+        BL  B   B   BR
+    */
+    if (coord0.y < r + shadowShiftTop) {
+        if (coord0.x < r + shadowShiftX) {
+            return getShadowByDistance(coord0, vec2(r+shadowShiftX, r+shadowShiftTop));               // Section TL
+        } else if (coord0.x > windowSize.x - r - shadowShiftX) {
+            return getShadowByDistance(coord0, vec2(windowSize.x -r-shadowShiftX, r+shadowShiftTop)); // Section TR
+        } else if (coord0.y < 0.0) {
+            return getShadowByDistance(coord0, vec2(coord0.x, r+shadowShiftTop));                     // Section T
+        }
+    }
+    else if (coord0.y > windowSize.y - r) {
+        if (coord0.x < r + shadowShiftX) {
+            return getShadowByDistance(coord0, vec2(r+shadowShiftX, windowSize.y-r));                   // Section BL
+        } else if (coord0.x > windowSize.x - r) {
+            return getShadowByDistance(coord0, vec2(windowSize.x -r-shadowShiftX, windowSize.y - r));   // Section BR
+        } else if (coord0.y > windowSize.y) {
+            return getShadowByDistance(coord0, vec2(coord0.x, windowSize.y - r));                       // Section B
+        }
+    }
+    else {
+        if (coord0.x < 0) {
+            return getShadowByDistance(coord0, vec2(r+shadowShiftX, coord0.y));                   // Section L
+        } else if (coord0.x > windowSize.x) {
+            return getShadowByDistance(coord0, vec2(windowSize.x -r-shadowShiftX, coord0.y));     // Section R
+        }
+        // For section x, the tex is not changing
+    }
+    return vec4(0.0, 0.0, 0.0, 0.0);
 }
 
 /*
@@ -54,28 +104,26 @@ vec4 getShadowColor(float distance_from_center) {
  *  \param coord0: The XY point
  *  \param tex: The RGBA color of the pixel in XY
  *  \param center: The origin XY point that is being used as a reference for rounding corners.
+ *  \param shadowColor: The RGBA color of the shadow of the pixel behind the window
  *  \return The RGBA color to be used instead of tex input.
  */
-vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle) {
+vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle, vec4 shadowColor) {
     bool diagonal = abs(cos(angle)) > 0.1 && abs(sin(angle)) > 0.1;
     vec2 center;
     float distance_from_center;
-    vec4 c;
     float r;
     if (!hasRoundCorners) {
         r = outlineThickness;
         center = start + r * vec2(cos(angle), sin(angle));
         distance_from_center = distance(coord0, center);
-        c = tex;
     }
     else {
         r = radius;
         center = start + radius * (diagonal? sqrt(2.0) : 1.0) * vec2(cos(angle), sin(angle));
         distance_from_center = distance(coord0, center);
-        c = getShadowColor(distance_from_center);
     }
 
-    vec4 secondaryOutlineOverlay = vec4(mix(c.rgb,  secondOutlineColor.rgb, secondOutlineColor.a), shadowColor.a);
+    vec4 secondaryOutlineOverlay = vec4(mix(shadowColor.rgb,  secondOutlineColor.rgb, secondOutlineColor.a), shadowColor.a);
     if(tex.a > 0.1 && hasPrimaryOutline()) {
         vec4 outlineOverlay = vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), 1.0);
 
@@ -94,12 +142,12 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle) {
             else {
                 // from the second outline to the shadow
                 float antialiasing = clamp(distance_from_center - r - secondOutlineThickness + 0.5, 0.0, 1.0);
-                return mix(secondaryOutlineOverlay, c, antialiasing);
+                return mix(secondaryOutlineOverlay, shadowColor, antialiasing);
             }
         } else {
             // from the first outline to the shadow
             float antialiasing = clamp(distance_from_center - r + 0.5, 0.0, 1.0);
-            return mix(outlineOverlay, c, antialiasing);
+            return mix(outlineOverlay, shadowColor, antialiasing);
         }
     }
     else if (hasSecondOutline()) {
@@ -111,13 +159,13 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle) {
         else {
             // from the second outline to the shadow
             float antialiasing = clamp(distance_from_center - r - secondOutlineThickness + 0.5, 0.0, 1.0);
-            return mix(secondaryOutlineOverlay, c, antialiasing);
+            return mix(secondaryOutlineOverlay, shadowColor, antialiasing);
         }
     }
     else {
         // from the window to the shadow
         float antialiasing = clamp(r-distance_from_center, 0.0, 1.0);
-        return mix(c, tex, antialiasing);
+        return mix(shadowColor, tex, antialiasing);
     }
 }
 
@@ -134,6 +182,8 @@ vec4 run(vec4 tex) {
      * This means areas with negative numbers and areas beyond windowSize is considered part of the shadow. */
     vec2 coord0 = tex_to_pixel(texcoord0);
 
+    vec4 shadowColor = getShadow(coord0, r);
+
     /*
         Split the window into these sections below. They will have a different center of circle for rounding.
 
@@ -143,28 +193,31 @@ vec4 run(vec4 tex) {
         BL  B   B   BR
     */
     if (coord0.y < r) {
-        if (coord0.x < r)
-            tex = shapeCorner(coord0, tex, vec2(0.0, 0.0), radians(45.0));                   // Section TL
-        else if (coord0.x > windowSize.x - r)
-            tex = shapeCorner(coord0, tex, vec2(windowSize.x, 0.0), radians(135.0));         // Section TR
-        else if (coord0.y < outlineThickness)
-            tex = shapeCorner(coord0, tex, vec2(coord0.x, 0.0), radians(90.0));              // Section T
+        if (coord0.x < r) {
+            return shapeCorner(coord0, tex, vec2(0.0, 0.0), radians(45.0), shadowColor);            // Section TL
+        } else if (coord0.x > windowSize.x - r) {
+            return shapeCorner(coord0, tex, vec2(windowSize.x, 0.0), radians(135.0), shadowColor);   // Section TR
+        } else if (coord0.y < outlineThickness) {
+            return shapeCorner(coord0, tex, vec2(coord0.x, 0.0), radians(90.0), shadowColor);        // Section T
+        }
     }
     else if (coord0.y > windowSize.y - r) {
-        if (coord0.x < r)
-            tex = shapeCorner(coord0, tex, vec2(0.0, windowSize.y), radians(315.0));          // Section BL
-        else if (coord0.x > windowSize.x - r)
-            tex = shapeCorner(coord0, tex, vec2(windowSize.x, windowSize.y), radians(225.0)); // Section BR
-        else if (coord0.y > windowSize.y - outlineThickness)
-            tex = shapeCorner(coord0, tex, vec2(coord0.x, windowSize.y), radians(270.0));     // Section B
+        if (coord0.x < r) {
+            return shapeCorner(coord0, tex, vec2(0.0, windowSize.y), radians(315.0), shadowColor);       // Section BL
+        } else if (coord0.x > windowSize.x - r) {
+            return shapeCorner(coord0, tex, vec2(windowSize.x, windowSize.y), radians(225.0), shadowColor);// Section BR
+        } else if (coord0.y > windowSize.y - outlineThickness) {
+            return shapeCorner(coord0, tex, vec2(coord0.x, windowSize.y), radians(270.0), shadowColor);    // Section B
+        }
     }
     else {
-        if (coord0.x < r)
-            tex = shapeCorner(coord0, tex, vec2(0.0, coord0.y), radians(0.0));                 // Section L
-        else if (coord0.x > windowSize.x - r)
-            tex = shapeCorner(coord0, tex, vec2(windowSize.x, coord0.y), radians(180.0));      // Section R
-
+        if (coord0.x < r) {
+            return shapeCorner(coord0, tex, vec2(0.0, coord0.y), radians(0.0), shadowColor);             // Section L
+        } else if (coord0.x > windowSize.x - r) {
+            return shapeCorner(coord0, tex, vec2(windowSize.x, coord0.y), radians(180.0), shadowColor);  // Section R
+        }
         // For section x, the tex is not changing
     }
     return tex;
 }
+
