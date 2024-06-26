@@ -113,45 +113,43 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle, vec4 coord_shad
     vec2 center = start + r * diagonal_length * vec2(cos(angle), sin(angle));
     float distance_from_center = distance(coord0, center);
 
-    if(tex.a > 0.1) {
-        vec4 secondaryOutlineOverlay = mix(coord_shadowColor, secondOutlineColor, secondOutlineColor.a);
-        if (hasPrimaryOutline()) {
-            vec4 outlineOverlay = vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), 1.0);
+    vec4 secondaryOutlineOverlay = mix(coord_shadowColor, secondOutlineColor, secondOutlineColor.a);
+    if (tex.a > 0.1 && hasPrimaryOutline()) {
+        vec4 outlineOverlay = vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), 1.0);
 
-            if (distance_from_center < r - outlineThickness + 0.5) {
-                // from the window to the outline
-                float antialiasing = clamp(r - outlineThickness + 0.5 - distance_from_center, 0.0, 1.0);
-                return mix(outlineOverlay, tex, antialiasing);
-            }
-            else if (hasSecondOutline()) {
-
-                if (distance_from_center < r + 0.5) {
-                    // from the second outline to the shadow
-                    float antialiasing = clamp(r + 0.5 - distance_from_center, 0.0, 1.0);
-                    return mix(secondaryOutlineOverlay, outlineOverlay, antialiasing);
-                }
-                else {
-                    // from the second outline to the shadow
-                    float antialiasing = clamp(distance_from_center - r - secondOutlineThickness + 0.5, 0.0, 1.0);
-                    return mix(secondaryOutlineOverlay, coord_shadowColor, antialiasing);
-                }
-            } else {
-                // from the first outline to the shadow
-                float antialiasing = clamp(distance_from_center - r + 0.5, 0.0, 1.0);
-                return mix(outlineOverlay, coord_shadowColor, antialiasing);
-            }
+        if (distance_from_center < r - outlineThickness + 0.5) {
+            // from the window to the outline
+            float antialiasing = clamp(r - outlineThickness + 0.5 - distance_from_center, 0.0, 1.0);
+            return mix(outlineOverlay, tex, antialiasing);
         }
-        else if (tex.a > 0.1 && hasSecondOutline()) {
+        else if (hasSecondOutline()) {
+
             if (distance_from_center < r + 0.5) {
-                // from window to the second outline
+                // from the second outline to the shadow
                 float antialiasing = clamp(r + 0.5 - distance_from_center, 0.0, 1.0);
-                return mix(secondaryOutlineOverlay, tex, antialiasing);
+                return mix(secondaryOutlineOverlay, outlineOverlay, antialiasing);
             }
             else {
                 // from the second outline to the shadow
                 float antialiasing = clamp(distance_from_center - r - secondOutlineThickness + 0.5, 0.0, 1.0);
                 return mix(secondaryOutlineOverlay, coord_shadowColor, antialiasing);
             }
+        } else {
+            // from the first outline to the shadow
+            float antialiasing = clamp(distance_from_center - r + 0.5, 0.0, 1.0);
+            return mix(outlineOverlay, coord_shadowColor, antialiasing);
+        }
+    }
+    else if (hasSecondOutline()) {
+        if (distance_from_center < r + 0.5) {
+            // from window to the second outline
+            float antialiasing = clamp(r + 0.5 - distance_from_center, 0.0, 1.0);
+            return mix(secondaryOutlineOverlay, tex, antialiasing);
+        }
+        else {
+            // from the second outline to the shadow
+            float antialiasing = clamp(distance_from_center - r - secondOutlineThickness + 0.5, 0.0, 1.0);
+            return mix(secondaryOutlineOverlay, coord_shadowColor, antialiasing);
         }
     }
 
