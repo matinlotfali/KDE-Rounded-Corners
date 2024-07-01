@@ -12,6 +12,8 @@
 #else
 #include <kwineffects.h>
 #endif
+#include <KDecoration2/Decoration>
+#include <KDecoration2/DecorationShadow>
 
 QWidget ShapeCorners::Window::m_widget {};
 
@@ -58,7 +60,7 @@ void ShapeCorners::Window::animateProperties(const std::chrono::milliseconds& ti
     float configShadowSize;
     float configOutlineSize;
     float configSecondOutlineSize;
-    Color configShadowColor;
+    Color configShadowColor = Color(getDecorationShadowColor());
     Color configOutlineColor;
     Color configSecondOutlineColor;
     const QPalette& m_palette = m_widget.palette();
@@ -67,10 +69,6 @@ void ShapeCorners::Window::animateProperties(const std::chrono::milliseconds& ti
         configShadowSize = static_cast<float>(Config::shadowSize());
         configOutlineSize = static_cast<float>(Config::outlineThickness());
         configSecondOutlineSize = static_cast<float>(Config::secondOutlineThickness());
-
-        configShadowColor = Color(Config::activeShadowUsePalette() ?
-                                  m_palette.color(QPalette::Active, static_cast<QPalette::ColorRole>(Config::activeShadowPalette())):
-                                  Config::shadowColor());
         configShadowColor.setAlpha(Config::activeShadowAlpha());
 
         configOutlineColor = Color(Config::activeOutlineUsePalette() ?
@@ -87,10 +85,6 @@ void ShapeCorners::Window::animateProperties(const std::chrono::milliseconds& ti
         configShadowSize = static_cast<float>(Config::inactiveShadowSize());
         configOutlineSize = static_cast<float>(Config::inactiveOutlineThickness());
         configSecondOutlineSize = static_cast<float>(Config::inactiveSecondOutlineThickness());
-
-        configShadowColor = Color(Config::inactiveShadowUsePalette() ?
-                                  m_palette.color(QPalette::Inactive, static_cast<QPalette::ColorRole>(Config::inactiveShadowPalette())):
-                                  Config::inactiveShadowColor());
         configShadowColor.setAlpha(Config::inactiveShadowAlpha());
 
         configOutlineColor = Color(Config::inactiveOutlineUsePalette() ?
@@ -184,4 +178,17 @@ void ShapeCorners::Window::animateProperties(const std::chrono::milliseconds& ti
     repaintCount++;
 #endif
     w->addRepaintFull();
+}
+
+QColor ShapeCorners::Window::getDecorationShadowColor() const {
+    QColor result = Qt::transparent;
+    auto decoration = w->decoration();
+    if (decoration) {
+        auto shadow = decoration->shadow().get();
+        if (shadow) {
+            auto shadowImage = shadow->shadow();
+            result = shadowImage.pixelColor(135, 54);
+        }
+    }
+    return result;
 }
