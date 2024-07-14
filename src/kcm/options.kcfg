@@ -5,7 +5,7 @@
                           http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
     <kcfgfile name="kwinrc"/>
 
-    <group name="ًRound-Corners">
+    <group name="Round-Corners">
         <entry name="Size" type="UInt">
             <default>10</default>
         </entry>

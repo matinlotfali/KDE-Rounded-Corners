@@ -8,7 +8,6 @@
 #include <qconfig.h>
 #if QT_VERSION_MAJOR >= 6
 #include <effect/effecthandler.h>
-
 #include <utility>
 #else
 #include <kwineffects.h>
@@ -32,6 +31,7 @@ bool ShapeCorners::Window::hasEffect() const {
                     || Config::inclusions().contains(name)
             )
             && !Config::exclusions().contains(name)
+            && (hasRoundCorners() || hasOutline())
     );
 }
 

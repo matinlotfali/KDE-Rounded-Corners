@@ -6,7 +6,8 @@ on:
     paths-ignore: [ '**.md', '**.png' ]
   pull_request:
     branches: [ master ]
-    paths-ignore: [ '**.md', '**.png' ]
+    paths: [ '**/kubuntu2204-backports.yml' ]
+  workflow_dispatch:
   schedule:
       - cron: "0 0 * * *"
 
@@ -57,7 +58,7 @@ jobs:
         echo "DEB_FILE=${DEB_FILE}" >> $GITHUB_ENV
 
     - name: Upload Workflow Artifact
-      uses: actions/upload-artifact@v4.3.3
+      uses: actions/upload-artifact@v4.3.4
       with:
         name: ${{ env.DEB_NAME }}
         path: ${{ env.DEB_FILE }}

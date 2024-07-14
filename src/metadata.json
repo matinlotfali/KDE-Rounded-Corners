@@ -20,6 +20,6 @@
         ],
         "Version": "git"
     },
-    "X-KDE-Ordering": "5",
+    "X-KDE-Ordering": 5,
     "X-KDE-ConfigModule": "kwin_shapecorners_config"
 }
