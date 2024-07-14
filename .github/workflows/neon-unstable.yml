@@ -23,22 +23,20 @@ jobs:
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-latest
     container:
-      image: kdeneon/plasma:unstable
+      image: invent-registry.kde.org/neon/docker-images/plasma:unstable
+      options: --user root
 
     steps:
     - name: Check out repository
       uses: actions/checkout@v4
 
     - name: Refresh Ubuntu Packages
-      run: |
-        sudo pkcon refresh force -y
-        sudo pkcon update -y --allow-downgrade
-        sudo pkcon update -y --allow-downgrade      
+      run: apt update
 
     - name: Install Dependencies
       run: |
-        sudo pkcon install -y --allow-downgrade cmake g++ gettext extra-cmake-modules qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev
-        sudo pkcon install -y --allow-downgrade dpkg-dev file
+        apt install -y --no-install-recommends cmake g++ gettext extra-cmake-modules qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev
+        apt install -y --no-install-recommends dpkg-dev file
     
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
