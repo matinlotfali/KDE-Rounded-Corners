@@ -24,7 +24,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: kdeneon/plasma:unstable
-      options: --user root
 
     steps:
     - name: Check out repository
@@ -32,14 +31,14 @@ jobs:
 
     - name: Refresh Ubuntu Packages
       run: |
-        pkcon refresh force -y
-        pkcon update -y --allow-downgrade
-        pkcon update -y --allow-downgrade      
+        sudo pkcon refresh force -y
+        sudo pkcon update -y --allow-downgrade
+        sudo pkcon update -y --allow-downgrade      
 
     - name: Install Dependencies
       run: |
-        pkcon install -y --allow-downgrades cmake g++ gettext extra-cmake-modules qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev
-        pkcon install -y --allow-downgrades dpkg-dev file
+        sudo pkcon install -y --allow-downgrade cmake g++ gettext extra-cmake-modules qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev
+        sudo pkcon install -y --allow-downgrade dpkg-dev file
     
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
