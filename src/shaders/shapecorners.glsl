@@ -154,7 +154,7 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle, vec4 coord_shad
     }
 
     // if other conditions don't apply, just don't draw an outline, from the window to the shadow
-    float antialiasing = clamp(r-distance_from_center, 0.0, 1.0);
+    float antialiasing = clamp(r - distance_from_center + 0.5, 0.0, 1.0);
     return mix(coord_shadowColor, tex, antialiasing);
 }
 
