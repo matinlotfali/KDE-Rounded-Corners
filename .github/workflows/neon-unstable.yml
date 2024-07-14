@@ -31,7 +31,9 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Refresh Ubuntu Packages
-      run: apt update
+      run: |
+        apt update
+        apt full-upgrade --fix-broken --allow-downgrades --allow-remove-essential --allow-change-held-packages
 
     - name: Install Dependencies
       run: |
