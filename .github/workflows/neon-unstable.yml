@@ -32,14 +32,14 @@ jobs:
 
     - name: Refresh Ubuntu Packages
       run: |
-        apt update
-        apt full-upgrade -y --fix-broken --allow-downgrades --allow-remove-essential --allow-change-held-packages
-        apt full-upgrade -y --fix-broken --allow-downgrades --allow-remove-essential --allow-change-held-packages
+        pkcon refresh force -y
+        pkcon update -y --allow-downgrade
+        pkcon update -y --allow-downgrade      
 
     - name: Install Dependencies
       run: |
-        apt install -y --no-install-recommends --fix-broken --allow-downgrades --allow-remove-essential --allow-change-held-packages cmake g++ gettext extra-cmake-modules qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev
-        apt install -y --no-install-recommends dpkg-dev file
+        pkcon install -y --allow-downgrades cmake g++ gettext extra-cmake-modules qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev
+        pkcon install -y --allow-downgrades dpkg-dev file
     
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
