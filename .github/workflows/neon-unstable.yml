@@ -40,7 +40,8 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        sudo aptitude -y install --without-recommends cmake g++ gettext extra-cmake-modules qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev
+        sudo aptitude -y install --without-recommends -o Aptitude::ProblemResolver::SolutionCost='100*canceled-actions,200*removals' \ 
+          cmake g++ gettext extra-cmake-modules qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev
         sudo aptitude -y install --without-recommends dpkg-dev file
     
     - name: Configure CMake
