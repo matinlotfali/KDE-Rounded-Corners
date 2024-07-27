@@ -33,6 +33,7 @@ bool ShapeCorners::Window::hasEffect() const {
                     || Config::inclusions().contains(name)
             )
             && !Config::exclusions().contains(name)
+            && (hasRoundCorners() || hasOutline())
     );
 }
 
