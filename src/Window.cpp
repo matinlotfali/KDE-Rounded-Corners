@@ -8,16 +8,17 @@
 #include <qconfig.h>
 #if QT_VERSION_MAJOR >= 6
 #include <effect/effecthandler.h>
-#include <utility>
 #else
 #include <kwineffects.h>
 #endif
 
 QWidget ShapeCorners::Window::m_widget {};
 
-ShapeCorners::Window::Window(KWin::EffectWindow *w, QString name)
-        : w(w), name(std::move(name))
-{ }
+ShapeCorners::Window::Window(KWin::EffectWindow *w)
+        : w(w), isIncluded(false), isExcluded(false)
+{
+    configChanged();
+}
 
 bool ShapeCorners::Window::isActive() const {
     return KWin::effects->activeWindow() == w;
@@ -28,9 +29,9 @@ bool ShapeCorners::Window::hasEffect() const {
             (
                     (w->isNormalWindow() && Config::includeNormalWindows())
                     || (w->isDialog() && Config::includeDialogs())
-                    || Config::inclusions().contains(name)
+                    || isIncluded
             )
-            && !Config::exclusions().contains(name)
+            && !isExcluded
             && (hasRoundCorners() || hasOutline())
     );
 }
@@ -154,9 +155,9 @@ void ShapeCorners::Window::animateProperties(const std::chrono::milliseconds& ti
         && deltaOutlineColor.isZero()
         && deltaSecondOutlineColor.isZero()
     ) {
-#ifdef QT_DEBUG
+#ifdef DEBUG_ANIMATION
         if (repaintCount > 0)
-                qDebug() << "ShapeCorners: repainted" << name << repaintCount << "times for animation.";
+                qDebug() << "ShapeCorners: repainted" << w->windowClass() << repaintCount << "times for animation.";
             repaintCount = 0;
 #endif
         return;
@@ -181,8 +182,34 @@ void ShapeCorners::Window::animateProperties(const std::chrono::milliseconds& ti
     secondOutlineColor.clamp();
 
     // the animation is still in progress
-#ifdef QT_DEBUG
+#ifdef DEBUG_ANIMATION
     repaintCount++;
 #endif
     w->addRepaintFull();
+}
+
+QString ShapeCorners::Window::debugName(const KWin::EffectWindow* w) {
+    return QStringLiteral("\tclass: ") + w->windowClass() +
+           QStringLiteral("\ttype: ") + QVariant::fromValue(w->windowType()).toString() +
+           QStringLiteral("\trole: ") + w->windowRole() +
+           QStringLiteral("\tcaption: ") + w->caption();
+}
+
+void ShapeCorners::Window::configChanged() {
+    for (auto& inclusion: Config::inclusions()) {
+        if (w->windowClass().contains(inclusion, Qt::CaseInsensitive)
+            || w->caption().contains(inclusion, Qt::CaseInsensitive)
+                ) {
+            isIncluded = true;
+            break;
+        }
+    }
+    for (auto& exclusion: Config::exclusions()) {
+        if (w->windowClass().contains(exclusion, Qt::CaseInsensitive)
+            || w->caption().contains(exclusion, Qt::CaseInsensitive)
+                ) {
+            isExcluded = true;
+            break;
+        }
+    }
 }
