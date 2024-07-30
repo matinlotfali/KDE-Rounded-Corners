@@ -190,7 +190,11 @@ void ShapeCorners::Window::animateProperties(const std::chrono::milliseconds& ti
 
 QString ShapeCorners::Window::debugName(const KWin::EffectWindow* w) {
     return QStringLiteral("\tclass: ") + w->windowClass() +
+#if QT_VERSION_MAJOR >= 6
            QStringLiteral("\ttype: ") + QVariant::fromValue(w->windowType()).toString() +
+#else
+           QStringLiteral("\ttype: ") + QString::number(static_cast<int>(w->windowType())) +
+#endif
            QStringLiteral("\trole: ") + w->windowRole() +
            QStringLiteral("\tcaption: ") + w->caption();
 }

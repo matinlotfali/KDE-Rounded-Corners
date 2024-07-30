@@ -62,10 +62,6 @@ namespace ShapeCorners {
         bool isIncluded;
         bool isExcluded;
 
-#if QT_VERSION_MAJOR < 6
-        Q_ENUM(KWin::WindowType);
-#endif
-
         /**
          * \brief Used only for its `palette()` function which holds the currently active highlight colors.
          */
