@@ -4,6 +4,14 @@ project(kwin4_effect_shapecorners VERSION 0.6.2 LANGUAGES CXX)
 
 include(cmake/default-vars.cmake)
 include(cmake/qtversion.cmake)
+include(cmake/info.cmake)
+
+find_package(ECM ${KF_MIN_VERSION} REQUIRED NO_MODULE)
+set(CMAKE_MODULE_PATH
+        ${CMAKE_MODULE_PATH}
+        ${ECM_MODULE_PATH}
+        ${ECM_KDE_MODULE_DIR}
+)
 include(FeatureSummary)
 include(KDEInstallDirs)
 include(KDECMakeSettings)
@@ -25,6 +33,5 @@ add_subdirectory(src)
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
 
-include(cmake/info.cmake)
 include(cmake/test.cmake)
 include(cmake/pack.cmake)
