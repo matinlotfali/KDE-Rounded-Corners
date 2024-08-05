@@ -80,7 +80,8 @@ ShapeCorners::Effect::windowAdded(KWin::EffectWindow *w)
     }
 
     const QSet<QString> hardExceptions {
-        "kwin", "kwin_x11", "kwin_wayland", "kscreenlocker_greet", "ksmserver", "krunner"
+        QStringLiteral("kwin"), QStringLiteral("kwin_x11"), QStringLiteral("kwin_wayland"),
+        QStringLiteral("kscreenlocker_greet"), QStringLiteral("ksmserver"), QStringLiteral("krunner")
     };
     const auto name = w->windowClass().split(QChar::Space).first();
     if (hardExceptions.contains(name)) {
@@ -220,7 +221,7 @@ QString ShapeCorners::Effect::get_window_titles() const {
         if (!response.contains(window.name))
             response.push_back(window.name);
     }
-    return response.join("\n");
+    return response.join(QStringLiteral("\n"));
 }
 
 void ShapeCorners::Effect::checkTiled() {
