@@ -20,9 +20,11 @@ namespace KWin
 }
 
 namespace ShapeCorners {
-    struct Window {
+    class Window: public QObject {
+        Q_OBJECT
+
+    public:
         KWin::EffectWindow *w;
-        QString name;
         bool isTiled = false;
         bool isMaximized = false;
 
@@ -34,11 +36,11 @@ namespace ShapeCorners {
         Color outlineColor = {};
         Color secondOutlineColor = {};
 
-#ifdef QT_DEBUG
+#ifdef DEBUG_ANIMATION
         uint32_t repaintCount = 0;
 #endif
 
-        explicit Window(KWin::EffectWindow *w, QString name);
+        explicit Window(KWin::EffectWindow *w);
 
         void animateProperties(const std::chrono::milliseconds &time);
 
@@ -50,8 +52,15 @@ namespace ShapeCorners {
 
         [[nodiscard]] bool hasEffect() const;
 
+        [[nodiscard]] static QString debugName(const KWin::EffectWindow* w);
+
+    public slots:
+        void configChanged();
+
     private:
         std::chrono::milliseconds m_last_time = {};
+        bool isIncluded;
+        bool isExcluded;
 
         /**
          * \brief Used only for its `palette()` function which holds the currently active highlight colors.

@@ -7,6 +7,7 @@
 
 #include <unordered_map>
 #include <cstdint>
+#include <memory>
 
 class QRect;
 namespace KWin {
@@ -15,7 +16,7 @@ namespace KWin {
 
 namespace ShapeCorners {
     class Window;
-    using WindowList = std::unordered_map<const KWin::EffectWindow *, Window>;
+    using WindowList = std::unordered_map<KWin::EffectWindow*, Window*>;
 
     class TileChecker {
 
