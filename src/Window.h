@@ -57,6 +57,8 @@ namespace ShapeCorners {
          * \brief Used only for its `palette()` function which holds the currently active highlight colors.
          */
         static QWidget m_widget;
+
+        [[nodiscard]] QColor getDecorationShadowColor() const;
     };
 }
 
