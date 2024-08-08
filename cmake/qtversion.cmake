@@ -1,5 +1,5 @@
 execute_process(
-        COMMAND sh -c "ldconfig -v 2>&1 | awk '$1 ~ \"libkwin.so\" {print $3}' | cut -d '.' -f 3-"
+        COMMAND sh -c "ldconfig -v 2>&1 | grep libkwin.so | rev | cut -d '.' -f -3 | rev"
         OUTPUT_VARIABLE KWIN_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 message("-- KWin Version: ${KWIN_VERSION}")
