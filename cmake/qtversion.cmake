@@ -1,4 +1,4 @@
-find_package(KF6 COMPONENTS ConfigWidgets)
+find_package(KF6 QUIET COMPONENTS ConfigWidgets)
 
 if(KF6_FOUND)
     set(QT_MIN_VERSION "6.4.0")
