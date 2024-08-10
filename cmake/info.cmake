@@ -1,4 +1,4 @@
-if(${KWin_VERSION_MAJOR} EQUAL 6)
+if(${KF_MIN_VERSION} EQUAL 6)
     set(KWIN_EFFECT_INCLUDE_FILE "/usr/include/kwin/effect/effect.h")
 else ()
     set(KWIN_EFFECT_INCLUDE_FILE "/usr/include/kwineffects.h")
