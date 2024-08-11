@@ -10,11 +10,11 @@ set(CMAKE_MODULE_PATH
         ${ECM_MODULE_PATH}
         ${ECM_KDE_MODULE_DIR}
 )
+include(cmake/qtversion.cmake)
 include(FeatureSummary)
 include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
-include(cmake/qtversion.cmake)
 
 # required frameworks by Core
 find_package(KF${QT_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED COMPONENTS ConfigWidgets)
