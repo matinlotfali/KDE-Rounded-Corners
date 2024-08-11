@@ -1,15 +1,7 @@
-execute_process(
-        COMMAND sh -c "ldconfig -v 2>&1 | grep libkwin.so | rev | cut -d '.' -f -3 | rev"
-        OUTPUT_VARIABLE KWIN_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-message("-- KWin Version: ${KWIN_VERSION}")
+find_package(KF6 QUIET COMPONENTS ConfigWidgets)
 
-set(KF_MIN_VERSION "5.78")
-set(QT_MIN_VERSION "5.15")
-set(QT_MAJOR_VERSION 5)
-
-if(KWIN_VERSION VERSION_GREATER "6")
+if(KF6_FOUND)
     set(QT_MIN_VERSION "6.4.0")
     set(QT_MAJOR_VERSION 6)
     set(KF_MIN_VERSION 6)
-endif()
+endif (KF6_FOUND)
