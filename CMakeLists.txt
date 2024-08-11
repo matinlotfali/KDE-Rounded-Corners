@@ -4,7 +4,7 @@ project(kwin4_effect_shapecorners VERSION 0.6.2 LANGUAGES CXX)
 
 include(cmake/default-vars.cmake)
 
-find_package(ECM REQUIRED NO_MODULE)
+find_package(ECM ${KF_MIN_VERSION} REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH
         ${CMAKE_MODULE_PATH}
         ${ECM_MODULE_PATH}
@@ -14,7 +14,6 @@ include(FeatureSummary)
 include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
-
 include(cmake/qtversion.cmake)
 
 # required frameworks by Core
