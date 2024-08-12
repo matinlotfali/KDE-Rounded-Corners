@@ -1,0 +1,92 @@
+name: Debian Sid
+
+on:
+  push:
+    branches: [ master ]
+    paths-ignore: [ '**.md', '**.png' ]
+  pull_request:
+    branches: [ master ]
+    paths: [ '**/debian-sid.yml' ]
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+  DEB_NAME: kwin4_effect_shapecorners
+
+jobs:
+  debian-sid:
+    # The CMake configure and build commands are platform agnostic and should work equally
+    # well on Windows or Mac.  You can convert this to a matrix build if you need
+    # cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ubuntu-latest
+    container:
+      image: debian:sid
+      options: --user root
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v4
+
+    - name: Install Dependencies
+      run: |
+        apt update 
+        apt -y install --no-install-recommends aptitude
+        aptitude -y install --without-recommends cmake g++ gettext qttools5-dev libkf5configwidgets-dev kwin-dev
+        aptitude -y install --without-recommends dpkg-dev file
+
+    - name: Install older ECM
+      run: |
+        echo "deb http://deb.debian.org/debian stable main" >> /etc/apt/sources.list
+        apt update 
+        apt -y install --no-install-recommends -t stable extra-cmake-modules 
+        
+    
+    - name: Configure CMake
+      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+      run: cmake . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Build
+      # Build your program with the given configuration
+      run: cmake --build . --config ${{env.BUILD_TYPE}} -j
+
+    - name: Package
+      run: |
+        cpack -V -G DEB
+        DEB_FILE=artifacts/${DEB_NAME}_${GITHUB_JOB}.deb
+        mkdir artifacts
+        mv ${DEB_NAME}.deb ${DEB_FILE}
+        echo "DEB_FILE=${DEB_FILE}" >> $GITHUB_ENV
+        echo "USERNAME: $USERNAME"
+        echo "HOST: $HOST"
+
+    - name: Upload Package to Workflow Artifact
+      uses: actions/upload-artifact@v4.3.5
+      with:
+        name: ${{ env.DEB_NAME }}
+        path: ${{ env.DEB_FILE }}
+        compression-level: 0
+        if-no-files-found: error
+
+    - name: Upload Package to SourceForge
+      if: github.ref == 'refs/heads/master'
+      uses: nicklasfrahm/scp-action@main
+      with:
+        direction: upload
+        host: ${{ secrets.SOURCEFORGE_HOST }}
+        username: ${{ secrets.SOURCEFORGE_USERNAME }}
+        key: ${{ secrets.SOURCEFORGE_KEY }}
+        fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
+        source: ${{ env.DEB_FILE }}
+        target: /home/frs/project/kde-rounded-corners/nightly/debian/${{ env.DEB_NAME }}_${{ github.job }}.deb
+
+#     - name: Test
+#       working-directory: ${{github.workspace}}/build
+#       # Execute tests defined by the CMake configuration.  
+#       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+#       run: ctest -C ${{env.BUILD_TYPE}}
+      
