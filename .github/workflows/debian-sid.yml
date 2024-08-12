@@ -35,8 +35,15 @@ jobs:
       run: |
         apt update 
         apt -y install --no-install-recommends aptitude
-        aptitude -y install --without-recommends cmake g++ gettext extra-cmake-modules qttools5-dev libkf5configwidgets-dev kwin-dev
+        aptitude -y install --without-recommends cmake g++ gettext qttools5-dev libkf5configwidgets-dev kwin-dev
         aptitude -y install --without-recommends dpkg-dev file
+
+    - name: Install older ECM
+      run: |
+        echo "deb http://deb.debian.org/debian stable main" >> /etc/apt/sources.list
+        apt update 
+        apt -y install --no-install-recommends -t stable extra-cmake-modules 
+        
     
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
