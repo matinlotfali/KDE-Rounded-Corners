@@ -33,16 +33,15 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        apt update 
-        apt -y install --no-install-recommends aptitude
-        aptitude -y install --without-recommends cmake g++ gettext qttools5-dev libkf5configwidgets-dev kwin-dev
-        aptitude -y install --without-recommends dpkg-dev file
+        apt-get update
+        apt-get install -y -f --no-install-recommends cmake g++ gettext qttools5-dev libkf5configwidgets-dev kwin-dev
+        apt-get install -y -f --no-install-recommends dpkg-dev file
 
     - name: Install older ECM
       run: |
         echo "deb http://deb.debian.org/debian stable main" >> /etc/apt/sources.list
-        apt update 
-        apt -y install --no-install-recommends -t stable extra-cmake-modules 
+        apt-get update 
+        apt-get install -y -f --no-install-recommends -t stable extra-cmake-modules 
         
     
     - name: Configure CMake
