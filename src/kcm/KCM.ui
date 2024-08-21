@@ -1676,7 +1676,7 @@
         </widget>
        </item>
        <item row="1" column="2">
-        <widget class="QCheckBox" name="kcfg_IncludeNormalWindow">
+        <widget class="QCheckBox" name="kcfg_IncludeNormalWindows">
          <property name="text">
           <string>Include all normal windows</string>
          </property>

@@ -1,4 +1,4 @@
-name: Kubuntu 24.04
+name: Debian Sid
 
 on:
   push:
@@ -6,10 +6,10 @@ on:
     paths-ignore: [ '**.md', '**.png' ]
   pull_request:
     branches: [ master ]
-    paths: [ '**/kubuntu2404.yml' ]
+    paths: [ '**/debian-sid.yml' ]
   workflow_dispatch:
   schedule:
-      - cron: "0 0 * * *"
+    - cron: "0 0 * * *"
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -17,41 +17,32 @@ env:
   DEB_NAME: kwin4_effect_shapecorners
 
 jobs:
-  kubuntu2404:
+  debian-sid:
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
     # cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-latest
     container:
-      image: ubuntu:24.04
+      image: debian:sid
       options: --user root
-
-    permissions:
-      # required for all workflows
-      security-events: write
-
-      # required to fetch internal or private CodeQL packs
-      packages: read
 
     steps:
     - name: Check out repository
       uses: actions/checkout@v4
-      
-    - name: Refresh Ubuntu Packages
-      run: apt update
 
     - name: Install Dependencies
       run: |
-        apt -y install --no-install-recommends aptitude
-        aptitude install -y --without-recommends cmake g++ gettext extra-cmake-modules qttools5-dev libkf5configwidgets-dev kwin-dev
-        aptitude -y install --without-recommends dpkg-dev file
+        apt-get update
+        apt-get install -y -f --no-install-recommends cmake g++ gettext qttools5-dev libkf5configwidgets-dev kwin-dev
+        apt-get install -y -f --no-install-recommends dpkg-dev file
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: c-cpp
-        build-mode: manual
+    - name: Install older ECM
+      run: |
+        echo "deb http://deb.debian.org/debian stable main" >> /etc/apt/sources.list
+        apt-get update 
+        apt-get install -y -f --no-install-recommends -t stable extra-cmake-modules 
+        
     
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -62,11 +53,6 @@ jobs:
       # Build your program with the given configuration
       run: cmake --build . --config ${{env.BUILD_TYPE}} -j
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
-      with:
-        category: "/language:c-cpp"
-
     - name: Package
       run: |
         cpack -V -G DEB
@@ -74,8 +60,10 @@ jobs:
         mkdir artifacts
         mv ${DEB_NAME}.deb ${DEB_FILE}
         echo "DEB_FILE=${DEB_FILE}" >> $GITHUB_ENV
+        echo "USERNAME: $USERNAME"
+        echo "HOST: $HOST"
 
-    - name: Upload Workflow Artifact
+    - name: Upload Package to Workflow Artifact
       uses: actions/upload-artifact@v4.3.6
       with:
         name: ${{ env.DEB_NAME }}
@@ -83,7 +71,7 @@ jobs:
         compression-level: 0
         if-no-files-found: error
 
-    - name: Upload Release Asset
+    - name: Upload Package to SourceForge
       if: github.ref == 'refs/heads/master'
       uses: nicklasfrahm/scp-action@main
       with:
@@ -93,11 +81,11 @@ jobs:
         key: ${{ secrets.SOURCEFORGE_KEY }}
         fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
         source: ${{ env.DEB_FILE }}
-        target: /home/frs/project/kde-rounded-corners/nightly/kubuntu/${{ env.DEB_NAME }}_${{ github.job }}.deb
+        target: /home/frs/project/kde-rounded-corners/nightly/debian/${{ env.DEB_NAME }}_${{ github.job }}.deb
 
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build
-#       # Execute tests defined by the CMake configuration.
+#       # Execute tests defined by the CMake configuration.  
 #       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
 #       run: ctest -C ${{env.BUILD_TYPE}}
-
+      
