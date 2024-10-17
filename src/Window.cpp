@@ -14,21 +14,21 @@
 
 QWidget ShapeCorners::Window::m_widget {};
 
-ShapeCorners::Window::Window(KWin::EffectWindow *w)
+ShapeCorners::Window::Window(KWin::EffectWindow& w)
         : w(w), isIncluded(false), isExcluded(false)
 {
     configChanged();
 }
 
 bool ShapeCorners::Window::isActive() const {
-    return KWin::effects->activeWindow() == w;
+    return KWin::effects->activeWindow() == &w;
 }
 
 bool ShapeCorners::Window::hasEffect() const {
     return (
             (
-                    (w->isNormalWindow() && Config::includeNormalWindows())
-                    || (w->isDialog() && Config::includeDialogs())
+                    (w.isNormalWindow() && Config::includeNormalWindows())
+                    || (w.isDialog() && Config::includeDialogs())
                     || isIncluded
             )
             && !isExcluded
@@ -157,7 +157,7 @@ void ShapeCorners::Window::animateProperties(const std::chrono::milliseconds& ti
     ) {
 #ifdef DEBUG_ANIMATION
         if (repaintCount > 0)
-                qDebug() << "ShapeCorners: repainted" << w->windowClass() << repaintCount << "times for animation.";
+                qDebug() << "ShapeCorners: repainted" << w.windowClass() << repaintCount << "times for animation.";
             repaintCount = 0;
 #endif
         return;
@@ -185,35 +185,43 @@ void ShapeCorners::Window::animateProperties(const std::chrono::milliseconds& ti
 #ifdef DEBUG_ANIMATION
     repaintCount++;
 #endif
-    w->addRepaintFull();
+    w.addRepaintFull();
 }
 
-QString ShapeCorners::Window::debugName(const KWin::EffectWindow* w) {
-    return QStringLiteral("\tclass: ") + w->windowClass() +
-#if QT_VERSION_MAJOR >= 6
-           QStringLiteral("\ttype: ") + QVariant::fromValue(w->windowType()).toString() +
-#else
-           QStringLiteral("\ttype: ") + QString::number(static_cast<int>(w->windowType())) +
-#endif
-           QStringLiteral("\trole: ") + w->windowRole() +
-           QStringLiteral("\tcaption: ") + w->caption();
+QDebug KWin::operator<<(QDebug& debug, const KWin::EffectWindow& w) {
+    return (debug << w.windowType() << w.windowClass() << w.caption());
 }
 
 void ShapeCorners::Window::configChanged() {
-    for (auto& inclusion: Config::inclusions()) {
-        if (w->windowClass().contains(inclusion, Qt::CaseInsensitive)
-            || w->caption().contains(inclusion, Qt::CaseInsensitive)
-                ) {
-            isIncluded = true;
-            break;
-        }
-    }
+    isExcluded = false;
+    isIncluded = false;
     for (auto& exclusion: Config::exclusions()) {
-        if (w->windowClass().contains(exclusion, Qt::CaseInsensitive)
-            || w->caption().contains(exclusion, Qt::CaseInsensitive)
+        if (w.windowClass().contains(exclusion, Qt::CaseInsensitive)
+            || w.caption().contains(exclusion, Qt::CaseInsensitive)
                 ) {
             isExcluded = true;
-            break;
+#ifdef DEBUG_INCLUSIONS
+            qDebug() << "ShapeCorners: Excluded window:" << *this;
+#endif
+            return;
         }
     }
+    for (auto& inclusion: Config::inclusions()) {
+        if (w.windowClass().contains(inclusion, Qt::CaseInsensitive)
+            || w.caption().contains(inclusion, Qt::CaseInsensitive)
+        ) {
+            isIncluded = true;
+#ifdef DEBUG_INCLUSIONS
+            qDebug() << "ShapeCorners: Included window:" << *this;
+#endif
+            return;
+        }
+    }
+}
+
+QJsonObject ShapeCorners::Window::toJson() const {
+    auto json = QJsonObject();
+    json[QStringLiteral("class")] = w.windowClass();
+    json[QStringLiteral("caption")] = w.caption();
+    return json;
 }

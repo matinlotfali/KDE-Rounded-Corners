@@ -17,6 +17,9 @@ class QWidget;
 namespace KWin
 {
     class EffectWindow;
+
+    QDebug operator<<(QDebug& debug, const KWin::EffectWindow& w);
+    inline QDebug operator<<(QDebug& debug, const KWin::EffectWindow* w) { return (debug << *w); }
 }
 
 namespace ShapeCorners {
@@ -24,7 +27,7 @@ namespace ShapeCorners {
         Q_OBJECT
 
     public:
-        KWin::EffectWindow *w;
+        KWin::EffectWindow& w;
         bool isTiled = false;
         bool isMaximized = false;
 
@@ -40,7 +43,7 @@ namespace ShapeCorners {
         uint32_t repaintCount = 0;
 #endif
 
-        explicit Window(KWin::EffectWindow *w);
+        explicit Window(KWin::EffectWindow& w);
 
         void animateProperties(const std::chrono::milliseconds &time);
 
@@ -52,9 +55,9 @@ namespace ShapeCorners {
 
         [[nodiscard]] bool hasEffect() const;
 
-        [[nodiscard]] static QString debugName(const KWin::EffectWindow* w);
+        [[nodiscard]] QJsonObject toJson() const;
 
-    public slots:
+    public Q_SLOTS:
         void configChanged();
 
     private:
@@ -67,6 +70,8 @@ namespace ShapeCorners {
          */
         static QWidget m_widget;
     };
+
+    inline QDebug operator<<(QDebug& debug, const Window& w) { return (debug << w.w); }
 }
 
 #endif //KWIN4_EFFECT_SHAPECORNERS_WINDOW_H

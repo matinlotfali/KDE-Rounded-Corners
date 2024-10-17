@@ -22,6 +22,8 @@
 
 #include <QtDBus/QDBusConnection>
 #include <QDBusError>
+#include <QJsonDocument>
+#include <QJsonArray>
 #include <KX11Extras>
 
 #if QT_VERSION_MAJOR >= 6
@@ -69,10 +71,10 @@ void
 ShapeCorners::Effect::windowAdded(KWin::EffectWindow *w)
 {
 #ifdef QT_DEBUG
-    qInfo() << "ShapeCorners: window added." << Window::debugName(w);
+    qInfo() << "ShapeCorners: window added." << w;
 #endif
     
-    if (w->windowClass().trimmed().isEmpty()) {
+    if (w->windowClass().trimmed().isEmpty() && w->caption().trimmed().isEmpty()) {
 #ifdef QT_DEBUG
         qWarning() << "ShapeCorners: window does not have a valid class name.";
 #endif
@@ -91,7 +93,7 @@ ShapeCorners::Effect::windowAdded(KWin::EffectWindow *w)
         return;
     }
 
-    auto window = new Window(w);
+    auto window = new Window(*w);
     auto pair = std::make_pair(w, window);
     if (const auto& [iter, r] = m_managed.insert(pair); !r) {
 #ifdef QT_DEBUG
@@ -99,12 +101,6 @@ ShapeCorners::Effect::windowAdded(KWin::EffectWindow *w)
 #endif
         return;
     }
-
-#ifdef QT_DEBUG
-    if (Config::exclusions().contains(name)) {
-        qWarning() << "ShapeCorners: window is excluded in configurations.";
-    }
-#endif
 
 #if QT_VERSION_MAJOR >= 6
     connect(w, &KWin::EffectWindow::windowFrameGeometryChanged, this, &Effect::windowResized);
@@ -220,12 +216,14 @@ void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *w, int mask, const QRe
 }
 
 QString ShapeCorners::Effect::get_window_titles() const {
-    QStringList response;
+    QJsonArray array;
     for (const auto& [w, window]: m_managed) {
-        if (!response.contains(w->windowClass()))
-            response.push_back(w->windowClass());
+        auto json = window->toJson();
+        if (!array.contains(json))
+            array.push_back(json);
     }
-    return response.join(QStringLiteral("\n"));
+    auto doc = QJsonDocument(array).toJson(QJsonDocument::Compact);
+    return QString::fromUtf8(doc);
 }
 
 void ShapeCorners::Effect::checkTiled() {
@@ -269,7 +267,9 @@ void ShapeCorners::Effect::checkMaximized(KWin::EffectWindow *w) {
 
     // check if window and screen match
     auto remaining = screen_region - w->frameGeometry().toRect();
+#ifdef DEBUG_MAXIMIZED
     qDebug() << "ShapeCorners: active window remaining region" << remaining;
+#endif
     if (remaining.isEmpty()) {
         window_iterator->second->isMaximized = true;
 #ifdef DEBUG_MAXIMIZED

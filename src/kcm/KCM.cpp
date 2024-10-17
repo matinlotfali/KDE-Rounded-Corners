@@ -8,7 +8,9 @@ ShapeCorners::KCM::KCM(QObject* parent, const KPluginMetaData& args)
     , ui(new Ui::Form)
 {
     ui->setupUi(widget());
+    ui->currentWindowList->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     addConfig(&config, widget());
+
 #else
 ShapeCorners::KCM::KCM(QWidget* parent, const QVariantList& args)
     : KCModule(parent, args)
@@ -163,14 +165,34 @@ void ShapeCorners::KCM::update_colors() {
 }
 
 void ShapeCorners::KCM::update_windows() const {
-    QStringList windowList;
+    QJsonArray array;
     if (const auto connection = QDBusConnection::sessionBus(); connection.isConnected())
         if (QDBusInterface interface(QStringLiteral("org.kde.ShapeCorners"), QStringLiteral("/ShapeCornersEffect")); interface.isValid())
-            if (const QDBusReply<QString> reply = interface.call(QStringLiteral("get_window_titles")); reply.isValid())
-                windowList = reply.value().split(QStringLiteral("\n"));
+            if (const QDBusReply<QString> reply = interface.call(QStringLiteral("get_window_titles")); reply.isValid()) {
+                auto str = reply.value();
+                auto doc = QJsonDocument::fromJson(str.toUtf8());
+                array = doc.array();
+            }
 
     ui->currentWindowList->clear();
-    ui->currentWindowList->addItems(windowList);
+    ui->currentWindowList->setRowCount(static_cast<int>(array.size()));
+    ui->currentWindowList->setColumnCount(3);
+    ui->currentWindowList->setHorizontalHeaderLabels({
+        QStringLiteral("Class 1"), QStringLiteral("Class 2"), QStringLiteral("Caption") });
+
+    for (int i=0; i < array.size(); ++i) {
+        const auto obj = array.at(i).toObject();
+        const auto windowClass = obj.value(QStringLiteral("class")).toString();
+        const auto caption = obj.value(QStringLiteral("caption")).toString();
+
+        const auto space_index = windowClass.indexOf(QChar(QChar::Space));
+        const auto class1 = windowClass.left(space_index);
+        const auto class2 = windowClass.sliced(space_index+1);
+
+        ui->currentWindowList->setItem(i, 0, new QTableWidgetItem(class1));
+        ui->currentWindowList->setItem(i, 1, new QTableWidgetItem(class2));
+        ui->currentWindowList->setItem(i, 2, new QTableWidgetItem(caption));
+    }
 }
 
 void ShapeCorners::KCM::outline_group_toggled(bool value) const {
