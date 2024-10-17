@@ -92,7 +92,7 @@ jobs:
         key: ${{ secrets.SOURCEFORGE_KEY }}
         fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
         source: ${{ env.DEB_FILE }}
-        target: /home/frs/project/kde-rounded-corners/nightly/kubuntu/${{ env.DEB_NAME }}_${{ github.job }}.deb
+        target: /home/frs/project/kde-rounded-corners/nightly/kubuntu2410/${{ env.DEB_NAME }}_${{ github.job }}.deb
 
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build
