@@ -43,7 +43,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        apt-get install -y --no-install-recommends cmake g++ gettext extra-cmake-modules qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev
+        apt-get install -y --no-install-recommends cmake g++ gettext extra-cmake-modules qt6-base-private-dev qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev
         apt-get install -y --no-install-recommends dpkg-dev file
 
     - name: Initialize CodeQL
