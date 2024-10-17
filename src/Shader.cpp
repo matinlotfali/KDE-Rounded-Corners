@@ -47,8 +47,8 @@ bool ShapeCorners::Shader::IsValid() const {
 }
 
 void ShapeCorners::Shader::Bind(const ShapeCorners::Window &window, qreal scale) const {
-    auto frameGeometry = window.w->frameGeometry() * scale;
-    auto expandedGeometry = window.w->expandedGeometry() * scale;
+    auto frameGeometry = window.w.frameGeometry() * scale;
+    auto expandedGeometry = window.w.expandedGeometry() * scale;
     auto xy = QVector2D(frameGeometry.topLeft() - expandedGeometry.topLeft());
     qreal max_shadow_size = xy.length();
     m_manager->pushShader(m_shader.get());

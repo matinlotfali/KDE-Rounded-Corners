@@ -65,8 +65,7 @@ namespace ShapeCorners {
         void windowResized(KWin::EffectWindow *window, const QRectF &);
 
     private:
-        // Pair of Window pointers and their maximized/tiled state.
-        std::unordered_map<const KWin::EffectWindow *, Window> m_managed;
+        WindowList m_managed;
         Shader m_shaderManager;
 
         void checkTiled();

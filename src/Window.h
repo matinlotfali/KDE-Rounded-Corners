@@ -17,12 +17,17 @@ class QWidget;
 namespace KWin
 {
     class EffectWindow;
+
+    QDebug operator<<(QDebug& debug, const KWin::EffectWindow& w);
+    inline QDebug operator<<(QDebug& debug, const KWin::EffectWindow* w) { return (debug << *w); }
 }
 
 namespace ShapeCorners {
-    struct Window {
-        KWin::EffectWindow *w;
-        QString name;
+    class Window: public QObject {
+        Q_OBJECT
+
+    public:
+        KWin::EffectWindow& w;
         bool isTiled = false;
         bool isMaximized = false;
 
@@ -34,11 +39,11 @@ namespace ShapeCorners {
         Color outlineColor = {};
         Color secondOutlineColor = {};
 
-#ifdef QT_DEBUG
+#ifdef DEBUG_ANIMATION
         uint32_t repaintCount = 0;
 #endif
 
-        explicit Window(KWin::EffectWindow *w, QString name);
+        explicit Window(KWin::EffectWindow& w);
 
         void animateProperties(const std::chrono::milliseconds &time);
 
@@ -50,14 +55,23 @@ namespace ShapeCorners {
 
         [[nodiscard]] bool hasEffect() const;
 
+        [[nodiscard]] QJsonObject toJson() const;
+
+    public Q_SLOTS:
+        void configChanged();
+
     private:
         std::chrono::milliseconds m_last_time = {};
+        bool isIncluded;
+        bool isExcluded;
 
         /**
          * \brief Used only for its `palette()` function which holds the currently active highlight colors.
          */
         static QWidget m_widget;
     };
+
+    inline QDebug operator<<(QDebug& debug, const Window& w) { return (debug << w.w); }
 }
 
 #endif //KWIN4_EFFECT_SHAPECORNERS_WINDOW_H
