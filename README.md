@@ -16,6 +16,10 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)
       [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Fkubuntu?label=Download%20%5Bkwin4_effect_shapecorners_kubuntu2404.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/kubuntu/kwin4_effect_shapecorners_kubuntu2404.deb/download)
+- ![Kubuntu 24.10 Oracular](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2410.yml?label=Kubuntu%2024.10&logo=kubuntu&branch=master)
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    ![](https://img.shields.io/badge/Plasma-6.1-lightgreen)
+    [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Fkubuntu2410?label=Download%20%5Bkwin4_effect_shapecorners_kubuntu2410.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/kubuntu2410/kwin4_effect_shapecorners_kubuntu2410.deb/download)
 - ![Debian 12 Bookworm](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/debian12.yml?branch=master&label=Debian%2012&logo=debian)
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -77,7 +81,7 @@ You need to install development packages for your distribution first:
     ```
   - Plasma 6
     ```
-    sudo apt install git cmake g++ extra-cmake-modules kwin-dev qt6-base-dev-tools kf6-kcmutils-dev
+    sudo apt install git cmake g++ extra-cmake-modules kwin-dev qt6-base-private-dev qt6-base-dev-tools kf6-kcmutils-dev
     ```
 </details>
 <details>
