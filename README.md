@@ -81,7 +81,7 @@ You need to install development packages for your distribution first:
     ```
   - Plasma 6
     ```
-    sudo apt install git cmake g++ extra-cmake-modules kwin-dev qt6-base-private-dev qt6-base-dev-tools kf6-kcmutils-dev
+    sudo apt install git cmake g++ extra-cmake-modules kwin-dev qt6-base-private-dev qt6-base-dev-tools libkf6kcmutils-dev
     ```
 </details>
 <details>
