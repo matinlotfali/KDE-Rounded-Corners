@@ -185,9 +185,9 @@ void ShapeCorners::KCM::update_windows() const {
         const auto windowClass = obj.value(QStringLiteral("class")).toString();
         const auto caption = obj.value(QStringLiteral("caption")).toString();
 
-        const auto space_index = windowClass.indexOf(QChar(QChar::Space));
-        const auto class1 = windowClass.left(space_index);
-        const auto class2 = windowClass.sliced(space_index+1);
+        const auto windowClassSplit = windowClass.split(QChar(QChar::Space));
+        const auto& class1 = windowClassSplit.at(0);
+        const auto& class2 = windowClassSplit.at(1);
 
         ui->currentWindowList->setItem(i, 0, new QTableWidgetItem(class1));
         ui->currentWindowList->setItem(i, 1, new QTableWidgetItem(class2));
