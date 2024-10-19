@@ -33,7 +33,6 @@ endif()
 option(DEBUG_ANIMATION "Add debug logs for animation" OFF)
 option(DEBUG_INCLUSIONS "Add debug logs for inclusion & exclusion lists" OFF)
 option(DEBUG_MAXIMIZED "Add debug logs for maximized windows" OFF)
-set(DEBUG_INCLUSIONS 1)
 
 if (DEBUG_ANIMATION OR DEBUG_INCLUSIONS OR DEBUG_MAXIMIZED)
     set(CMAKE_BUILD_TYPE "Debug")
