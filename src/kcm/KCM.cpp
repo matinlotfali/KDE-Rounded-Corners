@@ -76,14 +76,14 @@ ShapeCorners::KCM::KCM(QWidget* parent, const QVariantList& args)
     connect(ui->refreshButton, &QPushButton::pressed, this, &KCM::update_windows);
     connect(ui->includeButton, &QPushButton::pressed, [=, this]() {
         if (const auto s = ui->currentWindowList->currentItem();
-            s && ui->InclusionList->findItems(s->text(), Qt::MatchExactly).empty()) {
+            s && !s->text().isEmpty() && ui->InclusionList->findItems(s->text(), Qt::MatchExactly).empty()) {
             ui->InclusionList->addItem(s->text());
             markAsChanged();
         }
     });
     connect(ui->excludeButton, &QPushButton::pressed, [=, this]() {
         if (const auto s = ui->currentWindowList->currentItem();
-            s && ui->ExclusionList->findItems(s->text(), Qt::MatchExactly).empty()) {
+            s && !s->text().isEmpty() && ui->ExclusionList->findItems(s->text(), Qt::MatchExactly).empty()) {
             ui->ExclusionList->addItem(s->text());
             markAsChanged();
         }
