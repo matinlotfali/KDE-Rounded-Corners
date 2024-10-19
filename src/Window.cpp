@@ -188,9 +188,11 @@ void ShapeCorners::Window::animateProperties(const std::chrono::milliseconds& ti
     w.addRepaintFull();
 }
 
+#ifdef QT_DEBUG
 QDebug KWin::operator<<(QDebug& debug, const KWin::EffectWindow& w) {
     return (debug << w.windowType() << w.windowClass() << w.caption());
 }
+#endif
 
 void ShapeCorners::Window::configChanged() {
     isExcluded = false;

@@ -18,8 +18,10 @@ namespace KWin
 {
     class EffectWindow;
 
+#ifdef QT_DEBUG
     QDebug operator<<(QDebug& debug, const KWin::EffectWindow& w);
     inline QDebug operator<<(QDebug& debug, const KWin::EffectWindow* w) { return (debug << *w); }
+#endif
 }
 
 namespace ShapeCorners {
@@ -71,7 +73,9 @@ namespace ShapeCorners {
         static QWidget m_widget;
     };
 
+#ifdef QT_DEBUG
     inline QDebug operator<<(QDebug& debug, const Window& w) { return (debug << w.w); }
+#endif
 }
 
 #endif //KWIN4_EFFECT_SHAPECORNERS_WINDOW_H
