@@ -30,5 +30,29 @@ else()
     )
 endif()
 
+option(DEBUG_ANIMATION "Add debug logs for animation" OFF)
+option(DEBUG_INCLUSIONS "Add debug logs for inclusion & exclusion lists" OFF)
+option(DEBUG_MAXIMIZED "Add debug logs for maximized windows" OFF)
+
+if (DEBUG_ANIMATION OR DEBUG_INCLUSIONS OR DEBUG_MAXIMIZED)
+    set(CMAKE_BUILD_TYPE "Debug")
+    target_compile_definitions(kwin4_effect_shapecorners PRIVATE QT_DEBUG)
+endif ()
+
+if (DEBUG_ANIMATION)
+    message("-- Debug: Animation debug logs are enabled.")
+    target_compile_definitions(kwin4_effect_shapecorners PRIVATE DEBUG_ANIMATION)
+endif (DEBUG_ANIMATION)
+
+if (DEBUG_INCLUSIONS)
+    message("-- Debug: Inclusion & exclusion debug logs are enabled.")
+    target_compile_definitions(kwin4_effect_shapecorners PRIVATE DEBUG_INCLUSIONS)
+endif (DEBUG_INCLUSIONS)
+
+if (DEBUG_MAXIMIZED)
+    message("-- Debug: Maximized debug logs are enabled.")
+    target_compile_definitions(kwin4_effect_shapecorners PRIVATE DEBUG_MAXIMIZED)
+endif (DEBUG_MAXIMIZED)
+
 add_subdirectory(kcm)
 add_subdirectory(shaders)

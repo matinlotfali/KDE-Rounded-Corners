@@ -9,7 +9,7 @@ if ctest > /dev/null; then
     echo "KDE-Rounded-Corners is supported by KWin and doesn't need re-installation."
 else
     kdialog --msgbox "KDE-Rounded-Corners is not supported by KWin anymore.\n\nThis can probably be for an update.\nWe will now rebuild and reinstall the effect."
-    make clean
+    rm -rf ./*
     cmake .. --install-prefix /usr
     cmake --build . -j &
     pid=$!

@@ -24,7 +24,7 @@ bool ShapeCorners::TileChecker::checkTiled_Recursive(double window_start, const 
     bool r = false;
     for (auto& [w, window]: m_managed) {
 
-        if (!window.hasEffect())
+        if (!window->hasEffect())
             continue;
 
         const auto x = std::get<vertical>(std::make_pair(w->x(), w->y()));
@@ -39,7 +39,7 @@ bool ShapeCorners::TileChecker::checkTiled_Recursive(double window_start, const 
 
         if (x == window_start && width > 0) {
             if (checkTiled_Recursive<vertical>(window_start + width + gap, depth+1)) {
-                window.isTiled = true;   // Mark every tile as you go back to the first.
+                window->isTiled = true;   // Mark every tile as you go back to the first.
                 r = true;
             }
         }
@@ -53,7 +53,7 @@ bool ShapeCorners::TileChecker::checkTiled_Recursive(double window_start, const 
 
 void ShapeCorners::TileChecker::clearTiles() {
     for (auto& [ptr, window]: m_managed) {     // Delete tile memory.
-        window.isTiled = false;
+        window->isTiled = false;
     }
 }
 
