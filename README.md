@@ -123,10 +123,10 @@ You need to install development packages for your distribution first:
   ```
 </details>
 <details>
-<summary>Void - by https://github.com/lay-by</summary>
+<summary>Void - by https://github.com/lay-by and https://github.com/tre-flip</summary>
 
   ```
-  xbps-install git cmake make qt5-tools-devel extra-cmake-modules gettext-devel kwin-devel
+  xbps-install git cmake make extra-cmake-modules gettext-devel kwin-devel kf6-kconfigwidgets-devel kf6-kcmutils-devel
   ```
 </details>
 <details>
