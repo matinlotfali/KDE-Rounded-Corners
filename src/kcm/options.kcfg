@@ -12,20 +12,6 @@
         <entry name="InactiveCornerRadius" type="UInt">
             <default>10</default>
         </entry>
-        <entry name="ShadowSize" type="UInt">
-            <default>25</default>
-            <min>1</min>
-        </entry>
-        <entry name="InactiveShadowSize" type="UInt">
-            <default>20</default>
-            <min>1</min>
-        </entry>
-        <entry name="ShadowColor" type="Color">
-            <default>black</default>
-        </entry>
-        <entry name="InactiveShadowColor" type="Color">
-            <default>black</default>
-        </entry>
         <entry name="AnimationEnabled" type="Bool">
             <default>true</default>
         </entry>

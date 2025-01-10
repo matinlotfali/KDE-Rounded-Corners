@@ -7,8 +7,6 @@ uniform vec2 windowTopLeft;      /* The distance between the top-left of `expand
                                   * the top-left of `frameGeometry`. When `windowTopLeft = {0,0}`, it means
                                   * `expandedGeometry = frameGeometry` and there is no shadow. */
 
-uniform vec4 shadowColor;        // The RGBA of the shadow color specified in settings.
-uniform float shadowSize;        // The shadow size specified in settings.
 uniform vec4 outlineColor;       // The RGBA of the outline color specified in settings.
 uniform float outlineThickness;  // The thickness of the outline in pixels specified in settings.
 uniform vec4 secondOutlineColor; // The RGBA of the second outline color specified in settings.
@@ -23,31 +21,9 @@ vec2 pixel_to_tex(vec2 pixelcoord) {
                 1.0-(pixelcoord.y + windowTopLeft.y) / windowExpandedSize.y);
 }
 bool hasExpandedSize() { return windowSize != windowExpandedSize; }
-bool isDrawingShadows() { return hasExpandedSize() && shadowColor.a > 0.0; }
+bool isDrawingShadows() { return hasExpandedSize(); }
 bool hasPrimaryOutline() { return outlineColor.a > 0.0 && outlineThickness > 0.0; }
 bool hasSecondOutline() { return hasExpandedSize() && secondOutlineColor.a > 0.0 && secondOutlineThickness > 0.0; }
-
-float parametricBlend(float t) {
-    float sqt = t * t;
-    return sqt / (2.0 * (sqt - t) + 1.0);
-}
-
-/*
- *  \brief This function generates the shadow color based on the distance_from_center
- *  \param coord0: The XY point
- *  \param center: The origin XY point that is being used as a reference for the center of shadow darkness.
- *  \return The RGBA color to be used for the shadow.
- */
-vec4 getShadowByDistance(vec2 coord0, vec2 center) {
-    float distance_from_center = distance(coord0, center);
-    float percent = 1.0 - distance_from_center/shadowSize;
-    percent = clamp(percent, 0.0, 1.0);
-    percent = parametricBlend(percent);
-    if (percent < 0.0) {
-        return vec4(0.0, 0.0, 0.0, 0.0);
-    }
-    return vec4(shadowColor.rgb * shadowColor.a * percent, shadowColor.a * percent);
-}
 
 /*
  *  \brief This function is used to choose the pixel shadow color based on the XY pixel and corner radius.
@@ -55,12 +31,13 @@ vec4 getShadowByDistance(vec2 coord0, vec2 center) {
  *  \param r: The radius of corners in pixel.
  *  \return The RGBA color to be used for the shadow.
  */
-vec4 getShadow(vec2 coord0, float r) {
+vec4 getShadow(vec2 coord0, float r, vec4 default_tex) {
     if(!isDrawingShadows()) {
         return vec4(0.0, 0.0, 0.0, 0.0);
     }
-    float shadowShiftX = sqrt(shadowSize);
-    float shadowShiftTop = sqrt(shadowSize);
+
+    float margin_point = 2.0;
+    float margin_edge = 1.0;
 
     /*
         Split the window into these sections below. They will have a different center of circle for rounding.
@@ -70,33 +47,40 @@ vec4 getShadow(vec2 coord0, float r) {
         L   x   x   R
         BL  B   B   BR
     */
-    if (coord0.y < r + shadowShiftTop) {
-        if (coord0.x < r + shadowShiftX) {
-            return getShadowByDistance(coord0, vec2(r+shadowShiftX, r+shadowShiftTop));               // Section TL
-        } else if (coord0.x > windowSize.x - r - shadowShiftX) {
-            return getShadowByDistance(coord0, vec2(windowSize.x -r-shadowShiftX, r+shadowShiftTop)); // Section TR
-        } else if (coord0.y < 0.0) {
-            return getShadowByDistance(coord0, vec2(coord0.x, r+shadowShiftTop));                     // Section T
+    if (coord0.y >= -margin_edge && coord0.y <= r) {
+        if (coord0.x >= -margin_edge && coord0.x <= r) {
+            vec2 a = vec2(-margin_point, coord0.y+coord0.x+margin_point);
+            vec2 b = vec2(coord0.x+coord0.y+margin_point, -margin_point);
+            vec4 a_color = texture2D(sampler, pixel_to_tex(a));
+            vec4 b_color = texture2D(sampler, pixel_to_tex(b));
+            return mix(a_color, b_color, distance(a, coord0)/distance(a,b));          // Section TL
+
+        } else if (coord0.x <= windowSize.x + margin_edge && coord0.x >= windowSize.x - r) {
+            vec2 a = vec2(windowSize.x+margin_point, coord0.y+(windowSize.x-coord0.x)+margin_point);
+            vec2 b = vec2(coord0.x-coord0.y-margin_point, -margin_point);
+            vec4 a_color = texture2D(sampler, pixel_to_tex(a));
+            vec4 b_color = texture2D(sampler, pixel_to_tex(b));
+            return mix(a_color, b_color, distance(a, coord0)/distance(a,b));          // Section TR
+
         }
     }
-    else if (coord0.y > windowSize.y - r) {
-        if (coord0.x < r + shadowShiftX) {
-            return getShadowByDistance(coord0, vec2(r+shadowShiftX, windowSize.y-r));                   // Section BL
-        } else if (coord0.x > windowSize.x - r - shadowShiftX) {
-            return getShadowByDistance(coord0, vec2(windowSize.x -r-shadowShiftX, windowSize.y - r));   // Section BR
-        } else if (coord0.y > windowSize.y) {
-            return getShadowByDistance(coord0, vec2(coord0.x, windowSize.y - r));                       // Section B
+    else if (coord0.y <= windowSize.y + margin_edge && coord0.y >= windowSize.y - r) {
+        if (coord0.x >= -margin_edge && coord0.x <= r) {
+            vec2 a = vec2(-margin_point, coord0.y-coord0.x-margin_point);
+            vec2 b = vec2(coord0.x+(windowSize.y-coord0.y)+margin_point, windowSize.y+margin_point);
+            vec4 a_color = texture2D(sampler, pixel_to_tex(a));
+            vec4 b_color = texture2D(sampler, pixel_to_tex(b));
+            return mix(a_color, b_color, distance(a, coord0)/distance(a,b));          // Section BL
+
+        } else if (coord0.x <= windowSize.x + margin_edge && coord0.x >= windowSize.x - r) {
+            vec2 a = vec2(windowSize.x+margin_point, coord0.y-(windowSize.x-coord0.x)-margin_point);
+            vec2 b = vec2(coord0.x-(windowSize.y-coord0.y)-margin_point, windowSize.y+margin_point);
+            vec4 a_color = texture2D(sampler, pixel_to_tex(a));
+            vec4 b_color = texture2D(sampler, pixel_to_tex(b));
+            return mix(a_color, b_color, distance(a, coord0)/distance(a,b));          // Section BR
         }
     }
-    else {
-        if (coord0.x < 0.0) {
-            return getShadowByDistance(coord0, vec2(r+shadowShiftX, coord0.y));                   // Section L
-        } else if (coord0.x > windowSize.x) {
-            return getShadowByDistance(coord0, vec2(windowSize.x -r-shadowShiftX, coord0.y));     // Section R
-        }
-        // For section x, the tex is not changing
-    }
-    return vec4(0.0, 0.0, 0.0, 0.0);
+    return default_tex;
 }
 
 /*
@@ -171,7 +155,7 @@ vec4 run(vec4 tex) {
      * This means areas with negative numbers and areas beyond windowSize is considered part of the shadow. */
     vec2 coord0 = tex_to_pixel(texcoord0);
 
-    vec4 coord_shadowColor = getShadow(coord0, r);
+    vec4 coord_shadowColor = getShadow(coord0, r, tex);
 
     /*
         Split the window into these sections below. They will have a different center of circle for rounding.
