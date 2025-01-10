@@ -36,8 +36,8 @@ vec4 getShadow(vec2 coord0, float r, vec4 default_tex) {
         return vec4(0.0, 0.0, 0.0, 0.0);
     }
 
-    float margin_point = 2.0;
-    float margin_edge = 1.0;
+    float margin_edge = 2.0;
+    float margin_point = margin_edge + 1.0;
 
     /*
         Split the window into these sections below. They will have a different center of circle for rounding.

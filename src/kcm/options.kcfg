@@ -29,18 +29,18 @@
             <max>20</max>
         </entry>
         <entry name="OutlineColor" type="Color">
-            <default>black</default>
+            <default>white</default>
         </entry>
         <entry name="InactiveOutlineColor" type="Color">
-            <default>black</default>
+            <default>white</default>
         </entry>
         <entry name="ActiveOutlineAlpha" type="Int">
-            <default>255</default>
+            <default>128</default>
             <min>0</min>
             <max>255</max>
         </entry>
         <entry name="InactiveOutlineAlpha" type="Int">
-            <default>255</default>
+            <default>128</default>
             <min>0</min>
             <max>255</max>
         </entry>
@@ -61,37 +61,6 @@
         </entry>
         <entry name="InactiveOutlineUseCustom" type="Bool">
             <default>true</default>
-        </entry>
-    </group>
-
-    <group name="Shadow">
-        <entry name="ActiveShadowAlpha" type="Int">
-            <default>255</default>
-            <min>0</min>
-            <max>255</max>
-        </entry>
-        <entry name="InactiveShadowAlpha" type="Int">
-            <default>255</default>
-            <min>0</min>
-            <max>255</max>
-        </entry>
-        <entry name="ActiveShadowPalette" type="UInt">
-            <default>11</default>
-        </entry>
-        <entry name="InactiveShadowPalette" type="UInt">
-            <default>11</default>
-        </entry>
-        <entry name="ActiveShadowUsePalette" type="Bool">
-            <default>true</default>
-        </entry>
-        <entry name="InactiveShadowUsePalette" type="Bool">
-            <default>true</default>
-        </entry>
-        <entry name="ActiveShadowUseCustom" type="Bool">
-            <default>false</default>
-        </entry>
-        <entry name="InactiveShadowUseCustom" type="Bool">
-            <default>false</default>
         </entry>
     </group>
 
