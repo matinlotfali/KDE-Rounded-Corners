@@ -4,6 +4,10 @@ This effect rounds the corners of your windows and adds an outline around them w
 
 This effect started as a fork of [shapecorners](https://sourceforge.net/projects/shapecorners/) with some additional contributions in [Alex47's project](https://github.com/alex47/KDE-Rounded-Corners), then I optimized and reimplemented the effect with shaders with influences from the [invert effect](https://github.com/KDE/kwin/tree/master/src/plugins/invert).
 
+![before-after](https://github.com/user-attachments/assets/cbd98412-ee47-4f4b-8b80-297328dfb1f5)
+
+
+
 **Tested on:**
 * ![Wayland](https://img.shields.io/badge/Wayland-supported-green?logo=wayland) ![Wayland](https://img.shields.io/badge/X11-supported-green?logo=X.org)
 - ![Kubuntu 22.04 Jammy](https://img.shields.io/badge/-not_supported-red?label=Kubuntu%2022.04&logo=kubuntu&branch=master)
@@ -51,8 +55,6 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 - ![KDE Neon (Unstable)](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/neon-unstable.yml?branch=master&label=KDE%20Neon%20%28Unstable%29&logo=kde&logoColor=white)
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       ![](https://img.shields.io/badge/Plasma-6.2-green)
-
-https://github.com/matinlotfali/KDE-Rounded-Corners/assets/7337168/7081f1c8-9fa5-440f-90b5-28b2fb04546a
 
 # Contributions:
 
