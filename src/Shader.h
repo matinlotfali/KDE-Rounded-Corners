@@ -95,18 +95,6 @@ namespace ShapeCorners {
         int m_shader_hasRoundCorners = 0;
 
         /**
-         * \brief Reference to `uniform vec4 shadowColor;`
-         *        Containing the RGBA of the shadow color specified in settings.
-         */
-        int m_shader_shadowColor = 0;
-
-        /**
-         * \brief Reference to `uniform float shadowSize;`
-         *        Containing the shadow size specified in settings.
-         */
-        int m_shader_shadowSize = 0;
-
-        /**
          * \brief Reference to `uniform float radius;`
          *        Containing the corner radius in pixels specified in settings.
          */
