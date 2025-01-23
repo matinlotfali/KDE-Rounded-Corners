@@ -26,7 +26,8 @@ bool ShapeCorners::Window::isActive() const {
 
 bool ShapeCorners::Window::hasEffect() const {
     return (
-            (
+            w.expandedGeometry().isValid()
+            && (
                     (w.isNormalWindow() && Config::includeNormalWindows())
                     || (w.isDialog() && Config::includeDialogs())
                     || isIncluded
