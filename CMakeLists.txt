@@ -19,7 +19,7 @@ include(KDECompilerSettings NO_POLICY_SCOPE)
 include(cmake/qtversion.cmake)
 
 # required frameworks by Core
-find_package(KF${QT_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED COMPONENTS ConfigWidgets)
+find_package(KF${QT_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED COMPONENTS ConfigWidgets I18n)
 
 if(${QT_MAJOR_VERSION} EQUAL 6)
     find_package(KF${QT_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED COMPONENTS KCMUtils)
@@ -35,6 +35,7 @@ find_package(XCB REQUIRED COMPONENTS XCB)
 find_package(KWinDBusInterface CONFIG REQUIRED)
 
 add_subdirectory(src)
+ki18n_install(po)
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
 

@@ -12,9 +12,11 @@
         ],
         "Category": "Appearance",
         "Description": "An effect that shapes/rounds corners of windows with adjusted outlines and shadows.",
+        "Description[ru]": "Эффект, который формирует/скругляет углы окон с помощью настроенных контуров и теней.",
         "EnabledByDefault": true,
         "License": "GPL",
         "Name": "Rounded Corners (formerly ShapeCorners)",
+        "Name[ru]": "Закругленные углы",
         "ServiceTypes": [
             "KWin/Effect"
         ],
