@@ -1,6 +1,7 @@
 {
     "KPlugin": {
         "Name": "Rounded Corners (formerly ShapeCorners)",
+        "Name[ru]": "Закругленные углы",
         "ServiceTypes": [
             "KCModule"
         ]

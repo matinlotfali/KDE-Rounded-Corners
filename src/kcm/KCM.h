@@ -1,6 +1,7 @@
 #pragma once
 
 #include <kcmodule.h>
+#include <KLocalizedString>
 #include "Config.h"
 
 namespace Ui {

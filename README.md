@@ -6,9 +6,7 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 
 ![before-after](https://github.com/user-attachments/assets/cbd98412-ee47-4f4b-8b80-297328dfb1f5)
 
-
-
-**Tested on:**
+### Tested on
 * ![Wayland](https://img.shields.io/badge/Wayland-supported-green?logo=wayland) ![Wayland](https://img.shields.io/badge/X11-supported-green?logo=X.org)
 - ![Kubuntu 22.04 Jammy](https://img.shields.io/badge/-not_supported-red?label=Kubuntu%2022.04&logo=kubuntu&branch=master)
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -59,17 +57,21 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 # Contributions:
 
 - Compatibility of the effect with other effects like Wobbly windows
-- Compatibility with KWin for Plasma versions 5.27 to 6.0
+- Compatibility with KWin for Plasma versions 5.27 to 6.2
 - Compatibility with HDR in Plasma 6.0
 - Optimize the effect to render once instead of 5 times - see [#49](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/49)
 - Smooth animation when a window moves to an active state
-- Reimplementation with shaders to include shadows at corners and an outline
+- Reimplementation with shaders, including shadows at corners and two outlines
 - Ability to disable effect when windows get maximized or tiled
 - Cleanups for the plugin logic, remove unneeded dependencies from CMakeLists.txt file - by [alex1701c](https://github.com/alex1701c)
 - Separate outline color for active and inactive windows - by [OrkenWhite](https://github.com/OrkenWhite)
-- Use interpolation to fill shadows at corners
+- Support for language translations - by [VictorR2007](https://github.com/VictorR2007) (See [How to add more translations?]())
 
-# How to build from source code:
+<a href="https://github.com/matinlotfali/KDE-Rounded-Corners/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=matinlotfali/KDE-Rounded-Corners" />
+</a>
+
+# How to build
 
 You need to install development packages for your distribution first:
 
@@ -91,11 +93,11 @@ You need to install development packages for your distribution first:
 
 - Plasma 6 (Fedora 40 and later)
    ```bash
-   sudo dnf install git cmake gcc-c++ extra-cmake-modules kwin-devel kf6-kconfigwidgets-devel libepoxy-devel kf6-kcmutils-devel qt6-qtbase-private-devel wayland-devel
+   sudo dnf install git cmake gcc-c++ extra-cmake-modules kwin-devel kf6-kconfigwidgets-devel libepoxy-devel kf6-kcmutils-devel kf6-ki18n-devel qt6-qtbase-private-devel wayland-devel
    ``` 
 - Plasma 5 (Fedora 39)
    ```bash
-   sudo dnf install git cmake gcc-c++ extra-cmake-modules kwin-devel kf5-kconfigwidgets-devel libepoxy-devel
+   sudo dnf install git cmake gcc-c++ extra-cmake-modules kwin-devel kf5-kconfigwidgets-devel kf5-ki18n-devel libepoxy-devel
    ```
  
 </details>
@@ -150,9 +152,10 @@ cmake --build . -j
 sudo make install
 ```
 
-# Load & Unload
+# How to load or unload the effect
 
 To activate the effect, you can now log out and log back in, or run the command below inside the `build` directory:
+
 ```bash
 sh ../tools/load.sh
 ```
@@ -164,11 +167,11 @@ sh ../tools/unload.sh
 sudo make uninstall
 ```
 
-# Auto install after KWin update
+# How to auto-install after KWin update
 
-After each `kwin` package update, the effect becomes incompatible. So it won't load without a rebuild.
+After each KWin package update, the effect becomes incompatible. So it won't load without a rebuild.
 
-As long as the effect is not part of the `kwin` yet (being discussed 
+As long as the effect is not part of the KWin yet (being discussed 
 [here](https://invent.kde.org/plasma/kwin/-/issues/198)), you can automate the re-installation by running the command
 below inside the `build` directory:
 
@@ -176,48 +179,54 @@ below inside the `build` directory:
 sh ../tools/install-autorun-test.sh
 ```
 
-The command above adds a `desktop` file inside the `autorun` directory which checks if the effect is still supported,
-if it is not supported, it will automatically rebuild and reinstall the effect.
+The command above adds a `.desktop` file inside the `autorun` directory which checks if the effect is still compatible,
+If it is incompatible, the script will automatically rebuild and reinstall the effect.
 
 > [!NOTE]
 > The script uses `qdbus` to show a progress bar. On Plasma 6, it is not installed by default. You need to manually install the package `qtchooser`.
 
-# Settings
+# How to adjust its settings
 
-You can change the corner radius, or disable the effect in:
+You can change the corner radius, outlines, exclusions, and more in:
 
-> [ System Settings ] --> [ Workspace Behavior ] --> [ Desktop Effects ] --> [ ShapeCorners ]
+> System Settings → Workspace Behavior → Desktop Effects → Rounded Corners
 
-# Tips
+# Extra Tips
 
-## Disable conflicting native window outline
+## How to add more languages to the translation
+
+Translations are stored in `po/<lang>/kcmcorners.po`. One can copy from other languages and start editing it in a different subdirectory of `po`.
+
+If the `kcm.ui` changes, a new language template `.pot` can be generated by running the script `tools/generate-messages.sh`.
+
+## How to disable conflicting native window outline
 
 If using Breeze (default) window decorations with Plasma 5.27 or higher you may wish to disable the native window outline, to prevent it from overlapping and causing visual glitches.
 
-- System settings -> Themes -> Window Decorations -> Breeze -> Edit icon -> Shadows and Outline tab -> Outline intensity (Off)
+> System settings → Themes → Window Decorations → Breeze → Edit icon → Shadows and Outline tab → Outline intensity (Off)
 
-Alternatively you can use the command below:
+Alternatively, you can use the command below:
 
 ```bash
 kwriteconfig6 --file breezerc --group Common --key OutlineIntensity "OutlineOff"
 qdbus-qt6 org.kde.KWin /KWin reconfigure
 ```
 
-## Add shadow to windows without decoration (like Steam)
+## How to add shadow to windows without decoration (like Steam)
 
 You can add shadows for specific windows using the hack below. I don't know how to enforce it in my code.
 
-1. In [ System settings ] -> [ Window management ] -> [ Window rules ] -> [ Appearance & Fixes ]:
+1. In [ System settings ] → [ Window management ] → [ Window rules ] → [ Appearance & Fixes ]:
 
    **Add [steam] and set [ No titlebar ] and frame to [ No ]**
    
-2. In [ System settings ] -> [ Application Style ] -> [ Window decoration ] -> [ Breeze theme setting ] -> [ Window specific overrides ]:
+2. In [ System settings ] → [ Application Style ] → [ Window decoration ] → [ Breeze theme setting ] → [ Window specific overrides ]:
 
    **Add [steam] and set [ Hide Window title bar ] to [ Yes ].**
 
 After that, the Steam window gets its shadows back.
 
-## Add Debug Messages
+## How to add debug messages
 
 When troubleshooting or reporting an issue, it might be useful to enable Debug logs during the build time using:
 
