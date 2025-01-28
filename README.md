@@ -6,7 +6,7 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 
 I maintain this effect on KDE Plasma desktop version 5.27 to 6.2+ in various Linux distros ([See tests](#tested-on)).
 <br>
-<a href="https://www.buymeacoffee.com/gbraad" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png" alt="Buy Me A Coffee"></a>
+<a href="https://www.buymeacoffee.com/matinlotfali" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png" alt="Buy Me A Coffee"></a>
 
 ![before-after](https://github.com/user-attachments/assets/cbd98412-ee47-4f4b-8b80-297328dfb1f5)
 
