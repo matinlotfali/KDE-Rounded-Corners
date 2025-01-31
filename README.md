@@ -68,7 +68,7 @@ I maintain this effect on KDE Plasma desktop version 5.27 to 6.2+ in various Lin
 - Ability to disable effect when windows get maximized or tiled
 - Cleanups for the plugin logic, remove unneeded dependencies from CMakeLists.txt file - by [alex1701c](https://github.com/alex1701c)
 - Separate outline color for active and inactive windows - by [OrkenWhite](https://github.com/OrkenWhite)
-- Support for language translations - by [VictorR2007](https://github.com/VictorR2007) (See [How to add more translations?]())
+- Support for language translations - by [VictorR2007](https://github.com/VictorR2007) (See [How to add more translations?](#how-to-add-more-languages-to-the-translation))
 
 <a href="https://github.com/matinlotfali/KDE-Rounded-Corners/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=matinlotfali/KDE-Rounded-Corners" />
