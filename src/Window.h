@@ -57,6 +57,14 @@ namespace ShapeCorners {
 
         [[nodiscard]] QJsonObject toJson() const;
 
+        /**
+         *  \brief Returns the windows caption after the " — ".
+         *  \description This is useful for apps like Dolphin and Konsole that include the working file/directory in their title
+         *  and we don't want that to be considered in the inclusion and exclusion rules.
+         *  \example a window with the title "file — Dolphin" will have "Dolphin" returned.
+         */
+        [[nodiscard]] QString captionAfterDash() const;
+
     public Q_SLOTS:
         void configChanged();
 
