@@ -173,7 +173,7 @@ void ShapeCorners::Window::configChanged() {
     isIncluded = false;
     for (auto& exclusion: Config::exclusions()) {
         if (w.windowClass().contains(exclusion, Qt::CaseInsensitive)
-            || w.caption().contains(exclusion, Qt::CaseInsensitive)
+            || captionAfterDash().contains(exclusion, Qt::CaseInsensitive)
                 ) {
             isExcluded = true;
 #ifdef DEBUG_INCLUSIONS
@@ -184,7 +184,7 @@ void ShapeCorners::Window::configChanged() {
     }
     for (auto& inclusion: Config::inclusions()) {
         if (w.windowClass().contains(inclusion, Qt::CaseInsensitive)
-            || w.caption().contains(inclusion, Qt::CaseInsensitive)
+            || captionAfterDash().contains(inclusion, Qt::CaseInsensitive)
         ) {
             isIncluded = true;
 #ifdef DEBUG_INCLUSIONS
@@ -200,4 +200,12 @@ QJsonObject ShapeCorners::Window::toJson() const {
     json[QStringLiteral("class")] = w.windowClass();
     json[QStringLiteral("caption")] = w.caption();
     return json;
+}
+
+QString ShapeCorners::Window::captionAfterDash() const {
+    const auto sep = QStringLiteral(" — ");
+    const auto index = w.caption().indexOf(sep);
+    if (index == -1)
+        return w.caption();
+    return w.caption().slice(index + sep.size());
 }
