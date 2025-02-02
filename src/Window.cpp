@@ -207,5 +207,5 @@ QString ShapeCorners::Window::captionAfterDash() const {
     const auto index = w.caption().indexOf(sep);
     if (index == -1)
         return w.caption();
-    return w.caption().slice(index + sep.size());
+    return w.caption().mid(index + sep.size());
 }
