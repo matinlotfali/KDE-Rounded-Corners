@@ -333,13 +333,13 @@ msgstr "次轮廓"
 #: KCM.ui:1055
 #, kde-format
 msgid "Disable Outline on Tile"
-msgstr "平铺时禁用圆角"
+msgstr "平铺时禁用轮廓"
 
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_DisableOutlineMaximize)
 #: KCM.ui:1065
 #, kde-format
 msgid "Disable Outline on Maximize"
-msgstr "最大化时禁用圆角"
+msgstr "最大化时禁用轮廓"
 
 #. i18n: ectx: attribute (title), widget (QWidget, inclusionsTab)
 #: KCM.ui:1089
