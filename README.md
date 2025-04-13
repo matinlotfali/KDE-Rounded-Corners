@@ -25,6 +25,10 @@ I maintain this effect on KDE Plasma desktop version 5.27 to 6.3+ in various Lin
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     ![](https://img.shields.io/badge/Plasma-6.1-lightgreen)
     [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Fkubuntu2410?label=Download%20%5Bkwin4_effect_shapecorners_kubuntu2410.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/kubuntu2410/kwin4_effect_shapecorners_kubuntu2410.deb/download)
+- [![Kubuntu 25.04 Plucky](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2504.yml?label=Kubuntu%2025.04&logo=kubuntu&branch=master)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/kubuntu2504.yml)
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    ![](https://img.shields.io/badge/Plasma-6.3-lightblue)
+    [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Fkubuntu2504?label=Download%20%5Bkwin4_effect_shapecorners_kubuntu2504.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/kubuntu2504/kwin4_effect_shapecorners_kubuntu2504.deb/download)
 - [![Debian 12 Bookworm](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/debian12.yml?branch=master&label=Debian%2012&logo=debian)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/debian12.yml)
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -37,11 +41,21 @@ I maintain this effect on KDE Plasma desktop version 5.27 to 6.3+ in various Lin
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       ![](https://img.shields.io/badge/Plasma-6.3-lightblue)
       [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Ftumbleweed?label=Download%20%5Bkwin4_effect_shapecorners_tumbleweed.rpm%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/tumbleweed/kwin4_effect_shapecorners_tumbleweed.rpm/download)
-- [![Fedora 41](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/fedora40.yml?branch=master&label=Fedora%2040&logo=fedora&logoColor=white)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/fedora40.yml)
+- [![Fedora 40](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/fedora40.yml?branch=master&label=Fedora%2040&logo=fedora&logoColor=white)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/fedora40.yml)
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       ![](https://img.shields.io/badge/Plasma-6.3-lightblue)
       [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Ffedora?label=Download%20%5Bkwin4_effect_shapecorners_fedora40.rpm%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/fedora/kwin4_effect_shapecorners_fedora40.rpm/download)
+- [![Fedora 41](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/fedora41.yml?branch=master&label=Fedora%2041&logo=fedora&logoColor=white)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/fedora41.yml)
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      ![](https://img.shields.io/badge/Plasma-6.3-lightblue)
+      [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Ffedora41?label=Download%20%5Bkwin4_effect_shapecorners_fedora41.rpm%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/fedora41/kwin4_effect_shapecorners_fedora41.rpm/download)
+- [![Fedora 42](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/fedora42.yml?branch=master&label=Fedora%2042&logo=fedora&logoColor=white)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/fedora42.yml)
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      ![](https://img.shields.io/badge/Plasma-6.3-lightblue)
+      [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Ffedora42?label=Download%20%5Bkwin4_effect_shapecorners_fedora42.rpm%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/fedora42/kwin4_effect_shapecorners_fedora42.rpm/download)
 - [![Arch](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/arch.yml?branch=master&label=Arch%20Linux&logo=archlinux&logoColor=white)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/arch.yml)
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
