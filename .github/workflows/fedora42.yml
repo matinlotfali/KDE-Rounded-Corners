@@ -17,7 +17,7 @@ env:
   RPM_NAME: kwin4_effect_shapecorners
 
 jobs:
-  fedora40:
+  fedora42:
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
     # cross-platform coverage.
@@ -71,7 +71,7 @@ jobs:
         key: ${{ secrets.SOURCEFORGE_KEY }}
         fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
         source: ${{ env.RPM_FILE }}
-        target: /home/frs/project/kde-rounded-corners/nightly/fedora/${{ env.RPM_NAME }}_${{ github.job }}.rpm
+        target: /home/frs/project/kde-rounded-corners/nightly/${{ github.job }}/${{ env.RPM_NAME }}_${{ github.job }}.rpm
 
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build
