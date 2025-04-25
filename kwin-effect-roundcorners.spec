@@ -19,6 +19,7 @@ BuildRequires:  qt6-qtbase-devel
 BuildRequires:  qt6-qtbase-private-devel
 BuildRequires:  libepoxy-devel
 BuildRequires:  libxcb-devel
+BuildRequires:  wayland-devel
 
 %description
 KDE Rounded Corners is a desktop effect for KWin that smoothly rounds
