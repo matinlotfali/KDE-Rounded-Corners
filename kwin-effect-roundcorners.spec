@@ -11,15 +11,22 @@ Source0:        https://github.com/matinlotfali/KDE-Rounded-Corners/archive/refs
 BuildRequires:  cmake >= 3.20
 BuildRequires:  gcc-c++
 BuildRequires:  extra-cmake-modules
-BuildRequires:  kwin-devel
 BuildRequires:  kf6-kconfigwidgets-devel
 BuildRequires:  kf6-kcmutils-devel
 BuildRequires:  kf6-ki18n-devel
-BuildRequires:  qt6-qtbase-devel
-BuildRequires:  qt6-qtbase-private-devel
+BuildRequires:  kf6-kwindowsystem-devel
 BuildRequires:  libepoxy-devel
 BuildRequires:  libxcb-devel
 BuildRequires:  wayland-devel
+%if %{defined suse_version}
+BuildRequires:  kwin6-devel
+BuildRequires:  qt6-core-private-devel
+BuildRequires:  qt6-quick-devel
+%else
+BuildRequires:  kwin-devel
+BuildRequires:  qt6-qtbase-devel
+BuildRequires:  qt6-qtbase-private-devel
+%endif
 
 %description
 KDE Rounded Corners is a desktop effect for KWin that smoothly rounds
