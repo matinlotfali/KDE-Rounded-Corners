@@ -24,7 +24,7 @@ I maintain this effect on KDE Plasma desktop version 5.27 to 6.3+ in various Lin
 - [![Kubuntu 24.10 Oracular](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2410.yml?label=Kubuntu%2024.10&logo=kubuntu&branch=master)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/kubuntu2410.yml)
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     ![](https://img.shields.io/badge/Plasma-6.1-lightgreen)
-    [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Fkubuntu2410?label=Download%20%5Bkwin4_effect_shapecorners_kubuntu2410.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/kubuntu2410/kwin4_effect_shapecorners_kubuntu2410.deb/download)
+    [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Fkubuntu2410?label=Download%20%5Bk[![Copr build status](https://copr.fedorainfracloud.org/coprs/matinlotfali/KDE-Rounded-Corners/package/kwin-effect-roundcorners/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/matinlotfali/KDE-Rounded-Corners/package/kwin-effect-roundcorners/)win4_effect_shapecorners_kubuntu2410.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/kubuntu2410/kwin4_effect_shapecorners_kubuntu2410.deb/download)
 - [![Kubuntu 25.04 Plucky](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2504.yml?label=Kubuntu%2025.04&logo=kubuntu&branch=master)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/kubuntu2504.yml)
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     ![](https://img.shields.io/badge/Plasma-6.3-lightblue)
@@ -41,21 +41,11 @@ I maintain this effect on KDE Plasma desktop version 5.27 to 6.3+ in various Lin
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       ![](https://img.shields.io/badge/Plasma-6.3-lightblue)
       [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Ftumbleweed?label=Download%20%5Bkwin4_effect_shapecorners_tumbleweed.rpm%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/tumbleweed/kwin4_effect_shapecorners_tumbleweed.rpm/download)
-- [![Fedora 40](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/fedora40.yml?branch=master&label=Fedora%2040&logo=fedora&logoColor=white)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/fedora40.yml)
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      ![](https://img.shields.io/badge/Plasma-6.3-lightblue)
-      [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Ffedora?label=Download%20%5Bkwin4_effect_shapecorners_fedora40.rpm%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/fedora/kwin4_effect_shapecorners_fedora40.rpm/download)
-- [![Fedora 41](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/fedora41.yml?branch=master&label=Fedora%2041&logo=fedora&logoColor=white)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/fedora41.yml)
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      ![](https://img.shields.io/badge/Plasma-6.3-lightblue)
-      [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Ffedora41?label=Download%20%5Bkwin4_effect_shapecorners_fedora41.rpm%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/fedora41/kwin4_effect_shapecorners_fedora41.rpm/download)
 - [![Fedora 42](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/fedora42.yml?branch=master&label=Fedora%2042&logo=fedora&logoColor=white)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/fedora42.yml)
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       ![](https://img.shields.io/badge/Plasma-6.3-lightblue)
-      [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Ffedora42?label=Download%20%5Bkwin4_effect_shapecorners_fedora42.rpm%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/fedora42/kwin4_effect_shapecorners_fedora42.rpm/download)
+      [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Ffedora42?label=Download%20%5Bkwin4_effect_shapecorners_fedora42.rpm%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/fedora42/kwin4_effect_shapecorners_fedora42.rpm/download)![](https://img.shields.io/badge/Copr-gray)[![Copr build status](https://copr.fedorainfracloud.org/coprs/matinlotfali/KDE-Rounded-Corners/package/kwin-effect-roundcorners/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/matinlotfali/KDE-Rounded-Corners/package/kwin-effect-roundcorners/)
 - [![Arch](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/arch.yml?branch=master&label=Arch%20Linux&logo=archlinux&logoColor=white)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/arch.yml)
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -88,7 +78,40 @@ I maintain this effect on KDE Plasma desktop version 5.27 to 6.3+ in various Lin
   <img src="https://contrib.rocks/image?repo=matinlotfali/KDE-Rounded-Corners" />
 </a>
 
-# How to build
+# How to install using unofficial repositories
+
+Copr package at [matinlotfali/KDE-Rounded-Corners](https://copr.fedorainfracloud.org/coprs/matinlotfali/KDE-Rounded-Corners)
+
+```bash
+sudo dnf copr enable matinlotfali/KDE-Rounded-Corners
+sudo dnf update
+sudo dnf install kwin-effect-roundcorners
+```
+
+AUR package by [xiota](https://aur.archlinux.org/account/xiota)  
+
+```bash
+sudo pamac build kwin-effect-rounded-corners-git
+```
+
+NixOS package by [flexagoon](https://github.com/flexagoon)
+
+```bash
+nix-env -iA nixos.kde-rounded-corners
+```
+
+
+# How to install using a pre-built package
+
+Download `.deb` or `.rpm` packages from above and install them using commands:
+
+```bash
+sudo dpkg -i ./kwin4_effect_shapecorners_debian.deb # for debian and kubuntu
+sudo dnf install ./kwin4_effect_shapecorners_fedora42.rpm # for fedora
+sudo zypper install ./kwin4_effect_shapecorners_tumbleweed.rpm # for opensuse tumbleweed
+```
+
+# How to build from source code
 
 You need to install development packages for your distribution first:
 
@@ -125,10 +148,6 @@ You need to install development packages for your distribution first:
   sudo pacman -S git cmake extra-cmake-modules base-devel
   yay -S qt5-tools
   ```
-  or AUR package by [xiota](https://aur.archlinux.org/account/xiota)  
-  ```bash
-  sudo pamac build kwin-effect-rounded-corners-git
-  ```
 </details>
 <details>
 <summary>OpenSUSE - by https://github.com/mathiasgredal, https://github.com/Richardsause, and https://github.com/aaronkirschen</summary>
@@ -149,13 +168,6 @@ You need to install development packages for your distribution first:
   ```bash
   xbps-install git cmake make extra-cmake-modules gettext-devel kwin-devel kf6-kconfigwidgets-devel kf6-kcmutils-devel
   ```
-</details>
-<details>
-<summary>NixOS - by https://github.com/flexagoon</summary>
-
-   ```bash
-   nix-env -iA nixos.kde-rounded-corners
-   ```
 </details>
 
 Then clone the source code and compile it:
