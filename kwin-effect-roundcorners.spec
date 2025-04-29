@@ -21,12 +21,12 @@ BuildRequires:  wayland-devel
 BuildRequires:  kwin6-devel
 BuildRequires:  qt6-core-private-devel
 BuildRequires:  qt6-quick-devel
-BuildRequires:  kf6-rpm-macros
+BuildRequires:  kf6-filesystem
 %else
 BuildRequires:  kwin-devel
 BuildRequires:  qt6-qtbase-devel
 BuildRequires:  qt6-qtbase-private-devel
-BuildRequires:  kf6-filesystem
+BuildRequires:  kf6-rpm-macros
 %endif
 
 %description
