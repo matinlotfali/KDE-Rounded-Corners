@@ -9,7 +9,6 @@ Source0:        https://github.com/matinlotfali/KDE-Rounded-Corners/archive/refs
 # Build requirements
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
-BuildRequires:  kf6-rpm-macros
 BuildRequires:  extra-cmake-modules
 BuildRequires:  kf6-kconfigwidgets-devel
 BuildRequires:  kf6-kcmutils-devel
@@ -22,10 +21,12 @@ BuildRequires:  wayland-devel
 BuildRequires:  kwin6-devel
 BuildRequires:  qt6-core-private-devel
 BuildRequires:  qt6-quick-devel
+BuildRequires:  kf6-rpm-macros
 %else
 BuildRequires:  kwin-devel
 BuildRequires:  qt6-qtbase-devel
 BuildRequires:  qt6-qtbase-private-devel
+BuildRequires:  kf6-filesystem
 %endif
 
 %description
