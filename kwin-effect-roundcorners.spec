@@ -1,6 +1,6 @@
 Summary:        KDE KWin effect to round the corners of windows
 Name:           kwin-effect-roundcorners
-Version:        0.7.1
+Version:        0.7.2
 License:        GPL-3.0
 URL:            https://github.com/matinlotfali/KDE-Rounded-Corners
 Source0:        https://github.com/matinlotfali/KDE-Rounded-Corners/archive/refs/heads/master.tar.gz

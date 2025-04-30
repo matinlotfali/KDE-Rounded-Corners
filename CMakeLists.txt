@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(kwin4_effect_shapecorners VERSION 0.7.1 LANGUAGES CXX)
+project(kwin4_effect_shapecorners VERSION 0.7.2 LANGUAGES CXX)
 
 include(cmake/default-vars.cmake)
 
