@@ -39,11 +39,25 @@ minimal impact on performance.
 %setup -q -n KDE-Rounded-Corners-master
 
 %build
+%if %{defined suse_version}
+mkdir -p build
+cd build
+cmake .. \
+    -DCMAKE_INSTALL_PREFIX=%{_prefix} \
+    -DCMAKE_INSTALL_LIBDIR=%{_libdir}
+make %{?_smp_mflags}
+%else
 %cmake_kf6
 %cmake_build
+%endif
 
 %install
+%if %{defined suse_version}
+cd build
+make install DESTDIR=%{buildroot}
+%else
 %cmake_install
+%endif
 
 %files
 %license LICENSE
