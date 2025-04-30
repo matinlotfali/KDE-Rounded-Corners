@@ -16,18 +16,25 @@ BuildRequires:  kf6-kwindowsystem-devel
 BuildRequires:  libepoxy-devel
 BuildRequires:  libxcb-devel
 BuildRequires:  wayland-devel
+
 %if %{defined suse_version}
 Release:        1%{?dist}
 BuildRequires:  kwin6-devel
 BuildRequires:  qt6-core-private-devel
 BuildRequires:  qt6-quick-devel
-BuildRequires:  kf6-filesystem
+%define cmake_kf6        mkdir -p build; cd build; cmake .. -DCMAKE_INSTALL_PREFIX=%{_prefix} -DCMAKE_INSTALL_LIBDIR=%{_libdir}
+%define cmake_build      make %{?_smp_mflags}
+%define cmake_install    cd build; make install DESTDIR=%{buildroot}
+%define _kf6_qtplugindir %{_libdir}/qt6/plugins
+%define _kf6_datadir     %{_datadir}
+
 %else
 Release:        %{autorelease}
 BuildRequires:  kwin-devel
 BuildRequires:  qt6-qtbase-devel
 BuildRequires:  qt6-qtbase-private-devel
 BuildRequires:  kf6-rpm-macros
+
 %endif
 
 %description
@@ -39,25 +46,11 @@ minimal impact on performance.
 %setup -q -n KDE-Rounded-Corners-master
 
 %build
-%if %{defined suse_version}
-mkdir -p build
-cd build
-cmake .. \
-    -DCMAKE_INSTALL_PREFIX=%{_prefix} \
-    -DCMAKE_INSTALL_LIBDIR=%{_libdir}
-make %{?_smp_mflags}
-%else
 %cmake_kf6
 %cmake_build
-%endif
 
 %install
-%if %{defined suse_version}
-cd build
-make install DESTDIR=%{buildroot}
-%else
 %cmake_install
-%endif
 
 %files
 %license LICENSE
@@ -67,6 +60,7 @@ make install DESTDIR=%{buildroot}
 %{_kf6_datadir}/kwin/shaders/shapecorners.frag
 %{_kf6_datadir}/kwin/shaders/shapecorners_core.frag
 %{_kf6_datadir}/locale/*/LC_MESSAGES/kcmcorners.mo*
+
 
 %changelog
 * Thu Apr 24 2025 Matin Lotfaliei <matinlotfali@gmail.com> - 0.7.1-1
