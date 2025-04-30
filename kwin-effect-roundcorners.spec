@@ -63,5 +63,9 @@ minimal impact on performance.
 
 
 %changelog
+%if %{defined suse_version}
 * Thu Apr 24 2025 Matin Lotfaliei <matinlotfali@gmail.com> - 0.7.1-1
 - Initial RPM packaging of KDE-Rounded-Corners
+%else
+%autochangelog
+%endif
