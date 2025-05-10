@@ -111,6 +111,16 @@
         </widget>
        </item>
        <item>
+        <widget class="QCheckBox" name="kcfg_DisableRoundFullScreen">
+         <property name="text">
+          <string>Disable Roundness on FullScreen</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Orientation::Vertical</enum>
@@ -1063,6 +1073,16 @@
         <widget class="QCheckBox" name="kcfg_DisableOutlineMaximize">
          <property name="text">
           <string>Disable Outline on Maximize</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="kcfg_DisableOutlineFullScreen">
+         <property name="text">
+          <string>Disable Outline on FullScreen</string>
          </property>
          <property name="checked">
           <bool>true</bool>

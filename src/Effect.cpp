@@ -81,9 +81,14 @@ ShapeCorners::Effect::windowAdded(KWin::EffectWindow *w)
         return;
     }
 
-    const QSet<QString> hardExceptions {
-        QStringLiteral("kwin"), QStringLiteral("kwin_x11"), QStringLiteral("kwin_wayland"),
-        QStringLiteral("kscreenlocker_greet"), QStringLiteral("ksmserver"), QStringLiteral("krunner")
+    const QSet hardExceptions {
+        QStringLiteral("kwin"),
+        QStringLiteral("kwin_x11"),
+        QStringLiteral("kwin_wayland"),
+        QStringLiteral("kscreenlocker_greet"),
+        QStringLiteral("ksmserver"),
+        QStringLiteral("krunner"),
+        QStringLiteral("ksplashqml"),
     };
     const auto name = w->windowClass().split(QChar::Space).first();
     if (hardExceptions.contains(name)) {
