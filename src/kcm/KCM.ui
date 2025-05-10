@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>658</width>
-    <height>600</height>
+    <width>708</width>
+    <height>608</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -1089,44 +1089,18 @@
        <string>Inclusions &amp;&amp; Exclusions</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="3" column="1">
-        <widget class="QPushButton" name="includeButton">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
+       <item row="1" column="2">
+        <widget class="QCheckBox" name="kcfg_IncludeNormalWindows">
          <property name="text">
-          <string>Include &gt;</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="2">
-        <widget class="QCheckBox" name="kcfg_IncludeDialogs">
-         <property name="text">
-          <string>Include all dialogs</string>
+          <string>Include all normal windows</string>
          </property>
          <property name="checked">
           <bool>true</bool>
          </property>
         </widget>
        </item>
-       <item row="5" column="2">
-        <widget class="QLabel" name="label_11">
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>20</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Excluded Windows:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QPushButton" name="deleteIncludeButton">
+       <item row="10" column="1">
+        <widget class="QPushButton" name="deleteExcludeButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -1138,7 +1112,20 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="2" rowspan="2">
+       <item row="12" column="0">
+        <widget class="QPushButton" name="refreshButton">
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Refresh</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="2" rowspan="2">
         <widget class="QListWidget" name="InclusionList">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -1154,7 +1141,49 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="2">
+       <item row="3" column="2">
+        <widget class="QCheckBox" name="kcfg_IncludeDialogs">
+         <property name="text">
+          <string>Include all dialogs</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="1">
+        <widget class="QPushButton" name="excludeButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Exclude &gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>List of Current Open Windows:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="12" column="2">
         <widget class="QWidget" name="widget" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
@@ -1181,14 +1210,24 @@
          </layout>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
+       <item row="9" column="2" rowspan="2">
+        <widget class="QListWidget" name="ExclusionList">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+         </property>
+         <property name="showDropIndicator" stdset="0">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="2">
+        <widget class="QLabel" name="label_11">
          <property name="maximumSize">
           <size>
            <width>16777215</width>
@@ -1196,20 +1235,7 @@
           </size>
          </property>
          <property name="text">
-          <string>List of Current Open Windows:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QPushButton" name="excludeButton">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Exclude &gt;</string>
+          <string>Excluded Windows:</string>
          </property>
         </widget>
        </item>
@@ -1232,18 +1258,8 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="2">
-        <widget class="QCheckBox" name="kcfg_IncludeNormalWindows">
-         <property name="text">
-          <string>Include all normal windows</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="1">
-        <widget class="QPushButton" name="deleteExcludeButton">
+       <item row="6" column="1">
+        <widget class="QPushButton" name="includeButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -1251,27 +1267,11 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>&lt;</string>
+          <string>Include &gt;</string>
          </property>
         </widget>
        </item>
-       <item row="6" column="2" rowspan="2">
-        <widget class="QListWidget" name="ExclusionList">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="editTriggers">
-          <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
-         </property>
-         <property name="showDropIndicator" stdset="0">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" rowspan="7">
+       <item row="3" column="0" rowspan="8">
         <widget class="QTableWidget" name="currentWindowList">
          <property name="sizeAdjustPolicy">
           <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustToContents</enum>
@@ -1325,16 +1325,43 @@
          </column>
         </widget>
        </item>
-       <item row="8" column="0">
-        <widget class="QPushButton" name="refreshButton">
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
+       <item row="0" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="classNameLabel">
+           <property name="text">
+            <string>Manual Class Name:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPlainTextEdit" name="classTextEdit">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="verticalScrollBarPolicy">
+            <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+           </property>
+           <property name="horizontalScrollBarPolicy">
+            <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="7" column="1">
+        <widget class="QPushButton" name="deleteIncludeButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
          <property name="text">
-          <string>Refresh</string>
+          <string>&lt;</string>
          </property>
         </widget>
        </item>
