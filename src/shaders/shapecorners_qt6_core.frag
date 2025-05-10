@@ -17,7 +17,12 @@ void main(void)
 
     tex = sourceEncodingToNitsInDestinationColorspace(tex);
     tex = adjustSaturation(tex);
+
+    // to preserve perceptual contrast, apply the inversion in gamma 2.2 space
+    tex = nitsToEncoding(tex, gamma22_EOTF, 0.0, destinationReferenceLuminance);
     tex *= modulation;
+    tex.rgb *= tex.a;
+    tex = encodingToNits(tex, gamma22_EOTF, 0.0, destinationReferenceLuminance);
 
     fragColor = nitsToDestinationEncoding(tex);
 }
