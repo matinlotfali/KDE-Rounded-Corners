@@ -152,9 +152,9 @@ void ShapeCorners::Window::animateProperties(const std::chrono::milliseconds& ti
     secondOutlineColor += deltaSecondOutlineColor;
 
     // check boundaries after adjusting
-    clamp(cornerRadius, deltaCornerRadius, configCornerRadius);
-    clamp(outlineSize, deltaOutlineSize, configOutlineSize);
-    clamp(secondOutlineSize, deltaSecondOutlineSize, configSecondOutlineSize);
+    cornerRadius = std::clamp(cornerRadius, 0.0f, configCornerRadius);
+    outlineSize = std::clamp(outlineSize, 0.0f, configOutlineSize);
+    secondOutlineSize = std::clamp(secondOutlineSize, 0.0f, configSecondOutlineSize);
     outlineColor.clamp();
     secondOutlineColor.clamp();
 
