@@ -38,20 +38,23 @@ bool ShapeCorners::Window::hasEffect() const {
 }
 
 bool ShapeCorners::Window::hasRoundCorners() const {
-    return !(isTiled && Config::disableRoundTile() && !isMaximized)
-           && !(isMaximized && Config::disableRoundMaximize());
+    if (w.isFullScreen())
+        return !Config::disableRoundFullScreen();
+    if (isMaximized)
+        return !Config::disableRoundMaximize();
+    if (isTiled)
+        return !Config::disableRoundTile();
+    return true;
 }
 
 bool ShapeCorners::Window::hasOutline() const {
-    return !(isTiled && Config::disableOutlineTile() && !isMaximized)
-           && !(isMaximized && Config::disableOutlineMaximize());
-}
-
-constexpr void clamp(float& value, const float& delta, const float& config) {
-    if (delta > 0)
-        value = std::min(value, config);
-    else if (delta < 0)
-        value = std::max(value, 0.0f);
+    if (w.isFullScreen())
+        return !Config::disableOutlineFullScreen();
+    if (isMaximized)
+        return !Config::disableOutlineMaximize();
+    if (isTiled)
+        return !Config::disableOutlineTile();
+    return true;
 }
 
 void ShapeCorners::Window::animateProperties(const std::chrono::milliseconds& time) {
