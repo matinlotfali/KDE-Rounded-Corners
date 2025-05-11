@@ -3,7 +3,7 @@ Name:           kwin-effect-roundcorners
 License:        GPL-3.0
 URL:            https://github.com/matinlotfali/KDE-Rounded-Corners
 Source0:        https://github.com/matinlotfali/KDE-Rounded-Corners/archive/refs/heads/master.tar.gz
-Version:        7.2
+Version:        0.7.2
 
 %if %{defined suse_version}
 Release:        1%{?dist}
