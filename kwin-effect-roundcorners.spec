@@ -3,8 +3,29 @@ Name:           kwin-effect-roundcorners
 License:        GPL-3.0
 URL:            https://github.com/matinlotfali/KDE-Rounded-Corners
 Source0:        https://github.com/matinlotfali/KDE-Rounded-Corners/archive/refs/heads/master.tar.gz
+%define version 7.2
 
-# Build requirements
+
+%if %{defined suse_version}
+Release:        1%{?dist}
+BuildRequires:  qt6-core-private-devel
+BuildRequires:  qt6-quick-devel
+%define kwin_pkg_name    kwin6
+%define cmake_kf6        mkdir -p build; cd build; cmake .. -DCMAKE_INSTALL_PREFIX=%{_prefix} -DCMAKE_INSTALL_LIBDIR=%{_libdir}
+%define cmake_build      make %{?_smp_mflags}
+%define cmake_install    cd build; make install DESTDIR=%{buildroot}
+%define _kf6_qtplugindir %{_libdir}/qt6/plugins
+%define _kf6_datadir     %{_datadir}
+
+%else
+Release:        %{autorelease}
+BuildRequires:  qt6-qtbase-devel
+BuildRequires:  qt6-qtbase-private-devel
+BuildRequires:  kf6-rpm-macros
+%define kwin_pkg_name kwin
+
+%endif
+
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
 BuildRequires:  extra-cmake-modules
@@ -15,32 +36,17 @@ BuildRequires:  kf6-kwindowsystem-devel
 BuildRequires:  libepoxy-devel
 BuildRequires:  libxcb-devel
 BuildRequires:  wayland-devel
+BuildRequires:  %{kwin_pkg_name}-devel
 
-%if %{defined suse_version}
-Release:        1%{?dist}
-BuildRequires:  kwin6-devel
-BuildRequires:  qt6-core-private-devel
-BuildRequires:  qt6-quick-devel
-%define cmake_kf6        mkdir -p build; cd build; cmake .. -DCMAKE_INSTALL_PREFIX=%{_prefix} -DCMAKE_INSTALL_LIBDIR=%{_libdir}
-%define cmake_build      make %{?_smp_mflags}
-%define cmake_install    cd build; make install DESTDIR=%{buildroot}
-%define _kf6_qtplugindir %{_libdir}/qt6/plugins
-%define _kf6_datadir     %{_datadir}
-%define kwinver          %(rpm -q --qf '%%{VERSION}' kwin6)
-Requires:       kwin6 = %{kwinver}
-
+%define kwinver %(rpm -q --qf '%%{VERSION}' %{kwin_pkg_name})
+%if "%{kwinver}" == "package %{kwin_pkg_name} is not installed"
+Version:  %{version}
+Requires: %{kwin_pkg_name}
 %else
-Release:        %{autorelease}
-BuildRequires:  kwin-devel
-BuildRequires:  qt6-qtbase-devel
-BuildRequires:  qt6-qtbase-private-devel
-BuildRequires:  kf6-rpm-macros
-%define kwinver %(rpm -q --qf '%%{VERSION}' kwin)
-Requires:       kwin = %{kwinver}
-
+Version:  %{version}~kwin%{kwinver}
+Requires: %{kwin_pkg_name} = %{kwinver}
 %endif
 
-Version:        0.7.2~kwin%{kwinver}
 
 %description
 KDE Rounded Corners is a desktop effect for KWin that smoothly rounds
