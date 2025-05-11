@@ -3,8 +3,7 @@ Name:           kwin-effect-roundcorners
 License:        GPL-3.0
 URL:            https://github.com/matinlotfali/KDE-Rounded-Corners
 Source0:        https://github.com/matinlotfali/KDE-Rounded-Corners/archive/refs/heads/master.tar.gz
-%define version 7.2
-
+Version:        7.2
 
 %if %{defined suse_version}
 Release:        1%{?dist}
@@ -38,16 +37,6 @@ BuildRequires:  libxcb-devel
 BuildRequires:  wayland-devel
 BuildRequires:  %{kwin_pkg_name}-devel
 
-%define kwinver %(rpm -q --qf '%%{VERSION}' %{kwin_pkg_name})
-%if "%{kwinver}" == "package %{kwin_pkg_name} is not installed"
-Version:  %{version}
-Requires: %{kwin_pkg_name}
-%else
-Version:  %{version}~kwin%{kwinver}
-Requires: %{kwin_pkg_name} = %{kwinver}
-%endif
-
-
 %description
 KDE Rounded Corners is a desktop effect for KWin that smoothly rounds
 the corners of all windows and optionally adds an outline, with
@@ -71,7 +60,6 @@ minimal impact on performance.
 %{_kf6_datadir}/kwin/shaders/shapecorners.frag
 %{_kf6_datadir}/kwin/shaders/shapecorners_core.frag
 %{_kf6_datadir}/locale/*/LC_MESSAGES/kcmcorners.mo*
-
 
 %changelog
 %if %{defined suse_version}
