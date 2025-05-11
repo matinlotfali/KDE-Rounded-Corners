@@ -4,10 +4,6 @@ License:        GPL-3.0
 URL:            https://github.com/matinlotfali/KDE-Rounded-Corners
 Source0:        https://github.com/matinlotfali/KDE-Rounded-Corners/archive/refs/heads/master.tar.gz
 
-%global kwinver %(rpm -q --qf '%%{VERSION}' kwin)
-Version:        0.7.2~kwin%{kwinver}
-Requires:       kwin = %{kwinver}
-
 # Build requirements
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
@@ -30,6 +26,8 @@ BuildRequires:  qt6-quick-devel
 %define cmake_install    cd build; make install DESTDIR=%{buildroot}
 %define _kf6_qtplugindir %{_libdir}/qt6/plugins
 %define _kf6_datadir     %{_datadir}
+%define kwinver          %(rpm -q --qf '%%{VERSION}' kwin6)
+Requires:       kwin6 = %{kwinver}
 
 %else
 Release:        %{autorelease}
@@ -37,8 +35,12 @@ BuildRequires:  kwin-devel
 BuildRequires:  qt6-qtbase-devel
 BuildRequires:  qt6-qtbase-private-devel
 BuildRequires:  kf6-rpm-macros
+%define kwinver %(rpm -q --qf '%%{VERSION}' kwin)
+Requires:       kwin = %{kwinver}
 
 %endif
+
+Version:        0.7.2~kwin%{kwinver}
 
 %description
 KDE Rounded Corners is a desktop effect for KWin that smoothly rounds
