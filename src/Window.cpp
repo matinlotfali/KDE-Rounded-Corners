@@ -38,6 +38,8 @@ bool ShapeCorners::Window::hasEffect() const {
 }
 
 bool ShapeCorners::Window::hasRoundCorners() const {
+    if (cornerRadius <= 0)
+        return false;
     if (w.isFullScreen())
         return !Config::disableRoundFullScreen();
     if (isMaximized)
