@@ -6,7 +6,7 @@ Source0:        https://github.com/matinlotfali/KDE-Rounded-Corners/archive/refs
 Version:        0.7.2
 
 %if %{defined suse_version}
-Release:        1%{?dist}
+Release:        2%{?dist}
 BuildRequires:  qt6-core-private-devel
 BuildRequires:  qt6-quick-devel
 %define kwin_pkg_name    kwin6
@@ -17,7 +17,8 @@ BuildRequires:  qt6-quick-devel
 %define _kf6_datadir     %{_datadir}
 
 %else
-Release:        %{autorelease}
+#Release:        %{autorelease}
+Release:        2%{?dist}
 BuildRequires:  qt6-qtbase-devel
 BuildRequires:  qt6-qtbase-private-devel
 BuildRequires:  kf6-rpm-macros
