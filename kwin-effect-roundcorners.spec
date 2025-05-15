@@ -2,14 +2,15 @@ Summary:        KDE KWin effect to round the corners of windows
 Name:           kwin-effect-roundcorners
 License:        GPL-3.0
 URL:            https://github.com/matinlotfali/KDE-Rounded-Corners
-Source0:        https://github.com/matinlotfali/KDE-Rounded-Corners/archive/refs/heads/master.tar.gz
-Version:        0.7.2
+Source0:        %{URL}/archive/refs/heads/master.tar.gz
+%define version 0.7.2
 
 %if %{defined suse_version}
-Release:        2%{?dist}
+Release:        1%{?dist}
 BuildRequires:  qt6-core-private-devel
 BuildRequires:  qt6-quick-devel
 %define kwin_pkg_name    kwin6
+%define kwin_version     %(zypper info -y kwin 2>/dev/null | awk '$1=="Version" {print "~kwin"$3}')
 %define cmake_kf6        mkdir -p build; cd build; cmake .. -DCMAKE_INSTALL_PREFIX=%{_prefix} -DCMAKE_INSTALL_LIBDIR=%{_libdir}
 %define cmake_build      make %{?_smp_mflags}
 %define cmake_install    cd build; make install DESTDIR=%{buildroot}
@@ -17,15 +18,16 @@ BuildRequires:  qt6-quick-devel
 %define _kf6_datadir     %{_datadir}
 
 %else
-#Release:        %{autorelease}
-Release:        2%{?dist}
+Release:        %{autorelease}
 BuildRequires:  qt6-qtbase-devel
 BuildRequires:  qt6-qtbase-private-devel
 BuildRequires:  kf6-rpm-macros
 %define kwin_pkg_name kwin
+%define kwin_version  %(dnf info -y kwin 2>/dev/null | awk '$1=="Version" {print "~kwin"$3}')
 
 %endif
 
+Version:        %{version}%{kwin_version}
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
 BuildRequires:  extra-cmake-modules
