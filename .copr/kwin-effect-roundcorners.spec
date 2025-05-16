@@ -4,12 +4,12 @@ License:        GPL-3.0
 URL:            https://github.com/matinlotfali/KDE-Rounded-Corners
 Source0:        %{URL}/archive/refs/heads/master.tar.gz
 Version:        0.7.2
+Release:        1%{?dist}
 
 %if %{defined suse_version}
 BuildRequires:  qt6-core-private-devel
 BuildRequires:  qt6-quick-devel
 %global kwin_pkg_name    kwin6
-%global kwin_version     %(zypper info -y kwin6 2>/dev/null | awk '$1=="Version" {print $3}')
 %global cmake_kf6        mkdir -p build; cd build; cmake .. -DCMAKE_INSTALL_PREFIX=%{_prefix} -DCMAKE_INSTALL_LIBDIR=%{_libdir}
 %global cmake_build      make %{?_smp_mflags}
 %global cmake_install    cd build; make install DESTDIR=%{buildroot}
@@ -21,13 +21,9 @@ BuildRequires:  qt6-qtbase-devel
 BuildRequires:  qt6-qtbase-private-devel
 BuildRequires:  kf6-rpm-macros
 %global kwin_pkg_name kwin
-%global kwin_version  %(dnf info -y kwin 2>/dev/null | awk '$1=="Version" {print $3}')
 
 %endif
 
-Release:        %{kwin_version}%{?dist}
-Requires:       %{kwin_pkg_name} = %{kwin_version}
-BuildRequires:  %{kwin_pkg_name}-devel
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
 BuildRequires:  extra-cmake-modules
@@ -38,6 +34,7 @@ BuildRequires:  kf6-kwindowsystem-devel
 BuildRequires:  libepoxy-devel
 BuildRequires:  libxcb-devel
 BuildRequires:  wayland-devel
+BuildRequires:  %{kwin_pkg_name}-devel
 
 %description
 KDE Rounded Corners is a desktop effect for KWin that smoothly rounds
