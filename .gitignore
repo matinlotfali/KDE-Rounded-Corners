@@ -4,3 +4,4 @@
 /build/
 /Testing/
 CMakeLists.txt.user
+patched.spec

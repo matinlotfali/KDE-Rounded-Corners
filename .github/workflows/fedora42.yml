@@ -73,6 +73,11 @@ jobs:
         source: ${{ env.RPM_FILE }}
         target: /home/frs/project/kde-rounded-corners/nightly/${{ github.job }}/${{ env.RPM_NAME }}_${{ github.job }}.rpm
 
+    - name: Copr Webhook
+      if: github.ref == 'refs/heads/master'
+      run:
+        curl -X POST ${{ secrets.COPR_WEBHOOK_URL }}
+
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build
 #       # Execute tests defined by the CMake configuration.  
