@@ -8,20 +8,20 @@ Version:        0.7.2
 %if %{defined suse_version}
 BuildRequires:  qt6-core-private-devel
 BuildRequires:  qt6-quick-devel
-%define kwin_pkg_name    kwin6
-%define kwin_version     %(zypper info -y kwin6 2>/dev/null | awk '$1=="Version" {print $3}')
-%define cmake_kf6        mkdir -p build; cd build; cmake .. -DCMAKE_INSTALL_PREFIX=%{_prefix} -DCMAKE_INSTALL_LIBDIR=%{_libdir}
-%define cmake_build      make %{?_smp_mflags}
-%define cmake_install    cd build; make install DESTDIR=%{buildroot}
-%define _kf6_qtplugindir %{_libdir}/qt6/plugins
-%define _kf6_datadir     %{_datadir}
+%global kwin_pkg_name    kwin6
+%global kwin_version     %(zypper info -y kwin6 2>/dev/null | awk '$1=="Version" {print $3}')
+%global cmake_kf6        mkdir -p build; cd build; cmake .. -DCMAKE_INSTALL_PREFIX=%{_prefix} -DCMAKE_INSTALL_LIBDIR=%{_libdir}
+%global cmake_build      make %{?_smp_mflags}
+%global cmake_install    cd build; make install DESTDIR=%{buildroot}
+%global _kf6_qtplugindir %{_libdir}/qt6/plugins
+%global _kf6_datadir     %{_datadir}
 
 %else
 BuildRequires:  qt6-qtbase-devel
 BuildRequires:  qt6-qtbase-private-devel
 BuildRequires:  kf6-rpm-macros
-%define kwin_pkg_name kwin
-%define kwin_version  %(dnf info -y kwin 2>/dev/null | awk '$1=="Version" {print $3}')
+%global kwin_pkg_name kwin
+%global kwin_version  %(dnf info -y kwin 2>/dev/null | awk '$1=="Version" {print $3}')
 
 %endif
 
