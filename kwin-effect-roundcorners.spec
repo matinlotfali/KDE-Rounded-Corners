@@ -3,14 +3,13 @@ Name:           kwin-effect-roundcorners
 License:        GPL-3.0
 URL:            https://github.com/matinlotfali/KDE-Rounded-Corners
 Source0:        %{URL}/archive/refs/heads/master.tar.gz
-%define version 0.7.2
+Version:        0.7.2
 
 %if %{defined suse_version}
-Release:        1%{?dist}
 BuildRequires:  qt6-core-private-devel
 BuildRequires:  qt6-quick-devel
 %define kwin_pkg_name    kwin6
-%define kwin_version     %(zypper info -y kwin 2>/dev/null | awk '$1=="Version" {print "~kwin"$3}')
+%define kwin_version     %(zypper info -y kwin6 2>/dev/null | awk '$1=="Version" {print $3}')
 %define cmake_kf6        mkdir -p build; cd build; cmake .. -DCMAKE_INSTALL_PREFIX=%{_prefix} -DCMAKE_INSTALL_LIBDIR=%{_libdir}
 %define cmake_build      make %{?_smp_mflags}
 %define cmake_install    cd build; make install DESTDIR=%{buildroot}
@@ -18,16 +17,17 @@ BuildRequires:  qt6-quick-devel
 %define _kf6_datadir     %{_datadir}
 
 %else
-Release:        %{autorelease}
 BuildRequires:  qt6-qtbase-devel
 BuildRequires:  qt6-qtbase-private-devel
 BuildRequires:  kf6-rpm-macros
 %define kwin_pkg_name kwin
-%define kwin_version  %(dnf info -y kwin 2>/dev/null | awk '$1=="Version" {print "~kwin"$3}')
+%define kwin_version  %(dnf info -y kwin 2>/dev/null | awk '$1=="Version" {print $3}')
 
 %endif
 
-Version:        %{version}%{kwin_version}
+Release:        %{kwin_version}%{?dist}
+Requires:       %{kwin_pkg_name} = %{kwin_version}
+BuildRequires:  %{kwin_pkg_name}-devel
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
 BuildRequires:  extra-cmake-modules
@@ -38,7 +38,6 @@ BuildRequires:  kf6-kwindowsystem-devel
 BuildRequires:  libepoxy-devel
 BuildRequires:  libxcb-devel
 BuildRequires:  wayland-devel
-BuildRequires:  %{kwin_pkg_name}-devel
 
 %description
 KDE Rounded Corners is a desktop effect for KWin that smoothly rounds
