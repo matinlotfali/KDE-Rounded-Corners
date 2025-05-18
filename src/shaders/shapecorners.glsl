@@ -92,7 +92,7 @@ vec4 getShadow(vec2 coord0, float r, vec4 default_tex) {
  *  \return The RGBA color to be used instead of tex input.
  */
 vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle, vec4 coord_shadowColor) {
-    float diagonal_length = (hasRoundCorners && abs(cos(angle)) > 0.1 && abs(sin(angle)) > 0.1) ? sqrt(2.0) : 1.0;
+    float diagonal_length = (abs(cos(angle)) > 0.1 && abs(sin(angle)) > 0.1) ? sqrt(2.0) : 1.0;
     float r = hasRoundCorners ? radius: outlineThickness;
     vec2 center = start + r * diagonal_length * vec2(cos(angle), sin(angle));
     float distance_from_center = distance(coord0, center);
