@@ -5,6 +5,7 @@
 #ifndef KWIN4_EFFECT_SHAPECORNERS_SHADER_H
 #define KWIN4_EFFECT_SHAPECORNERS_SHADER_H
 
+#include <QRectF> // for KWin 5.27 compatibility
 #include <QVector2D>
 #include <memory>
 
