@@ -5,7 +5,6 @@
 #ifndef KWIN4_EFFECT_SHAPECORNERS_SHADER_H
 #define KWIN4_EFFECT_SHAPECORNERS_SHADER_H
 
-#include <QRectF>
 #include <QVector2D>
 #include <memory>
 
@@ -46,7 +45,8 @@ namespace ShapeCorners {
          * \brief This function assigns the required variables to the shader.
          *        Then it pushes the shader to the stack of rendering.
          *        This needs to be called before each window is rendered.
-         * \param w The window that the effect will be rendering on
+         * \param window The window that the effect will be rendering on
+         * \param scale The scale of the screen
          */
         void Bind(const ShapeCorners::Window &window, qreal scale) const;
 
@@ -92,6 +92,10 @@ namespace ShapeCorners {
          */
         int m_shader_windowTopLeft = 0;
 
+        /**
+         * \brief Reference to `uniform bool hasRoundCorners;`
+         *        Whether the window has rounded corners.
+         */
         int m_shader_hasRoundCorners = 0;
 
         /**
@@ -99,6 +103,24 @@ namespace ShapeCorners {
          *        Containing the corner radius in pixels specified in settings.
          */
         int m_shader_radius = 0;
+
+        /**
+         * \brief Reference to `uniform bool usesNativeShadows;`
+         *        Whether the window has custom shadows.
+         */
+        int m_shader_usesNativeShadows = 0;
+
+        /**
+         * \brief Reference to `uniform vec4 shadowColor;`
+         *        Containing the RGBA of the shadow color specified in settings.
+         */
+        int m_shader_shadowColor = 0;
+
+        /**
+         * \brief Reference to `uniform float shadowSize;`
+         *        Containing the shadow size specified in settings.
+         */
+        int m_shader_shadowSize = 0;
 
         /**
          * \brief Reference to `uniform vec4 outlineColor;`
