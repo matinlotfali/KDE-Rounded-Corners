@@ -89,6 +89,7 @@ ShapeCorners::Effect::windowAdded(KWin::EffectWindow *w)
         QStringLiteral("ksmserver"),
         QStringLiteral("krunner"),
         QStringLiteral("ksplashqml"),
+        QStringLiteral("plasmashell"),
     };
     const auto name = w->windowClass().split(QChar::Space).first();
     if (hardExceptions.contains(name)) {
