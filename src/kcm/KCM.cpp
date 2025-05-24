@@ -194,6 +194,7 @@ void ShapeCorners::KCM::defaults() {
     KCModule::defaults();
     config.setDefaults();
     load_ui();
+    markAsChanged();
 }
 
 void ShapeCorners::KCM::load_ui() const {

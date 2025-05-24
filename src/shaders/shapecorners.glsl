@@ -83,62 +83,91 @@ vec4 getShadow(vec2 coord0, float r, vec4 default_tex) {
     return default_tex;
 }
 
+bool is_within(float point, float a, float b) {
+    return (point >= min(a, b) && point <= max(a, b));
+}
+bool is_within(vec2 point, vec2 corner_a, vec2 corner_b) {
+    return is_within(point.x, corner_a.x, corner_b.x) && is_within(point.y, corner_a.y, corner_b.y);
+}
+
 /*
  *  \brief This function is used to choose the pixel color based on its distance to the center input.
  *  \param coord0: The XY point
  *  \param tex: The RGBA color of the pixel in XY
- *  \param center: The origin XY point that is being used as a reference for rounding corners.
- *  \param shadowColor: The RGBA color of the shadow of the pixel behind the window
+ *  \param start: The reference XY point to determine the center of the corner roundness.
+ *  \param angle: The angle in radians to move away from the start point to determine the center of the corner roundness.
+ *  \param is_corner: Boolean to know if its a corner or an edge
+ *  \param coord_shadowColor: The RGBA color of the shadow of the pixel behind the window.
  *  \return The RGBA color to be used instead of tex input.
  */
 vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle, vec4 coord_shadowColor) {
-    float diagonal_length = (hasRoundCorners && abs(cos(angle)) > 0.1 && abs(sin(angle)) > 0.1) ? sqrt(2.0) : 1.0;
-    float r = hasRoundCorners ? radius: outlineThickness;
-    vec2 center = start + r * diagonal_length * vec2(cos(angle), sin(angle));
-    float distance_from_center = distance(coord0, center);
+    vec2 angle_vector = vec2(cos(angle), sin(angle));
+    float corner_length = (abs(angle_vector.x) < 0.1 || abs(angle_vector.y) < 0.1) ? 1.0 : sqrt(2.0);
+    vec2 roundness_center = start + radius * angle_vector * corner_length;
+    vec2 outlineStart = start + outlineThickness * angle_vector * corner_length;
+    vec2 secondOutlineEnd = start - secondOutlineThickness * angle_vector * corner_length;
+    float distance_from_center = distance(coord0, roundness_center);
 
     vec4 secondaryOutlineOverlay = mix(coord_shadowColor, secondOutlineColor, secondOutlineColor.a);
     if (tex.a > 0.1 && hasPrimaryOutline()) {
         vec4 outlineOverlay = vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), 1.0);
 
-        if (distance_from_center < r - outlineThickness + 0.5) {
+        if (outlineThickness > radius && is_within(coord0, outlineStart, start) && !is_within(coord0, roundness_center, start)) {
+            // when the outline is bigger than the roundness radius
+            // from the window to the outline is sharp
+            // no antialiasing is needed because it is not round
+            return outlineOverlay;
+        }
+        else if (distance_from_center < radius - outlineThickness + 0.5) {
             // from the window to the outline
-            float antialiasing = clamp(r - outlineThickness + 0.5 - distance_from_center, 0.0, 1.0);
+            float antialiasing = clamp(radius - outlineThickness + 0.5 - distance_from_center, 0.0, 1.0);
             return mix(outlineOverlay, tex, antialiasing);
         }
         else if (hasSecondOutline()) {
 
-            if (distance_from_center < r + 0.5) {
-                // from the second outline to the shadow
-                float antialiasing = clamp(r + 0.5 - distance_from_center, 0.0, 1.0);
+            if (distance_from_center < radius + 0.5) {
+                // from the outline to the second outline
+                float antialiasing = clamp(radius + 0.5 - distance_from_center, 0.0, 1.0);
                 return mix(secondaryOutlineOverlay, outlineOverlay, antialiasing);
             }
             else {
                 // from the second outline to the shadow
-                float antialiasing = clamp(distance_from_center - r - secondOutlineThickness + 0.5, 0.0, 1.0);
-                return mix(secondaryOutlineOverlay, coord_shadowColor, antialiasing);
+                if (radius > 0.1) {
+                    float antialiasing = clamp(distance_from_center - radius - secondOutlineThickness + 0.5, 0.0, 1.0);
+                    return mix(secondaryOutlineOverlay, coord_shadowColor, antialiasing);
+                } else {
+                    // when the window is not rounded, we don't need to round the secondary outline
+                    // and since it is not rounded, we don't need antialiasing.
+                    return is_within(coord0, outlineStart, secondOutlineEnd)? secondaryOutlineOverlay: coord_shadowColor;
+                }
             }
         } else {
             // from the first outline to the shadow
-            float antialiasing = clamp(distance_from_center - r + 0.5, 0.0, 1.0);
+            float antialiasing = clamp(distance_from_center - radius + 0.5, 0.0, 1.0);
             return mix(outlineOverlay, coord_shadowColor, antialiasing);
         }
     }
     else if (hasSecondOutline()) {
-        if (distance_from_center < r + 0.5) {
+        if (distance_from_center < radius + 0.5) {
             // from window to the second outline
-            float antialiasing = clamp(r + 0.5 - distance_from_center, 0.0, 1.0);
+            float antialiasing = clamp(radius + 0.5 - distance_from_center, 0.0, 1.0);
             return mix(secondaryOutlineOverlay, tex, antialiasing);
         }
         else {
             // from the second outline to the shadow
-            float antialiasing = clamp(distance_from_center - r - secondOutlineThickness + 0.5, 0.0, 1.0);
-            return mix(secondaryOutlineOverlay, coord_shadowColor, antialiasing);
+            if (radius > 0.1) {
+                float antialiasing = clamp(distance_from_center - radius - secondOutlineThickness + 0.5, 0.0, 1.0);
+                return mix(secondaryOutlineOverlay, coord_shadowColor, antialiasing);
+            } else {
+                // when the window is not rounded, we don't need to round the secondary outline
+                // and since it is not rounded, we don't need antialiasing.
+                return is_within(coord0, outlineStart, secondOutlineEnd)? secondaryOutlineOverlay: coord_shadowColor;
+            }
         }
     }
 
     // if other conditions don't apply, just don't draw an outline, from the window to the shadow
-    float antialiasing = clamp(r - distance_from_center + 0.5, 0.0, 1.0);
+    float antialiasing = clamp(radius - distance_from_center + 0.5, 0.0, 1.0);
     return mix(coord_shadowColor, tex, antialiasing);
 }
 
@@ -147,7 +176,7 @@ vec4 run(vec4 tex) {
         return tex;
     }
 
-    float r = hasRoundCorners? radius: outlineThickness;
+    float r = max(radius, outlineThickness);
 
     /* Since `texcoord0` is ranging from {0.0, 0.0} to {1.0, 1.0} is not pixel intuitive,
      * I am changing the range to become from {0.0, 0.0} to {width, height}
