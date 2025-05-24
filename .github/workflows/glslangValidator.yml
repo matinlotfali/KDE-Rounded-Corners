@@ -31,5 +31,6 @@ jobs:
     - name: Validate Shaders
       working-directory: src/shaders
       run: |
-        sed -e '/#include "shapecorners.glsl"/ {' -e 'r shapecorners.glsl' -e 'd' -e '}' -i *.frag        
+        sed -i -e '/#include "shapecorners_shadows.glsl"/ {' -e 'r shapecorners_shadows.glsl' -e 'd' -e '}' *.glsl
+        sed -i -e '/#include "shapecorners.glsl"/ {' -e 'r shapecorners.glsl' -e 'd' -e '}' *.frag        
         glslangValidator *_qt5*.frag

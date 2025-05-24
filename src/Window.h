@@ -19,8 +19,8 @@ namespace KWin
     class EffectWindow;
 
 #ifdef QT_DEBUG
-    QDebug operator<<(QDebug& debug, const KWin::EffectWindow& w);
-    inline QDebug operator<<(QDebug& debug, const KWin::EffectWindow* w) { return (debug << *w); }
+    QDebug operator<<(QDebug& debug, const EffectWindow& w);
+    inline QDebug operator<<(QDebug& debug, const EffectWindow* w) { return (debug << *w); }
 #endif
 }
 
@@ -34,8 +34,10 @@ namespace ShapeCorners {
         bool isMaximized = false;
 
         float cornerRadius = -1;
+        float shadowSize = -1;
         float outlineSize = -1;
         float secondOutlineSize = -1;
+        Color shadowColor = {};
         Color outlineColor = {};
         Color secondOutlineColor = {};
 
