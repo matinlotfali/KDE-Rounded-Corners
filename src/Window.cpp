@@ -38,20 +38,25 @@ bool ShapeCorners::Window::hasEffect() const {
 }
 
 bool ShapeCorners::Window::hasRoundCorners() const {
-    return !(isTiled && Config::disableRoundTile() && !isMaximized)
-           && !(isMaximized && Config::disableRoundMaximize());
+    if (cornerRadius <= 0)
+        return false;
+    if (w.isFullScreen())
+        return !Config::disableRoundFullScreen();
+    if (isMaximized)
+        return !Config::disableRoundMaximize();
+    if (isTiled)
+        return !Config::disableRoundTile();
+    return true;
 }
 
 bool ShapeCorners::Window::hasOutline() const {
-    return !(isTiled && Config::disableOutlineTile() && !isMaximized)
-           && !(isMaximized && Config::disableOutlineMaximize());
-}
-
-constexpr void clamp(float& value, const float& delta, const float& config) {
-    if (delta > 0)
-        value = std::min(value, config);
-    else if (delta < 0)
-        value = std::max(value, 0.0f);
+    if (w.isFullScreen())
+        return !Config::disableOutlineFullScreen();
+    if (isMaximized)
+        return !Config::disableOutlineMaximize();
+    if (isTiled)
+        return !Config::disableOutlineTile();
+    return true;
 }
 
 void ShapeCorners::Window::animateProperties(const std::chrono::milliseconds& time) {
@@ -149,9 +154,9 @@ void ShapeCorners::Window::animateProperties(const std::chrono::milliseconds& ti
     secondOutlineColor += deltaSecondOutlineColor;
 
     // check boundaries after adjusting
-    clamp(cornerRadius, deltaCornerRadius, configCornerRadius);
-    clamp(outlineSize, deltaOutlineSize, configOutlineSize);
-    clamp(secondOutlineSize, deltaSecondOutlineSize, configSecondOutlineSize);
+    cornerRadius = std::clamp(cornerRadius, 0.0f, configCornerRadius);
+    outlineSize = std::clamp(outlineSize, 0.0f, configOutlineSize);
+    secondOutlineSize = std::clamp(secondOutlineSize, 0.0f, configSecondOutlineSize);
     outlineColor.clamp();
     secondOutlineColor.clamp();
 
