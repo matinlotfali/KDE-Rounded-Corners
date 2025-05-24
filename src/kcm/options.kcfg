@@ -129,5 +129,11 @@
         <entry name="DisableOutlineMaximize" type="Bool">
             <default>true</default>
         </entry>
+        <entry name="DisableRoundFullScreen" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="DisableOutlineFullScreen" type="Bool">
+            <default>true</default>
+        </entry>
     </group>
 </kcfg>

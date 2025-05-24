@@ -1,11 +1,29 @@
 Summary:        KDE KWin effect to round the corners of windows
 Name:           kwin-effect-roundcorners
-Version:        0.7.2
 License:        GPL-3.0
 URL:            https://github.com/matinlotfali/KDE-Rounded-Corners
-Source0:        https://github.com/matinlotfali/KDE-Rounded-Corners/archive/refs/heads/master.tar.gz
+Source0:        %{URL}/archive/refs/heads/master.tar.gz
+Version:        0.7.2
+Release:        1%{?dist}
 
-# Build requirements
+%if %{defined suse_version}
+BuildRequires:  qt6-core-private-devel
+BuildRequires:  qt6-quick-devel
+%global kwin_pkg_name    kwin6
+%global cmake_kf6        mkdir -p build; cd build; cmake .. -DCMAKE_INSTALL_PREFIX=%{_prefix} -DCMAKE_INSTALL_LIBDIR=%{_libdir}
+%global cmake_build      make %{?_smp_mflags}
+%global cmake_install    cd build; make install DESTDIR=%{buildroot}
+%global _kf6_qtplugindir %{_libdir}/qt6/plugins
+%global _kf6_datadir     %{_datadir}
+
+%else
+BuildRequires:  qt6-qtbase-devel
+BuildRequires:  qt6-qtbase-private-devel
+BuildRequires:  kf6-rpm-macros
+%global kwin_pkg_name kwin
+
+%endif
+
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
 BuildRequires:  extra-cmake-modules
@@ -16,26 +34,7 @@ BuildRequires:  kf6-kwindowsystem-devel
 BuildRequires:  libepoxy-devel
 BuildRequires:  libxcb-devel
 BuildRequires:  wayland-devel
-
-%if %{defined suse_version}
-Release:        1%{?dist}
-BuildRequires:  kwin6-devel
-BuildRequires:  qt6-core-private-devel
-BuildRequires:  qt6-quick-devel
-%define cmake_kf6        mkdir -p build; cd build; cmake .. -DCMAKE_INSTALL_PREFIX=%{_prefix} -DCMAKE_INSTALL_LIBDIR=%{_libdir}
-%define cmake_build      make %{?_smp_mflags}
-%define cmake_install    cd build; make install DESTDIR=%{buildroot}
-%define _kf6_qtplugindir %{_libdir}/qt6/plugins
-%define _kf6_datadir     %{_datadir}
-
-%else
-Release:        %{autorelease}
-BuildRequires:  kwin-devel
-BuildRequires:  qt6-qtbase-devel
-BuildRequires:  qt6-qtbase-private-devel
-BuildRequires:  kf6-rpm-macros
-
-%endif
+BuildRequires:  %{kwin_pkg_name}-devel
 
 %description
 KDE Rounded Corners is a desktop effect for KWin that smoothly rounds
@@ -60,7 +59,6 @@ minimal impact on performance.
 %{_kf6_datadir}/kwin/shaders/shapecorners.frag
 %{_kf6_datadir}/kwin/shaders/shapecorners_core.frag
 %{_kf6_datadir}/locale/*/LC_MESSAGES/kcmcorners.mo*
-
 
 %changelog
 %if %{defined suse_version}
