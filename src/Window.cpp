@@ -12,6 +12,14 @@
 #include <kwineffects.h>
 #endif
 
+inline float clamp(const float value, const float delta, const float config) {
+    if (delta > 0 && value > config)
+        return config;
+    if (delta < 0 && value < 0)
+        return 0;
+    return value;
+}
+
 QWidget ShapeCorners::Window::m_widget {};
 
 ShapeCorners::Window::Window(KWin::EffectWindow& w)
@@ -125,9 +133,9 @@ void ShapeCorners::Window::animateProperties(const std::chrono::milliseconds& ti
     auto deltaSecondOutlineColor = (configSecondOutlineColor - secondOutlineColor) / deltaTime;
 
     // adjust decimal precision
-    deltaCornerRadius = std::round(deltaCornerRadius * 10) / 10;
-    deltaOutlineSize = std::round(deltaOutlineSize * 10) / 10;
-    deltaSecondOutlineSize = std::round(deltaSecondOutlineSize * 10) / 10;
+    deltaCornerRadius = std::round(deltaCornerRadius * 100) / 100.f;
+    deltaOutlineSize = std::round(deltaOutlineSize * 100) / 100.f;
+    deltaSecondOutlineSize = std::round(deltaSecondOutlineSize * 100) / 100.f;
     deltaOutlineColor.round();
     deltaSecondOutlineColor.round();
 
@@ -154,9 +162,9 @@ void ShapeCorners::Window::animateProperties(const std::chrono::milliseconds& ti
     secondOutlineColor += deltaSecondOutlineColor;
 
     // check boundaries after adjusting
-    cornerRadius = std::clamp(cornerRadius, 0.0f, configCornerRadius);
-    outlineSize = std::clamp(outlineSize, 0.0f, configOutlineSize);
-    secondOutlineSize = std::clamp(secondOutlineSize, 0.0f, configSecondOutlineSize);
+    cornerRadius = clamp(cornerRadius, deltaCornerRadius, configCornerRadius);
+    outlineSize = clamp(outlineSize, deltaOutlineSize, configOutlineSize);
+    secondOutlineSize = clamp(secondOutlineSize, deltaSecondOutlineSize, configSecondOutlineSize);
     outlineColor.clamp();
     secondOutlineColor.clamp();
 
