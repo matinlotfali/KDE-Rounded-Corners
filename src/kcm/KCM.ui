@@ -153,7 +153,7 @@
        <item>
         <widget class="QRadioButton" name="UseCustomShadows">
          <property name="text">
-          <string>Use Custom Shadows*</string>
+          <string>Use Custom Shadows</string>
          </property>
         </widget>
        </item>
@@ -173,7 +173,7 @@
               <item row="0" column="0">
                <widget class="QLabel" name="inactiveShadowSizeLabel_2">
                 <property name="text">
-                 <string>Shadow Size</string>
+                 <string>Shadow Size*</string>
                 </property>
                </widget>
               </item>
@@ -406,7 +406,7 @@
               <item row="0" column="0">
                <widget class="QLabel" name="inactiveShadowSizeLabel">
                 <property name="text">
-                 <string>Shadow Size</string>
+                 <string>Shadow Size*</string>
                 </property>
                </widget>
               </item>
@@ -643,7 +643,7 @@
        <item>
         <widget class="QLabel" name="label_16">
          <property name="text">
-          <string>* Only if the decoration provides expanded geometry</string>
+          <string>* Limited by the decoration expanded geometry</string>
          </property>
         </widget>
        </item>
