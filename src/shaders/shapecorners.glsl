@@ -52,7 +52,7 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle, vec4 coord_shad
     float distance_from_center = distance(coord0, roundness_center);
 
     vec4 secondaryOutlineOverlay = mix(coord_shadowColor, secondOutlineColor, secondOutlineColor.a);
-    if (tex.a > 0.1 && hasPrimaryOutline()) {
+    if (tex.a > 0.0 && hasPrimaryOutline()) {
         vec4 outlineOverlay = vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), 1.0);
 
         if (outlineThickness > radius && is_within(coord0, outlineStart, start) && !is_within(coord0, roundness_center, start)) {

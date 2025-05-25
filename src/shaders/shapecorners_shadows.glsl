@@ -30,7 +30,7 @@ vec4 getCustomShadow(vec2 coord0, float r) {
     float shadowShiftX = sqrt(shadowSize);
     float shadowShiftTop = sqrt(shadowSize);
 
-/*
+    /*
         Split the window into these sections below. They will have a different center of circle for rounding.
 
         TL  T   T   TR
@@ -71,7 +71,7 @@ vec4 getNativeShadow(vec2 coord0, float r, vec4 default_tex) {
     float margin_edge = 2.0;
     float margin_point = margin_edge + 1.0;
 
-/*
+    /*
         Split the window into these sections below. They will have a different center of circle for rounding.
 
         TL  T   T   TR
