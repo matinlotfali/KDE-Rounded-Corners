@@ -16,6 +16,56 @@
             <default>true</default>
         </entry>
 
+        <!-- Shadow Options -->
+
+        <entry name="UseNativeDecorationShadows" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="ShadowSize" type="UInt">
+            <default>60</default>
+            <min>0</min>
+        </entry>
+        <entry name="InactiveShadowSize" type="UInt">
+            <default>40</default>
+            <min>0</min>
+        </entry>
+        <entry name="ShadowColor" type="Color">
+            <default>black</default>
+        </entry>
+        <entry name="InactiveShadowColor" type="Color">
+            <default>black</default>
+        </entry>
+        <entry name="ActiveShadowAlpha" type="Int">
+            <default>128</default>
+            <min>0</min>
+            <max>255</max>
+        </entry>
+        <entry name="InactiveShadowAlpha" type="Int">
+            <default>64</default>
+            <min>0</min>
+            <max>255</max>
+        </entry>
+        <entry name="ActiveShadowPalette" type="UInt">
+            <default>11</default>
+        </entry>
+        <entry name="InactiveShadowPalette" type="UInt">
+            <default>11</default>
+        </entry>
+        <entry name="ActiveShadowUsePalette" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="InactiveShadowUsePalette" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="ActiveShadowUseCustom" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="InactiveShadowUseCustom" type="Bool">
+            <default>false</default>
+        </entry>
+
+        <!-- Primary Outline Options -->
+
         <entry name="OutlineThickness" type="Double">
             <default>1</default>
             <min>0</min>
@@ -61,6 +111,8 @@
             <default>true</default>
         </entry>
 
+        <!-- Second Outline Options -->
+
         <entry name="SecondOutlineThickness" type="Double">
             <default>0.75</default>
             <min>0</min>
@@ -105,6 +157,8 @@
         <entry name="InactiveSecondOutlineUseCustom" type="Bool">
             <default>true</default>
         </entry>
+
+        <!-- Inclusion and Exclusion Options -->
 
         <entry name="Inclusions" type="StringList">
         </entry>
