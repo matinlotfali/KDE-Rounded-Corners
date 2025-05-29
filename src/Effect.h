@@ -72,6 +72,6 @@ namespace ShapeCorners {
         Shader m_shaderManager;
 
         void checkTiled();
-        [[nodiscard]] QRegion getScreenRegionWithoutMenus(const KWin::Output* screen);
+        [[nodiscard]] QRegion getRegionWithoutMenus(const QRect& screen_geometry);
     };
 }

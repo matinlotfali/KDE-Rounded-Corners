@@ -256,15 +256,15 @@ void ShapeCorners::Effect::checkTiled() {
     }
 
     for (const auto& screen: KWin::effects->screens()) {        // Per every screen
-        const auto screen_region = getScreenRegionWithoutMenus(screen);
+        const auto screen_region = getRegionWithoutMenus(screen->geometry());
         const auto geometry = screen_region.boundingRect();
         tileChecker.checkTiles(geometry);
     }
 }
 
-QRegion ShapeCorners::Effect::getScreenRegionWithoutMenus(const KWin::Output* screen)
+QRegion ShapeCorners::Effect::getRegionWithoutMenus(const QRect& screen_geometry)
 {
-    QRegion screen_region = screen->geometry();
+    auto screen_region = QRegion(screen_geometry);
     #ifdef DEBUG_MAXIMIZED
         qDebug() << "ShapeCorners: screen region" << screen_region;
     #endif
@@ -291,7 +291,7 @@ void ShapeCorners::Effect::checkMaximized(KWin::EffectWindow *w) {
 
     window_iterator->second->isMaximized = false;
 
-    auto screen_region = getScreenRegionWithoutMenus(w->screen());
+    auto screen_region = getRegionWithoutMenus(w->screen()->geometry());
 
     // check if window and screen match
     auto remaining = screen_region - w->frameGeometry().toRect();
