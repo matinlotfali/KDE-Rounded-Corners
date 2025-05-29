@@ -30,12 +30,14 @@ ShapeCorners::KCM::KCM(QWidget* parent, const QVariantList& args)
         QIcon icon (pix);
         ui->kcfg_ActiveOutlinePalette->setItemIcon(index, icon);
         ui->kcfg_ActiveSecondOutlinePalette->setItemIcon(index, icon);
+        ui->kcfg_ActiveShadowPalette->setItemIcon(index, icon);
 
         c = palette().color(QPalette::Inactive, static_cast<QPalette::ColorRole>(index));
         pix.fill(c);
         QIcon icon2 (pix);
         ui->kcfg_InactiveOutlinePalette->setItemIcon(index, icon2);
         ui->kcfg_InactiveSecondOutlinePalette->setItemIcon(index, icon2);
+        ui->kcfg_InactiveShadowPalette->setItemIcon(index, icon2);
     }
 
     connect(ui->kcfg_ActiveOutlinePalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &KCM::update_colors);
@@ -52,8 +54,23 @@ ShapeCorners::KCM::KCM(QWidget* parent, const QVariantList& args)
     connect(ui->kcfg_ActiveSecondOutlineUsePalette, &QRadioButton::toggled, this, &KCM::update_colors);
     connect(ui->kcfg_InactiveSecondOutlineUsePalette, &QRadioButton::toggled, this, &KCM::update_colors);
 
+    connect(ui->kcfg_ActiveShadowPalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &KCM::update_colors);
+    connect(ui->kcfg_ActiveShadowPalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &KCM::update_colors);
+    connect(ui->kcfg_ShadowColor, &KColorButton::changed, this, &KCM::update_colors);
+    connect(ui->kcfg_InactiveShadowColor, &KColorButton::changed, this, &KCM::update_colors);
+    connect(ui->kcfg_ActiveShadowUsePalette, &QRadioButton::toggled, this, &KCM::update_colors);
+    connect(ui->kcfg_InactiveShadowUsePalette, &QRadioButton::toggled, this, &KCM::update_colors);
+    connect(ui->kcfg_UseNativeDecorationShadows, &QRadioButton::toggled, [=, this] {
+        const auto& useCustomShadows = !ui->kcfg_UseNativeDecorationShadows->isChecked();
+        ui->UseCustomShadows->setChecked(useCustomShadows);
+        ui->activeShadowGroupBox->setEnabled(useCustomShadows);
+        ui->inactiveShadowGroupBox->setEnabled(useCustomShadows);
+    });
+
     // It was expected that the Apply button would get enabled automatically as the gradient sliders move, but it doesn't.
     // Maybe it is a bug on the KCM side. Need to check and delete these lines later.
+    connect(ui->kcfg_ActiveShadowAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
+    connect(ui->kcfg_InactiveShadowAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
     connect(ui->kcfg_ActiveOutlineAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
     connect(ui->kcfg_InactiveOutlineAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
     connect(ui->kcfg_ActiveSecondOutlineAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
@@ -129,6 +146,16 @@ void ShapeCorners::KCM::update_colors() {
     index = ui->kcfg_InactiveSecondOutlinePalette->currentIndex();
     color = checked ? palette().color(QPalette::Inactive, static_cast<QPalette::ColorRole>(index)): ui->kcfg_InactiveSecondOutlineColor->color();
     ui->kcfg_InactiveSecondOutlineAlpha->setSecondColor(color);
+
+    checked = ui->kcfg_ActiveShadowUsePalette->isChecked();
+    index = ui->kcfg_ActiveShadowPalette->currentIndex();
+    color = checked ? palette().color(QPalette::Active, static_cast<QPalette::ColorRole>(index)): ui->kcfg_ShadowColor->color();
+    ui->kcfg_ActiveShadowAlpha->setSecondColor(color);
+
+    checked = ui->kcfg_InactiveShadowUsePalette->isChecked();
+    index = ui->kcfg_InactiveShadowPalette->currentIndex();
+    color = checked ? palette().color(QPalette::Inactive, static_cast<QPalette::ColorRole>(index)): ui->kcfg_InactiveShadowColor->color();
+    ui->kcfg_InactiveShadowAlpha->setSecondColor(color);
 }
 
 void ShapeCorners::KCM::update_windows() const {
@@ -204,6 +231,7 @@ void ShapeCorners::KCM::defaults() {
     KCModule::defaults();
     config.setDefaults();
     load_ui();
+    markAsChanged();
 }
 
 void ShapeCorners::KCM::load_ui() const {
