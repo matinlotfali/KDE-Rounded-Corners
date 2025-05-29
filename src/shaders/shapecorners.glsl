@@ -21,67 +21,10 @@ vec2 pixel_to_tex(vec2 pixelcoord) {
                 1.0-(pixelcoord.y + windowTopLeft.y) / windowExpandedSize.y);
 }
 bool hasExpandedSize() { return windowSize != windowExpandedSize; }
-bool isDrawingShadows() { return hasExpandedSize(); }
 bool hasPrimaryOutline() { return outlineColor.a > 0.0 && outlineThickness > 0.0; }
 bool hasSecondOutline() { return hasExpandedSize() && secondOutlineColor.a > 0.0 && secondOutlineThickness > 0.0; }
 
-/*
- *  \brief This function is used to choose the pixel shadow color based on the XY pixel and corner radius.
- *  \param coord0: The XY point
- *  \param r: The radius of corners in pixel.
- *  \return The RGBA color to be used for the shadow.
- */
-vec4 getShadow(vec2 coord0, float r, vec4 default_tex) {
-    if(!isDrawingShadows()) {
-        return vec4(0.0, 0.0, 0.0, 0.0);
-    }
-
-    float margin_edge = 2.0;
-    float margin_point = margin_edge + 1.0;
-
-    /*
-        Split the window into these sections below. They will have a different center of circle for rounding.
-
-        TL  T   T   TR
-        L   x   x   R
-        L   x   x   R
-        BL  B   B   BR
-    */
-    if (coord0.y >= -margin_edge && coord0.y <= r) {
-        if (coord0.x >= -margin_edge && coord0.x <= r) {
-            vec2 a = vec2(-margin_point, coord0.y+coord0.x+margin_point);
-            vec2 b = vec2(coord0.x+coord0.y+margin_point, -margin_point);
-            vec4 a_color = texture2D(sampler, pixel_to_tex(a));
-            vec4 b_color = texture2D(sampler, pixel_to_tex(b));
-            return mix(a_color, b_color, distance(a, coord0)/distance(a,b));          // Section TL
-
-        } else if (coord0.x <= windowSize.x + margin_edge && coord0.x >= windowSize.x - r) {
-            vec2 a = vec2(windowSize.x+margin_point, coord0.y+(windowSize.x-coord0.x)+margin_point);
-            vec2 b = vec2(coord0.x-coord0.y-margin_point, -margin_point);
-            vec4 a_color = texture2D(sampler, pixel_to_tex(a));
-            vec4 b_color = texture2D(sampler, pixel_to_tex(b));
-            return mix(a_color, b_color, distance(a, coord0)/distance(a,b));          // Section TR
-
-        }
-    }
-    else if (coord0.y <= windowSize.y + margin_edge && coord0.y >= windowSize.y - r) {
-        if (coord0.x >= -margin_edge && coord0.x <= r) {
-            vec2 a = vec2(-margin_point, coord0.y-coord0.x-margin_point);
-            vec2 b = vec2(coord0.x+(windowSize.y-coord0.y)+margin_point, windowSize.y+margin_point);
-            vec4 a_color = texture2D(sampler, pixel_to_tex(a));
-            vec4 b_color = texture2D(sampler, pixel_to_tex(b));
-            return mix(a_color, b_color, distance(a, coord0)/distance(a,b));          // Section BL
-
-        } else if (coord0.x <= windowSize.x + margin_edge && coord0.x >= windowSize.x - r) {
-            vec2 a = vec2(windowSize.x+margin_point, coord0.y-(windowSize.x-coord0.x)-margin_point);
-            vec2 b = vec2(coord0.x-(windowSize.y-coord0.y)-margin_point, windowSize.y+margin_point);
-            vec4 a_color = texture2D(sampler, pixel_to_tex(a));
-            vec4 b_color = texture2D(sampler, pixel_to_tex(b));
-            return mix(a_color, b_color, distance(a, coord0)/distance(a,b));          // Section BR
-        }
-    }
-    return default_tex;
-}
+#include "shapecorners_shadows.glsl"
 
 bool is_within(float point, float a, float b) {
     return (point >= min(a, b) && point <= max(a, b));
@@ -109,7 +52,7 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle, vec4 coord_shad
     float distance_from_center = distance(coord0, roundness_center);
 
     vec4 secondaryOutlineOverlay = mix(coord_shadowColor, secondOutlineColor, secondOutlineColor.a);
-    if (tex.a > 0.1 && hasPrimaryOutline()) {
+    if (tex.a > 0.0 && hasPrimaryOutline()) {
         vec4 outlineOverlay = vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), 1.0);
 
         if (outlineThickness > radius && is_within(coord0, outlineStart, start) && !is_within(coord0, roundness_center, start)) {

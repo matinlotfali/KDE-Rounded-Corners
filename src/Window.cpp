@@ -5,7 +5,6 @@
 #include "Window.h"
 #include "Config.h"
 
-#include <qconfig.h>
 #if QT_VERSION_MAJOR >= 6
 #include <effect/effecthandler.h>
 #else
@@ -71,15 +70,23 @@ void ShapeCorners::Window::animateProperties(const std::chrono::milliseconds& ti
 
     // find the destination value
     float configCornerRadius;
+    float configShadowSize;
     float configOutlineSize;
     float configSecondOutlineSize;
+    Color configShadowColor;
     Color configOutlineColor;
     Color configSecondOutlineColor;
     const QPalette& m_palette = m_widget.palette();
     if (isActive()) {
         configCornerRadius = static_cast<float>(Config::size());
+        configShadowSize = static_cast<float>(Config::shadowSize());
         configOutlineSize = static_cast<float>(Config::outlineThickness());
         configSecondOutlineSize = static_cast<float>(Config::secondOutlineThickness());
+
+        configShadowColor = Color(Config::activeShadowUsePalette() ?
+                                  m_palette.color(QPalette::Active, static_cast<QPalette::ColorRole>(Config::activeShadowPalette())):
+                                  Config::shadowColor());
+        configShadowColor.setAlpha(Config::activeShadowAlpha());
 
         configOutlineColor = Color(Config::activeOutlineUsePalette() ?
                                    m_palette.color(QPalette::Active, static_cast<QPalette::ColorRole>(Config::activeOutlinePalette())):
@@ -92,8 +99,14 @@ void ShapeCorners::Window::animateProperties(const std::chrono::milliseconds& ti
         configSecondOutlineColor.setAlpha(hasOutline() ? Config::activeSecondOutlineAlpha(): 0);
     } else {
         configCornerRadius = static_cast<float>(Config::inactiveCornerRadius());
+        configShadowSize = static_cast<float>(Config::inactiveShadowSize());
         configOutlineSize = static_cast<float>(Config::inactiveOutlineThickness());
         configSecondOutlineSize = static_cast<float>(Config::inactiveSecondOutlineThickness());
+
+        configShadowColor = Color(Config::inactiveShadowUsePalette() ?
+                                  m_palette.color(QPalette::Inactive, static_cast<QPalette::ColorRole>(Config::inactiveShadowPalette())):
+                                  Config::inactiveShadowColor());
+        configShadowColor.setAlpha(Config::inactiveShadowAlpha());
 
         configOutlineColor = Color(Config::inactiveOutlineUsePalette() ?
                                    m_palette.color(QPalette::Inactive, static_cast<QPalette::ColorRole>(Config::inactiveOutlinePalette())):
@@ -109,40 +122,49 @@ void ShapeCorners::Window::animateProperties(const std::chrono::milliseconds& ti
     // if the properties are not initialized yet, don't animate them.
     if (!Config::animationEnabled()
         || cornerRadius == -1
+        || shadowSize == -1
         || outlineSize == -1
         || secondOutlineSize == -1
     ) {
         cornerRadius = configCornerRadius;
+        shadowSize = configShadowSize;
         outlineSize = configOutlineSize;
         secondOutlineSize = configSecondOutlineSize;
+        shadowColor = configShadowColor;
         outlineColor = configOutlineColor;
         secondOutlineColor = configSecondOutlineColor;
         return;
     }
 
-    auto deltaTime = static_cast<float>((time - m_last_time).count());
+    const auto deltaTime = static_cast<float>((time - m_last_time).count());
     m_last_time = time;
     if (deltaTime <= 0)
         return;
 
     // calculate the animation step
     auto deltaCornerRadius = (configCornerRadius - cornerRadius) / deltaTime;
+    auto deltaShadowSize = (configShadowSize - shadowSize) / deltaTime;
     auto deltaOutlineSize = (configOutlineSize - outlineSize) / deltaTime;
     auto deltaSecondOutlineSize = (configSecondOutlineSize - secondOutlineSize) / deltaTime;
+    auto deltaShadowColor = (configShadowColor - shadowColor) / deltaTime;
     auto deltaOutlineColor = (configOutlineColor - outlineColor) / deltaTime;
     auto deltaSecondOutlineColor = (configSecondOutlineColor - secondOutlineColor) / deltaTime;
 
     // adjust decimal precision
     deltaCornerRadius = std::round(deltaCornerRadius * 100) / 100.f;
+    deltaShadowSize = std::round(deltaShadowSize * 100) / 100.f;
     deltaOutlineSize = std::round(deltaOutlineSize * 100) / 100.f;
     deltaSecondOutlineSize = std::round(deltaSecondOutlineSize * 100) / 100.f;
+    deltaShadowColor.round();
     deltaOutlineColor.round();
     deltaSecondOutlineColor.round();
 
     // return false if the animation is over
     if (deltaCornerRadius == 0
+        && deltaShadowSize == 0
         && deltaOutlineSize == 0
         && deltaSecondOutlineSize == 0
+        && deltaShadowColor.isZero()
         && deltaOutlineColor.isZero()
         && deltaSecondOutlineColor.isZero()
     ) {
@@ -156,15 +178,19 @@ void ShapeCorners::Window::animateProperties(const std::chrono::milliseconds& ti
 
     // adjust properties
     cornerRadius += deltaCornerRadius;
+    shadowSize += deltaShadowSize;
     outlineSize += deltaOutlineSize;
     secondOutlineSize += deltaSecondOutlineSize;
+    shadowColor += deltaShadowColor;
     outlineColor += deltaOutlineColor;
     secondOutlineColor += deltaSecondOutlineColor;
 
     // check boundaries after adjusting
     cornerRadius = clamp(cornerRadius, deltaCornerRadius, configCornerRadius);
+    shadowSize = clamp(shadowSize, deltaShadowSize, configShadowSize);
     outlineSize = clamp(outlineSize, deltaOutlineSize, configOutlineSize);
     secondOutlineSize = clamp(secondOutlineSize, deltaSecondOutlineSize, configSecondOutlineSize);
+    shadowColor.clamp();
     outlineColor.clamp();
     secondOutlineColor.clamp();
 
@@ -176,7 +202,7 @@ void ShapeCorners::Window::animateProperties(const std::chrono::milliseconds& ti
 }
 
 #ifdef QT_DEBUG
-QDebug KWin::operator<<(QDebug& debug, const KWin::EffectWindow& w) {
+QDebug KWin::operator<<(QDebug& debug, const EffectWindow& w) {
     return (debug << w.windowType() << w.windowClass() << w.caption());
 }
 #endif
