@@ -30,6 +30,8 @@
 #endif
 
 namespace ShapeCorners {
+    using MenuBarList = std::vector<KWin::EffectWindow*>;
+
     class Effect final : public KWin::OffscreenEffect {
     Q_OBJECT
 
@@ -66,8 +68,10 @@ namespace ShapeCorners {
 
     private:
         WindowList m_managed;
+        MenuBarList m_menuBars;
         Shader m_shaderManager;
 
         void checkTiled();
+        [[nodiscard]] QRegion getRegionWithoutMenus(const QRect& screen_geometry);
     };
 }

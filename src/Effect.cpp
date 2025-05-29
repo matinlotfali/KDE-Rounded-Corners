@@ -70,6 +70,15 @@ ShapeCorners::Effect::~Effect() = default;
 void
 ShapeCorners::Effect::windowAdded(KWin::EffectWindow *w)
 {
+    // Don't treat docks as windows. They are needed for the maximized check only.
+    if (w->isDock()) {
+#ifdef QT_DEBUG
+    qInfo() << "ShapeCorners: menu added." << w;
+#endif  
+        m_menuBars.push_back(w);
+        return;
+    }
+
 #ifdef QT_DEBUG
     qInfo() << "ShapeCorners: window added." << w;
 #endif
@@ -128,7 +137,13 @@ void ShapeCorners::Effect::windowRemoved(KWin::EffectWindow *w)
         window_iterator->second->deleteLater();
         m_managed.erase(window_iterator);
     } else {
-        qDebug() << "ShapeCorners: window removed";
+        auto menubar_iterator = std::find(m_menuBars.begin(), m_menuBars.end(), w);
+        if (menubar_iterator != m_menuBars.end()) {
+            qDebug() << "ShapeCorners: menu removed" << w->windowClass();
+            m_menuBars.erase(menubar_iterator);
+        } else {
+            qDebug() << "ShapeCorners: window removed";
+        }
     }
     checkTiled();
 }
@@ -241,10 +256,33 @@ void ShapeCorners::Effect::checkTiled() {
     }
 
     for (const auto& screen: KWin::effects->screens()) {        // Per every screen
-        const auto& geometry = screen->geometry();
+        const auto screen_region = getRegionWithoutMenus(screen->geometry());
+        const auto geometry = screen_region.boundingRect();
         tileChecker.checkTiles(geometry);
     }
 }
+
+QRegion ShapeCorners::Effect::getRegionWithoutMenus(const QRect& screen_geometry)
+{
+    auto screen_region = QRegion(screen_geometry);
+    #ifdef DEBUG_MAXIMIZED
+        qDebug() << "ShapeCorners: screen region" << screen_region;
+    #endif
+
+        // subtract all menus
+        for (const auto &ptr: m_menuBars) {
+    #ifdef DEBUG_MAXIMIZED
+            qDebug() << "ShapeCorners: menu is" << ptr->frameGeometry();
+    #endif
+            screen_region -= ptr->frameGeometry().toRect();
+        }
+
+    #ifdef DEBUG_MAXIMIZED
+        qDebug() << "ShapeCorners: screen region without menus" << screen_region;
+    #endif
+
+    return screen_region;
+} 
 
 void ShapeCorners::Effect::checkMaximized(KWin::EffectWindow *w) {
     auto window_iterator = m_managed.find(w);
@@ -253,23 +291,7 @@ void ShapeCorners::Effect::checkMaximized(KWin::EffectWindow *w) {
 
     window_iterator->second->isMaximized = false;
 
-    auto screen_region = QRegion(w->screen()->geometry());
-#ifdef DEBUG_MAXIMIZED
-    qDebug() << "ShapeCorners: screen region" << screen_region;
-#endif
-
-    // subtract all menus
-    for (auto& [ptr, window]: m_managed)
-        if (ptr->isDock()) {
-#ifdef DEBUG_MAXIMIZED
-            qDebug() << "ShapeCorners: menu is" << ptr->frameGeometry();
-#endif
-            screen_region -= ptr->frameGeometry().toRect();
-        }
-
-#ifdef DEBUG_MAXIMIZED
-    qDebug() << "ShapeCorners: screen region without menus" << screen_region;
-#endif
+    auto screen_region = getRegionWithoutMenus(w->screen()->geometry());
 
     // check if window and screen match
     auto remaining = screen_region - w->frameGeometry().toRect();
