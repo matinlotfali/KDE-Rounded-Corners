@@ -8,44 +8,44 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-12 17:38+0200\n"
-"PO-Revision-Date: 2025-04-12 17:44+0200\n"
+"POT-Creation-Date: 2025-05-25 16:06-0700\n"
+"PO-Revision-Date: 2025-05-30 11:15+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: \n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.6\n"
 
 #. i18n: file: src/kcm/KCM.ui:20
 #. i18n: ectx: property (windowTitle), widget (QWidget, Form)
 #: rc.cpp:3
 #, kde-format
-msgid "Form"
-msgstr "Vorm"
+msgid "Rounded Corners (formerly ShapeCorners)"
+msgstr "Afgeronde hoeken (voorheen: ShapeCorners)"
 
-#. i18n: file: src/kcm/KCM.ui:30
-#. i18n: ectx: attribute (title), widget (QWidget, roundnessTab)
-#: rc.cpp:6
-#, kde-format
-msgid "Roundness"
-msgstr "Afronding"
-
-#. i18n: file: src/kcm/KCM.ui:36
+#. i18n: file: src/kcm/KCM.ui:26
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_AnimationEnabled)
-#: rc.cpp:9
+#: rc.cpp:6
 #, kde-format
 msgid "Enable animation between active and inactive state"
 msgstr "Animatie tonen tijdens wisselen tussen actieve en inactieve vensters"
 
+#. i18n: file: src/kcm/KCM.ui:40
+#. i18n: ectx: attribute (title), widget (QWidget, roundnessTab)
+#: rc.cpp:9
+#, kde-format
+msgid "Roundness"
+msgstr "Afronding"
+
 #. i18n: file: src/kcm/KCM.ui:48
 #. i18n: ectx: property (title), widget (QGroupBox, activeBox)
-#. i18n: file: src/kcm/KCM.ui:145
+#. i18n: file: src/kcm/KCM.ui:669
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox)
-#. i18n: file: src/kcm/KCM.ui:606
+#. i18n: file: src/kcm/KCM.ui:1130
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_6)
-#: rc.cpp:12 rc.cpp:36 rc.cpp:201
+#: rc.cpp:12 rc.cpp:213 rc.cpp:378
 #, kde-format
 msgid "Active Window"
 msgstr "Actief venster"
@@ -61,11 +61,11 @@ msgstr "Straal van hoekafronding"
 
 #. i18n: file: src/kcm/KCM.ui:71
 #. i18n: ectx: property (title), widget (QGroupBox, inactiveBox)
-#. i18n: file: src/kcm/KCM.ui:368
+#. i18n: file: src/kcm/KCM.ui:892
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_2)
-#. i18n: file: src/kcm/KCM.ui:829
+#. i18n: file: src/kcm/KCM.ui:1353
 #. i18n: ectx: property (title), widget (QGroupBox, groupBox_5)
-#: rc.cpp:18 rc.cpp:117 rc.cpp:282
+#: rc.cpp:18 rc.cpp:294 rc.cpp:459
 #, kde-format
 msgid "Inactive Window"
 msgstr "Inactief venster"
@@ -84,474 +84,656 @@ msgstr "Hoeken niet afronden tijdens tegelen"
 msgid "Disable Roundness on Maximize"
 msgstr "Hoeken van gemaximaliseerde vensters niet afronden"
 
-#. i18n: file: src/kcm/KCM.ui:130
-#. i18n: ectx: attribute (title), widget (QWidget, outlineTab)
+#. i18n: file: src/kcm/KCM.ui:116
+#. i18n: ectx: property (text), widget (QCheckBox, kcfg_DisableRoundFullScreen)
 #: rc.cpp:30
 #, kde-format
-msgid "Outlines"
-msgstr "Contouren"
+msgid "Disable Roundness on FullScreen"
+msgstr "Hoeken niet afronden in schermvullende weergave"
 
-#. i18n: file: src/kcm/KCM.ui:136
-#. i18n: ectx: property (title), widget (QGroupBox, primaryOutline)
+#. i18n: file: src/kcm/KCM.ui:140
+#. i18n: ectx: attribute (title), widget (QWidget, shadowsTab)
 #: rc.cpp:33
 #, kde-format
-msgid "Primar&y Outline"
-msgstr "Prima&ir contour"
+msgid "Shadows"
+msgstr "Schaduwen"
 
-#. i18n: file: src/kcm/KCM.ui:153
-#. i18n: ectx: property (text), widget (QLabel, label_7)
-#. i18n: file: src/kcm/KCM.ui:376
-#. i18n: ectx: property (text), widget (QLabel, label_3)
-#. i18n: file: src/kcm/KCM.ui:614
-#. i18n: ectx: property (text), widget (QLabel, label_14)
-#. i18n: file: src/kcm/KCM.ui:837
-#. i18n: ectx: property (text), widget (QLabel, label_12)
-#: rc.cpp:39 rc.cpp:120 rc.cpp:204 rc.cpp:285
+#. i18n: file: src/kcm/KCM.ui:146
+#. i18n: ectx: property (text), widget (QRadioButton, kcfg_UseNativeDecorationShadows)
+#: rc.cpp:36
 #, kde-format
-msgid "Outline Thickness"
-msgstr "Dikte van contour"
+msgid "Use Native Decoration Shadows"
+msgstr "Meegeleverde decoratieschaduwen gebruiken"
 
-#. i18n: file: src/kcm/KCM.ui:170
-#. i18n: ectx: property (text), widget (QLabel, label_8)
-#. i18n: file: src/kcm/KCM.ui:393
-#. i18n: ectx: property (text), widget (QLabel, label_4)
-#. i18n: file: src/kcm/KCM.ui:631
-#. i18n: ectx: property (text), widget (QLabel, label_15)
-#. i18n: file: src/kcm/KCM.ui:854
-#. i18n: ectx: property (text), widget (QLabel, label_13)
-#: rc.cpp:42 rc.cpp:123 rc.cpp:207 rc.cpp:288
+#. i18n: file: src/kcm/KCM.ui:156
+#. i18n: ectx: property (text), widget (QRadioButton, UseCustomShadows)
+#: rc.cpp:39
 #, kde-format
-msgid "Outline Transparency"
-msgstr "Doorzichtigheid van contour"
+msgid "Use Custom Shadows"
+msgstr "Eigen schaduwen gebruiken"
 
-#. i18n: file: src/kcm/KCM.ui:231
-#. i18n: ectx: property (currentText), widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:298
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:461
-#. i18n: ectx: property (currentText), widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:528
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:699
-#. i18n: ectx: property (currentText), widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:766
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:922
-#. i18n: ectx: property (currentText), widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:989
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#: rc.cpp:45 rc.cpp:84 rc.cpp:129 rc.cpp:168 rc.cpp:213 rc.cpp:252 rc.cpp:294
-#: rc.cpp:333
+#. i18n: file: src/kcm/KCM.ui:168
+#. i18n: ectx: property (title), widget (QGroupBox, activeShadowGroupBox)
+#: rc.cpp:42
 #, kde-format
-msgid "Highlight"
-msgstr "Markering"
+msgid "Active Shadow"
+msgstr "Actieve schaduw"
 
-#. i18n: file: src/kcm/KCM.ui:238
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:468
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:706
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:929
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#: rc.cpp:48 rc.cpp:132 rc.cpp:216 rc.cpp:297
+#. i18n: file: src/kcm/KCM.ui:176
+#. i18n: ectx: property (text), widget (QLabel, inactiveShadowSizeLabel_2)
+#. i18n: file: src/kcm/KCM.ui:409
+#. i18n: ectx: property (text), widget (QLabel, inactiveShadowSizeLabel)
+#: rc.cpp:45 rc.cpp:126
 #, kde-format
-msgid "WindowText"
-msgstr "Venstertekst"
+msgid "Shadow Size*"
+msgstr "Schaduwomvang*"
 
-#. i18n: file: src/kcm/KCM.ui:243
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:473
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:711
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:934
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#: rc.cpp:51 rc.cpp:135 rc.cpp:219 rc.cpp:300
+#. i18n: file: src/kcm/KCM.ui:190
+#. i18n: ectx: property (text), widget (QLabel, label_9)
+#. i18n: file: src/kcm/KCM.ui:423
+#. i18n: ectx: property (text), widget (QLabel, label_5)
+#: rc.cpp:48 rc.cpp:129
 #, kde-format
-msgid "Button"
-msgstr "Knop"
+msgid "Initial Transparency"
+msgstr "Standaard doorzichtigheid"
 
 #. i18n: file: src/kcm/KCM.ui:248
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:478
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:716
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:939
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#: rc.cpp:54 rc.cpp:138 rc.cpp:222 rc.cpp:303
-#, kde-format
-msgid "Light"
-msgstr "Licht"
-
-#. i18n: file: src/kcm/KCM.ui:253
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:483
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:721
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:944
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#: rc.cpp:57 rc.cpp:141 rc.cpp:225 rc.cpp:306
-#, kde-format
-msgid "Midlight"
-msgstr "Halflicht"
-
-#. i18n: file: src/kcm/KCM.ui:258
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:488
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:726
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:949
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#: rc.cpp:60 rc.cpp:144 rc.cpp:228 rc.cpp:309
-#, kde-format
-msgid "Dark"
-msgstr "Donker"
-
-#. i18n: file: src/kcm/KCM.ui:263
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:493
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:731
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:954
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#: rc.cpp:63 rc.cpp:147 rc.cpp:231 rc.cpp:312
-#, kde-format
-msgid "Mid"
-msgstr "Half"
-
-#. i18n: file: src/kcm/KCM.ui:268
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:498
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:736
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:959
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#: rc.cpp:66 rc.cpp:150 rc.cpp:234 rc.cpp:315
-#, kde-format
-msgid "Text"
-msgstr "Tekst"
-
-#. i18n: file: src/kcm/KCM.ui:273
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:503
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:741
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:964
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#: rc.cpp:69 rc.cpp:153 rc.cpp:237 rc.cpp:318
-#, kde-format
-msgid "BrightText"
-msgstr "Lichte tekst"
-
-#. i18n: file: src/kcm/KCM.ui:278
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:508
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:746
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:969
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#: rc.cpp:72 rc.cpp:156 rc.cpp:240 rc.cpp:321
-#, kde-format
-msgid "ButtonText"
-msgstr "Knoptekst"
-
-#. i18n: file: src/kcm/KCM.ui:283
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:513
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:751
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:974
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#: rc.cpp:75 rc.cpp:159 rc.cpp:243 rc.cpp:324
-#, kde-format
-msgid "Base"
-msgstr "Basis"
-
-#. i18n: file: src/kcm/KCM.ui:288
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:518
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:756
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:979
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#: rc.cpp:78 rc.cpp:162 rc.cpp:246 rc.cpp:327
-#, kde-format
-msgid "Window"
-msgstr "Venster"
-
-#. i18n: file: src/kcm/KCM.ui:293
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:523
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:761
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:984
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#: rc.cpp:81 rc.cpp:165 rc.cpp:249 rc.cpp:330
-#, kde-format
-msgid "Shadow"
-msgstr "Schaduw"
-
-#. i18n: file: src/kcm/KCM.ui:303
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:533
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:771
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:994
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#: rc.cpp:87 rc.cpp:171 rc.cpp:255 rc.cpp:336
-#, kde-format
-msgid "HighlightedText"
-msgstr "Gemarkeerde tekst"
-
-#. i18n: file: src/kcm/KCM.ui:308
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:538
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:776
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:999
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#: rc.cpp:90 rc.cpp:174 rc.cpp:258 rc.cpp:339
-#, kde-format
-msgid "Link"
-msgstr "Link"
-
-#. i18n: file: src/kcm/KCM.ui:313
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:543
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:781
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:1004
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#: rc.cpp:93 rc.cpp:177 rc.cpp:261 rc.cpp:342
-#, kde-format
-msgid "LinkVisited"
-msgstr "Bezochte link"
-
-#. i18n: file: src/kcm/KCM.ui:318
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:548
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:786
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:1009
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#: rc.cpp:96 rc.cpp:180 rc.cpp:264 rc.cpp:345
-#, kde-format
-msgid "AlternateBase"
-msgstr "Basis (alternatief)"
-
-#. i18n: file: src/kcm/KCM.ui:323
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:553
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:791
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:1014
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#: rc.cpp:99 rc.cpp:183 rc.cpp:267 rc.cpp:348
-#, kde-format
-msgid "NoRole"
-msgstr "Geen rol"
-
-#. i18n: file: src/kcm/KCM.ui:328
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:558
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:796
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:1019
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#: rc.cpp:102 rc.cpp:186 rc.cpp:270 rc.cpp:351
-#, kde-format
-msgid "ToolTipBase"
-msgstr "Basis van hulpballon"
-
-#. i18n: file: src/kcm/KCM.ui:333
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:563
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:801
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:1024
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#: rc.cpp:105 rc.cpp:189 rc.cpp:273 rc.cpp:354
-#, kde-format
-msgid "ToolTipText"
-msgstr "Hulpballontekst"
-
-#. i18n: file: src/kcm/KCM.ui:338
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:568
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:806
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
-#. i18n: file: src/kcm/KCM.ui:1029
-#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
-#: rc.cpp:108 rc.cpp:192 rc.cpp:276 rc.cpp:357
-#, kde-format
-msgid "PlaceholderText"
-msgstr "Opvultekst"
-
-#. i18n: file: src/kcm/KCM.ui:346
+#. i18n: ectx: property (text), widget (QRadioButton, kcfg_ActiveShadowUsePalette)
+#. i18n: file: src/kcm/KCM.ui:870
 #. i18n: ectx: property (text), widget (QRadioButton, kcfg_ActiveOutlineUsePalette)
-#. i18n: file: src/kcm/KCM.ui:686
+#. i18n: file: src/kcm/KCM.ui:1210
 #. i18n: ectx: property (text), widget (QRadioButton, kcfg_ActiveSecondOutlineUsePalette)
-#: rc.cpp:111 rc.cpp:210
+#: rc.cpp:51 rc.cpp:288 rc.cpp:387
 #, kde-format
 msgid "&Use Decoration Color"
 msgstr "Decoratiekleur gebr&uiken"
 
-#. i18n: file: src/kcm/KCM.ui:356
+#. i18n: file: src/kcm/KCM.ui:261
+#. i18n: ectx: property (currentText), widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:265
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:494
+#. i18n: ectx: property (currentText), widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:498
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:762
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:992
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1230
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1453
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#: rc.cpp:54 rc.cpp:57 rc.cpp:135 rc.cpp:138 rc.cpp:225 rc.cpp:309 rc.cpp:393
+#: rc.cpp:474
+#, kde-format
+msgid "WindowText"
+msgstr "Venstertekst"
+
+#. i18n: file: src/kcm/KCM.ui:270
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:503
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:767
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:997
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1235
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1458
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#: rc.cpp:60 rc.cpp:141 rc.cpp:228 rc.cpp:312 rc.cpp:396 rc.cpp:477
+#, kde-format
+msgid "Button"
+msgstr "Knop"
+
+#. i18n: file: src/kcm/KCM.ui:275
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:508
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:772
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1002
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1240
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1463
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#: rc.cpp:63 rc.cpp:144 rc.cpp:231 rc.cpp:315 rc.cpp:399 rc.cpp:480
+#, kde-format
+msgid "Light"
+msgstr "Licht"
+
+#. i18n: file: src/kcm/KCM.ui:280
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:513
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:777
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1007
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1245
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1468
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#: rc.cpp:66 rc.cpp:147 rc.cpp:234 rc.cpp:318 rc.cpp:402 rc.cpp:483
+#, kde-format
+msgid "Midlight"
+msgstr "Halflicht"
+
+#. i18n: file: src/kcm/KCM.ui:285
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:518
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:782
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1012
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1250
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1473
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#: rc.cpp:69 rc.cpp:150 rc.cpp:237 rc.cpp:321 rc.cpp:405 rc.cpp:486
+#, kde-format
+msgid "Dark"
+msgstr "Donker"
+
+#. i18n: file: src/kcm/KCM.ui:290
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:523
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:787
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1017
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1255
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1478
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#: rc.cpp:72 rc.cpp:153 rc.cpp:240 rc.cpp:324 rc.cpp:408 rc.cpp:489
+#, kde-format
+msgid "Mid"
+msgstr "Half"
+
+#. i18n: file: src/kcm/KCM.ui:295
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:528
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:792
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1022
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1260
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1483
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#: rc.cpp:75 rc.cpp:156 rc.cpp:243 rc.cpp:327 rc.cpp:411 rc.cpp:492
+#, kde-format
+msgid "Text"
+msgstr "Tekst"
+
+#. i18n: file: src/kcm/KCM.ui:300
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:533
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:797
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1027
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1265
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1488
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#: rc.cpp:78 rc.cpp:159 rc.cpp:246 rc.cpp:330 rc.cpp:414 rc.cpp:495
+#, kde-format
+msgid "BrightText"
+msgstr "Lichte tekst"
+
+#. i18n: file: src/kcm/KCM.ui:305
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:538
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:802
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1032
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1270
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1493
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#: rc.cpp:81 rc.cpp:162 rc.cpp:249 rc.cpp:333 rc.cpp:417 rc.cpp:498
+#, kde-format
+msgid "ButtonText"
+msgstr "Knoptekst"
+
+#. i18n: file: src/kcm/KCM.ui:310
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:543
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:807
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1037
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1275
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1498
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#: rc.cpp:84 rc.cpp:165 rc.cpp:252 rc.cpp:336 rc.cpp:420 rc.cpp:501
+#, kde-format
+msgid "Base"
+msgstr "Basis"
+
+#. i18n: file: src/kcm/KCM.ui:315
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:548
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:812
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1042
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1280
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1503
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#: rc.cpp:87 rc.cpp:168 rc.cpp:255 rc.cpp:339 rc.cpp:423 rc.cpp:504
+#, kde-format
+msgid "Window"
+msgstr "Venster"
+
+#. i18n: file: src/kcm/KCM.ui:320
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:553
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:817
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1047
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1285
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1508
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#: rc.cpp:90 rc.cpp:171 rc.cpp:258 rc.cpp:342 rc.cpp:426 rc.cpp:507
+#, kde-format
+msgid "Shadow"
+msgstr "Schaduw"
+
+#. i18n: file: src/kcm/KCM.ui:325
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:558
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:755
+#. i18n: ectx: property (currentText), widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:822
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:985
+#. i18n: ectx: property (currentText), widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1052
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1223
+#. i18n: ectx: property (currentText), widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1290
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1446
+#. i18n: ectx: property (currentText), widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1513
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#: rc.cpp:93 rc.cpp:174 rc.cpp:222 rc.cpp:261 rc.cpp:306 rc.cpp:345 rc.cpp:390
+#: rc.cpp:429 rc.cpp:471 rc.cpp:510
+#, kde-format
+msgid "Highlight"
+msgstr "Markering"
+
+#. i18n: file: src/kcm/KCM.ui:330
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:563
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:827
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1057
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1295
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1518
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#: rc.cpp:96 rc.cpp:177 rc.cpp:264 rc.cpp:348 rc.cpp:432 rc.cpp:513
+#, kde-format
+msgid "HighlightedText"
+msgstr "Gemarkeerde tekst"
+
+#. i18n: file: src/kcm/KCM.ui:335
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:568
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:832
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1062
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1300
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1523
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#: rc.cpp:99 rc.cpp:180 rc.cpp:267 rc.cpp:351 rc.cpp:435 rc.cpp:516
+#, kde-format
+msgid "Link"
+msgstr "Link"
+
+#. i18n: file: src/kcm/KCM.ui:340
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:573
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:837
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1067
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1305
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1528
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#: rc.cpp:102 rc.cpp:183 rc.cpp:270 rc.cpp:354 rc.cpp:438 rc.cpp:519
+#, kde-format
+msgid "LinkVisited"
+msgstr "Bezochte link"
+
+#. i18n: file: src/kcm/KCM.ui:345
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:578
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:842
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1072
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1310
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1533
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#: rc.cpp:105 rc.cpp:186 rc.cpp:273 rc.cpp:357 rc.cpp:441 rc.cpp:522
+#, kde-format
+msgid "AlternateBase"
+msgstr "Basis (alternatief)"
+
+#. i18n: file: src/kcm/KCM.ui:350
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:583
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:847
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1077
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1315
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1538
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#: rc.cpp:108 rc.cpp:189 rc.cpp:276 rc.cpp:360 rc.cpp:444 rc.cpp:525
+#, kde-format
+msgid "NoRole"
+msgstr "Geen rol"
+
+#. i18n: file: src/kcm/KCM.ui:355
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:588
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:852
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1082
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1320
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1543
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#: rc.cpp:111 rc.cpp:192 rc.cpp:279 rc.cpp:363 rc.cpp:447 rc.cpp:528
+#, kde-format
+msgid "ToolTipBase"
+msgstr "Basis van hulpballon"
+
+#. i18n: file: src/kcm/KCM.ui:360
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:593
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:857
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1087
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1325
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1548
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#: rc.cpp:114 rc.cpp:195 rc.cpp:282 rc.cpp:366 rc.cpp:450 rc.cpp:531
+#, kde-format
+msgid "ToolTipText"
+msgstr "Hulpballontekst"
+
+#. i18n: file: src/kcm/KCM.ui:365
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:598
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveShadowPalette)
+#. i18n: file: src/kcm/KCM.ui:862
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1092
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1330
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_ActiveSecondOutlinePalette)
+#. i18n: file: src/kcm/KCM.ui:1553
+#. i18n: ectx: property (text), item, widget (QComboBox, kcfg_InactiveSecondOutlinePalette)
+#: rc.cpp:117 rc.cpp:198 rc.cpp:285 rc.cpp:369 rc.cpp:453 rc.cpp:534
+#, kde-format
+msgid "PlaceholderText"
+msgstr "Opvultekst"
+
+#. i18n: file: src/kcm/KCM.ui:379
+#. i18n: ectx: property (text), widget (QRadioButton, kcfg_ActiveShadowUseCustom)
+#. i18n: file: src/kcm/KCM.ui:880
 #. i18n: ectx: property (text), widget (QRadioButton, kcfg_ActiveOutlineUseCustom)
-#. i18n: file: src/kcm/KCM.ui:814
+#. i18n: file: src/kcm/KCM.ui:1338
 #. i18n: ectx: property (text), widget (QRadioButton, kcfg_ActiveSecondOutlineUseCustom)
-#: rc.cpp:114 rc.cpp:279
+#: rc.cpp:120 rc.cpp:291 rc.cpp:456
 #, kde-format
 msgid "Use Custom Co&lor"
 msgstr "Eigen k&leur gebruiken"
 
-#. i18n: file: src/kcm/KCM.ui:448
+#. i18n: file: src/kcm/KCM.ui:401
+#. i18n: ectx: property (title), widget (QGroupBox, inactiveShadowGroupBox)
+#: rc.cpp:123
+#, kde-format
+msgid "Inactive Shadow"
+msgstr "Inactieve schaduw"
+
+#. i18n: file: src/kcm/KCM.ui:481
+#. i18n: ectx: property (text), widget (QRadioButton, kcfg_InactiveShadowUsePalette)
+#. i18n: file: src/kcm/KCM.ui:972
 #. i18n: ectx: property (text), widget (QRadioButton, kcfg_InactiveOutlineUsePalette)
-#. i18n: file: src/kcm/KCM.ui:909
+#. i18n: file: src/kcm/KCM.ui:1433
 #. i18n: ectx: property (text), widget (QRadioButton, kcfg_InactiveSecondOutlineUsePalette)
-#: rc.cpp:126 rc.cpp:291
+#: rc.cpp:132 rc.cpp:303 rc.cpp:468
 #, kde-format
 msgid "Use Decoration Color"
 msgstr "Decoratiekleur gebruiken"
 
-#. i18n: file: src/kcm/KCM.ui:576
+#. i18n: file: src/kcm/KCM.ui:612
+#. i18n: ectx: property (text), widget (QRadioButton, kcfg_InactiveShadowUseCustom)
+#. i18n: file: src/kcm/KCM.ui:1100
 #. i18n: ectx: property (text), widget (QRadioButton, kcfg_InactiveOutlineUseCustom)
-#. i18n: file: src/kcm/KCM.ui:1037
+#. i18n: file: src/kcm/KCM.ui:1561
 #. i18n: ectx: property (text), widget (QRadioButton, kcfg_InactiveSecondOutlineUseCustom)
-#: rc.cpp:195 rc.cpp:360
+#: rc.cpp:201 rc.cpp:372 rc.cpp:537
 #, kde-format
 msgid "Use Custom Color"
 msgstr "Eigen kleur gebruiken"
 
-#. i18n: file: src/kcm/KCM.ui:594
-#. i18n: ectx: property (title), widget (QGroupBox, secondaryOutline)
-#: rc.cpp:198
+#. i18n: file: src/kcm/KCM.ui:646
+#. i18n: ectx: property (text), widget (QLabel, label_16)
+#: rc.cpp:204
 #, kde-format
-msgid "Secondary Outline"
-msgstr "Secundair contour"
+msgid "* Limited by the decoration expanded geometry"
+msgstr "* Beperkt mogelijk door toedoen van de decoratieafmetingen"
 
-#. i18n: file: src/kcm/KCM.ui:1055
+#. i18n: file: src/kcm/KCM.ui:654
+#. i18n: ectx: attribute (title), widget (QWidget, outlineTab)
+#: rc.cpp:207
+#, kde-format
+msgid "Outlines"
+msgstr "Contouren"
+
+#. i18n: file: src/kcm/KCM.ui:660
+#. i18n: ectx: property (title), widget (QGroupBox, primaryOutline)
+#: rc.cpp:210
+#, kde-format
+msgid "Primar&y Outline"
+msgstr "Prima&ir contour"
+
+#. i18n: file: src/kcm/KCM.ui:677
+#. i18n: ectx: property (text), widget (QLabel, label_7)
+#. i18n: file: src/kcm/KCM.ui:900
+#. i18n: ectx: property (text), widget (QLabel, label_3)
+#. i18n: file: src/kcm/KCM.ui:1138
+#. i18n: ectx: property (text), widget (QLabel, label_14)
+#. i18n: file: src/kcm/KCM.ui:1361
+#. i18n: ectx: property (text), widget (QLabel, label_12)
+#: rc.cpp:216 rc.cpp:297 rc.cpp:381 rc.cpp:462
+#, kde-format
+msgid "Outline Thickness"
+msgstr "Dikte van contour"
+
+#. i18n: file: src/kcm/KCM.ui:694
+#. i18n: ectx: property (text), widget (QLabel, label_8)
+#. i18n: file: src/kcm/KCM.ui:917
+#. i18n: ectx: property (text), widget (QLabel, label_4)
+#. i18n: file: src/kcm/KCM.ui:1155
+#. i18n: ectx: property (text), widget (QLabel, label_15)
+#. i18n: file: src/kcm/KCM.ui:1378
+#. i18n: ectx: property (text), widget (QLabel, label_13)
+#: rc.cpp:219 rc.cpp:300 rc.cpp:384 rc.cpp:465
+#, kde-format
+msgid "Outline Transparency"
+msgstr "Doorzichtigheid van contour"
+
+#. i18n: file: src/kcm/KCM.ui:1118
+#. i18n: ectx: property (title), widget (QGroupBox, secondaryOutline)
+#: rc.cpp:375
+#, kde-format
+msgid "Secondary Outline*"
+msgstr "Secundair contour*"
+
+#. i18n: file: src/kcm/KCM.ui:1579
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_DisableOutlineTile)
-#: rc.cpp:363
+#: rc.cpp:540
 #, kde-format
 msgid "Disable Outline on Tile"
 msgstr "Geen contour tonen tijdens tegelen"
 
-#. i18n: file: src/kcm/KCM.ui:1065
+#. i18n: file: src/kcm/KCM.ui:1589
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_DisableOutlineMaximize)
-#: rc.cpp:366
+#: rc.cpp:543
 #, kde-format
 msgid "Disable Outline on Maximize"
 msgstr "Gemaximaliseerde vensters niet voorzien van contour"
 
-#. i18n: file: src/kcm/KCM.ui:1089
+#. i18n: file: src/kcm/KCM.ui:1599
+#. i18n: ectx: property (text), widget (QCheckBox, kcfg_DisableOutlineFullScreen)
+#: rc.cpp:546
+#, kde-format
+msgid "Disable Outline on FullScreen"
+msgstr "Geen contour tonen in schermvullende weergave"
+
+#. i18n: file: src/kcm/KCM.ui:1622
+#. i18n: ectx: property (text), widget (QLabel, label_17)
+#: rc.cpp:549
+#, kde-format
+msgid "* Only if the decoration provides expanded geometry"
+msgstr "* Alleen als de decoratie uitgebreide afmetingen bevat"
+
+#. i18n: file: src/kcm/KCM.ui:1630
 #. i18n: ectx: attribute (title), widget (QWidget, inclusionsTab)
-#: rc.cpp:369
+#: rc.cpp:552
 #, kde-format
 msgid "Inclusions && Exclusions"
 msgstr "Toepassen op en uitzonderingen"
 
-#. i18n: file: src/kcm/KCM.ui:1101
+#. i18n: file: src/kcm/KCM.ui:1642
 #. i18n: ectx: property (text), widget (QPushButton, includeButton)
-#: rc.cpp:372
+#: rc.cpp:555
 #, kde-format
 msgid "Include >"
 msgstr "Toepassen op →"
 
-#. i18n: file: src/kcm/KCM.ui:1108
+#. i18n: file: src/kcm/KCM.ui:1649
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_IncludeDialogs)
-#: rc.cpp:375
+#: rc.cpp:558
 #, kde-format
 msgid "Include all dialogs"
 msgstr "Toepassen op alle dialoogvensters"
 
-#. i18n: file: src/kcm/KCM.ui:1124
+#. i18n: file: src/kcm/KCM.ui:1665
 #. i18n: ectx: property (text), widget (QLabel, label_11)
-#: rc.cpp:378
+#: rc.cpp:561
 #, kde-format
 msgid "Excluded Windows:"
 msgstr "Uitgezonderde vensters:"
 
-#. i18n: file: src/kcm/KCM.ui:1137
+#. i18n: file: src/kcm/KCM.ui:1678
 #. i18n: ectx: property (text), widget (QPushButton, deleteIncludeButton)
-#. i18n: file: src/kcm/KCM.ui:1254
+#. i18n: file: src/kcm/KCM.ui:1795
 #. i18n: ectx: property (text), widget (QPushButton, deleteExcludeButton)
-#: rc.cpp:381 rc.cpp:396
+#: rc.cpp:564 rc.cpp:579
 #, kde-format
 msgid "<"
 msgstr "←"
 
-#. i18n: file: src/kcm/KCM.ui:1199
+#. i18n: file: src/kcm/KCM.ui:1740
 #. i18n: ectx: property (text), widget (QLabel, label)
-#: rc.cpp:384
+#: rc.cpp:567
 #, kde-format
 msgid "List of Current Open Windows:"
 msgstr "Lijst met geopende vensters:"
 
-#. i18n: file: src/kcm/KCM.ui:1212
+#. i18n: file: src/kcm/KCM.ui:1753
 #. i18n: ectx: property (text), widget (QPushButton, excludeButton)
-#: rc.cpp:387
+#: rc.cpp:570
 #, kde-format
 msgid "Exclude >"
 msgstr "Niet toepassen op →"
 
-#. i18n: file: src/kcm/KCM.ui:1231
+#. i18n: file: src/kcm/KCM.ui:1772
 #. i18n: ectx: property (text), widget (QLabel, label_10)
-#: rc.cpp:390
+#: rc.cpp:573
 #, kde-format
 msgid "Included Windows:"
 msgstr "Toegepaste vensters:"
 
-#. i18n: file: src/kcm/KCM.ui:1238
+#. i18n: file: src/kcm/KCM.ui:1779
 #. i18n: ectx: property (text), widget (QCheckBox, kcfg_IncludeNormalWindows)
-#: rc.cpp:393
+#: rc.cpp:576
 #, kde-format
 msgid "Include all normal windows"
 msgstr "Toepassen op alle normale vensters"
 
-#. i18n: file: src/kcm/KCM.ui:1313
+#. i18n: file: src/kcm/KCM.ui:1854
 #. i18n: ectx: property (text), widget (QTableWidget, currentWindowList)
-#: rc.cpp:399
+#: rc.cpp:582
 #, kde-format
 msgid "Class 1"
 msgstr "Klasse 1"
 
-#. i18n: file: src/kcm/KCM.ui:1318
+#. i18n: file: src/kcm/KCM.ui:1859
 #. i18n: ectx: property (text), widget (QTableWidget, currentWindowList)
-#: rc.cpp:402
+#: rc.cpp:585
 #, kde-format
 msgid "Class 2"
 msgstr "Klasse 2"
 
-#. i18n: file: src/kcm/KCM.ui:1323
+#. i18n: file: src/kcm/KCM.ui:1864
 #. i18n: ectx: property (text), widget (QTableWidget, currentWindowList)
-#: rc.cpp:405
+#: rc.cpp:588
 #, kde-format
 msgid "Caption"
 msgstr "Bijschrift"
 
-#. i18n: file: src/kcm/KCM.ui:1337
+#. i18n: file: src/kcm/KCM.ui:1878
 #. i18n: ectx: property (text), widget (QPushButton, refreshButton)
-#: rc.cpp:408
+#: rc.cpp:591
 #, kde-format
 msgid "Refresh"
 msgstr "Herladen"
+
+#, kde-format
+#~ msgid "Form"
+#~ msgstr "Vorm"
