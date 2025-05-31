@@ -22,7 +22,8 @@ inline float clamp(const float value, const float delta, const float config) {
 QWidget ShapeCorners::Window::m_widget {};
 
 ShapeCorners::Window::Window(KWin::EffectWindow& w)
-        : w(w), isIncluded(false), isExcluded(false)
+    : w(w)
+    , cornerRadius(static_cast<float>(Config::inactiveCornerRadius()))
 {
     configChanged();
 }
