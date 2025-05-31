@@ -11,7 +11,7 @@
 #include <kwineffects.h>
 #endif
 
-inline float clamp(const float value, const float delta, const float config) {
+inline static float clamp(const float value, const float delta, const float config) {
     if (delta > 0 && value > config)
         return config;
     if (delta < 0 && value < 0)
