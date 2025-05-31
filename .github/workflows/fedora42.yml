@@ -28,13 +28,16 @@ jobs:
       options: --user root
 
     steps:
-    - name: Check out repository
-      uses: actions/checkout@v4
-
     - name: Install Dependencies
       run: |
         dnf -y install cmake gcc-c++ extra-cmake-modules kwin-devel kf6-kconfigwidgets-devel libepoxy-devel kf6-kcmutils-devel kf6-ki18n-devel qt6-qtbase-private-devel wayland-devel 
         dnf -y install rpm-build git copr-cli jq
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+    - name: Check out repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Fetch all history for accurate versioning
     
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
