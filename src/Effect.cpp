@@ -98,7 +98,7 @@ ShapeCorners::Effect::windowAdded(KWin::EffectWindow *w)
         QStringLiteral("ksmserver"),
         QStringLiteral("krunner"),
         QStringLiteral("ksplashqml"),
-        QStringLiteral("plasmashell"),
+        // QStringLiteral("plasmashell"),        Note: Don't add it to exceptions, it involves widget config windows
     };
     const auto name = w->windowClass().split(QChar::Space).first();
     if (hardExceptions.contains(name)) {
