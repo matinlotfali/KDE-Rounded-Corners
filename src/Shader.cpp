@@ -28,7 +28,6 @@ ShapeCorners::Shader::Shader():
         return;
     }
 
-    m_shader_hasRoundCorners = m_shader->uniformLocation("hasRoundCorners");
     m_shader_windowSize = m_shader->uniformLocation("windowSize");
     m_shader_windowExpandedSize = m_shader->uniformLocation("windowExpandedSize");
     m_shader_windowTopLeft = m_shader->uniformLocation("windowTopLeft");
@@ -59,7 +58,6 @@ void ShapeCorners::Shader::Bind(const Window &window, const qreal scale) const {
     m_shader->setUniform(m_shader_windowSize, toVector2D(frameGeometry.size()));
     m_shader->setUniform(m_shader_windowExpandedSize, toVector2D(expandedGeometry.size()));
     m_shader->setUniform(m_shader_windowTopLeft, xy);
-    m_shader->setUniform(m_shader_hasRoundCorners, window.hasRoundCorners());
     m_shader->setUniform(m_shader_usesNativeShadows, Config::useNativeDecorationShadows());
     m_shader->setUniform(m_shader_front, 0);
     m_shader->setUniform(m_shader_radius, static_cast<float>(window.cornerRadius * scale));
