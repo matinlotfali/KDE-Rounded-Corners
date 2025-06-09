@@ -94,12 +94,6 @@ namespace ShapeCorners {
         int m_shader_windowTopLeft = 0;
 
         /**
-         * \brief Reference to `uniform bool hasRoundCorners;`
-         *        Whether the window has rounded corners.
-         */
-        int m_shader_hasRoundCorners = 0;
-
-        /**
          * \brief Reference to `uniform float radius;`
          *        Containing the corner radius in pixels specified in settings.
          */
