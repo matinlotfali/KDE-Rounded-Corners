@@ -60,7 +60,7 @@ void ShapeCorners::Shader::Bind(const Window &window, const qreal scale) const {
     m_shader->setUniform(m_shader_windowTopLeft, xy);
     m_shader->setUniform(m_shader_usesNativeShadows, Config::useNativeDecorationShadows());
     m_shader->setUniform(m_shader_front, 0);
-    m_shader->setUniform(m_shader_radius, static_cast<float>(window.cornerRadius * scale));
+    m_shader->setUniform(m_shader_radius, window.hasRoundCorners()? static_cast<float>(window.cornerRadius * scale): 0);
     m_shader->setUniform(m_shader_outlineThickness, static_cast<float>(window.outlineSize * scale));
     m_shader->setUniform(m_shader_secondOutlineThickness, static_cast<float>(window.secondOutlineSize * scale));
     m_shader->setUniform(m_shader_shadowSize, static_cast<float>(shadowSize));
