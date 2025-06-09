@@ -33,7 +33,7 @@ namespace ShapeCorners {
         bool isTiled = false;
         bool isMaximized = false;
 
-        float cornerRadius = -1;
+        float cornerRadius;
         float shadowSize = -1;
         float outlineSize = -1;
         float secondOutlineSize = -1;
@@ -72,8 +72,8 @@ namespace ShapeCorners {
 
     private:
         std::chrono::milliseconds m_last_time = {};
-        bool isIncluded;
-        bool isExcluded;
+        bool isIncluded = false;
+        bool isExcluded = false;
 
         /**
          * \brief Used only for its `palette()` function which holds the currently active highlight colors.

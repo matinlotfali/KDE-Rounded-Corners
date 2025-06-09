@@ -11,7 +11,7 @@
 #include <kwineffects.h>
 #endif
 
-inline float clamp(const float value, const float delta, const float config) {
+inline static float clamp(const float value, const float delta, const float config) {
     if (delta > 0 && value > config)
         return config;
     if (delta < 0 && value < 0)
@@ -22,7 +22,8 @@ inline float clamp(const float value, const float delta, const float config) {
 QWidget ShapeCorners::Window::m_widget {};
 
 ShapeCorners::Window::Window(KWin::EffectWindow& w)
-        : w(w), isIncluded(false), isExcluded(false)
+    : w(w)
+    , cornerRadius(static_cast<float>(Config::inactiveCornerRadius()))
 {
     configChanged();
 }

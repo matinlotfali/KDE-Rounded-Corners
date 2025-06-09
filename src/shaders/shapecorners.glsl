@@ -1,7 +1,6 @@
 uniform float radius;            // The thickness of the outline in pixels specified in settings.
 uniform vec2 windowSize;         // Containing `window->frameGeometry().size()`
 uniform vec2 windowExpandedSize; // Containing `window->expandedGeometry().size()`
-uniform bool hasRoundCorners;
 
 uniform vec2 windowTopLeft;      /* The distance between the top-left of `expandedGeometry` and
                                   * the top-left of `frameGeometry`. When `windowTopLeft = {0,0}`, it means
