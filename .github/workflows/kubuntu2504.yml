@@ -37,9 +37,12 @@ jobs:
     steps:
     - name: Check out repository
       uses: actions/checkout@v4
-      
+
     - name: Refresh Ubuntu Packages
-      run: apt update
+      # automatically use a local mirror when fetching from the network
+      run: |
+        sed -i 's|archive.ubuntu.com|us.archive.ubuntu.com|' /etc/apt/sources.list.d/ubuntu.sources
+        apt-get update
 
     - name: Install Dependencies
       run: |

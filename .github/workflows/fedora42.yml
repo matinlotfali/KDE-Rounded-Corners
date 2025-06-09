@@ -28,13 +28,16 @@ jobs:
       options: --user root
 
     steps:
-    - name: Check out repository
-      uses: actions/checkout@v4
-
     - name: Install Dependencies
       run: |
         dnf -y install cmake gcc-c++ extra-cmake-modules kwin-devel kf6-kconfigwidgets-devel libepoxy-devel kf6-kcmutils-devel kf6-ki18n-devel qt6-qtbase-private-devel wayland-devel 
-        dnf -y install rpm-build
+        dnf -y install rpm-build git copr-cli jq
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+    - name: Check out repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Fetch all history for accurate versioning
     
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -61,8 +64,23 @@ jobs:
         compression-level: 0
         if-no-files-found: error
 
-    - name: Upload Release Asset
+    - name: Fetch Build Versions
       if: github.ref == 'refs/heads/master'
+      run: |
+        export LAST_RELEASE_TAG=$(git describe --tags --abbrev=0);
+        export REV_COUNT=$(git rev-list --count ${LAST_RELEASE_TAG}..HEAD);
+        export PKG_VERSION=$(echo ${LAST_RELEASE_TAG} | sed 's/^v//');
+        export KWIN_VERSION=$(dnf info -y kwin | awk '$1=="Version" {print $3}');
+        export CURRENT_BUILD_VERSION=${PKG_VERSION}.${REV_COUNT}-${KWIN_VERSION};
+        echo "Current build version: ${CURRENT_BUILD_VERSION}";
+        echo "CURRENT_BUILD_VERSION=${CURRENT_BUILD_VERSION}" >> $GITHUB_ENV
+        
+        export COPR_BUILD_VERSION=$(copr monitor matinlotfali/KDE-Rounded-Corners | jq -r 'first["pkg_version"]');
+        echo "Copr build version: ${COPR_BUILD_VERSION}";
+        echo "COPR_BUILD_VERSION=${COPR_BUILD_VERSION}" >> $GITHUB_ENV
+
+    - name: Upload Release Asset
+      if: github.ref == 'refs/heads/master' && env.CURRENT_BUILD_VERSION != env.COPR_BUILD_VERSION
       uses: nicklasfrahm/scp-action@main
       with:
         direction: upload
@@ -72,9 +90,9 @@ jobs:
         fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
         source: ${{ env.RPM_FILE }}
         target: /home/frs/project/kde-rounded-corners/nightly/${{ github.job }}/${{ env.RPM_NAME }}_${{ github.job }}.rpm
-
-    - name: Copr Webhook
-      if: github.ref == 'refs/heads/master'
+        
+    - name: Trigger Copr Rebuild
+      if: github.ref == 'refs/heads/master' && env.CURRENT_BUILD_VERSION != env.COPR_BUILD_VERSION
       run:
         curl -X POST ${{ secrets.COPR_WEBHOOK_URL }}
 

@@ -1,1 +1,1 @@
-SYSTEMD_COLORS=true journalctl -f | grep --color=never kwin
+SYSTEMD_COLORS=true journalctl -f | grep --color=never ShapeCorners

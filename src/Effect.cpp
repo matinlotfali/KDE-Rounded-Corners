@@ -98,7 +98,7 @@ ShapeCorners::Effect::windowAdded(KWin::EffectWindow *w)
         QStringLiteral("ksmserver"),
         QStringLiteral("krunner"),
         QStringLiteral("ksplashqml"),
-        QStringLiteral("plasmashell"),
+        // QStringLiteral("plasmashell"),        Note: Don't add it to exceptions, it involves widget config windows
     };
     const auto name = w->windowClass().split(QChar::Space).first();
     if (hardExceptions.contains(name)) {
@@ -265,21 +265,21 @@ void ShapeCorners::Effect::checkTiled() {
 QRegion ShapeCorners::Effect::getRegionWithoutMenus(const QRect& screen_geometry)
 {
     auto screen_region = QRegion(screen_geometry);
-    #ifdef DEBUG_MAXIMIZED
-        qDebug() << "ShapeCorners: screen region" << screen_region;
-    #endif
+#ifdef DEBUG_MAXIMIZED
+    qDebug() << "ShapeCorners: screen region" << screen_region;
+#endif
 
-        // subtract all menus
-        for (const auto &ptr: m_menuBars) {
-    #ifdef DEBUG_MAXIMIZED
-            qDebug() << "ShapeCorners: menu is" << ptr->frameGeometry();
-    #endif
-            screen_region -= ptr->frameGeometry().toRect();
-        }
+    // subtract all menus
+    for (const auto &ptr: m_menuBars) {
+#ifdef DEBUG_MAXIMIZED
+        qDebug() << "ShapeCorners: menu is" << ptr->frameGeometry();
+#endif
+        screen_region -= ptr->frameGeometry().toRect();
+    }
 
-    #ifdef DEBUG_MAXIMIZED
-        qDebug() << "ShapeCorners: screen region without menus" << screen_region;
-    #endif
+#ifdef DEBUG_MAXIMIZED
+    qDebug() << "ShapeCorners: screen region without menus" << screen_region;
+#endif
 
     return screen_region;
 } 
