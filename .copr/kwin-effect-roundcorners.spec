@@ -33,6 +33,7 @@ BuildRequires:  kf6-ki18n-devel
 BuildRequires:  kf6-kwindowsystem-devel
 BuildRequires:  libepoxy-devel
 BuildRequires:  libxcb-devel
+BuildRequires:  libdrm-devel
 BuildRequires:  wayland-devel
 BuildRequires:  %{kwin_pkg_name}-devel
 
