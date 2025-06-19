@@ -135,7 +135,7 @@ You need to install development packages for your distribution first:
 
 - Plasma 6 (Fedora 40 and later)
    ```bash
-   sudo dnf install git cmake gcc-c++ extra-cmake-modules kwin-devel kf6-kconfigwidgets-devel libepoxy-devel kf6-kcmutils-devel kf6-ki18n-devel qt6-qtbase-private-devel wayland-devel
+   sudo dnf install git cmake gcc-c++ extra-cmake-modules kwin-devel kf6-kconfigwidgets-devel libepoxy-devel kf6-kcmutils-devel kf6-ki18n-devel qt6-qtbase-private-devel wayland-devel libdrm-devel
    ``` 
 - Plasma 5 (Fedora 39)
    ```bash
