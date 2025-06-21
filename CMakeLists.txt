@@ -24,6 +24,7 @@ find_package(KF${QT_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED COMPONENTS ConfigW
 if(${QT_MAJOR_VERSION} EQUAL 6)
     find_package(KF${QT_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED COMPONENTS KCMUtils)
     find_package(KWin REQUIRED COMPONENTS kwineffects)
+    find_package(KWinX11 COMPONENTS kwineffects)
     message(STATUS "Found KWin Version: ${KWin_VERSION}")
     set (CMAKE_PROJECT_VERSION "${CMAKE_PROJECT_VERSION}.${KWin_VERSION}")
 else()

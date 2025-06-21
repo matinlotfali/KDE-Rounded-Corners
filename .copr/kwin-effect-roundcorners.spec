@@ -20,6 +20,7 @@ BuildRequires:  qt6-quick-devel
 BuildRequires:  qt6-qtbase-devel
 BuildRequires:  qt6-qtbase-private-devel
 BuildRequires:  kf6-rpm-macros
+BuildRequires:  kwin-x11-devel
 %global kwin_pkg_name kwin
 
 %endif

@@ -26,3 +26,8 @@ target_link_libraries(kwin_shapecorners_config
     KF${QT_MAJOR_VERSION}::I18n
     KF${QT_MAJOR_VERSION}::I18nLocaleData
 )
+
+# Add compatibility for KWin 6.4.0 on X11
+if(${KWinX11_FOUND})
+    install(TARGETS kwin_shapecorners_config DESTINATION ${KDE_INSTALL_PLUGINDIR}/kwin-x11/effects/configs)
+endif ()

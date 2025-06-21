@@ -30,6 +30,17 @@ else()
     )
 endif()
 
+# Add compatibility for KWin 6.4.0 on X11
+if(${KWinX11_FOUND})
+    kcoreaddons_add_plugin(kwin4_effect_shapecorners_x11 SOURCES ${effect_SRCS} INSTALL_NAMESPACE "kwin-x11/effects/plugins/")
+    target_link_libraries(kwin4_effect_shapecorners_x11
+            Qt${QT_MAJOR_VERSION}::DBus
+            KF${QT_MAJOR_VERSION}::ConfigGui
+            KWinX11::kwin
+            Qt${QT_MAJOR_VERSION}::CorePrivate
+    )
+endif()
+
 option(DEBUG_ANIMATION "Add debug logs for animation" OFF)
 option(DEBUG_INCLUSIONS "Add debug logs for inclusion & exclusion lists" OFF)
 option(DEBUG_MAXIMIZED "Add debug logs for maximized windows" OFF)
