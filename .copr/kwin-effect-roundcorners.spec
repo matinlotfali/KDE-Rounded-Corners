@@ -36,6 +36,7 @@ BuildRequires:  libxcb-devel
 BuildRequires:  libdrm-devel
 BuildRequires:  wayland-devel
 BuildRequires:  %{kwin_pkg_name}-devel
+BuildRequires:  %{kwin_pkg_name}-x11-devel
 
 %description
 KDE Rounded Corners is a desktop effect for KWin that smoothly rounds

@@ -30,7 +30,7 @@ jobs:
     steps:
     - name: Install Dependencies
       run: |
-        dnf -y install cmake gcc-c++ extra-cmake-modules kwin-devel kf6-kconfigwidgets-devel libepoxy-devel kf6-kcmutils-devel kf6-ki18n-devel qt6-qtbase-private-devel wayland-devel libdrm-devel
+        dnf -y install cmake gcc-c++ extra-cmake-modules kwin-devel kwin-x11-devel kf6-kconfigwidgets-devel libepoxy-devel kf6-kcmutils-devel kf6-ki18n-devel qt6-qtbase-private-devel wayland-devel libdrm-devel
         dnf -y install rpm-build git copr-cli jq
         git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
