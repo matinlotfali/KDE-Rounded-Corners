@@ -9,7 +9,7 @@ on:
     paths: [ '**/fedora42.yml' ]
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 * * * *"
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
