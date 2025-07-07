@@ -3,6 +3,7 @@
 #include "Window.h"
 #include "Config.h"
 #include <QJsonArray>
+#include <QJsonDocument>
 #include <QtDBus/QDBusConnection>
 #include <QDBusError>
 #include <ranges>
