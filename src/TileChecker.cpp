@@ -1,10 +1,7 @@
-//
-// Created by matin on 16/06/24.
-//
 
 #include "TileChecker.h"
 #include "Window.h"
-
+#include <ranges>
 #if QT_VERSION_MAJOR >= 6
 #include <effect/effecthandler.h>
 #include <utility>
@@ -12,55 +9,79 @@
 #include <kwineffects.h>
 #endif
 
+/**
+ * @brief Maximum recursion depth for tile checking.
+ */
+constexpr static uint8_t MAX_TILE_DEPTH = 5;
+
+/**
+ * @brief Maximum gap size allowed between tiles
+ */
+constexpr static uint8_t MAX_GAP_SIZE = 40;
+
 template<bool vertical>
-bool ShapeCorners::TileChecker::checkTiled_Recursive(double window_start, const uint8_t depth) {
-    if (window_start == screen_end)
+bool ShapeCorners::TileChecker::checkTiled_Recursive(double window_start, const uint8_t depth) noexcept {
+    if (window_start == screen_end) {
         return true;    // Found the last chain of tiles
-    if (window_start > screen_end)
+    }
+    if (window_start > screen_end) {
         return false;
-    if (depth > max_tile_depth)
+    }
+    if (depth > MAX_TILE_DEPTH) {
         return false;
+    }
 
-    bool r = false;
-    for (auto& [w, window]: m_managed) {
+    bool found_last_chain = false;
+    for (auto& [kwindow, window]: m_managed) {
 
-        if (!window->hasEffect())
+        // Skip windows without an effect
+        if (!window->hasEffect()) {
             continue;
+        }
 
-        const auto x = std::get<vertical>(std::make_pair(w->x(), w->y()));
-        const auto width = std::get<vertical>(std::make_pair(w->width(), w->height()));
+        // Select x/y and width/height based on orientation
+        const auto orientation_x = std::get<vertical>(std::make_pair(kwindow->x(), kwindow->y()));
+        const auto orientation_width = std::get<vertical>(std::make_pair(kwindow->width(), kwindow->height()));
 
         if (depth == 0) {
-            if(x - window_start > 40)        // There is no way that a window is tiled and has such a big gap.
+            // Ignore windows with a gap larger than allowed
+            if(orientation_x - window_start > MAX_GAP_SIZE) {
                 continue;
-            gap = x - window_start;
+            }
+            gap = orientation_x - window_start;
             window_start += gap;
         }
 
-        if (x == window_start && width > 0) {
-            if (checkTiled_Recursive<vertical>(window_start + width + gap, depth+1)) {
+        // If the window starts at the expected position and has a positive size
+        if (orientation_x == window_start && orientation_width > 0) {
+            // Recursively check the next tile in the chain
+            if (checkTiled_Recursive<vertical>(window_start + orientation_width + gap, depth+1)) {
                 window->isTiled = true;   // Mark every tile as you go back to the first.
-                r = true;
+                found_last_chain = true;
             }
         }
 
+        // Revert changes to window_start for the next iteration
         if(depth == 0) {
-            window_start -= gap;    // Revert changes.
+            window_start -= gap;
         }
     }
-    return r;
+    return found_last_chain;
 }
 
-void ShapeCorners::TileChecker::clearTiles() {
-    for (auto& [ptr, window]: m_managed) {     // Delete tile memory.
+void ShapeCorners::TileChecker::clearTiles() const noexcept {
+    // Iterate over all managed windows and reset their isTiled flag
+    for (const auto & window: m_managed | std::views::values) {
         window->isTiled = false;
     }
 }
 
-void ShapeCorners::TileChecker::checkTiles(const QRect& screen) {
+void ShapeCorners::TileChecker::checkTiles(const QRect& screen) noexcept {
+    // Check horizontally
     screen_end = screen.x() + screen.width();
-    checkTiled_Recursive<false>(screen.x(), 0); // Check horizontally
+    checkTiled_Recursive<false>(screen.x(), 0);
 
+    // Check vertically
     screen_end = screen.y() + screen.height();
-    checkTiled_Recursive<true>(screen.y(), 0); // Check vertically
+    checkTiled_Recursive<true>(screen.y(), 0);
 }

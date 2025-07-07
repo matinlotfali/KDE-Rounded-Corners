@@ -7,7 +7,11 @@ set(effect_SRCS
     Window.cpp
     TileChecker.h
     TileChecker.cpp
-    Color.h
+    FloatColor.h
+    WindowConfig.h
+    WindowConfig.cpp
+    WindowManager.h
+    WindowManager.cpp
     plugin.cpp
 )
 

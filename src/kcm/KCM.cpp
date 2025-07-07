@@ -7,6 +7,7 @@ ShapeCorners::KCM::KCM(QObject* parent, const KPluginMetaData& args)
     : KCModule(parent, args)
     , ui(new Ui::Form)
 {
+    // Set up the UI for Qt 6
     ui->setupUi(widget());
     ui->currentWindowList->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     addConfig(&config, widget());
@@ -16,30 +17,35 @@ ShapeCorners::KCM::KCM(QWidget* parent, const QVariantList& args)
     : KCModule(parent, args)
     , ui(new Ui::Form)
 {
+    // Set up the UI for Qt 5
     ui->setupUi(this);
     addConfig(&config, this);
 #endif
 
+    // Initialize color previews and window list
     update_colors();
     update_windows();
 
-    QPixmap pix (16, 16);
+    // Set icons for palette combo boxes based on current palette colors
+    const int size = 16;
+    QPixmap pix (size, size);
     for (int index = 0; index < ui->kcfg_ActiveOutlinePalette->count(); ++index) {
-        auto c = palette().color(QPalette::Active, static_cast<QPalette::ColorRole>(index));
-        pix.fill(c);
+        auto color = palette().color(QPalette::Active, static_cast<QPalette::ColorRole>(index));
+        pix.fill(color);
         QIcon icon (pix);
         ui->kcfg_ActiveOutlinePalette->setItemIcon(index, icon);
         ui->kcfg_ActiveSecondOutlinePalette->setItemIcon(index, icon);
         ui->kcfg_ActiveShadowPalette->setItemIcon(index, icon);
 
-        c = palette().color(QPalette::Inactive, static_cast<QPalette::ColorRole>(index));
-        pix.fill(c);
+        color = palette().color(QPalette::Inactive, static_cast<QPalette::ColorRole>(index));
+        pix.fill(color);
         QIcon icon2 (pix);
         ui->kcfg_InactiveOutlinePalette->setItemIcon(index, icon2);
         ui->kcfg_InactiveSecondOutlinePalette->setItemIcon(index, icon2);
         ui->kcfg_InactiveShadowPalette->setItemIcon(index, icon2);
     }
 
+    // Connect UI signals to slots for color and palette changes
     connect(ui->kcfg_ActiveOutlinePalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &KCM::update_colors);
     connect(ui->kcfg_InactiveOutlinePalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &KCM::update_colors);
     connect(ui->kcfg_OutlineColor, &KColorButton::changed, this, &KCM::update_colors);
@@ -60,6 +66,8 @@ ShapeCorners::KCM::KCM(QWidget* parent, const QVariantList& args)
     connect(ui->kcfg_InactiveShadowColor, &KColorButton::changed, this, &KCM::update_colors);
     connect(ui->kcfg_ActiveShadowUsePalette, &QRadioButton::toggled, this, &KCM::update_colors);
     connect(ui->kcfg_InactiveShadowUsePalette, &QRadioButton::toggled, this, &KCM::update_colors);
+    
+    // Enable/disable shadow controls based on native decoration shadow usage
     connect(ui->kcfg_UseNativeDecorationShadows, &QRadioButton::toggled, [=, this] {
         const auto& useCustomShadows = !ui->kcfg_UseNativeDecorationShadows->isChecked();
         ui->UseCustomShadows->setChecked(useCustomShadows);
@@ -76,29 +84,35 @@ ShapeCorners::KCM::KCM(QWidget* parent, const QVariantList& args)
     connect(ui->kcfg_ActiveSecondOutlineAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
     connect(ui->kcfg_InactiveSecondOutlineAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
 
+    // Connect outline group toggles
     connect(ui->primaryOutline, &QGroupBox::toggled, this, &KCM::outline_group_toggled);
     connect(ui->secondaryOutline, &QGroupBox::toggled, this, &KCM::outline_group_toggled);
 
+    // Connect window list and inclusion/exclusion controls
     connect(ui->refreshButton, &QPushButton::pressed, this, &KCM::update_windows);
     connect(ui->includeButton, &QPushButton::pressed, [=, this]() {
-        if (const auto s = ui->currentWindowList->currentItem();
-            s && !s->text().isEmpty() && ui->InclusionList->findItems(s->text(), Qt::MatchExactly).empty()) {
-            ui->InclusionList->addItem(s->text());
+        // Add selected window to inclusion list if not already present
+        if (auto* const item = ui->currentWindowList->currentItem();
+            item != nullptr && !item->text().isEmpty() && ui->InclusionList->findItems(item->text(), Qt::MatchExactly).empty()) {
+            ui->InclusionList->addItem(item->text());
             markAsChanged();
         }
     });
     connect(ui->excludeButton, &QPushButton::pressed, [=, this]() {
-        if (const auto s = ui->currentWindowList->currentItem();
-            s && !s->text().isEmpty() && ui->ExclusionList->findItems(s->text(), Qt::MatchExactly).empty()) {
-            ui->ExclusionList->addItem(s->text());
+        // Add selected window to exclusion list if not already present
+        if (auto* const item = ui->currentWindowList->currentItem();
+            item != nullptr && !item->text().isEmpty() && ui->ExclusionList->findItems(item->text(), Qt::MatchExactly).empty()) {
+            ui->ExclusionList->addItem(item->text());
             markAsChanged();
         }
     });
     connect(ui->deleteIncludeButton, &QPushButton::pressed, [=, this]() {
+        // Remove selected item from inclusion list
         ui->InclusionList->takeItem(ui->InclusionList->currentRow());
         markAsChanged();
     });
     connect(ui->deleteExcludeButton, &QPushButton::pressed, [=, this]() {
+        // Remove selected item from exclusion list
         ui->ExclusionList->takeItem(ui->ExclusionList->currentRow());
         markAsChanged();
     });
@@ -107,18 +121,25 @@ ShapeCorners::KCM::KCM(QWidget* parent, const QVariantList& args)
 void
 ShapeCorners::KCM::save()
 {
-    QStringList inclusions, exclusions;
-    for (int i = 0; i < ui->InclusionList->count(); ++i)
+    // Gather inclusion list from UI and save to config
+    QStringList inclusions;
+    for (int i = 0; i < ui->InclusionList->count(); ++i) {
         inclusions.push_back(ui->InclusionList->item(i)->text());
+    }
     config.setInclusions(inclusions);
-    for (int i = 0; i < ui->ExclusionList->count(); ++i)
+    
+    // Gather exclusion list from UI and save to config
+    QStringList exclusions;
+    for (int i = 0; i < ui->ExclusionList->count(); ++i) {
         exclusions.push_back(ui->ExclusionList->item(i)->text());
+    }
     config.setExclusions(exclusions);
 
     qDebug() << "ShapeCorners: Saving configurations";
     config.save();
     KCModule::save();
 
+    // Notify KWin to reload the effect configuration via DBus
     const auto dbusName = QStringLiteral("kwin4_effect_shapecorners");
     OrgKdeKwinEffectsInterface interface(QStringLiteral("org.kde.KWin"),
                                          QStringLiteral("/Effects"),
@@ -131,6 +152,7 @@ ShapeCorners::KCM::save()
     interface.unloadEffect(dbusName);
     interface.loadEffect(dbusName);
 
+    // Reload UI to reflect saved settings
     load();
 }
 
@@ -139,31 +161,37 @@ void ShapeCorners::KCM::update_colors() {
     bool checked;
     int index;
 
+    // Update active outline color preview
     checked = ui->kcfg_ActiveOutlineUsePalette->isChecked();
     index = ui->kcfg_ActiveOutlinePalette->currentIndex();
     color = checked ? palette().color(QPalette::Active, static_cast<QPalette::ColorRole>(index)): ui->kcfg_OutlineColor->color();
     ui->kcfg_ActiveOutlineAlpha->setSecondColor(color);
 
+    // Update inactive outline color preview
     checked = ui->kcfg_InactiveOutlineUsePalette->isChecked();
     index = ui->kcfg_InactiveOutlinePalette->currentIndex();
     color = checked ? palette().color(QPalette::Inactive, static_cast<QPalette::ColorRole>(index)): ui->kcfg_InactiveOutlineColor->color();
     ui->kcfg_InactiveOutlineAlpha->setSecondColor(color);
 
+    // Update active second outline color preview
     checked = ui->kcfg_ActiveSecondOutlineUsePalette->isChecked();
     index = ui->kcfg_ActiveSecondOutlinePalette->currentIndex();
     color = checked ? palette().color(QPalette::Active, static_cast<QPalette::ColorRole>(index)): ui->kcfg_SecondOutlineColor->color();
     ui->kcfg_ActiveSecondOutlineAlpha->setSecondColor(color);
 
+    // Update inactive second outline color preview
     checked = ui->kcfg_InactiveSecondOutlineUsePalette->isChecked();
     index = ui->kcfg_InactiveSecondOutlinePalette->currentIndex();
     color = checked ? palette().color(QPalette::Inactive, static_cast<QPalette::ColorRole>(index)): ui->kcfg_InactiveSecondOutlineColor->color();
     ui->kcfg_InactiveSecondOutlineAlpha->setSecondColor(color);
 
+    // Update active shadow color preview
     checked = ui->kcfg_ActiveShadowUsePalette->isChecked();
     index = ui->kcfg_ActiveShadowPalette->currentIndex();
     color = checked ? palette().color(QPalette::Active, static_cast<QPalette::ColorRole>(index)): ui->kcfg_ShadowColor->color();
     ui->kcfg_ActiveShadowAlpha->setSecondColor(color);
 
+    // Update inactive shadow color preview
     checked = ui->kcfg_InactiveShadowUsePalette->isChecked();
     index = ui->kcfg_InactiveShadowPalette->currentIndex();
     color = checked ? palette().color(QPalette::Inactive, static_cast<QPalette::ColorRole>(index)): ui->kcfg_InactiveShadowColor->color();
@@ -172,20 +200,25 @@ void ShapeCorners::KCM::update_colors() {
 
 void ShapeCorners::KCM::update_windows() const {
     QJsonArray array;
-    if (const auto connection = QDBusConnection::sessionBus(); connection.isConnected())
-        if (QDBusInterface interface(QStringLiteral("org.kde.ShapeCorners"), QStringLiteral("/ShapeCornersEffect")); interface.isValid())
+    // Query the ShapeCorners effect for the list of open windows via DBus
+    if (const auto connection = QDBusConnection::sessionBus(); connection.isConnected()) {
+        if (QDBusInterface interface(QStringLiteral("org.kde.ShapeCorners"), QStringLiteral("/ShapeCornersEffect")); interface.isValid()) {
             if (const QDBusReply<QString> reply = interface.call(QStringLiteral("get_window_titles")); reply.isValid()) {
                 auto str = reply.value();
                 auto doc = QJsonDocument::fromJson(str.toUtf8());
                 array = doc.array();
             }
+        }
+    }
 
+    // Clear and repopulate the window list table
     ui->currentWindowList->clear();
     ui->currentWindowList->setRowCount(static_cast<int>(array.size()));
     ui->currentWindowList->setColumnCount(3);
     ui->currentWindowList->setHorizontalHeaderLabels({
         QStringLiteral("Class 1"), QStringLiteral("Class 2"), QStringLiteral("Caption") });
 
+    // Fill the table with window class and caption data
     for (int i=0; i < array.size(); ++i) {
         const auto obj = array.at(i).toObject();
         const auto windowClass = obj.value(QStringLiteral("class")).toString();
@@ -202,22 +235,26 @@ void ShapeCorners::KCM::update_windows() const {
 }
 
 void ShapeCorners::KCM::outline_group_toggled(bool value) const {
+    const float outlineThicknessMin = 0.75F;
+    // Enable or disable outline thickness based on group toggle
     if (sender() == ui->primaryOutline) {
-        ui->kcfg_OutlineThickness->setValue(value ? 0.75 : 0);
-        ui->kcfg_InactiveOutlineThickness->setValue(value ? 0.75 : 0);
+        ui->kcfg_OutlineThickness->setValue(value ? outlineThicknessMin : 0);
+        ui->kcfg_InactiveOutlineThickness->setValue(value ? outlineThicknessMin : 0);
     } else if (sender() == ui->secondaryOutline) {
-        ui->kcfg_SecondOutlineThickness->setValue(value ? 0.75 : 0);
-        ui->kcfg_InactiveSecondOutlineThickness->setValue(value ? 0.75 : 0);
+        ui->kcfg_SecondOutlineThickness->setValue(value ? outlineThicknessMin : 0);
+        ui->kcfg_InactiveSecondOutlineThickness->setValue(value ? outlineThicknessMin : 0);
     }
 }
 
 void ShapeCorners::KCM::load() {
+    // Load settings from config and update UI
     KCModule::load();
     config.load();
     load_ui();
 }
 
 void ShapeCorners::KCM::defaults() {
+    // Reset settings to defaults and update UI
     KCModule::defaults();
     config.setDefaults();
     load_ui();
@@ -225,12 +262,14 @@ void ShapeCorners::KCM::defaults() {
 }
 
 void ShapeCorners::KCM::load_ui() const {
+    // Clear and repopulate inclusion/exclusion lists from config
     ui->InclusionList->clear();
     ui->ExclusionList->clear();
 
     ui->InclusionList->addItems(config.inclusions());
     ui->ExclusionList->addItems(config.exclusions());
 
+    // Set outline group checkboxes based on thickness values
     ui->primaryOutline->setChecked(ui->kcfg_OutlineThickness->value() > 0);
     ui->secondaryOutline->setChecked(ui->kcfg_SecondOutlineThickness->value() > 0);
 }
