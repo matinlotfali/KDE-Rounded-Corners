@@ -16,7 +16,7 @@ set(effect_SRCS
 )
 
 kconfig_add_kcfg_files(effect_SRCS Config.kcfgc)
-kcoreaddons_add_plugin(kwin4_effect_shapecorners SOURCES ${effect_SRCS} INSTALL_NAMESPACE "kwin/effects/plugins/")
+kcoreaddons_add_plugin(kwin4_effect_shapecorners SOURCES ${effect_SRCS} INSTALL_NAMESPACE "${KWIN_NAMESPACE_PREFIX}/effects/plugins/")
 
 target_link_libraries(kwin4_effect_shapecorners
     Qt${QT_MAJOR_VERSION}::DBus
@@ -24,24 +24,13 @@ target_link_libraries(kwin4_effect_shapecorners
 )
 if(${QT_MAJOR_VERSION} EQUAL 6)
     target_link_libraries(kwin4_effect_shapecorners
-            KWin::kwin
+            ${KWIN_LIB_NAME}::kwin
             Qt${QT_MAJOR_VERSION}::CorePrivate
     )
 else()
     target_link_libraries(kwin4_effect_shapecorners
             KWinEffects::kwineffects
             KWinEffects::kwinglutils
-    )
-endif()
-
-# Add compatibility for KWin 6.4.0 on X11
-if(${KWinX11_FOUND})
-    kcoreaddons_add_plugin(kwin4_effect_shapecorners_x11 SOURCES ${effect_SRCS} INSTALL_NAMESPACE "kwin-x11/effects/plugins/")
-    target_link_libraries(kwin4_effect_shapecorners_x11
-            Qt${QT_MAJOR_VERSION}::DBus
-            KF${QT_MAJOR_VERSION}::ConfigGui
-            KWinX11::kwin
-            Qt${QT_MAJOR_VERSION}::CorePrivate
     )
 endif()
 
