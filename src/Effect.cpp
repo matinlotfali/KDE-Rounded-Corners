@@ -19,295 +19,149 @@
 
 #include "Effect.h"
 #include "Config.h"
-
-#include <QtDBus/QDBusConnection>
-#include <QDBusError>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <KX11Extras>
-
+#include "Utils.h"
+#include "WindowManager.h"
+#include "Window.h"
+#ifdef QT_DEBUG
+#include <QLoggingCategory>
+#endif
 #if QT_VERSION_MAJOR >= 6
-    #include <opengl/glutils.h>
-    #include <effect/effectwindow.h>
-    #include <effect/effecthandler.h>
-    #include <core/renderviewport.h>
+#include <opengl/glutils.h>
+#include <effect/effectwindow.h>
+#include <effect/effecthandler.h>
+#include <core/renderviewport.h>
 #else
-    #include <kwineffects.h>
-    #include <kwinglutils.h>
+#include <kwineffects.h>
+#include <kwinglutils.h>
 #endif
 
-
-ShapeCorners::Effect::Effect()
-    : KWin::OffscreenEffect()
-{
+ShapeCorners::Effect::Effect() {
+    // Read configuration and initialize the effect.
     reconfigure(ReconfigureAll);
 
-    if (auto connection = QDBusConnection::sessionBus();
-        !connection.isConnected()) {
-        qWarning() << "ShapeCorners: Cannot connect to the D-Bus session bus.";
-    }
-    else {
-        if (!connection.registerService(QStringLiteral("org.kde.ShapeCorners"))) {
-            qWarning() << "ShapeCorners:" << connection.lastError().message();
-        }
-        else {
-            if (!connection.registerObject(QStringLiteral("/ShapeCornersEffect"), this, QDBusConnection::ExportAllSlots)) {
-                qWarning() << "ShapeCorners:" << connection.lastError().message();
-            }
-        }
-    }
-
+    // If the shader is valid, create the window manager and connect the windowAdded signal.
     if(m_shaderManager.IsValid()) {
-        for (const auto& win: KWin::effects->stackingOrder())
-            windowAdded(win);
+        m_windowManager = std::make_unique<WindowManager>();
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &Effect::windowAdded);
-        connect(KWin::effects, &KWin::EffectsHandler::windowDeleted, this, &Effect::windowRemoved);
     }
 }
 
 ShapeCorners::Effect::~Effect() = default;
 
-void
-ShapeCorners::Effect::windowAdded(KWin::EffectWindow *w)
-{
-    // Don't treat docks as windows. They are needed for the maximized check only.
-    if (w->isDock()) {
-#ifdef QT_DEBUG
-    qInfo() << "ShapeCorners: menu added." << w;
-#endif  
-        m_menuBars.push_back(w);
-        return;
-    }
-
-#ifdef QT_DEBUG
-    qInfo() << "ShapeCorners: window added." << w;
-#endif
-    
-    if (w->windowClass().trimmed().isEmpty() && w->caption().trimmed().isEmpty()) {
-#ifdef QT_DEBUG
-        qWarning() << "ShapeCorners: window does not have a valid class name.";
-#endif
-        return;
-    }
-
-    const QSet hardExceptions {
-        QStringLiteral("kwin"),
-        QStringLiteral("kwin_x11"),
-        QStringLiteral("kwin_wayland"),
-        QStringLiteral("kscreenlocker_greet"),
-        QStringLiteral("ksmserver"),
-        QStringLiteral("krunner"),
-        QStringLiteral("ksplashqml"),
-        // QStringLiteral("plasmashell"),        Note: Don't add it to exceptions, it involves widget config windows
-    };
-    const auto name = w->windowClass().split(QChar::Space).first();
-    if (hardExceptions.contains(name)) {
-#ifdef QT_DEBUG
-        qWarning() << "ShapeCorners: ignoring window explicitly.";
-#endif
-        return;
-    }
-
-    auto window = new Window(*w);
-    auto pair = std::make_pair(w, window);
-    if (const auto& [iter, r] = m_managed.insert(pair); !r) {
-#ifdef QT_DEBUG
-        qWarning() << "ShapeCorners: ignoring duplicate window.";
-#endif
-        return;
-    }
-
-#if QT_VERSION_MAJOR >= 6
-    connect(w, &KWin::EffectWindow::windowFrameGeometryChanged, this, &Effect::windowResized);
-#else
-    connect(KWin::effects, &KWin::EffectsHandler::windowFrameGeometryChanged, this, &Effect::windowResized);
-#endif
-    connect(Config::self(), &Config::configChanged, window, &Window::configChanged);
-    redirect(w);
-    setShader(w, m_shaderManager.GetShader().get());
-    checkTiled();
-    checkMaximized(w);
-}
-
-void ShapeCorners::Effect::windowRemoved(KWin::EffectWindow *w)
-{
-    auto window_iterator = m_managed.find(w);
-    if (window_iterator != m_managed.end()) {
-        qDebug() << "ShapeCorners: window removed" << window_iterator->first->windowClass();
-        window_iterator->second->deleteLater();
-        m_managed.erase(window_iterator);
-    } else {
-        auto menubar_iterator = std::find(m_menuBars.begin(), m_menuBars.end(), w);
-        if (menubar_iterator != m_menuBars.end()) {
-            qDebug() << "ShapeCorners: menu removed" << w->windowClass();
-            m_menuBars.erase(menubar_iterator);
-        } else {
-            qDebug() << "ShapeCorners: window removed";
-        }
-    }
-    checkTiled();
-}
-
-void
-ShapeCorners::Effect::reconfigure(const ReconfigureFlags flags)
+void ShapeCorners::Effect::reconfigure(const ReconfigureFlags flags)
 {
     Q_UNUSED(flags)
+    
+    // Reload configuration settings.
     Config::self()->read();
 }
 
-void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
+void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
 {
-    auto window_iterator = m_managed.find(w);
-    if (!m_shaderManager.IsValid()
-        || window_iterator == m_managed.end()
-        || !window_iterator->second->hasEffect())
+    // Find the managed window structure.
+    auto* window = m_windowManager->findWindow(kwindow);
+    
+    // If the shader is not valid or the window is not managed or doesn't need the effect, fall back to default.
+    if (!m_shaderManager.IsValid() || window == nullptr || !window->hasEffect())
     {
-        OffscreenEffect::prePaintWindow(w, data, time);
+        OffscreenEffect::prePaintWindow(kwindow, data, time);
         return;
     }
 
-    window_iterator->second->animateProperties(time);
+    // Animate window properties for smooth transitions.
+    window->animateProperties(time);
 
-    if(window_iterator->second->hasRoundCorners()) {
+    // If the window should have rounded corners, adjust the paint and opaque regions.
+    if(window->hasRoundCorners()) {
 #if QT_VERSION_MAJOR >= 6
-        const auto geo = w->frameGeometry() * w->screen()->scale();
-        const auto size = window_iterator->second->cornerRadius * w->screen()->scale();
+        // Calculate geometry and corner size for Qt6.
+        const auto geo = kwindow->frameGeometry() * kwindow->screen()->scale();
+        const auto size = window->currentConfig.cornerRadius * kwindow->screen()->scale();
 #else
-        const auto geo = w->frameGeometry() * KWin::effects->renderTargetScale();
+        // Calculate geometry and corner size for Qt5.
+        const auto geo = window->frameGeometry() * KWin::effects->renderTargetScale();
         const auto size = window_iterator->second->cornerRadius * KWin::effects->renderTargetScale();
 #endif
 
+        // Create a region for each rounded corner.
         QRegion reg{};
         reg += QRect(geo.x(), geo.y(), size, size);
         reg += QRect(geo.x() + geo.width() - size, geo.y(), size, size);
         reg += QRect(geo.x(), geo.y() + geo.height() - size, size, size);
         reg += QRect(geo.x() + geo.width() - size, geo.y() + geo.height() - size, size, size);
+        
+        // Remove the rounded corners from the opaque region and add them to the paint region.
         data.opaque -= reg;
         data.paint += reg;
+        
+        // Mark the window as having translucent regions.
         data.setTranslucent();
     }
 
-    OffscreenEffect::prePaintWindow(w, data, time);
+    // Call the base implementation.
+    OffscreenEffect::prePaintWindow(kwindow, data, time);
 }
 
 bool ShapeCorners::Effect::supported()
 {
+    // The effect is supported if OpenGL compositing is enabled.
     return KWin::effects->isOpenGLCompositing();
 }
 
 #if QT_VERSION_MAJOR >= 6
 void ShapeCorners::Effect::drawWindow(const KWin::RenderTarget &renderTarget, const KWin::RenderViewport &viewport,
-                                    KWin::EffectWindow *w, int mask, const QRegion &region,
-                                    KWin::WindowPaintData &data) {
+                                      KWin::EffectWindow *kwindow, int mask, const QRegion &region,
+                                      KWin::WindowPaintData &data) {
 #else
-void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *w, int mask, const QRegion &region,
-                                    KWin::WindowPaintData &data) {
+void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *kwindow, int mask, const QRegion &region,
+                                      KWin::WindowPaintData &data) {
 #endif
-    auto window_iterator = m_managed.find(w);
-    if (!m_shaderManager.IsValid()
-        || window_iterator == m_managed.end()
-        || !window_iterator->second->hasEffect())
-    {
-        unredirect(w);
+    // Find the managed window structure.
+    auto* window = m_windowManager->findWindow(kwindow);
+    
+    // If the shader is not valid or the window is not managed or doesn't need the effect, unredirect and use default drawing.
+    if (!m_shaderManager.IsValid() || window == nullptr || !window->hasEffect()) {
+        unredirect(kwindow);
 #if QT_VERSION_MAJOR >= 6
-        OffscreenEffect::drawWindow(renderTarget, viewport, w, mask, region, data);
+        OffscreenEffect::drawWindow(renderTarget, viewport, kwindow, mask, region, data);
 #else
-        OffscreenEffect::drawWindow(w, mask, region, data);
+        OffscreenEffect::drawWindow(window, mask, region, data);
 #endif
         return;
     }
 
 #if QT_VERSION_MAJOR >= 6
+    // Get the scale factor for Qt6.
     const auto scale = viewport.scale();
 #else
+    // Get the scale factor for Qt5.
     const auto scale = KWin::effects->renderTargetScale();
 #endif
 
-    redirect(w);
-    setShader(w, m_shaderManager.GetShader().get());
-    m_shaderManager.Bind(*window_iterator->second, scale);
+    // Redirect the window for offscreen rendering.
+    redirect(kwindow);
+    // Set the custom shader for the window.
+    setShader(kwindow, m_shaderManager.GetShader().get());
+    // Bind the shader with the current window configs and scale.
+    m_shaderManager.Bind(*window, scale);
+    // Activate the first texture unit which is the window content.
     glActiveTexture(GL_TEXTURE0);
 
+    // Call the base implementation to actually draw the window.
 #if QT_VERSION_MAJOR >= 6
-    OffscreenEffect::drawWindow(renderTarget, viewport, w, mask, region, data);
+    OffscreenEffect::drawWindow(renderTarget, viewport, kwindow, mask, region, data);
 #else
-    OffscreenEffect::drawWindow(w, mask, region, data);
+    OffscreenEffect::drawWindow(kwindow, mask, region, data);
 #endif
+    // Unbind the shader after drawing.
     m_shaderManager.Unbind();
 }
 
-QString ShapeCorners::Effect::get_window_titles() const {
-    QJsonArray array;
-    for (const auto& [w, window]: m_managed) {
-        auto json = window->toJson();
-        if (!array.contains(json))
-            array.push_back(json);
+void ShapeCorners::Effect::windowAdded(KWin::EffectWindow *kwindow) {
+    // Add the new window to the manager.
+    if (m_windowManager->addWindow(kwindow)) {
+        // Redirect the window and set the shader if it was successfully added.
+        redirect(kwindow);
+        setShader(kwindow, m_shaderManager.GetShader().get());
     }
-    auto doc = QJsonDocument(array).toJson(QJsonDocument::Compact);
-    return QString::fromUtf8(doc);
-}
-
-void ShapeCorners::Effect::checkTiled() {
-    TileChecker tileChecker (m_managed);
-    tileChecker.clearTiles();
-
-    if (!Config::disableRoundTile() && !Config::disableOutlineTile()) {
-        return;
-    }
-
-    for (const auto& screen: KWin::effects->screens()) {        // Per every screen
-        const auto screen_region = getRegionWithoutMenus(screen->geometry());
-        const auto geometry = screen_region.boundingRect();
-        tileChecker.checkTiles(geometry);
-    }
-}
-
-QRegion ShapeCorners::Effect::getRegionWithoutMenus(const QRect& screen_geometry)
-{
-    auto screen_region = QRegion(screen_geometry);
-#ifdef DEBUG_MAXIMIZED
-    qDebug() << "ShapeCorners: screen region" << screen_region;
-#endif
-
-    // subtract all menus
-    for (const auto &ptr: m_menuBars) {
-#ifdef DEBUG_MAXIMIZED
-        qDebug() << "ShapeCorners: menu is" << ptr->frameGeometry();
-#endif
-        screen_region -= ptr->frameGeometry().toRect();
-    }
-
-#ifdef DEBUG_MAXIMIZED
-    qDebug() << "ShapeCorners: screen region without menus" << screen_region;
-#endif
-
-    return screen_region;
-} 
-
-void ShapeCorners::Effect::checkMaximized(KWin::EffectWindow *w) {
-    auto window_iterator = m_managed.find(w);
-    if (window_iterator == m_managed.end())
-        return;
-
-    window_iterator->second->isMaximized = false;
-
-    auto screen_region = getRegionWithoutMenus(w->screen()->geometry());
-
-    // check if window and screen match
-    auto remaining = screen_region - w->frameGeometry().toRect();
-#ifdef DEBUG_MAXIMIZED
-    qDebug() << "ShapeCorners: active window remaining region" << remaining;
-#endif
-    if (remaining.isEmpty()) {
-        window_iterator->second->isMaximized = true;
-#ifdef DEBUG_MAXIMIZED
-        qInfo() << "ShapeCorners: window maximized" << window_iterator->first->windowClass();
-#endif
-    }
-}
-
-void ShapeCorners::Effect::windowResized(KWin::EffectWindow *window, const QRectF &)
-{
-    checkTiled();
-    checkMaximized(window);
 }

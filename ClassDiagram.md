@@ -1,6 +1,7 @@
 # KDE-Rounded-Corners Class Diagram
 ```mermaid
 classDiagram
+    direction LR
     
     namespace KWin {
         class KWinEffect {
@@ -34,34 +35,82 @@ classDiagram
             popShader()
         }
     }
+
+    namespace DBus {
+        class QDBusConnection {
+            sessionBus()
+            isConnected()
+            registerService()
+            registerObject()
+        }
+    }
+    
+    namespace KConfig {
+        class KCModule {
+            widget: QWidget
+            +defaults()
+            +load()
+            +save()
+        }
+    }
     
     namespace kwin4_shapecorners_effect {
         class Effect {
-            m_shader_manager
-            m_managed
+            m_shaderManager
+            m_windowManager
             +prePaintWindow()
             +drawWindow()
-            get_window_titles()
-            checkTiled()
-            checkMaximized()
             windowAdded()
-            windowRemoved()
-            windowResized()
         }
         
-        class Window {
-            name: QString
-            isTiled: bool
-            isMaximized: bool
+        class WindowManager {
+            -m_managed: WindowList
+            -m_menuBars: MenuBarList
+            -registerDBus()
+            -getRegionWithoutMenus()
+            -checkTiled()
+            -checkMaximized()
+            -windowRemoved()
+            -windowResized()
+            findWindow()
+            addWindow()
+            get_window_titles()
+        }
+        
+        class WindowConfig {
             cornerRadius: float
             shadowSize: float
             outlineSize: float
-            m_last_time: miliseconds
+            secondOutlineSize: float
+            shadowColor: FloatColor
+            outlineColor: FloatColor
+            secondOutlineColor: FloatColor
+            activeWindowConfig()
+            inactiveWindowConfig()
+            operator+()
+            operator-()
+            operator/()
+            operator!()
+            operator+=()
+            round()
+            clamp()
+        }
+        
+        class Window {
+            isTiled: bool
+            isMaximized: bool
+            -m_last_time: miliseconds
+            -isIncluded: bool
+            -isExcluded: bool
             animateProperties()
             isActive()
             hasRoundCorners()
             hasOutline()
             hasEffect()
+            toJson()
+            captionAfterDash()
+            configChanged()
+            -getExpectedConfig()
         }
         
         class Shader {
@@ -72,16 +121,21 @@ classDiagram
             UnBind()
         }
         
-        class Color {
+        class FloatColor {
             r: float
             g: float
             b: float
             a: float
+            operator-(other: FloatColor)
+            operator+(other: FloatColor)
+            operator+=(other: FloatColor)
+            operator*(scalar: float)
+            operator/(scalar: float)
+            operator!()
             toQColor()
             toString()
             round()
             clamp()
-            setAlpha()
         }
     }
     
@@ -113,37 +167,26 @@ classDiagram
         }
     }
     
-    class QDBusConnection {
-        sessionBus()
-        isConnected()
-        registerService()
-        registerObject()
-    }
-    
-    class KCModule {
-        widget: QWidget
-        +defaults()
-        +load()
-        +save()
-    }
-    
-    KWinEffect <|-- OffscreenEffect
-    OffscreenEffect <|-- Effect
-    Window o-- Color
+    KWinEffect <|-- OffscreenEffect: Inherits
+    ShaderManager *-- GLShader: Contains
+    KWinEffect o-- EffectWindow: Manages
+    OffscreenEffect ..> ShaderManager: Uses
 
-    GLShader --o ShaderManager
-    Effect o-- Window
-    EffectWindow <-- Window 
-    Effect --> Shader
-    EffectWindow <.. Effect
-    QDBusConnection <.. Effect
-    Window --> Config
+    OffscreenEffect <|-- Effect: Inherits
+    Effect --> Shader: Has
+    Effect --> WindowManager: Has
+    Shader --> GLShader: Has
+    Shader ..> Window: Uses
+    Shader ..> ShaderManager: Uses
+    Window --> WindowConfig: Has
+    Window --> EffectWindow: Manages
+    Window ..> Config: Uses
+    WindowConfig o-- FloatColor: Contains
+    WindowConfig ..> Config: Uses
+    WindowManager o-- Window: Contains
+    QDBusConnection <.. WindowManager: Registers
     
-    KCModule <|-- KCM
-    QDBusConnection <.. KCM
-    KCM --> Config
-
-    Shader ..> Window
-    GLShader <-- Shader
-    ShaderManager <-- Shader
+    KCModule <|-- KCM: Inherits
+    KCM --> Config: Manages
+    KCM ..> QDBusConnection: Reads
 ```
