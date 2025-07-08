@@ -1,5 +1,5 @@
 if(${KF_MIN_VERSION} EQUAL 6)
-    set(KWIN_EFFECT_INCLUDE_FILE "/usr/include/kwin/effect/effect.h")
+    set(KWIN_EFFECT_INCLUDE_FILE "/usr/include/${KWIN_NAMESPACE_PREFIX}/effect/effect.h")
 else ()
     set(KWIN_EFFECT_INCLUDE_FILE "/usr/include/kwineffects.h")
 endif ()
