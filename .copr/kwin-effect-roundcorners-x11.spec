@@ -35,6 +35,7 @@ BuildRequires:  libepoxy-devel
 BuildRequires:  libxcb-devel
 BuildRequires:  libdrm-devel
 BuildRequires:  wayland-devel
+BuildRequires:  %{kwin_pkg_name}-devel
 BuildRequires:  %{kwin_pkg_name}-x11-devel
 
 %description
