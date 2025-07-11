@@ -1,34 +1,28 @@
-//
-// Created by matin on 20/07/22.
-//
+/**
+ * @file Shader.h
+ * @brief Declares the ShapeCorners::Shader class for managing OpenGL shaders in the KWin effect.
+ *
+ * This file provides the Shader class, which loads, manages, and binds OpenGL shaders for the ShapeCorners KWin effect.
+ */
 
-#ifndef KWIN4_EFFECT_SHAPECORNERS_SHADER_H
-#define KWIN4_EFFECT_SHAPECORNERS_SHADER_H
+#pragma once
 
-#include <QRectF> // for KWin 5.27 compatibility
-#include <QVector2D>
 #include <memory>
 
 namespace KWin {
     class GLShader;
-    class ShaderManager;
 }
 
 namespace ShapeCorners {
     class Window;
 
-    inline QRectF operator*(const QRect &r, const qreal scale) {
-        return {r.x() * scale, r.y() * scale, r.width() * scale, r.height() * scale};
-    }
-
-    inline QRectF operator*(const QRectF &r, const qreal scale) {
-        return {r.x() * scale, r.y() * scale, r.width() * scale, r.height() * scale};
-    }
-
-    inline QVector2D toVector2D(const QSizeF &s) {
-        return {static_cast<float>(s.width()), static_cast<float>(s.height())};
-    }
-
+    /**
+     * @class Shader
+     * @brief Manages the OpenGL shader program for the ShapeCorners KWin effect.
+     *
+     * Loads the correct shader based on the GL platform in KWin, assigns uniform variable locations,
+     * and provides methods to bind and unbind the shader during rendering.
+     */
     class Shader {
     public:
         /**
@@ -38,40 +32,38 @@ namespace ShapeCorners {
         explicit Shader();
 
         /**
+         * @brief Checks if the shader is valid and loaded.
          * \return True if the shader is valid and loaded
          */
-        [[nodiscard]] bool IsValid() const;
+        [[nodiscard]]
+        bool IsValid() const noexcept;
 
         /**
          * \brief This function assigns the required variables to the shader.
          *        Then it pushes the shader to the stack of rendering.
-         *        This needs to be called before each window is rendered.
+         * \note  This needs to be called before each window is rendered.
          * \param window The window that the effect will be rendering on
          * \param scale The scale of the screen
          */
-        void Bind(const ShapeCorners::Window &window, qreal scale) const;
+        void Bind(const Window &window, double scale) const noexcept;
 
         /**
          * \brief Pop the shader from the stack of rendering.
-         *        This needs to be called after each window is rendered.
+         * \note  This needs to be called after each window is rendered.
          */
-        void Unbind() const;
+        void Unbind() const noexcept;
 
         /**
-         * \return A reference to the unique pointer of the loaded shader.
+         * @brief Gets a reference to the unique pointer of the loaded shader.
+         * \return Reference to the unique pointer of the loaded shader.
          */
-        std::unique_ptr<KWin::GLShader> &GetShader() { return m_shader; }
+        std::unique_ptr<KWin::GLShader> &GetShader() noexcept { return m_shader; }
 
     private:
         /**
          * \brief A pointer to the loaded shader used to assign the value of uniform variables.
          */
         std::unique_ptr<KWin::GLShader> m_shader;
-
-        /**
-         * \brief An instance of `ShaderManager` used to load shader from file and push/pop the shader for each render.
-         */
-        KWin::ShaderManager *m_manager;
 
         /**
          * \brief Reference to `uniform vec2 windowSize;`
@@ -148,6 +140,3 @@ namespace ShapeCorners {
         int m_shader_front = 0;
     };
 }
-
-
-#endif //KWIN4_EFFECT_SHAPECORNERS_SHADER_H

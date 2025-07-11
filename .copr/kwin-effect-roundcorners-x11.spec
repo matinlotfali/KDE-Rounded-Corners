@@ -1,5 +1,5 @@
 Summary:        KDE KWin effect to round the corners of windows
-Name:           kwin-effect-roundcorners
+Name:           kwin-effect-roundcorners-x11
 License:        GPL-3.0
 URL:            https://github.com/matinlotfali/KDE-Rounded-Corners
 Source0:        %{URL}/archive/refs/heads/master.tar.gz
@@ -36,6 +36,7 @@ BuildRequires:  libxcb-devel
 BuildRequires:  libdrm-devel
 BuildRequires:  wayland-devel
 BuildRequires:  %{kwin_pkg_name}-devel
+BuildRequires:  %{kwin_pkg_name}-x11-devel
 
 %description
 KDE Rounded Corners is a desktop effect for KWin that smoothly rounds
@@ -46,7 +47,7 @@ minimal impact on performance.
 %setup -q -n KDE-Rounded-Corners-master
 
 %build
-%cmake_kf6
+%cmake_kf6 -DKWIN_X11=On
 %cmake_build
 
 %install
@@ -55,10 +56,10 @@ minimal impact on performance.
 %files
 %license LICENSE
 %doc README.md
-%{_kf6_qtplugindir}/kwin/effects/configs/kwin_shapecorners_config.so
-%{_kf6_qtplugindir}/kwin/effects/plugins/kwin4_effect_shapecorners.so
-%{_kf6_datadir}/kwin/shaders/shapecorners.frag
-%{_kf6_datadir}/kwin/shaders/shapecorners_core.frag
+%{_kf6_qtplugindir}/kwin-x11/effects/configs/kwin_shapecorners_config.so
+%{_kf6_qtplugindir}/kwin-x11/effects/plugins/kwin4_effect_shapecorners.so
+%{_kf6_datadir}/kwin-x11/shaders/shapecorners.frag
+%{_kf6_datadir}/kwin-x11/shaders/shapecorners_core.frag
 %{_kf6_datadir}/locale/*/LC_MESSAGES/kcmcorners.mo*
 
 %changelog

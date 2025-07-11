@@ -7,12 +7,16 @@ set(effect_SRCS
     Window.cpp
     TileChecker.h
     TileChecker.cpp
-    Color.h
+    FloatColor.h
+    WindowConfig.h
+    WindowConfig.cpp
+    WindowManager.h
+    WindowManager.cpp
     plugin.cpp
 )
 
 kconfig_add_kcfg_files(effect_SRCS Config.kcfgc)
-kcoreaddons_add_plugin(kwin4_effect_shapecorners SOURCES ${effect_SRCS} INSTALL_NAMESPACE "kwin/effects/plugins/")
+kcoreaddons_add_plugin(kwin4_effect_shapecorners SOURCES ${effect_SRCS} INSTALL_NAMESPACE "${KWIN_NAMESPACE_PREFIX}/effects/plugins/")
 
 target_link_libraries(kwin4_effect_shapecorners
     Qt${QT_MAJOR_VERSION}::DBus
@@ -20,7 +24,7 @@ target_link_libraries(kwin4_effect_shapecorners
 )
 if(${QT_MAJOR_VERSION} EQUAL 6)
     target_link_libraries(kwin4_effect_shapecorners
-            KWin::kwin
+            ${KWIN_LIB_NAME}::kwin
             Qt${QT_MAJOR_VERSION}::CorePrivate
     )
 else()

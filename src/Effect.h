@@ -20,58 +20,121 @@
 #pragma once
 
 #include "Shader.h"
-#include "Window.h"
-#include "TileChecker.h"
-
+#include <QObject>
 #if QT_VERSION_MAJOR >= 6
-    #include <effect/offscreeneffect.h>
+#include <effect/offscreeneffect.h>
 #else
-    #include <kwinoffscreeneffect.h>
+#include <kwinoffscreeneffect.h>
 #endif
 
 namespace ShapeCorners {
-    using MenuBarList = std::vector<KWin::EffectWindow*>;
+    class WindowManager;
 
+    /**
+     * @class Effect
+     * @brief KDE KWin effect for rendering rounded corners on windows.
+     *
+     * This class implements a KWin OffscreenEffect that applies rounded corners
+     * to windows using a custom shader. It manages window addition, configuration,
+     * and painting logic.
+     */
     class Effect final : public KWin::OffscreenEffect {
     Q_OBJECT
 
     public:
+        /**
+         * @brief Constructs the Effect object.
+         */
         Effect();
 
+        /**
+         * @brief Destructor.
+         */
         ~Effect() override;
 
+        /**
+         * @brief Checks if the effect is supported on the current system.
+         * @return True if supported, false otherwise.
+         */
         static bool supported();
 
+        /**
+         * @brief Reconfigures the effect based on the given flags.
+         * @param flags The reconfiguration flags.
+         */
         void reconfigure(ReconfigureFlags flags) override;
+        
+        /**
+         * @brief Prepares a window for painting.
+         * @param w The effect window.
+         * @param data The window pre-paint data.
+         * @param time The time since the last frame.
+         */
         void prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time) override;
 
 #if QT_VERSION_MAJOR >= 6
+        /**
+         * @brief Draws the window with the effect applied (Qt6 version).
+         * @param RenderTarget The render target.
+         * @param viewport The render viewport.
+         * @param w The effect window.
+         * @param mask The paint mask.
+         * @param region The paint region.
+         * @param data The window paint data.
+         */
         void drawWindow(const KWin::RenderTarget &RenderTarget, const KWin::RenderViewport &viewport,
                         KWin::EffectWindow *w, int mask, const QRegion &region, KWin::WindowPaintData &data) override;
 #else
+        /**
+         * @brief Draws the window with the effect applied (Qt5 version).
+         * @param w The effect window.
+         * @param mask The paint mask.
+         * @param region The paint region.
+         * @param data The window paint data.
+         */
         void drawWindow(KWin::EffectWindow *w, int mask, const QRegion &region, KWin::WindowPaintData &data) override;
 #endif
 
-        [[nodiscard]] int requestedEffectChainPosition() const override { return 99; }
-        [[nodiscard]] bool blocksDirectScanout() const override { return false; }
-        [[nodiscard]] bool isActive() const override { return m_shaderManager.IsValid(); }
-        [[nodiscard]] bool provides(Feature feature) override { return feature == Feature::Nothing; }
-
-    public Q_SLOTS:
-        [[nodiscard]] QString get_window_titles() const;
+        /**
+         * @brief Returns the requested position in the effect chain.
+         * @return The effect chain position.
+         */
+        [[nodiscard]] 
+        int requestedEffectChainPosition() const override { return 99; }
+        
+        /**
+         * @brief Indicates whether the effect blocks direct scanout.
+         * @return False, this effect does not block direct scanout.
+         */
+        [[nodiscard]]
+        bool blocksDirectScanout() const override { return false; }
+        
+        /**
+         * @brief Checks if the effect is currently active.
+         * @return True if the shader manager is valid, false otherwise.
+         */
+        [[nodiscard]]
+        bool isActive() const override { return m_shaderManager.IsValid(); }
+        
+        /**
+         * @brief Indicates which features this effect provides.
+         * @param feature The feature to check.
+         * @return True if the feature is provided, false otherwise.
+         */
+        [[nodiscard]] 
+        bool provides(const Feature feature) override { return feature == Nothing; }
 
     private Q_SLOTS:
-        void windowAdded(KWin::EffectWindow *window);
-        void windowRemoved(KWin::EffectWindow *window);
-        void checkMaximized(KWin::EffectWindow *window);
-        void windowResized(KWin::EffectWindow *window, const QRectF &);
+        /**
+         * @brief Slot called when a new window is added.
+         * @param kwindow The newly added effect window.
+         */
+        void windowAdded(KWin::EffectWindow *kwindow);
 
     private:
-        WindowList m_managed;
-        MenuBarList m_menuBars;
+        /// Manages the shader used for rounded corners.
         Shader m_shaderManager;
-
-        void checkTiled();
-        [[nodiscard]] QRegion getRegionWithoutMenus(const QRect& screen_geometry);
+        /// Manages the windows affected by the effect.
+        std::unique_ptr<WindowManager> m_windowManager;
     };
 }
