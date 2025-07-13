@@ -183,30 +183,27 @@ cmake --build . -j
 sudo make install
 ```
 
+> [!Note]
+> If you are building for X11, use the command `cmake .. -DKWIN_X11=ON` instead of `cmake ..`
+
 > [!Note] 
 >
-> For systems like **KDE Linux** (https://community.kde.org/KDE_Linux) or other immutable distributions that lack tools such as `rpm-ostree`, it is necessary to manually create a user overlay to supplement missing or non-modifiable system paths.
+> When building for KDE Linux (https://community.kde.org/KDE_Linux) or other immutable distributions that do not provide tools like `rpm-ostree`, you cannot write to system paths such as `/usr`. To deploy a plugin in such environments, you need to build it into a user overlay and activate it using `systemd-sysext`.
 >
-> First, clone the source code and compile it into a user-owned directory:
+> To ensure the plugin is installed under the correct directory layout expected by KWin, use the following command instead of `cmake ..` :
 >
-> ```bash
-> git clone https://github.com/matinlotfali/KDE-Rounded-Corners
-> cd KDE-Rounded-Corners
-> mkdir -p build
-> cd build
-> cmake .. -DCMAKE_INSTALL_PREFIX=../install-root
-> cmake --build . -j
-> make install
 > ```
->
-> Then, deploy the compiled files into a user overlay directory and activate it using `systemd-sysext`. Running
+> cmake .. \
+>   -DCMAKE_INSTALL_PREFIX=~/kde/usr \
+>   -DKDE_INSTALL_PLUGINDIR=lib/qt6/plugins
+> ```
+> 
+> Once built, you can prepare the overlay by placing it under `~/kde` and linking it into `/var/lib/extensions/kde`, where `systemd-sysext` expects extension roots to be located. The following command automates that:
+> 
 > ```bash
 > sh ../tools/deploy-to-overlay.sh
 > ```
-> will automate this process.
-
-> [!Note]
-> If you are building for X11, use the command `cmake .. -DKWIN_X11=ON` instead of `cmake ..`
+> This way, the plugin is installed in a form that `systemd-sysext` can recognize and load, while still preserving the integrity of the immutable root filesystem.
 
 # How to load or unload the effect
 
