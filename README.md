@@ -68,10 +68,11 @@ I maintain this effect on KDE Plasma desktop version 5.27 to 6.4+ in various Lin
 - Compatibility of the effect with other effects like Wobbly windows
 - Compatibility with KWin for Plasma versions 5.27 to 6.4
 - Compatibility with HDR in Plasma 6.0
+- Compatibility with split KWin codebase dependency starting version 6.4 - see [#383](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/383)
 - Optimize the effect to render once instead of 5 times - see [#49](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/49)
 - Smooth animation when a window moves to an active state
 - Reimplementation with shaders, including shadows at corners and two outlines
-- Ability to disable effect when windows get maximized or tiled
+- Ability to disable the effect when windows get maximized or tiled
 - Cleanups for the plugin logic, remove unneeded dependencies from CMakeLists.txt file - by [alex1701c](https://github.com/alex1701c)
 - Separate outline color for active and inactive windows - by [OrkenWhite](https://github.com/OrkenWhite)
 - Support for language translations - by [VictorR2007](https://github.com/VictorR2007) (See [How to add more translations?](#how-to-add-more-languages-to-the-translation))
@@ -86,14 +87,13 @@ Copr package at [matinlotfali/KDE-Rounded-Corners](https://copr.fedorainfracloud
 
 ```bash
 sudo dnf copr enable matinlotfali/KDE-Rounded-Corners
-sudo dnf update
-sudo dnf install kwin-effect-roundcorners
+sudo dnf install kwin-effect-roundcorners # or kwin-effect-roundcorners-x11 
 ```
 
 AUR package by [xiota](https://aur.archlinux.org/account/xiota)  
 
 ```bash
-sudo pamac build kwin-effect-rounded-corners-git
+sudo pamac build kwin-effect-rounded-corners-git # or kwin-effect-rounded-corners-x11-git
 ```
 
 NixOS package by [flexagoon](https://github.com/flexagoon)
@@ -105,7 +105,7 @@ nix-env -iA nixos.kde-rounded-corners
 
 # How to install using a pre-built package
 
-Download `.deb` or `.rpm` packages from above and install them using commands:
+Download `.deb` or `.rpm` packages from above and install them using the commands:
 
 ```bash
 sudo dpkg -i ./kwin4_effect_shapecorners_debian.deb # for debian and kubuntu
@@ -182,6 +182,9 @@ cmake ..
 cmake --build . -j
 sudo make install
 ```
+
+> [!Note]
+> If you are building for X11, use the command `cmake .. -DKWIN_X11=ON` instead of `cmake ..`
 
 # How to load or unload the effect
 
@@ -264,6 +267,15 @@ When troubleshooting or reporting an issue, it might be useful to enable Debug l
 ```bash
 cmake .. --DCMAKE_BUILD_TYPE=Debug
 cmake --build . -j
+```
+
+You may also need to add the `default.debug=true` rule in `~/.config/QtProject/qtlogging.ini`. The example of the file content is:
+
+```ini
+[Rules]
+*.debug=false
+qt.qpa.xcb.xcberror.warning=false
+default.debug=true
 ```
 
 After the installation and loading the effect, debug messages would appear in `journalctl`:
