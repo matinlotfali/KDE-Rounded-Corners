@@ -183,6 +183,28 @@ cmake --build . -j
 sudo make install
 ```
 
+> [!Note] 
+>
+> For systems like **KDE Linux** (https://community.kde.org/KDE_Linux) or other immutable distributions that lack tools such as `rpm-ostree`, it is necessary to manually create a user overlay to supplement missing or non-modifiable system paths.
+>
+> First, clone the source code and compile it into a user-owned directory:
+>
+> ```bash
+> git clone https://github.com/matinlotfali/KDE-Rounded-Corners
+> cd KDE-Rounded-Corners
+> mkdir -p build
+> cd build
+> cmake .. -DCMAKE_INSTALL_PREFIX=../install-root
+> cmake --build . -j
+> make install
+> ```
+>
+> Then, deploy the compiled files into a user overlay directory and activate it using `systemd-sysext`. Running
+> ```bash
+> sh ../tools/deploy-to-overlay.sh
+> ```
+> will automate this process.
+
 > [!Note]
 > If you are building for X11, use the command `cmake .. -DKWIN_X11=ON` instead of `cmake ..`
 
