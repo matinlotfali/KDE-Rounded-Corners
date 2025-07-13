@@ -89,7 +89,7 @@ jobs:
         compression-level: 0
         if-no-files-found: error
 
-    - name: Upload Release Asset
+    - name: Upload Release Asset For Wayland
       if: github.ref == 'refs/heads/master' && env.CURRENT_BUILD_VERSION != env.COPR_BUILD_VERSION
       uses: nicklasfrahm/scp-action@main
       with:
@@ -116,7 +116,8 @@ jobs:
     - name: Trigger Copr Rebuild
       if: github.ref == 'refs/heads/master' && env.CURRENT_BUILD_VERSION != env.COPR_BUILD_VERSION
       run:
-        curl -X POST ${{ secrets.COPR_WEBHOOK_URL }}
+        curl -X POST ${{ secrets.COPR_WEBHOOK_URL }}/kwin-effect-roundcorners
+        curl -X POST ${{ secrets.COPR_WEBHOOK_URL }}/kwin-effect-roundcorners-x11
 
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build
