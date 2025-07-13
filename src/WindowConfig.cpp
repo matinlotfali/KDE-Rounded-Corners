@@ -153,7 +153,7 @@ void ShapeCorners::WindowConfig::clamp(const WindowConfig &direction, const Wind
     cornerRadius = ShapeCorners::clamp(cornerRadius, direction.cornerRadius, destination.cornerRadius);
     shadowSize = ShapeCorners::clamp(shadowSize, direction.shadowSize, destination.shadowSize);
     outlineSize = ShapeCorners::clamp(outlineSize, direction.outlineSize, destination.outlineSize);
-    secondOutlineSize = ShapeCorners::clamp(secondOutlineSize, direction.secondOutlineSize, destination.outlineSize);
+    secondOutlineSize = ShapeCorners::clamp(secondOutlineSize, direction.secondOutlineSize, destination.secondOutlineSize);
     shadowColor.clamp();
     outlineColor.clamp();
     secondOutlineColor.clamp();
