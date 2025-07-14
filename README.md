@@ -186,6 +186,24 @@ sudo make install
 > [!Note]
 > If you are building for X11, use the command `cmake .. -DKWIN_X11=ON` instead of `cmake ..`
 
+> [!Note] 
+> When building for KDE Linux (https://community.kde.org/KDE_Linux) or other immutable distributions that do not provide tools like `rpm-ostree`, you cannot write to system paths such as `/usr`. To deploy a plugin in such environments, you need to build it into a user overlay and activate it using `systemd-sysext`.
+>
+> To ensure the plugin is installed under the correct directory layout expected by KWin, use
+> ```
+> cmake .. \
+>   -DCMAKE_INSTALL_PREFIX=~/kde/usr \
+>   -DKDE_INSTALL_PLUGINDIR=lib/qt6/plugins
+> ```
+> instead of `cmake ..`, and also use `make install` **instead of** `sudo make install`.
+> 
+> Once built, you can prepare the overlay by placing it under `~/kde` and linking it into `/var/lib/extensions/kde`, where `systemd-sysext` expects extension roots to be located. The following command automates that:
+> 
+> ```bash
+> sh ../tools/deploy-to-overlay.sh
+> ```
+> This way, the plugin is installed in a form that `systemd-sysext` can recognize and load, while still preserving the integrity of the immutable root filesystem.
+
 # How to load or unload the effect
 
 To activate the effect, you can now log out and log back in, or run the command below inside the `build` directory:
