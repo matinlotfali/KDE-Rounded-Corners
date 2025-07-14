@@ -10,17 +10,19 @@ sequenceDiagram
     end
     Box kwin4_shapecorners_effect
         participant Effect
+        participant WindowManager
         participant Shader
         participant shapecorners.frag
         participant Window
-        participant Config
+        participant WindowConfig
     end
 
     loop approximately 60 frames per second
         KWin->>+Effect: prePaintWindow()
+        Effect->>WindowManager: findWindow()
         Effect->>+Window: animateProperties()
-        Window->>+Config: read config
-        Config-->>-Window: values
+        Window->>+WindowConfig: read config
+        WindowConfig-->>-Window: values
         Note over Window: calculates<br>animation
         Note over Window: stores window<br>properties
         alt animation not finished
@@ -37,9 +39,10 @@ sequenceDiagram
         
         alt if painting is required
             KWin->>+Effect: drawWindow()
+            Effect->>WindowManager: findWindow()
             Effect->>+Shader: Bind()
-            Shader->>+Window: read properties
-            Window-->>-Shader: values
+            Shader->>+WindowConfig: read properties
+            WindowConfig-->>-Shader: values
             Shader->>+shapecorners.frag: setUniform()
             shapecorners.frag-->>-Shader: done
             Shader-)ShaderManager: pushShader()

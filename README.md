@@ -4,7 +4,7 @@ This effect rounds the corners of your windows and adds an outline around them w
 
 This effect started as a fork of [shapecorners](https://sourceforge.net/projects/shapecorners/) with some additional contributions in [Alex47's project](https://github.com/alex47/KDE-Rounded-Corners), then I optimized and reimplemented the effect with shaders with influences from the [invert effect](https://github.com/KDE/kwin/tree/master/src/plugins/invert).
 
-I maintain this effect on KDE Plasma desktop version 5.27 to 6.3+ in various Linux distros ([See tests](#tested-on)).
+I maintain this effect on KDE Plasma desktop version 5.27 to 6.4+ in various Linux distros ([See tests](#tested-on)).
 <br>[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png)](https://www.buymeacoffee.com/matinlotfali)
 
 ![before-after](https://github.com/user-attachments/assets/cbd98412-ee47-4f4b-8b80-297328dfb1f5)
@@ -37,41 +37,42 @@ I maintain this effect on KDE Plasma desktop version 5.27 to 6.3+ in various Lin
 - [![Debian Sid](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/debian-sid.yml?branch=master&label=Debian%20Sid%20(Unstable)&logo=debian)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/debian-sid.yml)
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       ![](https://img.shields.io/badge/Plasma-6.3-lightblue)
-- [![openSUSE Tumbleweed](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/fedora40.yml?branch=master&label=openSUSE%20Tumbleweed&logo=opensuse&logoColor=white)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/tumbleweed.yml)
+- [![openSUSE Tumbleweed](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/tumbleweed.yml?branch=master&label=openSUSE%20Tumbleweed&logo=opensuse&logoColor=white)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/tumbleweed.yml)
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      ![](https://img.shields.io/badge/Plasma-6.3-lightblue)
+      ![](https://img.shields.io/badge/Plasma-6.4-blue)
       ![](https://img.shields.io/badge/Copr-gray)[![Copr build status](https://copr.fedorainfracloud.org/coprs/matinlotfali/KDE-Rounded-Corners/package/kwin-effect-roundcorners/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/matinlotfali/KDE-Rounded-Corners/package/kwin-effect-roundcorners/)
       [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Ftumbleweed?label=Download%20RPM)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/tumbleweed/kwin4_effect_shapecorners_tumbleweed.rpm/download)
 - [![Fedora 42](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/fedora42.yml?branch=master&label=Fedora%2042&logo=fedora&logoColor=white)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/fedora42.yml)
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      ![](https://img.shields.io/badge/Plasma-6.3-lightblue)
+      ![](https://img.shields.io/badge/Plasma-6.4-blue)
       ![](https://img.shields.io/badge/Copr-gray)[![Copr build status](https://copr.fedorainfracloud.org/coprs/matinlotfali/KDE-Rounded-Corners/package/kwin-effect-roundcorners/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/matinlotfali/KDE-Rounded-Corners/package/kwin-effect-roundcorners/)
       [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Ffedora42?label=Download%20RPM)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/fedora42/kwin4_effect_shapecorners_fedora42.rpm/download)
 - [![Arch](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/arch.yml?branch=master&label=Arch%20Linux&logo=archlinux&logoColor=white)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/arch.yml)
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      ![](https://img.shields.io/badge/Plasma-6.3-lightblue)
+      ![](https://img.shields.io/badge/Plasma-6.4-blue)
       [![](https://img.shields.io/aur/maintainer/kwin-effect-rounded-corners-git?label=AUR%20Maintainer)](https://aur.archlinux.org/packages/kwin-effect-rounded-corners-git)
       [![](https://img.shields.io/aur/votes/kwin-effect-rounded-corners-git?label=AUR%20Votes)](https://aur.archlinux.org/packages/kwin-effect-rounded-corners-git)
       [![](https://img.shields.io/aur/popularity/kwin-effect-rounded-corners-git?label=AUR%20Popularity)](https://aur.archlinux.org/packages/kwin-effect-rounded-corners-git)
 - [![KDE Neon (Stable)](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/neon.yml?branch=master&label=KDE%20Neon%20%28Stable%29&logo=kde&logoColor=white)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/neon.yml)
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      ![](https://img.shields.io/badge/Plasma-6.3-lightblue)
+      ![](https://img.shields.io/badge/Plasma-6.4-blue)
       [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Fneon?label=Download%20%5Bkwin4_effect_shapecorners_neon.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/neon/kwin4_effect_shapecorners_neon.deb/download)
 - [![KDE Neon (Unstable)](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/neon-unstable.yml?branch=master&label=KDE%20Neon%20%28Unstable%29&logo=kde&logoColor=white)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/neon-unstable.yml)
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      ![](https://img.shields.io/badge/Plasma-6.3-lightblue)
+      ![](https://img.shields.io/badge/Plasma-6.4-blue)
 
 # Contributions:
 
 - Compatibility of the effect with other effects like Wobbly windows
-- Compatibility with KWin for Plasma versions 5.27 to 6.3
+- Compatibility with KWin for Plasma versions 5.27 to 6.4
 - Compatibility with HDR in Plasma 6.0
+- Compatibility with split KWin codebase dependency starting version 6.4 - see [#383](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/383)
 - Optimize the effect to render once instead of 5 times - see [#49](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/49)
 - Smooth animation when a window moves to an active state
 - Reimplementation with shaders, including shadows at corners and two outlines
-- Ability to disable effect when windows get maximized or tiled
+- Ability to disable the effect when windows get maximized or tiled
 - Cleanups for the plugin logic, remove unneeded dependencies from CMakeLists.txt file - by [alex1701c](https://github.com/alex1701c)
 - Separate outline color for active and inactive windows - by [OrkenWhite](https://github.com/OrkenWhite)
 - Support for language translations - by [VictorR2007](https://github.com/VictorR2007) (See [How to add more translations?](#how-to-add-more-languages-to-the-translation))
@@ -86,14 +87,13 @@ Copr package at [matinlotfali/KDE-Rounded-Corners](https://copr.fedorainfracloud
 
 ```bash
 sudo dnf copr enable matinlotfali/KDE-Rounded-Corners
-sudo dnf update
-sudo dnf install kwin-effect-roundcorners
+sudo dnf install kwin-effect-roundcorners # or kwin-effect-roundcorners-x11 
 ```
 
 AUR package by [xiota](https://aur.archlinux.org/account/xiota)  
 
 ```bash
-sudo pamac build kwin-effect-rounded-corners-git
+sudo pamac build kwin-effect-rounded-corners-git # or kwin-effect-rounded-corners-x11-git
 ```
 
 NixOS package by [flexagoon](https://github.com/flexagoon)
@@ -105,7 +105,7 @@ nix-env -iA nixos.kde-rounded-corners
 
 # How to install using a pre-built package
 
-Download `.deb` or `.rpm` packages from above and install them using commands:
+Download `.deb` or `.rpm` packages from above and install them using the commands:
 
 ```bash
 sudo dpkg -i ./kwin4_effect_shapecorners_debian.deb # for debian and kubuntu
@@ -135,7 +135,7 @@ You need to install development packages for your distribution first:
 
 - Plasma 6 (Fedora 40 and later)
    ```bash
-   sudo dnf install git cmake gcc-c++ extra-cmake-modules kwin-devel kf6-kconfigwidgets-devel libepoxy-devel kf6-kcmutils-devel kf6-ki18n-devel qt6-qtbase-private-devel wayland-devel
+   sudo dnf install git cmake gcc-c++ extra-cmake-modules kwin-devel kf6-kconfigwidgets-devel libepoxy-devel kf6-kcmutils-devel kf6-ki18n-devel qt6-qtbase-private-devel wayland-devel libdrm-devel
    ``` 
 - Plasma 5 (Fedora 39)
    ```bash
@@ -182,6 +182,27 @@ cmake ..
 cmake --build . -j
 sudo make install
 ```
+
+> [!Note]
+> If you are building for X11, use the command `cmake .. -DKWIN_X11=ON` instead of `cmake ..`
+
+> [!Note] 
+> When building for KDE Linux (https://community.kde.org/KDE_Linux) or other immutable distributions that do not provide tools like `rpm-ostree`, you cannot write to system paths such as `/usr`. To deploy a plugin in such environments, you need to build it into a user overlay and activate it using `systemd-sysext`.
+>
+> To ensure the plugin is installed under the correct directory layout expected by KWin, use
+> ```
+> cmake .. \
+>   -DCMAKE_INSTALL_PREFIX=~/kde/usr \
+>   -DKDE_INSTALL_PLUGINDIR=lib/qt6/plugins
+> ```
+> instead of `cmake ..`, and also use `make install` **instead of** `sudo make install`.
+> 
+> Once built, you can prepare the overlay by placing it under `~/kde` and linking it into `/var/lib/extensions/kde`, where `systemd-sysext` expects extension roots to be located. The following command automates that:
+> 
+> ```bash
+> sh ../tools/deploy-to-overlay.sh
+> ```
+> This way, the plugin is installed in a form that `systemd-sysext` can recognize and load, while still preserving the integrity of the immutable root filesystem.
 
 # How to load or unload the effect
 
@@ -264,6 +285,15 @@ When troubleshooting or reporting an issue, it might be useful to enable Debug l
 ```bash
 cmake .. --DCMAKE_BUILD_TYPE=Debug
 cmake --build . -j
+```
+
+You may also need to add the `default.debug=true` rule in `~/.config/QtProject/qtlogging.ini`. The example of the file content is:
+
+```ini
+[Rules]
+*.debug=false
+qt.qpa.xcb.xcberror.warning=false
+default.debug=true
 ```
 
 After the installation and loading the effect, debug messages would appear in `journalctl`:

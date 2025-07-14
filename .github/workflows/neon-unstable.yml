@@ -40,7 +40,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        sudo apt-get install -y --no-install-recommends cmake g++ gettext extra-cmake-modules qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev
+        sudo apt-get install -y --no-install-recommends cmake g++ gettext extra-cmake-modules qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev kwin-x11-dev
         sudo apt-get install -y --no-install-recommends dpkg-dev file
     
     - name: Configure CMake
