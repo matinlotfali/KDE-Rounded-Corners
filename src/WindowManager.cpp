@@ -43,6 +43,10 @@ bool ShapeCorners::WindowManager::addWindow(KWin::EffectWindow *kwindow)
         qInfo() << "ShapeCorners: menu added." << *kwindow;
 #endif
         m_menuBars.push_back(kwindow);
+
+        // Changes in menu bars can change the tiled and maximized state of all windows
+        checkTiled();
+        checkMaximized();
         return false;
     }
 
@@ -112,11 +116,15 @@ void ShapeCorners::WindowManager::windowRemoved(KWin::EffectWindow *kwindow)
     else if (const auto iterator2 = std::ranges::find(m_menuBars, kwindow); iterator2 != m_menuBars.end()) {
         m_menuBars.erase(iterator2);
         qDebug() << "ShapeCorners: menu removed" << kwindow->windowClass();
+
+        // Changes in menu bars can change the maximized state of all windows
+        checkMaximized();
     }
     else {
         qDebug() << "ShapeCorners: excluded window removed" << kwindow->windowClass();
     }
 
+    // Changes in windows can change the tile state of other windows
     checkTiled();
 }
 
@@ -215,4 +223,10 @@ void ShapeCorners::WindowManager::windowResized(KWin::EffectWindow *kwindow, con
 
     checkTiled();
     checkMaximized(kwindow);
+}
+
+void ShapeCorners::WindowManager::checkMaximized() {
+    for (auto* window: m_managed | std::views::values) {
+        checkMaximized(window->w);
+    }
 }
