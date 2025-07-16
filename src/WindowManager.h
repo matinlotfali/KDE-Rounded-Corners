@@ -122,6 +122,11 @@ namespace ShapeCorners {
         void checkTiled();
 
         /**
+         * @brief Checks and marks maximized for all windows.
+         */
+        void checkMaximized();
+
+        /**
          * @brief Returns the region of the screen excluding menu bars.
          * @param screen_geometry The geometry of the screen.
          * @return QRegion without menu bars.
