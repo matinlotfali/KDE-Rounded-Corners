@@ -7,6 +7,7 @@
 namespace Ui {
     class Form;
 }
+class QListWidgetItem;
 
 namespace ShapeCorners {
 
@@ -70,6 +71,8 @@ namespace ShapeCorners {
          * @param value Whether the group is toggled on or off.
          */
         void outline_group_toggled(bool value) const;
+        void include_button_clicked();
+        void exclude_button_clicked();
 
     private:
         /**
@@ -86,6 +89,9 @@ namespace ShapeCorners {
          * @brief Loads the UI elements from the configuration.
          */
         void load_ui() const;
+        void add_inclusion(const QString& text);
+        void add_exclusion(const QString& text);
+        [[nodiscard]] QListWidgetItem* find_class_in_lists(const QString& text) const;
 
 #if (QT_VERSION_MAJOR >= 6)
         /**
