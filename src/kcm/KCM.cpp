@@ -90,22 +90,8 @@ ShapeCorners::KCM::KCM(QWidget* parent, const QVariantList& args)
 
     // Connect window list and inclusion/exclusion controls
     connect(ui->refreshButton, &QPushButton::pressed, this, &KCM::update_windows);
-    connect(ui->includeButton, &QPushButton::pressed, [=, this]() {
-        // Add selected window to inclusion list if not already present
-        if (auto* const item = ui->currentWindowList->currentItem();
-            item != nullptr && !item->text().isEmpty() && ui->InclusionList->findItems(item->text(), Qt::MatchExactly).empty()) {
-            ui->InclusionList->addItem(item->text());
-            markAsChanged();
-        }
-    });
-    connect(ui->excludeButton, &QPushButton::pressed, [=, this]() {
-        // Add selected window to exclusion list if not already present
-        if (auto* const item = ui->currentWindowList->currentItem();
-            item != nullptr && !item->text().isEmpty() && ui->ExclusionList->findItems(item->text(), Qt::MatchExactly).empty()) {
-            ui->ExclusionList->addItem(item->text());
-            markAsChanged();
-        }
-    });
+    connect(ui->includeButton, &QPushButton::pressed, this, &KCM::include_button_clicked);
+    connect(ui->excludeButton, &QPushButton::pressed, this, &KCM::exclude_button_clicked);
     connect(ui->deleteIncludeButton, &QPushButton::pressed, [=, this]() {
         // Remove selected item from inclusion list
         ui->InclusionList->takeItem(ui->InclusionList->currentRow());
@@ -246,6 +232,28 @@ void ShapeCorners::KCM::outline_group_toggled(bool value) const {
     }
 }
 
+void ShapeCorners::KCM::include_button_clicked()
+{
+    if (!ui->classTextEdit->toPlainText().isEmpty()) {
+        add_inclusion(ui->classTextEdit->toPlainText());
+        ui->classTextEdit->clear();
+    } else if (const auto s = ui->currentWindowList->currentItem(); s && !s->text().isEmpty()) {
+        add_inclusion(s->text());
+        ui->currentWindowList->clearSelection();
+    }
+}
+
+void ShapeCorners::KCM::exclude_button_clicked()
+{
+    if (!ui->classTextEdit->toPlainText().isEmpty()) {
+        add_exclusion(ui->classTextEdit->toPlainText());
+        ui->classTextEdit->clear();
+    } else if (const auto s = ui->currentWindowList->currentItem(); s && !s->text().isEmpty()) {
+        add_exclusion(s->text());
+        ui->currentWindowList->clearSelection();
+    }
+}
+
 void ShapeCorners::KCM::load() {
     // Load settings from config and update UI
     KCModule::load();
@@ -272,4 +280,37 @@ void ShapeCorners::KCM::load_ui() const {
     // Set outline group checkboxes based on thickness values
     ui->primaryOutline->setChecked(ui->kcfg_OutlineThickness->value() > 0);
     ui->secondaryOutline->setChecked(ui->kcfg_SecondOutlineThickness->value() > 0);
+}
+
+void ShapeCorners::KCM::add_exclusion(const QString& text)
+{
+    auto item = find_class_in_lists(text);
+    if (!item) {
+        item = new QListWidgetItem(text);
+        ui->ExclusionList->addItem(item);
+        markAsChanged();
+    }
+    item->setSelected(true);
+}
+
+void ShapeCorners::KCM::add_inclusion(const QString& text)
+{
+    auto item = find_class_in_lists(text);
+    if (!item) {
+        item = new QListWidgetItem(text);
+        ui->InclusionList->addItem(item);
+        markAsChanged();
+    }
+    item->setSelected(true);
+}
+
+QListWidgetItem* ShapeCorners::KCM::find_class_in_lists(const QString& text) const
+{
+    if (auto items = ui->InclusionList->findItems(text, Qt::MatchExactly); !items.empty()) {
+        return items.first();
+    }
+    if (auto items = ui->ExclusionList->findItems(text, Qt::MatchExactly); !items.empty()) {
+        return items.first();
+    }
+    return nullptr;
 }
