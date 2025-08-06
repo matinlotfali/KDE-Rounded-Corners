@@ -27,11 +27,6 @@ namespace ShapeCorners {
     }
 }
 
-/**
- * \brief An instance of `ShaderManager` used to load shader from file and push/pop the shader for each render.
- */
-static KWin::ShaderManager *m_manager = KWin::ShaderManager::instance();
-
 ShapeCorners::Shader::Shader() {
 
     qInfo() << "ShapeCorners: loading shaders...";
@@ -40,7 +35,7 @@ ShapeCorners::Shader::Shader() {
     const QString shaderFilePath = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
                                                           QStringLiteral("kwin/shaders/shapecorners.frag"));
     // Generate the shader from file using the ShaderManager
-    m_shader = m_manager->generateShaderFromFile(KWin::ShaderTrait::MapTexture, QString(), shaderFilePath);
+    m_shader = KWin::ShaderManager::instance()->generateShaderFromFile(KWin::ShaderTrait::MapTexture, QString(), shaderFilePath);
     if (!m_shader->isValid()) {
         qCritical() << "ShapeCorners: no valid shaders found! effect will not work.";
         return;
@@ -81,7 +76,7 @@ void ShapeCorners::Shader::Bind(const Window &window, const double scale) const 
     const auto shadowSize = std::min(window.currentConfig.shadowSize * scale, max_shadow_size);
 
     // Push the shader to the rendering stack
-    m_manager->pushShader(m_shader.get());
+    KWin::ShaderManager::instance()->pushShader(m_shader.get());
     // Set all required uniforms
     m_shader->setUniform(m_shader_windowSize, toVector2D(frameGeometry.size()));
     m_shader->setUniform(m_shader_windowExpandedSize, toVector2D(expandedGeometry.size()));
@@ -101,5 +96,5 @@ void ShapeCorners::Shader::Unbind() const noexcept {
     if (!IsValid()) {
         return;
     }
-    m_manager->popShader();
+    KWin::ShaderManager::instance()->popShader();
 }
