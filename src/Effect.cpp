@@ -20,8 +20,8 @@
 #include "Effect.h"
 
 #include <QDBusConnection>
+#include <QDBusMessage>
 #include <QDebug>
-#include <qdbusmessage.h>
 
 #include "Animation.h"
 #include "Config.h"
