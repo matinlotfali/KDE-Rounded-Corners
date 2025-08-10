@@ -4,7 +4,11 @@
 
 #include "Animation.h"
 #include <QDebug>
+#if QT_VERSION_MAJOR >= 6
 #include <effect/effecthandler.h>
+#else
+#include <kwineffects.h>
+#endif
 
 #include "Config.h"
 #include "Window.h"
