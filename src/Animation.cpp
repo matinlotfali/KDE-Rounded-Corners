@@ -21,7 +21,7 @@ ShapeCorners::Animation::Animation() : lastAnimationDuration(Config::animationDu
     // Initialize animation state.
     update();
     // Connect to window activation signal to handle active window changes.
-    connect(KWin::effects, &KWin::EffectsHandler::windowActivated, this,&Animation::setActiveWindowChanged);
+    connect(KWin::effects, &KWin::EffectsHandler::windowActivated, this, &Animation::setActiveWindowChanged);
 }
 
 void ShapeCorners::Animation::update()
@@ -69,12 +69,19 @@ const ShapeCorners::WindowConfig *ShapeCorners::Animation::getFrameConfig(const 
 
 void ShapeCorners::Animation::setActiveWindowChanged(const KWin::EffectWindow *w)
 {
-    qDebug() << "ShapeCorners: Window activated" << *w;
+#ifdef QT_DEBUG
+    if (w) {
+        qDebug() << "ShapeCorners: Window activated" << *w;
+    } else {
+        qDebug() << "ShapeCorners: No window activated";
+    }
+#endif
+
     // If not animating, start a new animation cycle.
     if (!m_isAnimating) {
         lastActiveWindowChangedTime = system_clock::now();
         lastAnimationDuration       = Config::animationDuration();
-        m_isAnimating = lastAnimationDuration > 0;
+        m_isAnimating               = lastAnimationDuration > 0;
 
         // If animation is disabled, set configs to their final values.
         if (!m_isAnimating) {
