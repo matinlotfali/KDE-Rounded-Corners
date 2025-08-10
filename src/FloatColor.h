@@ -17,7 +17,8 @@
 #include <sstream>
 #endif
 
-namespace ShapeCorners {
+namespace ShapeCorners
+{
     /**
      * @brief Represents a color with floating-point RGBA channels.
      *
@@ -30,21 +31,24 @@ namespace ShapeCorners {
         float g;
         float b;
         float a;
+
         constexpr static float MIN_CHANNEL_VALUE = 0.0F;
         constexpr static float MAX_CHANNEL_VALUE = 255.0F;
 
         /**
          * @brief Default constructor. Initializes all channels to MIN_CHANNEL_VALUE.
          */
-        constexpr FloatColor() :
-                FloatColor(MIN_CHANNEL_VALUE, MIN_CHANNEL_VALUE, MIN_CHANNEL_VALUE, MIN_CHANNEL_VALUE) {}
+        constexpr FloatColor() : FloatColor(MIN_CHANNEL_VALUE, MIN_CHANNEL_VALUE, MIN_CHANNEL_VALUE, MIN_CHANNEL_VALUE)
+        {
+        }
 
         /**
          * @brief Constructs a FloatColor from a QColor.
          * @param color The QColor to convert.
          */
-        explicit FloatColor(const QColor &color) :
-                FloatColor(color.red(), color.green(), color.blue(), color.alpha()) {}
+        explicit FloatColor(const QColor &color) : FloatColor(color.red(), color.green(), color.blue(), color.alpha())
+        {
+        }
 
         /**
          * @brief Constructs a FloatColor from integer RGBA values.
@@ -54,10 +58,10 @@ namespace ShapeCorners {
          * @param alpha Alpha channel [0, 255], defaults to MAX_CHANNEL_VALUE.
          */
         constexpr FloatColor(const int red, const int green, const int blue, const int alpha = MAX_CHANNEL_VALUE) :
-                r(static_cast<float>(red)),
-                g(static_cast<float>(green)),
-                b(static_cast<float>(blue)),
-                a(static_cast<float>(alpha)) {}
+            r(static_cast<float>(red)), g(static_cast<float>(green)), b(static_cast<float>(blue)),
+            a(static_cast<float>(alpha))
+        {
+        }
 
         /**
          * @brief Constructs a FloatColor from float RGBA values.
@@ -67,21 +71,18 @@ namespace ShapeCorners {
          * @param alpha Alpha channel, defaults to MAX_CHANNEL_VALUE.
          */
         constexpr FloatColor(const float red, const float green, const float blue,
-                             const float alpha = MAX_CHANNEL_VALUE) :
-                r(red), g(green), b(blue), a(alpha) {}
+                             const float alpha = MAX_CHANNEL_VALUE) : r(red), g(green), b(blue), a(alpha)
+        {
+        }
 
         /**
          * @brief Subtracts another FloatColor from this one.
          * @param other The color to subtract.
          * @return The result of the subtraction.
          */
-        constexpr FloatColor operator-(const FloatColor &other) const noexcept {
-            return {
-                r - other.r,
-                g - other.g,
-                b - other.b,
-                a - other.a
-            };
+        constexpr FloatColor operator-(const FloatColor &other) const
+        {
+            return {r - other.r, g - other.g, b - other.b, a - other.a};
         }
 
         /**
@@ -89,13 +90,9 @@ namespace ShapeCorners {
          * @param other The color to add.
          * @return The result of the addition.
          */
-        constexpr FloatColor operator+(const FloatColor &other) const noexcept {
-            return {
-                r + other.r,
-                g + other.g,
-                b + other.b,
-                a + other.a
-            };
+        constexpr FloatColor operator+(const FloatColor &other) const
+        {
+            return {r + other.r, g + other.g, b + other.b, a + other.a};
         }
 
         /**
@@ -105,13 +102,9 @@ namespace ShapeCorners {
          * @return The result of the multiplication.
          */
         template<typename T>
-        constexpr FloatColor operator*(const T &scalar) const noexcept {
-            return {
-                r * scalar,
-                g * scalar,
-                b * scalar,
-                a * scalar
-            };
+        constexpr FloatColor operator*(const T &scalar) const
+        {
+            return {r * scalar, g * scalar, b * scalar, a * scalar};
         }
 
         /**
@@ -121,13 +114,9 @@ namespace ShapeCorners {
          * @return The result of the division.
          */
         template<typename T>
-        constexpr FloatColor operator/(const T &scalar) const noexcept {
-            return {
-                r / scalar,
-                g / scalar,
-                b / scalar,
-                a / scalar
-            };
+        constexpr FloatColor operator/(const T &scalar) const
+        {
+            return {r / scalar, g / scalar, b / scalar, a / scalar};
         }
 
         /**
@@ -135,7 +124,8 @@ namespace ShapeCorners {
          * @return True if all channels are zero, false otherwise.
          */
         [[nodiscard]]
-        constexpr bool operator!() const noexcept {
+        constexpr bool operator!() const
+        {
             return (r <= 0 && g <= 0 && b <= 0 && a <= 0);
         }
 
@@ -144,13 +134,9 @@ namespace ShapeCorners {
          * @return The QColor representation.
          */
         [[nodiscard]]
-        QColor toQColor() const noexcept {
-            return {
-                static_cast<int>(r),
-                static_cast<int>(g),
-                static_cast<int>(b),
-                static_cast<int>(a)
-            };
+        QColor toQColor() const
+        {
+            return {static_cast<int>(r), static_cast<int>(g), static_cast<int>(b), static_cast<int>(a)};
         }
 
 #ifdef QT_DEBUG
@@ -159,7 +145,8 @@ namespace ShapeCorners {
          * @return The string representation.
          */
         [[nodiscard]]
-        std::string toString() const noexcept {
+        std::string toString() const
+        {
             std::stringstream stream;
             stream << "[ " << r << " , " << g << " , " << b << " , " << a << " ]";
             return stream.str();
@@ -170,7 +157,8 @@ namespace ShapeCorners {
          * @brief Adds another FloatColor to this one in-place.
          * @param other The color to add.
          */
-        constexpr void operator+=(const FloatColor &other) noexcept {
+        constexpr void operator+=(const FloatColor &other)
+        {
             r += other.r;
             g += other.g;
             b += other.b;
@@ -180,7 +168,8 @@ namespace ShapeCorners {
         /**
          * @brief Rounds all channels to the nearest integer.
          */
-        constexpr void round() noexcept {
+        constexpr void round()
+        {
             r = std::round(r);
             g = std::round(g);
             b = std::round(b);
@@ -190,7 +179,8 @@ namespace ShapeCorners {
         /**
          * @brief Clamps all channels to the valid range [MIN_CHANNEL_VALUE, MAX_CHANNEL_VALUE].
          */
-        constexpr void clamp() noexcept {
+        constexpr void clamp()
+        {
             r = std::clamp(r, MIN_CHANNEL_VALUE, MAX_CHANNEL_VALUE);
             g = std::clamp(g, MIN_CHANNEL_VALUE, MAX_CHANNEL_VALUE);
             b = std::clamp(b, MIN_CHANNEL_VALUE, MAX_CHANNEL_VALUE);
@@ -201,32 +191,24 @@ namespace ShapeCorners {
          * @brief Sets the alpha channel.
          * @param alpha The new alpha value.
          */
-        constexpr void setAlpha(const int alpha) noexcept {
-            a = static_cast<float>(alpha);
-        }
+        constexpr void setAlpha(const int alpha) { a = static_cast<float>(alpha); }
 
         /**
          * @brief Sets the red channel.
          * @param red The new red value.
          */
-        constexpr void setRed(const int red) noexcept {
-            r = static_cast<float>(red);
-        }
+        constexpr void setRed(const int red) { r = static_cast<float>(red); }
 
         /**
          * @brief Sets the green channel.
          * @param green The new green value.
          */
-        constexpr void setGreen(const int green) noexcept {
-            g = static_cast<float>(green);
-        }
+        constexpr void setGreen(const int green) { g = static_cast<float>(green); }
 
         /**
          * @brief Sets the blue channel.
          * @param blue The new blue value.
          */
-        constexpr void setBlue(const int blue) noexcept {
-            b = static_cast<float>(blue);
-        }
+        constexpr void setBlue(const int blue) { b = static_cast<float>(blue); }
     };
-}
+} // namespace ShapeCorners

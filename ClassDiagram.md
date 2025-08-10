@@ -63,6 +63,16 @@ classDiagram
             windowAdded()
         }
         
+        class Animation {
+            -lastAnimationDuration: long
+            -m_isAnimating: bool
+            -lastActiveWindowChangedTime: time_point
+            -setActiveWindowChanged()
+            +getFrameConfig()
+            +isAnimating()
+            +update()
+        }
+        
         class WindowManager {
             -m_managed: WindowList
             -m_menuBars: MenuBarList
@@ -99,10 +109,8 @@ classDiagram
         class Window {
             isTiled: bool
             isMaximized: bool
-            -m_last_time: miliseconds
             -isIncluded: bool
             -isExcluded: bool
-            animateProperties()
             isActive()
             hasRoundCorners()
             hasOutline()
@@ -110,7 +118,6 @@ classDiagram
             toJson()
             captionAfterDash()
             configChanged()
-            -getExpectedConfig()
         }
         
         class Shader {
@@ -152,7 +159,7 @@ classDiagram
             Size: UInt
             ShadowSize: UInt
             ShadowColor: Color
-            AnimationEnabled: Bool
+            AnimationDuration: UInt
             OutlineThickness: Double
             OutlineColor: Color
             .
@@ -173,13 +180,16 @@ classDiagram
     OffscreenEffect ..> ShaderManager: Uses
 
     OffscreenEffect <|-- Effect: Inherits
+    Effect ..> Animation: Has
     Effect --> Shader: Has
     Effect --> WindowManager: Has
     Shader --> GLShader: Has
     Shader ..> Window: Uses
     Shader ..> ShaderManager: Uses
-    Window --> WindowConfig: Has
+    Animation --> WindowConfig: Has
+    Animation ..> Window: Uses
     Window --> EffectWindow: Manages
+    Window ..> WindowConfig: Uses
     Window ..> Config: Uses
     WindowConfig o-- FloatColor: Contains
     WindowConfig ..> Config: Uses

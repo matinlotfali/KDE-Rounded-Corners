@@ -18,30 +18,30 @@
  */
 
 #include "Effect.h"
+#include <QDebug>
+#include "Animation.h"
 #include "Config.h"
 #include "Utils.h"
-#include "WindowManager.h"
 #include "Window.h"
-#ifdef QT_DEBUG
-#include <QLoggingCategory>
-#endif
+#include "WindowManager.h"
 #if QT_VERSION_MAJOR >= 6
-#include <opengl/glutils.h>
-#include <effect/effectwindow.h>
-#include <effect/effecthandler.h>
 #include <core/renderviewport.h>
+#include <effect/effecthandler.h>
+#include <effect/effectwindow.h>
+#include <opengl/glutils.h>
 #else
 #include <kwineffects.h>
 #include <kwinglutils.h>
 #endif
 
-ShapeCorners::Effect::Effect() {
+ShapeCorners::Effect::Effect()
+{
     // Read configuration and initialize the effect.
     reconfigure(ReconfigureAll);
 
     // If the shader is valid, create the window manager and connect the windowAdded signal.
-    if(m_shaderManager.IsValid()) {
-        m_windowManager = std::make_unique<WindowManager>();
+    if (m_shaderManager.IsValid()) {
+        m_windowManager = std::make_unique<WindowManager>(m_animation->getInactiveConfig());
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &Effect::windowAdded);
     }
 }
@@ -51,36 +51,51 @@ ShapeCorners::Effect::~Effect() = default;
 void ShapeCorners::Effect::reconfigure(const ReconfigureFlags flags)
 {
     Q_UNUSED(flags)
-    
+
     // Reload configuration settings.
     Config::self()->read();
+
+    if (!m_animation) {
+        m_animation = std::make_unique<Animation>();
+    } else {
+        m_animation->update();
+    }
 }
 
-void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
+void ShapeCorners::Effect::prePaintScreen(KWin::ScreenPrePaintData &data, const std::chrono::milliseconds presentTime)
+{
+    OffscreenEffect::prePaintScreen(data, presentTime);
+    m_animation->update();
+}
+
+void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::WindowPrePaintData &data,
+                                          std::chrono::milliseconds time)
 {
     // Find the managed window structure.
-    auto* window = m_windowManager->findWindow(kwindow);
-    
+    auto *window = m_windowManager->findWindow(kwindow);
+
     // If the shader is not valid or the window is not managed or doesn't need the effect, fall back to default.
-    if (!m_shaderManager.IsValid() || window == nullptr || !window->hasEffect())
-    {
+    if (!m_shaderManager.IsValid() || window == nullptr || !window->hasEffect()) {
         OffscreenEffect::prePaintWindow(kwindow, data, time);
         return;
     }
 
     // Animate window properties for smooth transitions.
-    window->animateProperties(time);
+    window->currentConfig = m_animation->getFrameConfig(*window);
+    if (m_animation->isAnimating()) {
+        kwindow->addRepaintFull();
+    }
 
     // If the window should have rounded corners, adjust the paint and opaque regions.
-    if(window->hasRoundCorners()) {
+    if (window->hasRoundCorners()) {
 #if QT_VERSION_MAJOR >= 6
         // Calculate geometry and corner size for Qt6.
-        const auto geo = kwindow->frameGeometry() * kwindow->screen()->scale();
-        const auto size = window->currentConfig.cornerRadius * kwindow->screen()->scale();
+        const auto geo  = kwindow->frameGeometry() * kwindow->screen()->scale();
+        const auto size = window->currentConfig->cornerRadius * kwindow->screen()->scale();
 #else
         // Calculate geometry and corner size for Qt5.
-        const auto geo = kwindow->frameGeometry() * KWin::effects->renderTargetScale();
-        const auto size = window->currentConfig.cornerRadius * KWin::effects->renderTargetScale();
+        const auto geo  = kwindow->frameGeometry() * KWin::effects->renderTargetScale();
+        const auto size = window->currentConfig->cornerRadius * KWin::effects->renderTargetScale();
 #endif
 
         // Create a region for each rounded corner.
@@ -89,11 +104,11 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
         reg += QRect(geo.x() + geo.width() - size, geo.y(), size, size);
         reg += QRect(geo.x(), geo.y() + geo.height() - size, size, size);
         reg += QRect(geo.x() + geo.width() - size, geo.y() + geo.height() - size, size, size);
-        
+
         // Remove the rounded corners from the opaque region and add them to the paint region.
         data.opaque -= reg;
         data.paint += reg;
-        
+
         // Mark the window as having translucent regions.
         data.setTranslucent();
     }
@@ -111,15 +126,18 @@ bool ShapeCorners::Effect::supported()
 #if QT_VERSION_MAJOR >= 6
 void ShapeCorners::Effect::drawWindow(const KWin::RenderTarget &renderTarget, const KWin::RenderViewport &viewport,
                                       KWin::EffectWindow *kwindow, int mask, const QRegion &region,
-                                      KWin::WindowPaintData &data) {
+                                      KWin::WindowPaintData &data)
+{
 #else
 void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *kwindow, int mask, const QRegion &region,
-                                      KWin::WindowPaintData &data) {
+                                      KWin::WindowPaintData &data)
+{
 #endif
     // Find the managed window structure.
-    auto* window = m_windowManager->findWindow(kwindow);
-    
-    // If the shader is not valid or the window is not managed or doesn't need the effect, unredirect and use default drawing.
+    const auto *window = m_windowManager->findWindow(kwindow);
+
+    // If the shader is not valid or the window is not managed or doesn't need the effect, unredirect and use default
+    // drawing.
     if (!m_shaderManager.IsValid() || window == nullptr || !window->hasEffect()) {
         unredirect(kwindow);
 #if QT_VERSION_MAJOR >= 6
@@ -157,9 +175,10 @@ void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *kwindow, int mask, con
     m_shaderManager.Unbind();
 }
 
-void ShapeCorners::Effect::windowAdded(KWin::EffectWindow *kwindow) {
+void ShapeCorners::Effect::windowAdded(KWin::EffectWindow *kwindow)
+{
     // Add the new window to the manager.
-    if (m_windowManager->addWindow(kwindow)) {
+    if (m_windowManager->addWindow(kwindow, m_animation->getInactiveConfig())) {
         // Redirect the window and set the shader if it was successfully added.
         redirect(kwindow);
         setShader(kwindow, m_shaderManager.GetShader().get());

@@ -10,7 +10,8 @@
 
 #include "FloatColor.h"
 
-namespace ShapeCorners {
+namespace ShapeCorners
+{
     /**
      * @struct WindowConfig
      * @brief Stores configuration for a window's appearance and animation.
@@ -71,44 +72,51 @@ namespace ShapeCorners {
          * @param other The other WindowConfig.
          * @return The sum of the two WindowConfigs.
          */
-        WindowConfig operator+(const WindowConfig &other) const noexcept;
+        WindowConfig operator+(const WindowConfig &other) const;
 
         /**
          * @brief Subtracts another WindowConfig from this one.
          * @param other The other WindowConfig.
          * @return The difference of the two WindowConfigs.
          */
-        WindowConfig operator-(const WindowConfig &other) const noexcept;
+        WindowConfig operator-(const WindowConfig &other) const;
+
+        /**
+         * @brief Multiply all fields with a scalar.
+         * @param scalar The scalar value.
+         * @return The scaled WindowConfig.
+         */
+        WindowConfig operator*(float scalar) const;
 
         /**
          * @brief Divides all fields by a scalar.
          * @param scalar The scalar value.
          * @return The scaled WindowConfig.
          */
-        WindowConfig operator/(float scalar) const noexcept;
+        WindowConfig operator/(float scalar) const;
 
         /**
          * @brief Checks if all fields are zero or default.
          * @return True if all fields are zero/default, false otherwise.
          */
-        bool operator!() const noexcept;
+        bool operator!() const;
 
         /**
          * @brief Adds another WindowConfig to this one in-place.
          * @param other The other WindowConfig.
          */
-        void operator+=(const WindowConfig &other) noexcept;
+        void operator+=(const WindowConfig &other);
 
         /**
          * @brief Rounds all floating-point fields to the nearest integer.
          */
-        void round() noexcept;
+        void round();
 
         /**
          * @brief Clamps all fields to the range defined by direction and destination configs.
          * @param direction The direction of change for each field.
          * @param destination The destination config to clamp to.
          */
-        void clamp(const WindowConfig &direction, const WindowConfig &destination) noexcept;
+        void clamp(const WindowConfig &direction, const WindowConfig &destination);
     };
-}
+} // namespace ShapeCorners

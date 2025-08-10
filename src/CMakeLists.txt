@@ -12,6 +12,8 @@ set(effect_SRCS
     WindowConfig.cpp
     WindowManager.h
     WindowManager.cpp
+    Animation.h
+    Animation.cpp
     plugin.cpp
 )
 
@@ -34,19 +36,18 @@ else()
     )
 endif()
 
-option(DEBUG_ANIMATION "Add debug logs for animation" OFF)
 option(DEBUG_INCLUSIONS "Add debug logs for inclusion & exclusion lists" OFF)
 option(DEBUG_MAXIMIZED "Add debug logs for maximized windows" OFF)
 
-if (DEBUG_ANIMATION OR DEBUG_INCLUSIONS OR DEBUG_MAXIMIZED)
+if (CMAKE_BUILD_TYPE EQUAL "Debug")
+    message("-- Debug: Using debug build type.")
+endif ()
+
+if (DEBUG_INCLUSIONS OR DEBUG_MAXIMIZED)
+    message("-- Debug: Switched to debug mode because of other flags.")
     set(CMAKE_BUILD_TYPE "Debug")
     target_compile_definitions(kwin4_effect_shapecorners PRIVATE QT_DEBUG)
 endif ()
-
-if (DEBUG_ANIMATION)
-    message("-- Debug: Animation debug logs are enabled.")
-    target_compile_definitions(kwin4_effect_shapecorners PRIVATE DEBUG_ANIMATION)
-endif (DEBUG_ANIMATION)
 
 if (DEBUG_INCLUSIONS)
     message("-- Debug: Inclusion & exclusion debug logs are enabled.")

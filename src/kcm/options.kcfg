@@ -12,8 +12,10 @@
         <entry name="InactiveCornerRadius" type="UInt">
             <default>10</default>
         </entry>
-        <entry name="AnimationEnabled" type="Bool">
-            <default>true</default>
+        <entry name="AnimationDuration" type="UInt">
+            <default>250</default>
+            <min>0</min>
+            <max>2000</max>
         </entry>
 
         <!-- Shadow Options -->

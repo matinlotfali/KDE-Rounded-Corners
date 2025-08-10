@@ -39,7 +39,7 @@ namespace ShapeCorners {
         explicit KCM(QWidget* parent = nullptr, const QVariantList& args = QVariantList());
 #endif
 
-    public Q_SLOTS:
+    private Q_SLOTS:
         /**
          * @brief Resets the settings to their default values.
          */
