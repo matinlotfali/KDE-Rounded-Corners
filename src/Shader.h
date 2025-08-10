@@ -9,11 +9,13 @@
 
 #include <memory>
 
-namespace KWin {
+namespace KWin
+{
     class GLShader;
 }
 
-namespace ShapeCorners {
+namespace ShapeCorners
+{
     class Window;
 
     /**
@@ -23,7 +25,8 @@ namespace ShapeCorners {
      * Loads the correct shader based on the GL platform in KWin, assigns uniform variable locations,
      * and provides methods to bind and unbind the shader during rendering.
      */
-    class Shader {
+    class Shader
+    {
     public:
         /**
          * \brief Loads the correct shader based on the GL platform in KWin.
@@ -36,7 +39,7 @@ namespace ShapeCorners {
          * \return True if the shader is valid and loaded
          */
         [[nodiscard]]
-        bool IsValid() const noexcept;
+        bool IsValid() const;
 
         /**
          * \brief This function assigns the required variables to the shader.
@@ -45,19 +48,19 @@ namespace ShapeCorners {
          * \param window The window that the effect will be rendering on
          * \param scale The scale of the screen
          */
-        void Bind(const Window &window, double scale) const noexcept;
+        void Bind(const Window &window, double scale) const;
 
         /**
          * \brief Pop the shader from the stack of rendering.
          * \note  This needs to be called after each window is rendered.
          */
-        void Unbind() const noexcept;
+        void Unbind() const;
 
         /**
          * @brief Gets a reference to the unique pointer of the loaded shader.
          * \return Reference to the unique pointer of the loaded shader.
          */
-        std::unique_ptr<KWin::GLShader> &GetShader() noexcept { return m_shader; }
+        std::unique_ptr<KWin::GLShader> &GetShader() { return m_shader; }
 
     private:
         /**
@@ -80,7 +83,8 @@ namespace ShapeCorners {
 
         /**
          * \brief Reference to `uniform vec2 windowTopLeft;`
-         *        Containing the distance between the top-left of `expandedGeometry` and the top-left of `frameGeometry`.
+         *        Containing the distance between the top-left of `expandedGeometry` and the top-left of
+         * `frameGeometry`.
          * \note  When `windowTopLeft = {0,0}`, it means `expandedGeometry = frameGeometry` and there is no shadow.
          */
         int m_shader_windowTopLeft = 0;
@@ -135,8 +139,9 @@ namespace ShapeCorners {
 
         /**
          * \brief Reference to `uniform sampler2D front;`
-         *        Containing the active texture. When assigned to zero, it will contain the painted contents of the window.
+         *        Containing the active texture. When assigned to zero, it will contain the painted contents of the
+         * window.
          */
         int m_shader_front = 0;
     };
-}
+} // namespace ShapeCorners

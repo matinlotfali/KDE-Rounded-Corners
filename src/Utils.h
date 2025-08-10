@@ -9,7 +9,8 @@
 
 #include <QRectF>
 
-namespace ShapeCorners {
+namespace ShapeCorners
+{
 
     /**
      * @brief Scales a QRect by a floating-point scale factor.
@@ -17,13 +18,9 @@ namespace ShapeCorners {
      * @param scale The scale factor.
      * @return The scaled QRectF.
      */
-    constexpr QRectF operator*(const QRect &rect, const qreal scale) noexcept {
-        return {
-            rect.x() * scale,
-            rect.y() * scale,
-            rect.width() * scale,
-            rect.height() * scale
-        };
+    constexpr QRectF operator*(const QRect &rect, const qreal scale)
+    {
+        return {rect.x() * scale, rect.y() * scale, rect.width() * scale, rect.height() * scale};
     }
 
     /**
@@ -32,12 +29,8 @@ namespace ShapeCorners {
      * @param scale The scale factor.
      * @return The scaled QRectF.
      */
-    constexpr QRectF operator*(const QRectF &rect, const qreal scale) noexcept {
-        return {
-            rect.x() * scale,
-            rect.y() * scale,
-            rect.width() * scale,
-            rect.height() * scale
-        };
+    constexpr QRectF operator*(const QRectF &rect, const qreal scale)
+    {
+        return {rect.x() * scale, rect.y() * scale, rect.width() * scale, rect.height() * scale};
     }
-}
+} // namespace ShapeCorners

@@ -12,11 +12,13 @@
 #include <cstdint>
 
 class QRect;
-namespace KWin {
+namespace KWin
+{
     class EffectWindow;
 }
 
-namespace ShapeCorners {
+namespace ShapeCorners
+{
     class Window;
 
     /**
@@ -26,31 +28,32 @@ namespace ShapeCorners {
      * Recursively checks window arrangements to determine if windows are tiled,
      * and marks them accordingly. Supports both horizontal and vertical tiling checks.
      */
-    class TileChecker {
+    class TileChecker
+    {
 
     public:
         /**
          * @brief Constructs a TileChecker with a reference to the managed window list.
          * @param windowList Reference to the managed window list.
          */
-        explicit TileChecker(WindowList& windowList): m_managed(windowList) {}
+        explicit TileChecker(WindowList &windowList) : m_managed(windowList) {}
 
         /**
          * @brief Clears the tiled state for all managed windows.
          */
-        void clearTiles() const noexcept;
+        void clearTiles() const;
 
         /**
          * @brief Checks and marks tiled windows based on the given screen geometry.
          * @param screen The QRect representing the screen area to check.
          */
-        void checkTiles(const QRect& screen) noexcept;
+        void checkTiles(const QRect &screen);
 
     private:
         /**
          * @brief Reference to the managed window list.
          */
-        WindowList& m_managed;
+        WindowList &m_managed;
 
         /**
          * @brief End coordinate of the screen (x or y, depending on orientation).
@@ -70,6 +73,6 @@ namespace ShapeCorners {
          * @return True if a valid chain of tiles is found, false otherwise.
          */
         template<bool vertical>
-        bool checkTiled_Recursive(double window_start, uint8_t depth) noexcept;
+        bool checkTiled_Recursive(double window_start, uint8_t depth);
     };
-}
+} // namespace ShapeCorners

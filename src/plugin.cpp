@@ -8,7 +8,8 @@
 
 #include "Effect.h"
 
-namespace ShapeCorners {
+namespace ShapeCorners
+{
     Q_NAMESPACE
 
     /**
@@ -17,9 +18,7 @@ namespace ShapeCorners {
      * Uses the KWIN_EFFECT_FACTORY_SUPPORTED macro to register the Effect class,
      * specifying the metadata file and the support check.
      */
-    KWIN_EFFECT_FACTORY_SUPPORTED(Effect,
-                                  "metadata.json",
-                                  return Effect::supported();)
-}
+    KWIN_EFFECT_FACTORY_SUPPORTED(Effect, "metadata.json", return Effect::supported();)
+} // namespace ShapeCorners
 
 #include "plugin.moc"
