@@ -18,7 +18,11 @@
  */
 
 #include "Effect.h"
+
+#include <QDBusConnection>
 #include <QDebug>
+#include <qdbusmessage.h>
+
 #include "Animation.h"
 #include "Config.h"
 #include "Utils.h"
@@ -34,6 +38,16 @@
 #include <kwinglutils.h>
 #endif
 
+static void WriteBreezeConfigOutlineIntensity(const QString &value)
+{
+    auto cfg      = KSharedConfig::openConfig(QStringLiteral("breezerc"), KConfig::NoGlobals);
+    auto cfgGroup = cfg->group(QStringLiteral("Common"));
+    cfgGroup.writeEntry(QStringLiteral("OutlineIntensity"), value);
+    cfg->sync();
+    QDBusConnection::sessionBus().send(QDBusMessage::createSignal(
+            QStringLiteral("/KWin"), QStringLiteral("org.kde.KWin"), QStringLiteral("reloadConfig")));
+}
+
 ShapeCorners::Effect::Effect()
 {
     // Read configuration and initialize the effect.
@@ -41,12 +55,23 @@ ShapeCorners::Effect::Effect()
 
     // If the shader is valid, create the window manager and connect the windowAdded signal.
     if (m_shaderManager.IsValid()) {
+        // Disable Breeze window outline when this effect loads:
+        WriteBreezeConfigOutlineIntensity(QStringLiteral("OutlineOff"));
+        // Create the window manager with the inactive configuration.
         m_windowManager = std::make_unique<WindowManager>(m_animation->getInactiveConfig());
+        // Connect the windowAdded signal to handle new windows.
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &Effect::windowAdded);
     }
 }
 
-ShapeCorners::Effect::~Effect() = default;
+ShapeCorners::Effect::~Effect()
+{
+    // If the shader manager is valid, then the effect has been active, so some cleanup is needed.
+    if (m_shaderManager.IsValid()) {
+        // Restore Breeze outline setting when effect is unloaded:
+        WriteBreezeConfigOutlineIntensity(QStringLiteral("OutlineMedium"));
+    }
+};
 
 void ShapeCorners::Effect::reconfigure(const ReconfigureFlags flags)
 {
