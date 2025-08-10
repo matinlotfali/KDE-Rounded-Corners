@@ -75,6 +75,8 @@ void ShapeCorners::Animation::setActiveWindowChanged(const KWin::EffectWindow *w
     } else {
         qDebug() << "ShapeCorners: No window activated";
     }
+#else
+    Q_UNUSED(w)
 #endif
 
     // If not animating, start a new animation cycle.
