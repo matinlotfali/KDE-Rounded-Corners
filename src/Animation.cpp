@@ -20,12 +20,15 @@ ShapeCorners::Animation::Animation() : lastAnimationDuration(Config::animationDu
 {
     // Initialize animation state.
     update();
-    // Connect to window activation signal to handle active window changes.
-    connect(KWin::effects, &KWin::EffectsHandler::windowActivated, this, &Animation::setActiveWindowChanged);
 }
 
 void ShapeCorners::Animation::update()
 {
+    if (const auto active = KWin::effects->activeWindow(); active != lastActiveWindow) {
+        setActiveWindowChanged(active);
+        lastActiveWindow = active;
+    }
+
     // If not animating, skip update.
     if (!m_isAnimating) {
         return;
