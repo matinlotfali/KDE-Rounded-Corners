@@ -34,7 +34,7 @@ jobs:
         git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
     - name: Check out repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 0 # Fetch all history for accurate versioning
 
