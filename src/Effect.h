@@ -68,13 +68,6 @@ namespace ShapeCorners
         void reconfigure(ReconfigureFlags flags) override;
 
         /**
-         * @brief Prepares the screen for painting.
-         * @param data The screen pre-paint data.
-         * @param presentTime The time at which the frame will be presented.
-         */
-        void prePaintScreen(KWin::ScreenPrePaintData &data, std::chrono::milliseconds presentTime) override;
-
-        /**
          * @brief Prepares a window for painting.
          * @param w The effect window.
          * @param data The window pre-paint data.

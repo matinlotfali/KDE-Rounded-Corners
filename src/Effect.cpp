@@ -58,7 +58,7 @@ ShapeCorners::Effect::Effect()
         // Disable Breeze window outline when this effect loads:
         WriteBreezeConfigOutlineIntensity(QStringLiteral("OutlineOff"));
         // Create the window manager with the inactive configuration.
-        m_windowManager = std::make_unique<WindowManager>(m_animation->getInactiveConfig());
+        m_windowManager = std::make_unique<WindowManager>();
         // Connect the windowAdded signal to handle new windows.
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &Effect::windowAdded);
     }
@@ -82,15 +82,7 @@ void ShapeCorners::Effect::reconfigure(const ReconfigureFlags flags)
 
     if (!m_animation) {
         m_animation = std::make_unique<Animation>();
-    } else {
-        m_animation->update();
     }
-}
-
-void ShapeCorners::Effect::prePaintScreen(KWin::ScreenPrePaintData &data, const std::chrono::milliseconds presentTime)
-{
-    OffscreenEffect::prePaintScreen(data, presentTime);
-    m_animation->update();
 }
 
 void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::WindowPrePaintData &data,
@@ -106,8 +98,8 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
     }
 
     // Animate window properties for smooth transitions.
-    window->currentConfig = m_animation->getFrameConfig(*window);
-    if (m_animation->isAnimating()) {
+    m_animation->update(*window);
+    if (window->isAnimating) {
         kwindow->addRepaintFull();
     }
 
@@ -116,7 +108,7 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
 #if QT_VERSION_MAJOR >= 6
         // Calculate geometry and corner size for Qt6.
         const auto geo  = kwindow->frameGeometry() * kwindow->screen()->scale();
-        const auto size = window->currentConfig->cornerRadius * kwindow->screen()->scale();
+        const auto size = window->currentConfig.cornerRadius * kwindow->screen()->scale();
 #else
         // Calculate geometry and corner size for Qt5.
         const auto geo  = kwindow->frameGeometry() * KWin::effects->renderTargetScale();
@@ -203,7 +195,7 @@ void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *kwindow, int mask, con
 void ShapeCorners::Effect::windowAdded(KWin::EffectWindow *kwindow)
 {
     // Add the new window to the manager.
-    if (m_windowManager->addWindow(kwindow, m_animation->getInactiveConfig())) {
+    if (m_windowManager->addWindow(kwindow)) {
         // Redirect the window and set the shader if it was successfully added.
         redirect(kwindow);
         setShader(kwindow, m_shaderManager.GetShader().get());

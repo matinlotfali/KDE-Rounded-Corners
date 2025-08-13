@@ -4,6 +4,8 @@
 
 #include "Animation.h"
 #include <QDebug>
+
+#include "WindowManager.h"
 #if QT_VERSION_MAJOR >= 6
 #include <effect/effecthandler.h>
 #else
@@ -16,27 +18,24 @@
 
 using namespace std::chrono;
 
-ShapeCorners::Animation::Animation() : lastAnimationDuration(Config::animationDuration())
-{
-    // Initialize animation state.
-    update();
-}
+ShapeCorners::Animation::Animation() = default;
 
-void ShapeCorners::Animation::update()
+void ShapeCorners::Animation::update(Window &window)
 {
-    if (const auto active = KWin::effects->activeWindow(); active != lastActiveWindow) {
-        setActiveWindowChanged(active);
-        lastActiveWindow = active;
+    if (const auto active = KWin::effects->activeWindow();
+        (active && !currentActiveWindow) || (currentActiveWindow && active != currentActiveWindow->w)) {
+        const auto activeWindow = WindowManager::instance()->findWindow(active);
+        setActiveWindowChanged(activeWindow);
     }
 
     // If not animating, skip update.
-    if (!m_isAnimating) {
+    if (!window.isAnimating) {
         return;
     }
 
     // If animation duration is zero, stop animating and set configs to final state.
-    if (lastAnimationDuration == 0) {
-        m_isAnimating = false;
+    if (window.lastAnimationDuration == 0) {
+        window.isAnimating = false;
         qDebug() << "ShapeCorners: Animation ended.";
         return;
     }
@@ -44,54 +43,54 @@ void ShapeCorners::Animation::update()
     // Calculate remaining animation duration.
     const auto now               = system_clock::now();
     const auto animationDuration = Config::animationDuration();
-    lastAnimationDuration = animationDuration + duration_cast<milliseconds>(lastActiveWindowChangedTime - now).count();
+    window.lastAnimationDuration =
+            animationDuration + duration_cast<milliseconds>(window.lastActiveChangedTime - now).count();
 
     // If animation is over, set configs to their final values.
-    if (lastAnimationDuration < 0) {
-        lastAnimationDuration = 0;
-        activeAnimation       = WindowConfig::activeWindowConfig();
-        inactiveAnimation     = WindowConfig::inactiveWindowConfig();
+    if (window.lastAnimationDuration < 0) {
+        window.lastAnimationDuration = 0;
+        window.currentConfig =
+                window.isActive() ? WindowConfig::activeWindowConfig() : WindowConfig::inactiveWindowConfig();
         return;
     }
 
     // Interpolate between active and inactive configs based on animation progress.
-    const auto deltaTime  = static_cast<float>(lastAnimationDuration) / static_cast<float>(animationDuration);
+    const auto deltaTime  = static_cast<float>(window.lastAnimationDuration) / static_cast<float>(animationDuration);
     const auto configDiff = WindowConfig::activeWindowConfig() - WindowConfig::inactiveWindowConfig();
     const auto deltaConf  = configDiff * deltaTime;
 
-    activeAnimation   = WindowConfig::activeWindowConfig() - deltaConf;
-    inactiveAnimation = WindowConfig::inactiveWindowConfig() + deltaConf;
-    m_isAnimating     = true;
+    if (window.isActive()) {
+        window.currentConfig = WindowConfig::activeWindowConfig() - deltaConf;
+    } else {
+        window.currentConfig = WindowConfig::inactiveWindowConfig() + deltaConf;
+    }
+    window.isAnimating = true;
 }
 
-const ShapeCorners::WindowConfig *ShapeCorners::Animation::getFrameConfig(const Window &window) const
-{
-    // Return the appropriate config based on window activity.
-    return window.isActive() ? &activeAnimation : &inactiveAnimation;
-}
-
-void ShapeCorners::Animation::setActiveWindowChanged(const KWin::EffectWindow *w)
+void ShapeCorners::Animation::setActiveWindowChanged(Window *window)
 {
 #ifdef QT_DEBUG
-    if (w) {
-        qDebug() << "ShapeCorners: Window activated" << *w;
+    if (window) {
+        qDebug() << "ShapeCorners: Window activated" << window;
     } else {
         qDebug() << "ShapeCorners: No window activated";
     }
-#else
-    Q_UNUSED(w)
 #endif
 
-    // If not animating, start a new animation cycle.
-    if (!m_isAnimating) {
-        lastActiveWindowChangedTime = system_clock::now();
-        lastAnimationDuration       = Config::animationDuration();
-        m_isAnimating               = lastAnimationDuration > 0;
+    lastActiveWindow    = currentActiveWindow;
+    currentActiveWindow = window;
 
-        // If animation is disabled, set configs to their final values.
-        if (!m_isAnimating) {
-            activeAnimation   = WindowConfig::activeWindowConfig();
-            inactiveAnimation = WindowConfig::inactiveWindowConfig();
-        }
+    // If not animating, start a new animation cycle for the newly activated window.
+    if (currentActiveWindow && !currentActiveWindow->isAnimating) {
+        currentActiveWindow->lastActiveChangedTime = system_clock::now();
+        currentActiveWindow->lastAnimationDuration = Config::animationDuration();
+        currentActiveWindow->isAnimating           = currentActiveWindow->lastAnimationDuration > 0;
+    }
+
+    // If not animating, start a new animation cycle for the non-activated window.
+    if (lastActiveWindow && !lastActiveWindow->isAnimating) {
+        lastActiveWindow->lastActiveChangedTime = system_clock::now();
+        lastActiveWindow->lastAnimationDuration = Config::animationDuration();
+        lastActiveWindow->isAnimating           = lastActiveWindow->lastAnimationDuration > 0;
     }
 }

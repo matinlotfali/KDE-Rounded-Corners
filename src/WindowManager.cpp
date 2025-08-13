@@ -14,21 +14,31 @@
 #include <kwineffects.h>
 #endif
 
-ShapeCorners::WindowManager::WindowManager(const WindowConfig *config)
+/**
+ * @brief Pointer to the singleton instance of WindowManager.
+ */
+static const ShapeCorners::WindowManager *self;
+
+ShapeCorners::WindowManager::WindowManager()
 {
+    // Assign singleton instance
+    self = this;
+
     // Register D-Bus service and object for external communication
     registerDBus();
 
     // Add all currently stacked windows
     for (const auto &kwindow: KWin::effects->stackingOrder()) {
-        addWindow(kwindow, config);
+        addWindow(kwindow);
     }
 
     // Listen for window deletion events
     connect(KWin::effects, &KWin::EffectsHandler::windowDeleted, this, &WindowManager::windowRemoved);
 }
 
-ShapeCorners::Window *ShapeCorners::WindowManager::findWindow(const KWin::EffectWindow *kwindow)
+const ShapeCorners::WindowManager *ShapeCorners::WindowManager::instance() { return self; }
+
+ShapeCorners::Window *ShapeCorners::WindowManager::findWindow(const KWin::EffectWindow *kwindow) const
 {
     const auto iterator = m_managed.find(kwindow);
     if (iterator != m_managed.end()) {
@@ -37,7 +47,7 @@ ShapeCorners::Window *ShapeCorners::WindowManager::findWindow(const KWin::Effect
     return nullptr;
 }
 
-bool ShapeCorners::WindowManager::addWindow(KWin::EffectWindow *kwindow, const WindowConfig *config)
+bool ShapeCorners::WindowManager::addWindow(KWin::EffectWindow *kwindow)
 {
     // Don't treat docks as windows. They are needed for the maximized check only.
     if (kwindow->isDock()) {
@@ -82,7 +92,7 @@ bool ShapeCorners::WindowManager::addWindow(KWin::EffectWindow *kwindow, const W
     }
 
     // Create and add the managed window
-    auto *window          = new Window(kwindow, config);
+    auto *window          = new Window(kwindow);
     const auto &[iter, r] = m_managed.emplace(kwindow, window);
     if (!r) {
 #ifdef QT_DEBUG
@@ -155,16 +165,16 @@ void ShapeCorners::WindowManager::registerDBus()
     }
 }
 
-void ShapeCorners::WindowManager::checkTiled()
+void ShapeCorners::WindowManager::checkTiled() const
 {
-    TileChecker tileChecker(m_managed);
-    tileChecker.clearTiles();
+    TileChecker::clearTiles();
 
     // If both tile options are disabled, skip checking
     if (!Config::disableRoundTile() && !Config::disableOutlineTile()) {
         return;
     }
 
+    TileChecker tileChecker;
     // Check tiling for each screen, excluding menu bars
     for (const auto &screen: KWin::effects->screens()) {
         const auto screen_region = getRegionWithoutMenus(screen->geometry());

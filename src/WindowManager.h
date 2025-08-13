@@ -48,19 +48,24 @@ namespace ShapeCorners
         /**
          * @brief Constructs the WindowManager, registers D-Bus, and adds existing windows.
          */
-        explicit WindowManager(const WindowConfig *config);
+        explicit WindowManager();
+
+        /**
+         * Singleton instance access method.
+         * @return instance of WindowManager.
+         */
+        static const WindowManager *instance();
 
         /**
          * @brief Finds a managed window by its EffectWindow pointer.
          * @param kwindow The EffectWindow to search for.
          * @return Pointer to the managed Window, or nullptr if not found.
          */
-        Window *findWindow(const KWin::EffectWindow *kwindow);
+        Window *findWindow(const KWin::EffectWindow *kwindow) const;
 
         /**
          * @brief Checks and adds a window to management, or as a menu bar if it's a dock.
          * @param kwindow The EffectWindow to add.
-         * @param config The initial config of the window.
          *
          * @return True if a new managed window was added, false if:
          *
@@ -72,10 +77,15 @@ namespace ShapeCorners
          *
          * - The window is already managed (duplicate)
          */
-        bool addWindow(KWin::EffectWindow *kwindow, const WindowConfig *config);
+        bool addWindow(KWin::EffectWindow *kwindow);
+
+        /**
+         * @brief Returns the const list of managed windows.
+         * @return Const reference to the map of managed windows.
+         */
+        const WindowList &getWindows() const { return m_managed; }
 
     public Q_SLOTS:
-
         /**
          * @brief Returns a JSON string of all managed window titles and classes.
          * It is being used by the D-Bus interface.
@@ -85,7 +95,6 @@ namespace ShapeCorners
         QString get_window_titles() const;
 
     private Q_SLOTS:
-
         /**
          * @brief Handles removal of a window or menu bar.
          * @param kwindow The EffectWindow to remove.
@@ -124,7 +133,7 @@ namespace ShapeCorners
         /**
          * @brief Checks and marks tiled windows using TileChecker for all screens.
          */
-        void checkTiled();
+        void checkTiled() const;
 
         /**
          * @brief Checks and marks maximized for all windows.
