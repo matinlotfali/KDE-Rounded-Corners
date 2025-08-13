@@ -23,9 +23,8 @@ namespace ShapeCorners
      * Handles the transition between active and inactive window configurations,
      * updating animation progress and responding to window activation changes.
      */
-    class Animation final : public QObject
+    class Animation
     {
-        Q_OBJECT
 
     public:
         /**
@@ -78,14 +77,13 @@ namespace ShapeCorners
          */
         void update();
 
-    private Q_SLOTS:
+    private:
         /**
          * @brief Handles changes to the active window.
          * @param w The newly activated EffectWindow.
          */
         void setActiveWindowChanged(const KWin::EffectWindow *w);
 
-    private:
         /// Duration remaining for the current animation, in milliseconds.
         long lastAnimationDuration;
 
@@ -94,6 +92,9 @@ namespace ShapeCorners
 
         /// Timestamp of the last active window change.
         std::chrono::system_clock::time_point lastActiveWindowChangedTime;
+
+        /// Pointer to the last active window, only used to detect changes.
+        KWin::EffectWindow * lastActiveWindow = nullptr;
 
         /// Interpolated configuration for the active window.
         WindowConfig activeAnimation;
