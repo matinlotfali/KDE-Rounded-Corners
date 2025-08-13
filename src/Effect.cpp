@@ -112,7 +112,7 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
 #else
         // Calculate geometry and corner size for Qt5.
         const auto geo  = kwindow->frameGeometry() * KWin::effects->renderTargetScale();
-        const auto size = window->currentConfig->cornerRadius * KWin::effects->renderTargetScale();
+        const auto size = window->currentConfig.cornerRadius * KWin::effects->renderTargetScale();
 #endif
 
         // Create a region for each rounded corner.
