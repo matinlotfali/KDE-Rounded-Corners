@@ -138,6 +138,18 @@ namespace ShapeCorners
         int m_shader_secondOutlineThickness = 0;
 
         /**
+         * \brief Reference to `uniform vec4 outerOutlineColor;`
+         *        Containing the RGBA of the outline color specified in settings.
+         */
+        int m_shader_outerOutlineColor = 0;
+
+        /**
+         * \brief Reference to `uniform float outerOutlineThickness;`
+         *        Containing the thickness of the outline in pixels specified in settings.
+         */
+        int m_shader_outerOutlineThickness = 0;
+
+        /**
          * \brief Reference to `uniform sampler2D front;`
          *        Containing the active texture. When assigned to zero, it will contain the painted contents of the
          * window.

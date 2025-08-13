@@ -160,6 +160,53 @@
             <default>true</default>
         </entry>
 
+        <!-- Outer Outline Options -->
+
+        <entry name="OuterOutlineThickness" type="Double">
+            <default>1</default>
+            <min>0</min>
+            <max>20</max>
+        </entry>
+        <entry name="InactiveOuterOutlineThickness" type="Double">
+            <default>1</default>
+            <min>0</min>
+            <max>20</max>
+        </entry>
+        <entry name="OuterOutlineColor" type="Color">
+            <default>black</default>
+        </entry>
+        <entry name="InactiveOuterOutlineColor" type="Color">
+            <default>black</default>
+        </entry>
+        <entry name="ActiveOuterOutlineAlpha" type="Int">
+            <default>255</default>
+            <min>0</min>
+            <max>255</max>
+        </entry>
+        <entry name="InactiveOuterOutlineAlpha" type="Int">
+            <default>255</default>
+            <min>0</min>
+            <max>255</max>
+        </entry>
+        <entry name="ActiveOuterOutlinePalette" type="UInt">
+            <default>12</default>
+        </entry>
+        <entry name="InactiveOuterOutlinePalette" type="UInt">
+            <default>12</default>
+        </entry>
+        <entry name="ActiveOuterOutlineUsePalette" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="InactiveOuterOutlineUsePalette" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="ActiveOuterOutlineUseCustom" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="InactiveOuterOutlineUseCustom" type="Bool">
+            <default>true</default>
+        </entry>
+
         <!-- Inclusion and Exclusion Options -->
 
         <entry name="Inclusions" type="StringList">
