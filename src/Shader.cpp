@@ -27,7 +27,8 @@ namespace ShapeCorners
     }
 } // namespace ShapeCorners
 
-ShapeCorners::Shader::Shader() {
+ShapeCorners::Shader::Shader()
+{
 
     qInfo() << "ShapeCorners: loading shaders...";
 
@@ -35,7 +36,8 @@ ShapeCorners::Shader::Shader() {
     const QString shaderFilePath = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
                                                           QStringLiteral("kwin/shaders/shapecorners.frag"));
     // Generate the shader from file using the ShaderManager
-    m_shader = KWin::ShaderManager::instance()->generateShaderFromFile(KWin::ShaderTrait::MapTexture, QString(), shaderFilePath);
+    m_shader = KWin::ShaderManager::instance()->generateShaderFromFile(KWin::ShaderTrait::MapTexture, QString(),
+                                                                       shaderFilePath);
     if (!m_shader->isValid()) {
         qCritical() << "ShapeCorners: no valid shaders found! effect will not work.";
         return;
@@ -72,7 +74,7 @@ void ShapeCorners::Shader::Bind(const Window &window, const double scale) const
     const auto frameOffset = QVector2D(frameGeometry.topLeft() - expandedGeometry.topLeft());
     // Clamp the shadow size to the maximum allowed
     const qreal max_shadow_size = frameOffset.length();
-    const auto  shadowSize      = std::min(window.currentConfig->shadowSize * scale, max_shadow_size);
+    const auto  shadowSize      = std::min(window.currentConfig.shadowSize * scale, max_shadow_size);
     // Push the shader to the rendering stack
     KWin::ShaderManager::instance()->pushShader(m_shader.get());
     // Set all required uniforms
@@ -81,15 +83,15 @@ void ShapeCorners::Shader::Bind(const Window &window, const double scale) const
     m_shader->setUniform(m_shader_windowTopLeft, frameOffset);
     m_shader->setUniform(m_shader_usesNativeShadows, static_cast<int>(Config::useNativeDecorationShadows()));
     m_shader->setUniform(m_shader_front, 0);
-    m_shader->setUniform(m_shader_radius, static_cast<float>(window.currentConfig->cornerRadius * scale));
-    m_shader->setUniform(m_shader_outlineThickness, static_cast<float>(window.currentConfig->outlineSize * scale));
+    m_shader->setUniform(m_shader_radius, static_cast<float>(window.currentConfig.cornerRadius * scale));
+    m_shader->setUniform(m_shader_outlineThickness, static_cast<float>(window.currentConfig.outlineSize * scale));
     m_shader->setUniform(m_shader_secondOutlineThickness,
-                         static_cast<float>(window.currentConfig->secondOutlineSize * scale));
+                         static_cast<float>(window.currentConfig.secondOutlineSize * scale));
     m_shader->setUniform(m_shader_shadowSize, static_cast<float>(shadowSize));
-    m_shader->setUniform(m_shader_shadowColor, window.currentConfig->shadowColor.toQColor());
+    m_shader->setUniform(m_shader_shadowColor, window.currentConfig.shadowColor.toQColor());
     if (window.hasOutline()) {
-        m_shader->setUniform(m_shader_outlineColor, window.currentConfig->outlineColor.toQColor());
-        m_shader->setUniform(m_shader_secondOutlineColor, window.currentConfig->secondOutlineColor.toQColor());
+        m_shader->setUniform(m_shader_outlineColor, window.currentConfig.outlineColor.toQColor());
+        m_shader->setUniform(m_shader_secondOutlineColor, window.currentConfig.secondOutlineColor.toQColor());
     } else {
         m_shader->setUniform(m_shader_outlineColor, 0);
         m_shader->setUniform(m_shader_secondOutlineColor, 0);
