@@ -38,10 +38,18 @@
 #include <kwinglutils.h>
 #endif
 
-static void WriteBreezeConfigOutlineIntensity(const QString &value)
+void ShapeCorners::Effect::WriteBreezeConfigOutlineIntensity(const QString &value)
 {
+    // Ignore if the last change was less than 10 seconds ago.
+    // This is a workaround to prevent infinite loops in X11
+    auto now = std::chrono::system_clock::now();
+    if (std::chrono::duration_cast<std::chrono::seconds>(now - lastConfigReloadTime).count() < 10) {
+        return;
+    }
+
     auto cfg      = KSharedConfig::openConfig(QStringLiteral("breezerc"), KConfig::NoGlobals);
     auto cfgGroup = cfg->group(QStringLiteral("Common"));
+    lastConfigReloadTime = now;
     cfgGroup.writeEntry(QStringLiteral("OutlineIntensity"), value);
     cfg->sync();
     QDBusConnection::sessionBus().send(QDBusMessage::createSignal(

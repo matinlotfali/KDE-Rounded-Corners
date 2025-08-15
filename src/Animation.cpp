@@ -71,7 +71,7 @@ void ShapeCorners::Animation::setActiveWindowChanged(Window *window)
 {
 #ifdef QT_DEBUG
     if (window) {
-        qDebug() << "ShapeCorners: Window activated" << window;
+        qDebug() << "ShapeCorners: Window activated" << *window;
     } else {
         qDebug() << "ShapeCorners: No window activated";
     }
