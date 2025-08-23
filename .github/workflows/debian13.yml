@@ -1,4 +1,4 @@
-name: openSUSE Tumbleweed
+name: Debian 13
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
     paths-ignore: [ '**.md', '**.png' ]
   pull_request:
     branches: [ master ]
-    paths: [ '**/tumbleweed.yml' ]
+    paths: [ '**/debian13.yml' ]
   workflow_dispatch:
   schedule:
     - cron: "0 0 * * *"
@@ -14,31 +14,28 @@ on:
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
-  RPM_NAME: kwin4_effect_shapecorners
+  DEB_NAME: kwin4_effect_shapecorners
 
 jobs:
-  tumbleweed:
+  debian13:
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
     # cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-latest
     container:
-      image: opensuse/tumbleweed
+      image: debian:trixie
       options: --user root
 
     steps:
     - name: Check out repository
       uses: actions/checkout@v5
 
-    - name: Refresh Fedora Packages
-      run: zypper ref
-      continue-on-error: true
-
     - name: Install Dependencies
       run: |
-        zypper in -y --no-recommends --force-resolution git cmake gcc-c++ kf6-kconfigwidgets-devel kf6-kcmutils-devel kwin6-devel kwin6-x11-devel kf6-kwindowsystem-devel qt6-quick-devel qt6-core-private-devel
-        zypper in -y --no-recommends --force-resolution rpm-build
+        apt-get update
+        apt-get install -y -f --no-install-recommends cmake g++ gettext extra-cmake-modules qt6-base-private-dev qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev
+        apt-get install -y -f --no-install-recommends dpkg-dev file
     
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -51,21 +48,23 @@ jobs:
 
     - name: Package
       run: |
-        cpack -V -G RPM
-        RPM_FILE=artifacts/${RPM_NAME}_${GITHUB_JOB}.rpm
+        cpack -V -G DEB
+        DEB_FILE=artifacts/${DEB_NAME}_${GITHUB_JOB}.deb
         mkdir artifacts
-        mv ${RPM_NAME}.rpm ${RPM_FILE}
-        echo "RPM_FILE=${RPM_FILE}" >> $GITHUB_ENV
+        mv ${DEB_NAME}.deb ${DEB_FILE}
+        echo "DEB_FILE=${DEB_FILE}" >> $GITHUB_ENV
+        echo "USERNAME: $USERNAME"
+        echo "HOST: $HOST"
 
-    - name: Upload Workflow Artifact
+    - name: Upload Package to Workflow Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ env.RPM_NAME }}
-        path: ${{ env.RPM_FILE }}
+        name: ${{ env.DEB_NAME }}
+        path: ${{ env.DEB_FILE }}
         compression-level: 0
         if-no-files-found: error
 
-    - name: Upload Release Asset
+    - name: Upload Package to SourceForge
       if: github.ref == 'refs/heads/master'
       uses: nicklasfrahm/scp-action@main
       with:
@@ -74,8 +73,8 @@ jobs:
         username: ${{ secrets.SOURCEFORGE_USERNAME }}
         key: ${{ secrets.SOURCEFORGE_KEY }}
         fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
-        source: ${{ env.RPM_FILE }}
-        target: /home/frs/project/kde-rounded-corners/nightly/tumbleweed/${{ env.RPM_NAME }}_${{ github.job }}.rpm
+        source: ${{ env.DEB_FILE }}
+        target: /home/frs/project/kde-rounded-corners/nightly/${{ github.job }}/${{ env.DEB_NAME }}_${{ github.job }}.deb
 
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build

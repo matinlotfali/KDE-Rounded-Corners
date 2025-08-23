@@ -8,11 +8,11 @@
 
 #pragma once
 
-#include "WindowConfig.h"
 #include <QObject>
 #include <QString>
 #include <chrono>
-#include <memory>
+
+#include "WindowConfig.h"
 #ifdef QT_DEBUG
 #include <QDebug>
 #endif
@@ -27,11 +27,13 @@ namespace KWin
     /**
      * @brief Debug operator for EffectWindow.
      */
-    QDebug operator<<(const QDebug & debug, EffectWindow& kwindow);
+    QDebug operator<<(const QDebug &debug, const EffectWindow &kwindow);
 #endif
-}
+} // namespace KWin
 
-namespace ShapeCorners {
+namespace ShapeCorners
+{
+    struct WindowConfig;
 
     /**
      * @class Window
@@ -40,14 +42,15 @@ namespace ShapeCorners {
      * Stores and animates properties such as corner radius, shadow, and outline for a managed window.
      * Handles inclusion/exclusion logic and provides utility methods for window state.
      */
-    class Window final : public QObject {
+    class Window final : public QObject
+    {
         Q_OBJECT
 
     public:
         /**
          * @brief Reference to the managed KWin EffectWindow.
          */
-        KWin::EffectWindow* w;
+        KWin::EffectWindow *w;
 
         /**
          * @brief True if the window is tiled.
@@ -59,68 +62,65 @@ namespace ShapeCorners {
          */
         bool isMaximized = false;
 
+        /// Duration remaining for the current animation, in milliseconds.
+        long lastAnimationDuration;
+
+        /// Whether an animation is currently running.
+        bool isAnimating = true;
+
+        /// Timestamp of the last active window change.
+        std::chrono::system_clock::time_point lastActiveChangedTime;
+
         /**
          * @brief Current window configuration that may be animated.
          */
         WindowConfig currentConfig;
 
-#ifdef DEBUG_ANIMATION
-        /**
-         * @brief Counts the number of repaints for animation (debug only).
-         */
-        uint32_t repaintCount = 0;
-#endif
-
         /**
          * @brief Constructs a Window object for the given EffectWindow.
          * @param kwindow Reference to the KWin EffectWindow.
          */
-        explicit Window(KWin::EffectWindow* kwindow);
+        explicit Window(KWin::EffectWindow *kwindow);
 
         // don't allow copying
         Window(const Window &) = delete;
-        Window &operator=(const Window &) = delete;
 
-        /**
-         * @brief Animates window properties towards their target values.
-         * @param time The current time in milliseconds.
-         */
-        void animateProperties(const std::chrono::milliseconds &time) noexcept;
+        Window &operator=(const Window &) = delete;
 
         /**
          * @brief Checks if the window is the currently active window.
          * @return True if the window is active.
          */
         [[nodiscard]]
-        bool isActive() const noexcept;
+        bool isActive() const;
 
         /**
          * @brief Checks if the window should have rounded corners.
          * @return True if the window has rounded corners.
          */
         [[nodiscard]]
-        bool hasRoundCorners() const noexcept;
+        bool hasRoundCorners() const;
 
         /**
          * @brief Checks if the window should have an outline.
          * @return True if the window has an outline.
          */
         [[nodiscard]]
-        bool hasOutline() const noexcept;
+        bool hasOutline() const;
 
         /**
          * @brief Checks if the window should have any ShapeCorners effect.
          * @return True if the window should be affected by the effect.
          */
         [[nodiscard]]
-        bool hasEffect() const noexcept;
+        bool hasEffect() const;
 
         /**
          * @brief Serializes window information to JSON.
          * @return QJsonObject containing window class and caption.
          */
         [[nodiscard]]
-        QJsonObject toJson() const noexcept;
+        QJsonObject toJson() const;
 
         /**
          *  @brief Returns the windows caption after the " — ".
@@ -131,7 +131,7 @@ namespace ShapeCorners {
          *  @return The caption after the dash, or the full caption if not found.
          */
         [[nodiscard]]
-        QString captionAfterDash() const noexcept;
+        QString captionAfterDash() const;
 
     public Q_SLOTS:
         /**
@@ -141,11 +141,6 @@ namespace ShapeCorners {
 
     private:
         /**
-         * @brief Last animation time.
-         */
-        std::chrono::milliseconds m_last_time = {};
-
-        /**
          * @brief True if the window is explicitly included by config.
          */
         bool isIncluded = false;
@@ -154,19 +149,12 @@ namespace ShapeCorners {
          * @brief True if the window is explicitly excluded by config.
          */
         bool isExcluded = false;
-
-        /**
-         * @brief Returns the expected configuration for the window based on its active or inactive state.
-         * @return The WindowConfig with the expected values for this window.
-         */
-        [[nodiscard]]
-        WindowConfig getExpectedConfig() const noexcept;
     };
 
 #ifdef QT_DEBUG
     /**
      * @brief Debug operator for ShapeCorners::Window.
      */
-    inline QDebug operator<<(const QDebug & debug, const Window& win) noexcept { return (debug << *win.w); }
+    inline QDebug operator<<(const QDebug &debug, const Window &win) { return (debug << *win.w); }
 #endif
-}
+} // namespace ShapeCorners

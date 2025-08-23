@@ -12,23 +12,26 @@
 #include <unordered_map>
 #include <vector>
 
-namespace KWin {
+namespace KWin
+{
     class EffectWindow;
 }
 
-namespace ShapeCorners {
+namespace ShapeCorners
+{
     class Window;
+    class WindowConfig;
 
     /**
      * @brief Alias for a map of managed windows.
      * Maps KWin::EffectWindow pointers to ShapeCorners::Window pointers.
      */
-    using WindowList = std::unordered_map<const KWin::EffectWindow*, Window*>;
+    using WindowList = std::unordered_map<const KWin::EffectWindow *, Window *>;
 
     /**
      * @brief Alias for a vector of managed menus.
      */
-    using MenuBarList = std::vector<const KWin::EffectWindow*>;
+    using MenuBarList = std::vector<const KWin::EffectWindow *>;
 
     /**
      * @class WindowManager
@@ -37,40 +40,52 @@ namespace ShapeCorners {
      * Handles adding/removing windows, tracking menu bars, checking tiling and maximization,
      * and provides a D-Bus interface for querying window information.
      */
-    class WindowManager final: public QObject {
+    class WindowManager final : public QObject
+    {
         Q_OBJECT
 
     public:
         /**
          * @brief Constructs the WindowManager, registers D-Bus, and adds existing windows.
          */
-        WindowManager();
+        explicit WindowManager();
+
+        /**
+         * Singleton instance access method.
+         * @return instance of WindowManager.
+         */
+        static const WindowManager *instance();
 
         /**
          * @brief Finds a managed window by its EffectWindow pointer.
          * @param kwindow The EffectWindow to search for.
          * @return Pointer to the managed Window, or nullptr if not found.
          */
-        Window* findWindow(const KWin::EffectWindow *kwindow);
+        Window *findWindow(const KWin::EffectWindow *kwindow) const;
 
         /**
          * @brief Checks and adds a window to management, or as a menu bar if it's a dock.
          * @param kwindow The EffectWindow to add.
-         * 
+         *
          * @return True if a new managed window was added, false if:
-         * 
+         *
          * - The window is a dock (added as a menu bar instead)
-         * 
+         *
          * - The window has an empty class and caption
-         * 
+         *
          * - The window matches a hardcoded exception (e.g., KWin, lockscreen, etc.)
-         * 
+         *
          * - The window is already managed (duplicate)
          */
         bool addWindow(KWin::EffectWindow *kwindow);
 
+        /**
+         * @brief Returns the const list of managed windows.
+         * @return Const reference to the map of managed windows.
+         */
+        const WindowList &getWindows() const { return m_managed; }
+
     public Q_SLOTS:
-        
         /**
          * @brief Returns a JSON string of all managed window titles and classes.
          * It is being used by the D-Bus interface.
@@ -80,7 +95,6 @@ namespace ShapeCorners {
         QString get_window_titles() const;
 
     private Q_SLOTS:
-
         /**
          * @brief Handles removal of a window or menu bar.
          * @param kwindow The EffectWindow to remove.
@@ -119,15 +133,19 @@ namespace ShapeCorners {
         /**
          * @brief Checks and marks tiled windows using TileChecker for all screens.
          */
-        void checkTiled();
+        void checkTiled() const;
+
+        /**
+         * @brief Checks and marks maximized for all windows.
+         */
+        void checkMaximized();
 
         /**
          * @brief Returns the region of the screen excluding menu bars.
          * @param screen_geometry The geometry of the screen.
          * @return QRegion without menu bars.
          */
-        [[nodiscard]] 
-        QRegion getRegionWithoutMenus(const QRect& screen_geometry) const;
-
+        [[nodiscard]]
+        QRegion getRegionWithoutMenus(const QRect &screen_geometry) const;
     };
-}
+} // namespace ShapeCorners

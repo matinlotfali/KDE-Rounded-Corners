@@ -19,15 +19,18 @@
 
 #pragma once
 
-#include "Shader.h"
 #include <QObject>
+#include "Shader.h"
+#include <chrono>
 #if QT_VERSION_MAJOR >= 6
 #include <effect/offscreeneffect.h>
 #else
 #include <kwinoffscreeneffect.h>
 #endif
 
-namespace ShapeCorners {
+namespace ShapeCorners
+{
+    class Animation;
     class WindowManager;
 
     /**
@@ -38,8 +41,9 @@ namespace ShapeCorners {
      * to windows using a custom shader. It manages window addition, configuration,
      * and painting logic.
      */
-    class Effect final : public KWin::OffscreenEffect {
-    Q_OBJECT
+    class Effect final : public KWin::OffscreenEffect
+    {
+        Q_OBJECT
 
     public:
         /**
@@ -63,14 +67,15 @@ namespace ShapeCorners {
          * @param flags The reconfiguration flags.
          */
         void reconfigure(ReconfigureFlags flags) override;
-        
+
         /**
          * @brief Prepares a window for painting.
          * @param w The effect window.
          * @param data The window pre-paint data.
          * @param time The time since the last frame.
          */
-        void prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time) override;
+        void prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data,
+                            std::chrono::milliseconds time) override;
 
 #if QT_VERSION_MAJOR >= 6
         /**
@@ -99,30 +104,42 @@ namespace ShapeCorners {
          * @brief Returns the requested position in the effect chain.
          * @return The effect chain position.
          */
-        [[nodiscard]] 
-        int requestedEffectChainPosition() const override { return 99; }
-        
+        [[nodiscard]]
+        int requestedEffectChainPosition() const override
+        {
+            return 99;
+        }
+
         /**
          * @brief Indicates whether the effect blocks direct scanout.
          * @return False, this effect does not block direct scanout.
          */
         [[nodiscard]]
-        bool blocksDirectScanout() const override { return false; }
-        
+        bool blocksDirectScanout() const override
+        {
+            return false;
+        }
+
         /**
          * @brief Checks if the effect is currently active.
          * @return True if the shader manager is valid, false otherwise.
          */
         [[nodiscard]]
-        bool isActive() const override { return m_shaderManager.IsValid(); }
-        
+        bool isActive() const override
+        {
+            return m_shaderManager.IsValid();
+        }
+
         /**
          * @brief Indicates which features this effect provides.
          * @param feature The feature to check.
          * @return True if the feature is provided, false otherwise.
          */
-        [[nodiscard]] 
-        bool provides(const Feature feature) override { return feature == Nothing; }
+        [[nodiscard]]
+        bool provides(const Feature feature) override
+        {
+            return feature == Nothing;
+        }
 
     private Q_SLOTS:
         /**
@@ -132,9 +149,15 @@ namespace ShapeCorners {
         void windowAdded(KWin::EffectWindow *kwindow);
 
     private:
+        /// Timestamp of the last config reload.
+        std::chrono::system_clock::time_point lastConfigReloadTime = std::chrono::system_clock::time_point::min();
         /// Manages the shader used for rounded corners.
         Shader m_shaderManager;
         /// Manages the windows affected by the effect.
         std::unique_ptr<WindowManager> m_windowManager;
+        /// Manages the animation state for window corner effects.
+        std::unique_ptr<Animation> m_animation;
+
+        void WriteBreezeConfigOutlineIntensity(const QString &value);
     };
-}
+} // namespace ShapeCorners

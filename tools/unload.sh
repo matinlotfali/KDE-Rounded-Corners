@@ -5,8 +5,6 @@ set -e
 dbus-send --dest=org.kde.KWin --print-reply /Effects \
   org.kde.kwin.Effects.unloadEffect string:kwin4_effect_shapecorners > /dev/null
 
-kwriteconfig6 --file breezerc --group Common --key OutlineIntensity "OutlineMedium"
-
 # Find available qdbus binary
 QDBUS_BIN=$(which qdbus6 qdbus-qt6 qdbus 2>/dev/null | head -n 1)
 

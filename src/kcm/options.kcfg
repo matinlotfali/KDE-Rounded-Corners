@@ -12,8 +12,10 @@
         <entry name="InactiveCornerRadius" type="UInt">
             <default>10</default>
         </entry>
-        <entry name="AnimationEnabled" type="Bool">
-            <default>true</default>
+        <entry name="AnimationDuration" type="UInt">
+            <default>250</default>
+            <min>0</min>
+            <max>2000</max>
         </entry>
 
         <!-- Shadow Options -->
@@ -83,12 +85,12 @@
             <default>white</default>
         </entry>
         <entry name="ActiveOutlineAlpha" type="Int">
-            <default>128</default>
+            <default>85</default>
             <min>0</min>
             <max>255</max>
         </entry>
         <entry name="InactiveOutlineAlpha" type="Int">
-            <default>128</default>
+            <default>85</default>
             <min>0</min>
             <max>255</max>
         </entry>
@@ -114,12 +116,12 @@
         <!-- Second Outline Options -->
 
         <entry name="SecondOutlineThickness" type="Double">
-            <default>0.75</default>
+            <default>1</default>
             <min>0</min>
             <max>20</max>
         </entry>
         <entry name="InactiveSecondOutlineThickness" type="Double">
-            <default>0.75</default>
+            <default>1</default>
             <min>0</min>
             <max>20</max>
         </entry>
