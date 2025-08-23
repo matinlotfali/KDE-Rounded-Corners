@@ -98,8 +98,8 @@ void ShapeCorners::Shader::Bind(const Window &window, const double scale) const
         m_shader->setUniform(m_shader_outlineColor, window.currentConfig.outlineColor.toQColor());
         m_shader->setUniform(m_shader_secondOutlineColor, window.currentConfig.secondOutlineColor.toQColor());
     } else {
-        m_shader->setUniform(m_shader_outlineColor, 0);
-        m_shader->setUniform(m_shader_secondOutlineColor, 0);
+        m_shader->setUniform(m_shader_outlineColor, QColor(0,0,0,0));
+        m_shader->setUniform(m_shader_secondOutlineColor, QColor(0,0,0,0));
     }
 }
 
