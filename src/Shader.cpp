@@ -88,7 +88,9 @@ void ShapeCorners::Shader::Bind(const Window &window, const double scale) const
     m_shader->setUniform(m_shader_windowTopLeft, frameOffset);
     m_shader->setUniform(m_shader_usesNativeShadows, static_cast<int>(Config::useNativeDecorationShadows()));
     m_shader->setUniform(m_shader_front, 0);
-    m_shader->setUniform(m_shader_radius, static_cast<float>(window.currentConfig.cornerRadius * scale));
+    m_shader->setUniform(m_shader_radius, window.hasRoundCorners()
+                                                  ? static_cast<float>(window.currentConfig.cornerRadius * scale)
+                                                  : 0.F);
     m_shader->setUniform(m_shader_outlineThickness, static_cast<float>(window.currentConfig.outlineSize * scale));
     m_shader->setUniform(m_shader_secondOutlineThickness,
                          static_cast<float>(window.currentConfig.secondOutlineSize * scale));
@@ -98,8 +100,8 @@ void ShapeCorners::Shader::Bind(const Window &window, const double scale) const
         m_shader->setUniform(m_shader_outlineColor, window.currentConfig.outlineColor.toQColor());
         m_shader->setUniform(m_shader_secondOutlineColor, window.currentConfig.secondOutlineColor.toQColor());
     } else {
-        m_shader->setUniform(m_shader_outlineColor, QColor(0,0,0,0));
-        m_shader->setUniform(m_shader_secondOutlineColor, QColor(0,0,0,0));
+        m_shader->setUniform(m_shader_outlineColor, QColor(0, 0, 0, 0));
+        m_shader->setUniform(m_shader_secondOutlineColor, QColor(0, 0, 0, 0));
     }
 }
 
