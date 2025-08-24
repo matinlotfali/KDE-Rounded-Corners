@@ -42,13 +42,17 @@ void ShapeCorners::Effect::WriteBreezeConfigOutlineIntensity(const QString &valu
 {
     // Ignore if the last change was less than 10 seconds ago.
     // This is a workaround to prevent infinite loops in X11
-    auto now = std::chrono::system_clock::now();
-    if (std::chrono::duration_cast<std::chrono::seconds>(now - lastConfigReloadTime).count() < 10) {
+    const auto now  = std::chrono::system_clock::now();
+    const auto diff = std::chrono::duration_cast<std::chrono::seconds>(now - lastConfigReloadTime).count();
+    if (std::abs(diff) < 10) {
+        qWarning() << "ShapeCorners: Skipped writing Breeze outline intensity config" << value
+                   << "because the last change was" << diff << "seconds ago.";
         return;
     }
 
-    auto cfg      = KSharedConfig::openConfig(QStringLiteral("breezerc"), KConfig::NoGlobals);
-    auto cfgGroup = cfg->group(QStringLiteral("Common"));
+    qInfo() << "ShapeCorners: Writing Breeze outline intensity config" << value;
+    auto cfg             = KSharedConfig::openConfig(QStringLiteral("breezerc"), KConfig::NoGlobals);
+    auto cfgGroup        = cfg->group(QStringLiteral("Common"));
     lastConfigReloadTime = now;
     cfgGroup.writeEntry(QStringLiteral("OutlineIntensity"), value);
     cfg->sync();
