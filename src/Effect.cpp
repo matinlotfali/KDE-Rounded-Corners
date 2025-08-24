@@ -50,14 +50,21 @@ void ShapeCorners::Effect::WriteBreezeConfigOutlineIntensity(const QString &valu
         return;
     }
 
+    const auto cfg      = KSharedConfig::openConfig(QStringLiteral("breezerc"), KConfig::NoGlobals);
+    auto       cfgGroup = cfg->group(QStringLiteral("Common"));
+    const auto entry    = cfgGroup.readEntry(QStringLiteral("OutlineIntensity"), QStringLiteral("OutlineMedium"));
+    if (entry == value) {
+        qWarning() << "ShapeCorners: Skipped writing Breeze outline intensity config" << value
+                   << "because it is already set.";
+        return;
+    }
+
     qInfo() << "ShapeCorners: Writing Breeze outline intensity config" << value;
-    auto cfg             = KSharedConfig::openConfig(QStringLiteral("breezerc"), KConfig::NoGlobals);
-    auto cfgGroup        = cfg->group(QStringLiteral("Common"));
-    lastConfigReloadTime = now;
     cfgGroup.writeEntry(QStringLiteral("OutlineIntensity"), value);
     cfg->sync();
     QDBusConnection::sessionBus().send(QDBusMessage::createSignal(
             QStringLiteral("/KWin"), QStringLiteral("org.kde.KWin"), QStringLiteral("reloadConfig")));
+    lastConfigReloadTime = now;
 }
 
 ShapeCorners::Effect::Effect()
