@@ -88,14 +88,18 @@ void ShapeCorners::Shader::Bind(const Window &window, const double scale) const
     m_shader->setUniform(m_shader_windowTopLeft, frameOffset);
     m_shader->setUniform(m_shader_usesNativeShadows, static_cast<int>(Config::useNativeDecorationShadows()));
     m_shader->setUniform(m_shader_front, 0);
-    m_shader->setUniform(m_shader_radius, window.hasRoundCorners()
-                                                  ? static_cast<float>(window.currentConfig.cornerRadius * scale)
-                                                  : 0.F);
     m_shader->setUniform(m_shader_outlineThickness, static_cast<float>(window.currentConfig.outlineSize * scale));
     m_shader->setUniform(m_shader_secondOutlineThickness,
                          static_cast<float>(window.currentConfig.secondOutlineSize * scale));
     m_shader->setUniform(m_shader_shadowSize, static_cast<float>(shadowSize));
     m_shader->setUniform(m_shader_shadowColor, window.currentConfig.shadowColor.toQColor());
+
+    // Set shader uniforms based on disabled states
+    if (window.hasRoundCorners()) {
+        m_shader->setUniform(m_shader_radius, static_cast<float>(window.currentConfig.cornerRadius * scale));
+    } else {
+        m_shader->setUniform(m_shader_radius, 0.F);
+    }
     if (window.hasOutline()) {
         m_shader->setUniform(m_shader_outlineColor, window.currentConfig.outlineColor.toQColor());
         m_shader->setUniform(m_shader_secondOutlineColor, window.currentConfig.secondOutlineColor.toQColor());
