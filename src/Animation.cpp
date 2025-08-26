@@ -80,6 +80,17 @@ void ShapeCorners::Animation::setActiveWindowChanged(Window *window)
     lastActiveWindow    = currentActiveWindow;
     currentActiveWindow = window;
 
+    // If animation is disabled, just set the config and skip animation settings
+    if (Config::animationDuration() == 0) {
+        if (currentActiveWindow) {
+            currentActiveWindow->currentConfig = WindowConfig::activeWindowConfig();
+        }
+        if (lastActiveWindow) {
+            lastActiveWindow->currentConfig = WindowConfig::inactiveWindowConfig();
+        }
+        return;
+    }
+
     // If not animating, start a new animation cycle for the newly activated window.
     if (currentActiveWindow && !currentActiveWindow->isAnimating) {
         currentActiveWindow->lastActiveChangedTime = system_clock::now();
