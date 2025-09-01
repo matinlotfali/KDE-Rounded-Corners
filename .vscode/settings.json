@@ -1,0 +1,52 @@
+{
+    // ==============================================================
+    // C_Cpp
+    // ==============================================================
+    "editor.formatOnSave": true,
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "C_Cpp.formatting": "clangFormat",
+    "C_Cpp.codeAnalysis.runAutomatically": true,
+    "C_Cpp.codeAnalysis.clangTidy.enabled": true,
+    "C_Cpp.codeAnalysis.clangTidy.codeAction.formatFixes": true,
+    "C_Cpp.codeAnalysis.clangTidy.checks.enabled": [
+        "modernize-*",
+        "performance-*",
+        "bugprone-*",
+        "readability-*",
+        "clang-analyzer-*",
+        "concurrency-*",
+        "cppcoreguidelines-*"
+    ],
+    "C_Cpp.codeAnalysis.clangTidy.checks.disabled": [
+        "modernize-use-trailing-return-type",
+        "readability-identifier-length",
+        "bugprone-easily-swappable-parameters",
+        "bugprone-implicit-widening-of-multiplication-result",
+        "performance-avoid-endl",
+        "cppcoreguidelines-pro-bounds-pointer-arithmetic",
+        "cppcoreguidelines-non-private-member-variables-in-classes",
+        "cppcoreguidelines-pro-type-reinterpret-cast",
+        "cppcoreguidelines-pro-type-vararg",
+        "concurrency-mt-unsafe"
+    ],
+    // ==============================================================
+    // cmake
+    // ==============================================================
+    "cmake.configureOnOpen": true,
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    // ==============================================================
+    // glsllint
+    // ==============================================================
+    "glsllint.linkShader": false,
+    "glsllint.useIncludeDirOfFile": false,
+    "glsllint.fallBackStage": "frag",
+    "glsllint.glslangValidatorArgs": [
+        "-l",
+        "-d",
+        "-Isrc/shaders",
+        "-Ibuild/src/shaders",
+        "--P",
+        "#extension GL_ARB_shading_language_include : enable"
+    ],
+    "task.allowAutomaticTasks": "on"
+}

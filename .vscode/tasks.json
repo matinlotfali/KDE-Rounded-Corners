@@ -1,0 +1,17 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "Download GLSL Shaders for Linter",
+            "icon": {
+                "id": "cloud-download"
+            },
+            "command": "mkdir -p ${workspaceFolder}/build/src/shaders && cd ${workspaceFolder}/build/src/shaders && wget -cq https://raw.githubusercontent.com/KDE/kwin/refs/heads/master/src/opengl/colormanagement.glsl && wget -cq https://raw.githubusercontent.com/KDE/kwin/refs/heads/master/src/opengl/saturation.glsl",
+            "problemMatcher": [],
+            "runOptions": {
+                "runOn": "folderOpen"
+            }
+        }
+    ]
+}
