@@ -33,7 +33,10 @@
     // cmake
     // ==============================================================
     "cmake.configureOnOpen": true,
+    "cmake.automaticReconfigure": true,
     "cmake.buildDirectory": "${workspaceFolder}/build",
+    "cmake.parallelJobs": 0,
+    "cmake.deleteBuildDirOnCleanConfigure": true,
     // ==============================================================
     // glsllint
     // ==============================================================
