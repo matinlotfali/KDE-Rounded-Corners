@@ -11,6 +11,8 @@
 #include <QObject>
 #include <QString>
 #include <chrono>
+
+#include "WindowConfig.h"
 #ifdef QT_DEBUG
 #include <QDebug>
 #endif
@@ -60,20 +62,29 @@ namespace ShapeCorners
          */
         bool isMaximized = false;
 
+        /// Duration remaining for the current animation, in milliseconds.
+        long lastAnimationDuration;
+
+        /// Whether an animation is currently running.
+        bool isAnimating = true;
+
+        /// Timestamp of the last active window change.
+        std::chrono::system_clock::time_point lastActiveChangedTime;
+
         /**
          * @brief Current window configuration that may be animated.
          */
-        const WindowConfig *currentConfig;
+        WindowConfig currentConfig;
 
         /**
          * @brief Constructs a Window object for the given EffectWindow.
          * @param kwindow Reference to the KWin EffectWindow.
-         * @param config Reference to the initial WindowConfig of the Window.
          */
-        explicit Window(KWin::EffectWindow *kwindow, const WindowConfig *config);
+        explicit Window(KWin::EffectWindow *kwindow);
 
         // don't allow copying
-        Window(const Window &)            = delete;
+        Window(const Window &) = delete;
+
         Window &operator=(const Window &) = delete;
 
         /**

@@ -8,10 +8,10 @@
 
 #pragma once
 
-#include <WindowManager.h>
 #include <cstdint>
 
 class QRect;
+
 namespace KWin
 {
     class EffectWindow;
@@ -30,18 +30,16 @@ namespace ShapeCorners
      */
     class TileChecker
     {
-
     public:
         /**
          * @brief Constructs a TileChecker with a reference to the managed window list.
-         * @param windowList Reference to the managed window list.
          */
-        explicit TileChecker(WindowList &windowList) : m_managed(windowList) {}
+        explicit TileChecker() = default;
 
         /**
          * @brief Clears the tiled state for all managed windows.
          */
-        void clearTiles() const;
+        static void clearTiles();
 
         /**
          * @brief Checks and marks tiled windows based on the given screen geometry.
@@ -50,11 +48,6 @@ namespace ShapeCorners
         void checkTiles(const QRect &screen);
 
     private:
-        /**
-         * @brief Reference to the managed window list.
-         */
-        WindowList &m_managed;
-
         /**
          * @brief End coordinate of the screen (x or y, depending on orientation).
          */

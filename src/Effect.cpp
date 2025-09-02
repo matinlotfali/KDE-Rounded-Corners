@@ -38,14 +38,33 @@
 #include <kwinglutils.h>
 #endif
 
-static void WriteBreezeConfigOutlineIntensity(const QString &value)
+void ShapeCorners::Effect::WriteBreezeConfigOutlineIntensity(const QString &value)
 {
-    auto cfg      = KSharedConfig::openConfig(QStringLiteral("breezerc"), KConfig::NoGlobals);
-    auto cfgGroup = cfg->group(QStringLiteral("Common"));
+    // Ignore if the last change was less than 10 seconds ago.
+    // This is a workaround to prevent infinite loops in X11
+    const auto now  = std::chrono::system_clock::now();
+    const auto diff = std::chrono::duration_cast<std::chrono::seconds>(now - lastConfigReloadTime).count();
+    if (std::abs(diff) < 10) {
+        qWarning() << "ShapeCorners: Skipped writing Breeze outline intensity config" << value
+                   << "because the last change was" << diff << "seconds ago.";
+        return;
+    }
+
+    const auto cfg      = KSharedConfig::openConfig(QStringLiteral("breezerc"), KConfig::NoGlobals);
+    auto       cfgGroup = cfg->group(QStringLiteral("Common"));
+    const auto entry    = cfgGroup.readEntry(QStringLiteral("OutlineIntensity"), QStringLiteral("OutlineMedium"));
+    if (entry == value) {
+        qWarning() << "ShapeCorners: Skipped writing Breeze outline intensity config" << value
+                   << "because it is already set.";
+        return;
+    }
+
+    qInfo() << "ShapeCorners: Writing Breeze outline intensity config" << value;
     cfgGroup.writeEntry(QStringLiteral("OutlineIntensity"), value);
     cfg->sync();
     QDBusConnection::sessionBus().send(QDBusMessage::createSignal(
             QStringLiteral("/KWin"), QStringLiteral("org.kde.KWin"), QStringLiteral("reloadConfig")));
+    lastConfigReloadTime = now;
 }
 
 ShapeCorners::Effect::Effect()
@@ -58,7 +77,7 @@ ShapeCorners::Effect::Effect()
         // Disable Breeze window outline when this effect loads:
         WriteBreezeConfigOutlineIntensity(QStringLiteral("OutlineOff"));
         // Create the window manager with the inactive configuration.
-        m_windowManager = std::make_unique<WindowManager>(m_animation->getInactiveConfig());
+        m_windowManager = std::make_unique<WindowManager>();
         // Connect the windowAdded signal to handle new windows.
         connect(KWin::effects, &KWin::EffectsHandler::windowAdded, this, &Effect::windowAdded);
     }
@@ -82,15 +101,7 @@ void ShapeCorners::Effect::reconfigure(const ReconfigureFlags flags)
 
     if (!m_animation) {
         m_animation = std::make_unique<Animation>();
-    } else {
-        m_animation->update();
     }
-}
-
-void ShapeCorners::Effect::prePaintScreen(KWin::ScreenPrePaintData &data, const std::chrono::milliseconds presentTime)
-{
-    OffscreenEffect::prePaintScreen(data, presentTime);
-    m_animation->update();
 }
 
 void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::WindowPrePaintData &data,
@@ -106,8 +117,8 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
     }
 
     // Animate window properties for smooth transitions.
-    window->currentConfig = m_animation->getFrameConfig(*window);
-    if (m_animation->isAnimating()) {
+    m_animation->update(*window);
+    if (window->isAnimating) {
         kwindow->addRepaintFull();
     }
 
@@ -116,11 +127,11 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
 #if QT_VERSION_MAJOR >= 6
         // Calculate geometry and corner size for Qt6.
         const auto geo  = kwindow->frameGeometry() * kwindow->screen()->scale();
-        const auto size = window->currentConfig->cornerRadius * kwindow->screen()->scale();
+        const auto size = window->currentConfig.cornerRadius * kwindow->screen()->scale();
 #else
         // Calculate geometry and corner size for Qt5.
         const auto geo  = kwindow->frameGeometry() * KWin::effects->renderTargetScale();
-        const auto size = window->currentConfig->cornerRadius * KWin::effects->renderTargetScale();
+        const auto size = window->currentConfig.cornerRadius * KWin::effects->renderTargetScale();
 #endif
 
         // Create a region for each rounded corner.
@@ -203,7 +214,7 @@ void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *kwindow, int mask, con
 void ShapeCorners::Effect::windowAdded(KWin::EffectWindow *kwindow)
 {
     // Add the new window to the manager.
-    if (m_windowManager->addWindow(kwindow, m_animation->getInactiveConfig())) {
+    if (m_windowManager->addWindow(kwindow)) {
         // Redirect the window and set the shader if it was successfully added.
         redirect(kwindow);
         setShader(kwindow, m_shaderManager.GetShader().get());

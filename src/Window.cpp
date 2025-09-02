@@ -9,8 +9,8 @@
 #include <kwineffects.h>
 #endif
 
-ShapeCorners::Window::Window(KWin::EffectWindow *kwindow, const WindowConfig *config) :
-    w(kwindow), currentConfig(config)
+ShapeCorners::Window::Window(KWin::EffectWindow *kwindow) :
+    w(kwindow), lastAnimationDuration(Config::animationDuration()), currentConfig(WindowConfig::inactiveWindowConfig())
 {
     connect(Config::self(), &Config::configChanged, this, &Window::configChanged);
     configChanged();
@@ -28,7 +28,7 @@ bool ShapeCorners::Window::hasEffect() const
 
 bool ShapeCorners::Window::hasRoundCorners() const
 {
-    if (currentConfig->cornerRadius <= 0) {
+    if (currentConfig.cornerRadius <= 0) {
         return false;
     }
     if (w->isFullScreen()) {

@@ -21,6 +21,7 @@
 
 #include <QObject>
 #include "Shader.h"
+#include <chrono>
 #if QT_VERSION_MAJOR >= 6
 #include <effect/offscreeneffect.h>
 #else
@@ -66,13 +67,6 @@ namespace ShapeCorners
          * @param flags The reconfiguration flags.
          */
         void reconfigure(ReconfigureFlags flags) override;
-
-        /**
-         * @brief Prepares the screen for painting.
-         * @param data The screen pre-paint data.
-         * @param presentTime The time at which the frame will be presented.
-         */
-        void prePaintScreen(KWin::ScreenPrePaintData &data, std::chrono::milliseconds presentTime) override;
 
         /**
          * @brief Prepares a window for painting.
@@ -155,11 +149,15 @@ namespace ShapeCorners
         void windowAdded(KWin::EffectWindow *kwindow);
 
     private:
+        /// Timestamp of the last config reload.
+        std::chrono::system_clock::time_point lastConfigReloadTime = std::chrono::system_clock::time_point::min();
         /// Manages the shader used for rounded corners.
         Shader m_shaderManager;
         /// Manages the windows affected by the effect.
         std::unique_ptr<WindowManager> m_windowManager;
         /// Manages the animation state for window corner effects.
         std::unique_ptr<Animation> m_animation;
+
+        void WriteBreezeConfigOutlineIntensity(const QString &value);
     };
 } // namespace ShapeCorners

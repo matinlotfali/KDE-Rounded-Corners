@@ -26,11 +26,20 @@ jobs:
       uses: actions/checkout@v5
 
     - name: Install Dependencies
-      run: sudo apt update && sudo apt install -y --no-install-recommends glslang-tools
+      run: | 
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends glslang-tools
+
+    - name: Download GLSL include files
+      working-directory: src/shaders
+      run: |
+        wget https://raw.githubusercontent.com/KDE/kwin/refs/heads/master/src/opengl/colormanagement.glsl
+        wget https://raw.githubusercontent.com/KDE/kwin/refs/heads/master/src/opengl/saturation.glsl
 
     - name: Validate Shaders
       working-directory: src/shaders
       run: |
-        sed -i -e '/#include "shapecorners_shadows.glsl"/ {' -e 'r shapecorners_shadows.glsl' -e 'd' -e '}' *.glsl
-        sed -i -e '/#include "shapecorners.glsl"/ {' -e 'r shapecorners.glsl' -e 'd' -e '}' *.frag        
-        glslangValidator *_qt5*.frag
+        glslangValidator -l -d -I. -S frag --P "#extension GL_ARB_shading_language_include : enable" shapecorners_qt6.frag
+        glslangValidator -l -d -I. -S frag --P "#extension GL_ARB_shading_language_include : enable" shapecorners_qt6_core.frag
+        glslangValidator -l -d -I. -S frag --P "#extension GL_ARB_shading_language_include : enable" shapecorners_qt5.frag
+        glslangValidator -l -d -I. -S frag --P "#extension GL_ARB_shading_language_include : enable" shapecorners_qt5_core.frag
