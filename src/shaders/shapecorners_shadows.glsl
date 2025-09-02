@@ -1,3 +1,5 @@
+#include "variables.glsl"
+
 uniform bool usesNativeShadows;
 uniform vec4 shadowColor;        // The RGBA of the shadow color specified in settings.
 uniform float shadowSize;        // The shadow size specified in settings.
