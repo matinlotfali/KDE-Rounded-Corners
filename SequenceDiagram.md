@@ -13,6 +13,7 @@ sequenceDiagram
         participant WindowManager
         participant Shader
         participant shapecorners.frag
+        participant Animation
         participant Window
         participant WindowConfig
     end
@@ -20,15 +21,16 @@ sequenceDiagram
     loop approximately 60 frames per second
         KWin->>+Effect: prePaintWindow()
         Effect->>WindowManager: findWindow()
-        Effect->>+Window: animateProperties()
-        Window->>+WindowConfig: read config
-        WindowConfig-->>-Window: values
-        Note over Window: calculates<br>animation
-        Note over Window: stores window<br>properties
+        Effect->>+Animation: update()
+        Animation->>Window: read WindowConfig
+        Window->>+WindowConfig:
+        WindowConfig-->>-Animation: values
+        Note over Animation: calculates<br>animation
+        Animation-)Window: set WindowConfig
         alt animation not finished
-            Window-)EffectWindow: addFullRepaint()
+            Animation-)EffectWindow: addFullRepaint()
         end
-        Window-->>-Effect: done
+        Animation-->>-Effect: done
         alt window has round corners
             Effect-)EffectWindow: add paint / remove opaque / set translucent
         end
@@ -41,7 +43,8 @@ sequenceDiagram
             KWin->>+Effect: drawWindow()
             Effect->>WindowManager: findWindow()
             Effect->>+Shader: Bind()
-            Shader->>+WindowConfig: read properties
+            Shader->>Window: read WindowConfig
+            Window->>+WindowConfig:
             WindowConfig-->>-Shader: values
             Shader->>+shapecorners.frag: setUniform()
             shapecorners.frag-->>-Shader: done
