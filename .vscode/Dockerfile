@@ -1,6 +1,7 @@
 FROM debian:13
 
 # Install dependencies
+ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get -y --no-install-recommends full-upgrade
 RUN apt-get install -y --no-install-recommends \
         bash-completion \
@@ -43,4 +44,4 @@ RUN --mount=type=bind,source=.,target=/workspace \
     cmake --build . -j && \
     cmake --install .
 
-CMD ["startplasma-x11 | grep ShapeCorners"]
+CMD ["startplasma-x11"]

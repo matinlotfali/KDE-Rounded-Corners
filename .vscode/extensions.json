@@ -4,6 +4,7 @@
         "bierner.markdown-mermaid",
         "bpruitt-goddard.mermaid-markdown-syntax-highlighting",
         "slevesque.shader",
-        "dtoplak.vscode-glsllint"
+        "dtoplak.vscode-glsllint",
+        "xaver.clang-format"
     ],
 }

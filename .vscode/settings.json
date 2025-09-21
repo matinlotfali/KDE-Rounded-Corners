@@ -43,6 +43,14 @@
     "glsllint.linkShader": false,
     "glsllint.useIncludeDirOfFile": false,
     "glsllint.fallBackStage": "frag",
+    "[glsl]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "xaver.clang-format"
+    },
+    "[frag]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "xaver.clang-format"
+    },
     "glsllint.glslangValidatorArgs": [
         "-l",
         "-d",
