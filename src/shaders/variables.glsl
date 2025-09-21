@@ -7,10 +7,10 @@ uniform vec2 windowTopLeft;      /* The distance between the top-left of `expand
                                   * the top-left of `frameGeometry`. When `windowTopLeft = {0,0}`, it means
                                   * `expandedGeometry = frameGeometry` and there is no shadow. */
 
-uniform vec4 outlineColor;       // The RGBA of the outline color specified in settings.
-uniform float outlineThickness;  // The thickness of the outline in pixels specified in settings.
-uniform vec4 secondOutlineColor; // The RGBA of the second outline color specified in settings.
-uniform float secondOutlineThickness;  // The thickness of the second outline in pixels specified in settings.
+uniform vec4  outlineColor;       // The RGBA of the outline color specified in settings.
+uniform float outlineThickness;   // The thickness of the outline in pixels specified in settings.
+uniform vec4  secondOutlineColor; // The RGBA of the second outline color specified in settings.
+uniform float secondOutlineThickness; // The thickness of the second outline in pixels specified in settings.
 uniform vec4  outerOutlineColor;      // The RGBA of the outer outline color specified in settings.
 uniform float outerOutlineThickness;  // The thickness of the outer outline in pixels specified in settings.
 

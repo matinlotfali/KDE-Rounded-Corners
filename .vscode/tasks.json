@@ -12,6 +12,22 @@
             "runOptions": {
                 "runOn": "folderOpen"
             }
+        },
+        {
+            "type": "shell",
+            "label": "Test Plasma in Docker",
+            "command": ".vscode/plasma-start-docker.sh",
+            "runOptions": {
+                "instanceLimit": 1,
+            },
+            "icon": {
+                "id": "device-desktop",
+                "color": "terminal.ansiBlue"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}",
+            },
+            "problemMatcher": []
         }
     ]
 }

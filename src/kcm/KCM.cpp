@@ -32,6 +32,7 @@ ShapeCorners::KCM::KCM(QWidget *parent, const QVariantList &args) : KCModule(par
         QIcon icon(pix);
         ui->kcfg_ActiveOutlinePalette->setItemIcon(index, icon);
         ui->kcfg_ActiveSecondOutlinePalette->setItemIcon(index, icon);
+        ui->kcfg_ActiveOuterOutlinePalette->setItemIcon(index, icon);
         ui->kcfg_ActiveShadowPalette->setItemIcon(index, icon);
 
         color = palette().color(QPalette::Inactive, static_cast<QPalette::ColorRole>(index));
@@ -39,6 +40,7 @@ ShapeCorners::KCM::KCM(QWidget *parent, const QVariantList &args) : KCModule(par
         QIcon icon2(pix);
         ui->kcfg_InactiveOutlinePalette->setItemIcon(index, icon2);
         ui->kcfg_InactiveSecondOutlinePalette->setItemIcon(index, icon2);
+        ui->kcfg_InactiveOuterOutlinePalette->setItemIcon(index, icon2);
         ui->kcfg_InactiveShadowPalette->setItemIcon(index, icon2);
     }
 
@@ -60,6 +62,15 @@ ShapeCorners::KCM::KCM(QWidget *parent, const QVariantList &args) : KCModule(par
     connect(ui->kcfg_InactiveSecondOutlineColor, &KColorButton::changed, this, &KCM::update_colors);
     connect(ui->kcfg_ActiveSecondOutlineUsePalette, &QRadioButton::toggled, this, &KCM::update_colors);
     connect(ui->kcfg_InactiveSecondOutlineUsePalette, &QRadioButton::toggled, this, &KCM::update_colors);
+
+    connect(ui->kcfg_ActiveOuterOutlinePalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+            &KCM::update_colors);
+    connect(ui->kcfg_InactiveOuterOutlinePalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+            &KCM::update_colors);
+    connect(ui->kcfg_OuterOutlineColor, &KColorButton::changed, this, &KCM::update_colors);
+    connect(ui->kcfg_InactiveOuterOutlineColor, &KColorButton::changed, this, &KCM::update_colors);
+    connect(ui->kcfg_ActiveOuterOutlineUsePalette, &QRadioButton::toggled, this, &KCM::update_colors);
+    connect(ui->kcfg_InactiveOuterOutlineUsePalette, &QRadioButton::toggled, this, &KCM::update_colors);
 
     connect(ui->kcfg_ActiveShadowPalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
             &KCM::update_colors);
@@ -86,10 +97,13 @@ ShapeCorners::KCM::KCM(QWidget *parent, const QVariantList &args) : KCModule(par
     connect(ui->kcfg_InactiveOutlineAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
     connect(ui->kcfg_ActiveSecondOutlineAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
     connect(ui->kcfg_InactiveSecondOutlineAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
+    connect(ui->kcfg_ActiveOuterOutlineAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
+    connect(ui->kcfg_InactiveOuterOutlineAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
 
     // Connect outline group toggles
     connect(ui->primaryOutline, &QGroupBox::toggled, this, &KCM::outline_group_toggled);
     connect(ui->secondaryOutline, &QGroupBox::toggled, this, &KCM::outline_group_toggled);
+    connect(ui->outerOutline, &QGroupBox::toggled, this, &KCM::outline_group_toggled);
 
     // Connect window list and inclusion/exclusion controls
     connect(ui->refreshButton, &QPushButton::pressed, this, &KCM::update_windows);
@@ -204,6 +218,20 @@ void ShapeCorners::KCM::update_colors()
                       : ui->kcfg_InactiveSecondOutlineColor->color();
     ui->kcfg_InactiveSecondOutlineAlpha->setSecondColor(color);
 
+    // Update active outer outline color preview
+    checked = ui->kcfg_ActiveOuterOutlineUsePalette->isChecked();
+    index   = ui->kcfg_ActiveOuterOutlinePalette->currentIndex();
+    color   = checked ? palette().color(QPalette::Active, static_cast<QPalette::ColorRole>(index))
+                      : ui->kcfg_OuterOutlineColor->color();
+    ui->kcfg_ActiveOuterOutlineAlpha->setSecondColor(color);
+
+    // Update inactive outer outline color preview
+    checked = ui->kcfg_InactiveOuterOutlineUsePalette->isChecked();
+    index   = ui->kcfg_InactiveOuterOutlinePalette->currentIndex();
+    color   = checked ? palette().color(QPalette::Inactive, static_cast<QPalette::ColorRole>(index))
+                      : ui->kcfg_InactiveOuterOutlineColor->color();
+    ui->kcfg_InactiveOuterOutlineAlpha->setSecondColor(color);
+
     // Update active shadow color preview
     checked = ui->kcfg_ActiveShadowUsePalette->isChecked();
     index   = ui->kcfg_ActiveShadowPalette->currentIndex();
@@ -268,6 +296,9 @@ void ShapeCorners::KCM::outline_group_toggled(const bool value) const
     } else if (sender() == ui->secondaryOutline) {
         ui->kcfg_SecondOutlineThickness->setValue(value ? outlineThicknessMin : 0);
         ui->kcfg_InactiveSecondOutlineThickness->setValue(value ? outlineThicknessMin : 0);
+    } else if (sender() == ui->outerOutline) {
+        ui->kcfg_OuterOutlineThickness->setValue(value ? outlineThicknessMin : 0);
+        ui->kcfg_InactiveOuterOutlineThickness->setValue(value ? outlineThicknessMin : 0);
     }
 }
 
@@ -300,6 +331,7 @@ void ShapeCorners::KCM::load_ui() const
     // Set outline group checkboxes based on thickness values
     ui->primaryOutline->setChecked(ui->kcfg_OutlineThickness->value() > 0);
     ui->secondaryOutline->setChecked(ui->kcfg_SecondOutlineThickness->value() > 0);
+    ui->outerOutline->setChecked(ui->kcfg_OuterOutlineThickness->value() > 0);
 
     // Set animation checkboxes based on its duration
     ui->AnimationCheckbox->setChecked(config.animationDuration() > 0);

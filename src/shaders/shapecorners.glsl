@@ -26,62 +26,89 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle, vec4 coord_shad
     vec2 outerOutlineEnd = start - outerOutlineThickness * angle_vector * corner_length;
     float distance_from_center = distance(coord0, roundness_center);
 
-    vec4 outerOutlineOverlay = mix(coord_shadowColor, outerOutlineColor, outerOutlineColor.a);
-    if (hasPrimaryOutline() && hasSecondOutline()) {
-        vec4 outlineOverlay = vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), 1.0);
-        vec4 secondOutlineOverlay = vec4(mix(tex.rgb, secondOutlineColor.rgb, secondOutlineColor.a), 1.0);
+    if (hasOuterOutline()) {
+        vec4 outerOutlineOverlay = mix(coord_shadowColor, outerOutlineColor, outerOutlineColor.a);
+        if (distance_from_center > radius + outerOutlineThickness - 0.5) {
+            // antialiasing for the outer outline to shadow
+            float antialiasing = clamp(distance_from_center - radius - outerOutlineThickness + 0.5, 0.0, 1.0);
+            return mix(outerOutlineOverlay, coord_shadowColor, antialiasing);
+        }
+        else if (distance_from_center > radius - 0.5) {
+            // antialiasing for the outer outline to the window edge
+            float antialiasing = clamp(distance_from_center - radius + 0.5, 0.0, 1.0);
+            if(hasPrimaryOutline()) {
+                // if the primary outline is present
+                vec4 outlineOverlay = vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), 1.0);
+                return mix(outlineOverlay, outerOutlineOverlay, antialiasing);
+            }
+            else if(hasSecondOutline()) {
+                // if the second outline is present
+                vec4 secondOutlineOverlay = vec4(mix(tex.rgb, secondOutlineColor.rgb, secondOutlineColor.a), 1.0);
+                return mix(secondOutlineOverlay, outerOutlineOverlay, antialiasing);
+            }
+            else {
+                // if the no other outline is not present
+                return mix(tex, outerOutlineOverlay, antialiasing);
+            }
+        }
+    } else {
+        if (distance_from_center > radius - 0.5) {
+            // antialiasing for the outer outline to the window edge
+            float antialiasing = clamp(distance_from_center - radius + 0.5, 0.0, 1.0);
+            if(hasPrimaryOutline()) {
+                // if the primary outline is present
+                vec4 outlineOverlay = vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), 1.0);
+                return mix(outlineOverlay, coord_shadowColor, antialiasing);
+            }
+            else if(hasSecondOutline()) {
+                // if the second outline is present
+                vec4 secondOutlineOverlay = vec4(mix(tex.rgb, secondOutlineColor.rgb, secondOutlineColor.a), 1.0);
+                return mix(secondOutlineOverlay, coord_shadowColor, antialiasing);
+            }
+            else {
+                // if the no other outline is not present
+                return mix(tex, coord_shadowColor, antialiasing);
+            }
+        }
+    }
 
-        if (outlineThickness > radius && is_within(coord0, outlineStart, start) && !is_within(coord0, roundness_center, start)) {
+    if (hasPrimaryOutline()) {
+        vec4 outlineOverlay = vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), 1.0);
+
+// && !is_within(coord0, roundness_center, start)
+        if (outlineThickness >= radius && is_within(coord0, outlineStart, start)) {
             // when the outline is bigger than the roundness radius
             // from the window to the outline is sharp
             // no antialiasing is needed because it is not round
             return outlineOverlay;
         }
-        else if (distance_from_center < radius - outlineThickness + 0.5) {
+        else if (distance_from_center > radius - outlineThickness + 0.5) {
             // from the window to the outline
-            float antialiasing = clamp(radius - outlineThickness + 0.5 - distance_from_center, 0.0, 1.0);
-            return mix(outlineOverlay, tex, antialiasing);
-        }
-        else if (hasOuterOutline()) {
-
-            if (distance_from_center < radius + 0.5) {
-                // from the outline to the outer outline
-                float antialiasing = clamp(radius + 0.5 - distance_from_center, 0.0, 1.0);
-                return mix(outerOutlineOverlay, outlineOverlay, antialiasing);
-            }
+            float antialiasing = clamp(distance_from_center - radius + outlineThickness - 0.5, 0.0, 1.0);
+            if (hasSecondOutline()) {
+                vec4 secondOutlineOverlay = vec4(mix(tex.rgb, secondOutlineColor.rgb, secondOutlineColor.a), 1.0);
+                return mix(secondOutlineOverlay, outlineOverlay, antialiasing);
+            } 
             else {
-                // from the outer outline to the shadow
-                if (radius > 0.1) {
-                    float antialiasing = clamp(distance_from_center - radius - outerOutlineThickness + 0.5, 0.0, 1.0);
-                    return mix(outerOutlineOverlay, coord_shadowColor, antialiasing);
-                } else {
-                    // when the window is not rounded, we don't need to round the outerary outline
-                    // and since it is not rounded, we don't need antialiasing.
-                    return is_within(coord0, outlineStart, outerOutlineEnd) ? outerOutlineOverlay : coord_shadowColor;
-                }
+                return mix(tex, outlineOverlay, antialiasing);
             }
-        } else {
-            // from the first outline to the shadow
-            float antialiasing = clamp(distance_from_center - radius + 0.5, 0.0, 1.0);
-            return mix(outlineOverlay, coord_shadowColor, antialiasing);
         }
     }
-    else if (hasOuterOutline()) {
-        if (distance_from_center < radius + 0.5) {
-            // from window to the outer outline
-            float antialiasing = clamp(radius + 0.5 - distance_from_center, 0.0, 1.0);
-            return mix(outerOutlineOverlay, tex, antialiasing);
+        
+    if (hasSecondOutline()) {
+        vec4 secondOutlineOverlay = vec4(mix(tex.rgb, secondOutlineColor.rgb, secondOutlineColor.a), 1.0);
+        
+        //&& !is_within(coord0, roundness_center, start)
+        if (outlineThickness + secondOutlineThickness > radius && is_within(coord0, secondOutlineStart, start)) {
+            // when the outline is bigger than the roundness radius
+            // from the window to the outline is sharp
+            // no antialiasing is needed because it is not round
+            return secondOutlineOverlay;
         }
-        else {
-            // from the outer outline to the shadow
-            if (radius > 0.1) {
-                float antialiasing = clamp(distance_from_center - radius - outerOutlineThickness + 0.5, 0.0, 1.0);
-                return mix(outerOutlineOverlay, coord_shadowColor, antialiasing);
-            } else {
-                // when the window is not rounded, we don't need to round the outerary outline
-                // and since it is not rounded, we don't need antialiasing.
-                return is_within(coord0, outlineStart, outerOutlineEnd) ? outerOutlineOverlay : coord_shadowColor;
-            }
+        else if (distance_from_center > radius - outlineThickness - secondOutlineThickness + 0.5) {
+            // from the window to the outline
+            float antialiasing = clamp(distance_from_center - radius + outlineThickness + secondOutlineThickness - 0.5, 0.0, 1.0);
+            return mix(tex, secondOutlineOverlay, antialiasing);
         }
     }
 
