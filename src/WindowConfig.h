@@ -41,6 +41,11 @@ namespace ShapeCorners
         float secondOutlineSize{};
 
         /**
+         * @brief Current outer outline thickness.
+         */
+        float outerOutlineSize{};
+
+        /**
          * @brief Current shadow color.
          */
         FloatColor shadowColor;
@@ -54,6 +59,11 @@ namespace ShapeCorners
          * @brief Current second outline color.
          */
         FloatColor secondOutlineColor;
+
+        /**
+         * @brief Current outer outline color.
+         */
+        FloatColor outerOutlineColor;
 
         /**
          * @brief Returns the configuration for an active window.
