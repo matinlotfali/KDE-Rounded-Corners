@@ -22,6 +22,12 @@ include(cmake/qtversion.cmake)
 find_package(KF${QT_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED COMPONENTS ConfigWidgets I18n)
 
 if(${QT_MAJOR_VERSION} EQUAL 6)
+    find_package(Qt6 REQUIRED COMPONENTS DBus)
+
+    if(${Qt6_VERSION} VERSION_GREATER_EQUAL 6.10)
+        find_package(Qt6 REQUIRED COMPONENTS CorePrivate)
+    endif()
+
     find_package(KF${QT_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED COMPONENTS KCMUtils)
 
     option(KWIN_X11 "Build for KWin X11 instead of Wayland" OFF)
