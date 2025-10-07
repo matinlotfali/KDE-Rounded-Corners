@@ -12,7 +12,8 @@ uniform vec4 modulation; // This variable is assigned and used by KWinEffects us
 void main(void)
 {
     vec4 tex = texture(sampler, texcoord0);
-    tex = run(tex);
+
+    tex = run(texcoord0, tex);
 
     tex = sourceEncodingToNitsInDestinationColorspace(tex);
     tex = adjustSaturation(tex);
