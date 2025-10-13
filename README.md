@@ -53,9 +53,6 @@ I maintain this effect on KDE Plasma desktop version 5.27 to 6.4+ in various Lin
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   ![](https://img.shields.io/badge/Plasma-6.4-blue)
-  [![](https://img.shields.io/aur/maintainer/kwin-effect-rounded-corners-git?label=AUR%20Maintainer)](https://aur.archlinux.org/packages/kwin-effect-rounded-corners-git)
-  [![](https://img.shields.io/aur/votes/kwin-effect-rounded-corners-git?label=AUR%20Votes)](https://aur.archlinux.org/packages/kwin-effect-rounded-corners-git)
-  [![](https://img.shields.io/aur/popularity/kwin-effect-rounded-corners-git?label=AUR%20Popularity)](https://aur.archlinux.org/packages/kwin-effect-rounded-corners-git)
 - [![KDE Neon (Stable)](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/neon.yml?branch=master&label=KDE%20Neon%20%28Stable%29&logo=kde&logoColor=white)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/neon.yml)
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   ![](https://img.shields.io/badge/Plasma-6.4-blue)
@@ -91,10 +88,12 @@ sudo dnf copr enable matinlotfali/KDE-Rounded-Corners
 sudo dnf install kwin-effect-roundcorners # or kwin-effect-roundcorners-x11 
 ```
 
-AUR package by [xiota](https://aur.archlinux.org/account/xiota)
+AUR package by [matthewq337](https://aur.archlinux.org/packages/kwin-effect-rounded-corners)
 
 ```bash
-sudo pamac build kwin-effect-rounded-corners-git # or kwin-effect-rounded-corners-x11-git
+git clone https://aur.archlinux.org/kwin-effect-rounded-corners.git # or kwin-effect-rounded-corners-x11
+cd kwin-effect-rounded-corners 
+makepkg -si 
 ```
 
 NixOS package by [flexagoon](https://github.com/flexagoon)
