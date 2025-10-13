@@ -147,8 +147,7 @@ You need to install development packages for your distribution first:
 <summary>Arch - by https://github.com/hexa-one</summary>
 
   ```bash
-  sudo pacman -S git cmake extra-cmake-modules base-devel
-  yay -S qt5-tools
+  sudo pacman -S cmake ninja extra-cmake-modules kwin
   ```
 </details>
 <details>
