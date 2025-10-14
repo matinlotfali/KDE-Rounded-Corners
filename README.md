@@ -87,11 +87,11 @@ Copr package at [matinlotfali/KDE-Rounded-Corners](https://copr.fedorainfracloud
 sudo dnf copr enable matinlotfali/KDE-Rounded-Corners
 sudo dnf install kwin-effect-roundcorners # or kwin-effect-roundcorners-x11 
 ```
-
-AUR package by [matthewq337](https://aur.archlinux.org/packages/kwin-effect-rounded-corners)
+git AUR package by [xiota ](https://aur.archlinux.org/packages/kwin-effect-rounded-corners-git)
+stable AUR package by [matthewq337](https://aur.archlinux.org/packages/kwin-effect-rounded-corners)
 
 ```bash
-git clone https://aur.archlinux.org/kwin-effect-rounded-corners.git # or kwin-effect-rounded-corners-x11
+git clone https://aur.archlinux.org/kwin-effect-rounded-corners.git # or kwin-effect-rounded-corners-x11/kwin-effect-rounded-corners-git
 cd kwin-effect-rounded-corners 
 makepkg -si 
 ```
@@ -144,10 +144,10 @@ You need to install development packages for your distribution first:
 
 </details>
 <details>
-<summary>Arch - by https://github.com/hexa-one</summary>
+<summary>Arch</summary>
 
   ```bash
-  sudo pacman -S cmake ninja extra-cmake-modules kwin
+  sudo pacman -S cmake ninja extra-cmake-modules kwin base-devel
   ```
 </details>
 <details>
