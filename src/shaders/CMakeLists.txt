@@ -30,5 +30,5 @@ install(
     FILES
         "${CMAKE_CURRENT_BINARY_DIR}/shapecorners.frag"
         "${CMAKE_CURRENT_BINARY_DIR}/shapecorners_core.frag"
-    DESTINATION "${KDE_INSTALL_DATADIR}/${KWIN_NAMESPACE_PREFIX}/shaders"
+    DESTINATION "${KDE_INSTALL_DATADIR}/kwin/shaders"
 )
