@@ -20,8 +20,8 @@
 #pragma once
 
 #include <QObject>
-#include "Shader.h"
 #include <chrono>
+#include "Shader.h"
 #if QT_VERSION_MAJOR >= 6
 #include <effect/offscreeneffect.h>
 #else

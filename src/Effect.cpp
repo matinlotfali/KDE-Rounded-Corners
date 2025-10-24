@@ -145,8 +145,10 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
         data.opaque -= reg;
         data.paint += reg;
 
-        // Mark the window as having translucent regions.
-        data.setTranslucent();
+        if (Config::setTranslucent()) {
+            // Mark the window as having translucent regions.
+            data.setTranslucent();
+        }
     }
 
     // Call the base implementation.
