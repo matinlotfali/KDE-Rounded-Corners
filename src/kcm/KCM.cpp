@@ -7,7 +7,6 @@ ShapeCorners::KCM::KCM(QObject *parent, const KPluginMetaData &args) : KCModule(
 {
     // Set up the UI for Qt 6
     ui->setupUi(KCModule::widget());
-    ui->widget->setFixedSize(800, 672);
     ui->currentWindowList->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     addConfig(&config, KCModule::widget());
 
