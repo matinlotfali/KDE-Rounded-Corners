@@ -58,7 +58,7 @@ jobs:
         echo "RPM_FILE=${RPM_FILE}" >> $GITHUB_ENV
 
     - name: Upload Workflow Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: ${{ env.RPM_NAME }}
         path: ${{ env.RPM_FILE }}
