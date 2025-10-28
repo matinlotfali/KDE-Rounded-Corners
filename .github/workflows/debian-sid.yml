@@ -58,7 +58,7 @@ jobs:
         echo "HOST: $HOST"
 
     - name: Upload Package to Workflow Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: ${{ env.DEB_NAME }}
         path: ${{ env.DEB_FILE }}
