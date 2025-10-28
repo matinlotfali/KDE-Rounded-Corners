@@ -17,6 +17,9 @@
             <min>0</min>
             <max>2000</max>
         </entry>
+        <entry name="SetTranslucent" type="Bool">
+            <default>false</default>
+        </entry>
 
         <!-- Shadow Options -->
 

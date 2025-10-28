@@ -1,14 +1,16 @@
 #pragma once
 
-#include <kcmodule.h>
 #include <KLocalizedString>
+#include <kcmodule.h>
 #include "Config.h"
 
-namespace Ui {
+namespace Ui
+{
     class Form;
 }
 
-namespace ShapeCorners {
+namespace ShapeCorners
+{
 
     /**
      * @class KCM
@@ -19,8 +21,9 @@ namespace ShapeCorners {
      * It manages loading, saving, and resetting settings, as well as
      * updating the UI in response to user actions.
      */
-    class KCM final : public KCModule {
-    Q_OBJECT
+    class KCM final : public KCModule
+    {
+        Q_OBJECT
 
     public:
 #if (QT_VERSION_MAJOR >= 6)
@@ -36,7 +39,7 @@ namespace ShapeCorners {
          * @param parent The parent widget.
          * @param args Additional arguments.
          */
-        explicit KCM(QWidget* parent = nullptr, const QVariantList& args = QVariantList());
+        explicit KCM(QWidget *parent = nullptr, const QVariantList &args = QVariantList());
 #endif
 
     private Q_SLOTS:
@@ -92,7 +95,7 @@ namespace ShapeCorners {
          * @brief Returns the palette used by the widget.
          * @return Reference to the widget's palette.
          */
-        const QPalette& palette() { return widget()->palette(); };
+        const QPalette &palette() { return widget()->palette(); };
 #endif
     };
-}
+} // namespace ShapeCorners
