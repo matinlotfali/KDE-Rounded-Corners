@@ -20,8 +20,8 @@
 #pragma once
 
 #include <QObject>
-#include "Shader.h"
 #include <chrono>
+#include "Shader.h"
 #if QT_VERSION_MAJOR >= 6
 #include <effect/offscreeneffect.h>
 #else
@@ -158,6 +158,6 @@ namespace ShapeCorners
         /// Manages the animation state for window corner effects.
         std::unique_ptr<Animation> m_animation;
 
-        void WriteBreezeConfigOutlineIntensity(const QString &value);
+        void WriteBreezeConfig(bool set_disabled);
     };
 } // namespace ShapeCorners
