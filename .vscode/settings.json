@@ -3,6 +3,7 @@
     // C_Cpp
     // ==============================================================
     "editor.formatOnSave": true,
+    "editor.defaultFormatter": "xaver.clang-format",
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
     "C_Cpp.formatting": "clangFormat",
     "C_Cpp.codeAnalysis.runAutomatically": true,
