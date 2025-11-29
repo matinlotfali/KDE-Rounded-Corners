@@ -21,22 +21,17 @@ jobs:
     # well on Windows or Mac.  You can convert this to a matrix build if you need
     # cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
+    container:
+      image: invent-registry.kde.org/neon/docker-images/plasma:unstable
+      options: --user root
 
     steps:
     - name: Check out repository
       uses: actions/checkout@v5
 
     - name: Refresh Ubuntu Packages
-      run: sudo apt-get update
-
-    - name: Add PPA support
-      run: sudo apt-get install -y --no-install-recommends software-properties-common gpg-agent
-
-    - name: Add Neon Repository
-      run: |        
-        wget -qO - 'http://archive.neon.kde.org/public.key' | sudo apt-key add -
-        sudo add-apt-repository -y 'deb http://archive.neon.kde.org/unstable noble main'
+      run: sudo apt-get update && sudo apt-get full-upgrade -y --allow-downgrades
 
     - name: Install Dependencies
       run: |
