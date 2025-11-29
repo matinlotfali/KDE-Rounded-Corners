@@ -31,7 +31,7 @@ jobs:
       uses: actions/checkout@v5
 
     - name: Refresh Ubuntu Packages
-      run: sudo apt-get update
+      run: sudo apt-get update && sudo apt-get full-upgrade -y
 
     - name: Install Dependencies
       run: |
