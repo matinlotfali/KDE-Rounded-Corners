@@ -104,15 +104,22 @@ void ShapeCorners::Effect::reconfigure(const ReconfigureFlags flags)
     }
 }
 
-void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::WindowPrePaintData &data,
-                                          std::chrono::milliseconds time)
+void ShapeCorners::Effect::prePaintWindow(
+#if KWIN_EFFECT_API_VERSION >= 237
+        KWin::RenderView *view,
+#endif
+        KWin::EffectWindow *kwindow, KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
 {
     // Find the managed window structure.
     auto *window = m_windowManager->findWindow(kwindow);
 
     // If the shader is not valid or the window is not managed or doesn't need the effect, fall back to default.
     if (!m_shaderManager.IsValid() || window == nullptr || !window->hasEffect()) {
-        OffscreenEffect::prePaintWindow(kwindow, data, time);
+        OffscreenEffect::prePaintWindow(
+#if KWIN_EFFECT_API_VERSION >= 237
+                view,
+#endif
+                kwindow, data, time);
         return;
     }
 
@@ -141,16 +148,25 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
         reg += QRect(geo.x(), geo.y() + geo.height() - size, size, size);
         reg += QRect(geo.x() + geo.width() - size, geo.y() + geo.height() - size, size, size);
 
-        // Remove the rounded corners from the opaque region and add them to the paint region.
+// Remove the rounded corners from the opaque region and add them to the paint region.
+#if KWIN_EFFECT_API_VERSION >= 237
+        data.deviceOpaque -= reg;
+        data.devicePaint += reg;
+#else
         data.opaque -= reg;
         data.paint += reg;
+#endif
 
         // Mark the window as having translucent regions.
         data.setTranslucent();
     }
 
     // Call the base implementation.
-    OffscreenEffect::prePaintWindow(kwindow, data, time);
+    OffscreenEffect::prePaintWindow(
+#if KWIN_EFFECT_API_VERSION >= 237
+            view,
+#endif
+            kwindow, data, time);
 }
 
 bool ShapeCorners::Effect::supported()
