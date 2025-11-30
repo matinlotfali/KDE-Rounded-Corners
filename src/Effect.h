@@ -161,6 +161,6 @@ namespace ShapeCorners
         /// Manages the animation state for window corner effects.
         std::unique_ptr<Animation> m_animation;
 
-        void WriteBreezeConfigOutlineIntensity(const QString &value);
+        void WriteBreezeConfig(bool set_disabled);
     };
 } // namespace ShapeCorners
