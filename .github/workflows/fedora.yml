@@ -1,4 +1,4 @@
-name: Fedora 42
+name: Fedora
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
     paths-ignore: [ '**.md', '**.png' ]
   pull_request:
     branches: [ master ]
-    paths: [ '**/fedora42.yml' ]
+    paths: [ '**/fedora.yml' ]
   workflow_dispatch:
   schedule:
     - cron: "0 * * * *"
@@ -17,14 +17,14 @@ env:
   RPM_NAME: kwin4_effect_shapecorners
 
 jobs:
-  fedora42:
+  fedora:
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
     # cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-latest
     container:
-      image: fedora:42
+      image: fedora
       options: --user root
 
     steps:
