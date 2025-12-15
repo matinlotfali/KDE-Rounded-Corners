@@ -82,7 +82,7 @@ jobs:
 
     - name: Upload Workflow Artifact
       if: env.CURRENT_BUILD_VERSION != env.COPR_BUILD_VERSION
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: ${{ env.RPM_NAME }}
         path: "artifacts"
