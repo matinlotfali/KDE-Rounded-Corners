@@ -151,7 +151,11 @@ void ShapeCorners::Effect::prePaintWindow(
 #endif
 
         // Create a region for each rounded corner.
+#if KWIN_EFFECT_API_VERSION >= 237
+        KWin::Region reg{};
+#else
         QRegion reg{};
+#endif
         reg += QRect(geo.x(), geo.y(), size, size);
         reg += QRect(geo.x() + geo.width() - size, geo.y(), size, size);
         reg += QRect(geo.x(), geo.y() + geo.height() - size, size, size);
@@ -186,7 +190,12 @@ bool ShapeCorners::Effect::supported()
 
 #if QT_VERSION_MAJOR >= 6
 void ShapeCorners::Effect::drawWindow(const KWin::RenderTarget &renderTarget, const KWin::RenderViewport &viewport,
-                                      KWin::EffectWindow *kwindow, int mask, const QRegion &region,
+                                      KWin::EffectWindow *kwindow, int mask,
+#if KWIN_EFFECT_API_VERSION >= 237
+                                      const KWin::Region &region,
+#else
+                                      const QRegion &region,
+#endif
                                       KWin::WindowPaintData &data)
 {
 #else
