@@ -91,7 +91,13 @@ namespace ShapeCorners
          * @param data The window paint data.
          */
         void drawWindow(const KWin::RenderTarget &RenderTarget, const KWin::RenderViewport &viewport,
-                        KWin::EffectWindow *w, int mask, const QRegion &region, KWin::WindowPaintData &data) override;
+                        KWin::EffectWindow *w, int mask,
+#if KWIN_EFFECT_API_VERSION >= 237
+                        const KWin::Region &region,
+#else
+                        const QRegion &region,
+#endif
+                        KWin::WindowPaintData &data) override;
 #else
         /**
          * @brief Draws the window with the effect applied (Qt5 version).
