@@ -20,8 +20,8 @@
 #pragma once
 
 #include <QObject>
-#include "Shader.h"
 #include <chrono>
+#include "Shader.h"
 #if QT_VERSION_MAJOR >= 6
 #include <effect/offscreeneffect.h>
 #else
@@ -74,8 +74,11 @@ namespace ShapeCorners
          * @param data The window pre-paint data.
          * @param time The time since the last frame.
          */
-        void prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data,
-                            std::chrono::milliseconds time) override;
+        void prePaintWindow(
+#if KWIN_EFFECT_API_VERSION >= 237
+                KWin::RenderView *view,
+#endif
+                KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time) override;
 
 #if QT_VERSION_MAJOR >= 6
         /**
@@ -88,7 +91,13 @@ namespace ShapeCorners
          * @param data The window paint data.
          */
         void drawWindow(const KWin::RenderTarget &RenderTarget, const KWin::RenderViewport &viewport,
-                        KWin::EffectWindow *w, int mask, const QRegion &region, KWin::WindowPaintData &data) override;
+                        KWin::EffectWindow *w, int mask,
+#if KWIN_EFFECT_API_VERSION >= 237
+                        const KWin::Region &region,
+#else
+                        const QRegion &region,
+#endif
+                        KWin::WindowPaintData &data) override;
 #else
         /**
          * @brief Draws the window with the effect applied (Qt5 version).
@@ -158,6 +167,6 @@ namespace ShapeCorners
         /// Manages the animation state for window corner effects.
         std::unique_ptr<Animation> m_animation;
 
-        void WriteBreezeConfigOutlineIntensity(const QString &value);
+        void WriteBreezeConfig(bool set_disabled);
     };
 } // namespace ShapeCorners

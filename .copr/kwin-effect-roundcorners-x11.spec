@@ -58,8 +58,8 @@ minimal impact on performance.
 %doc README.md
 %{_kf6_qtplugindir}/kwin-x11/effects/configs/kwin_shapecorners_config.so
 %{_kf6_qtplugindir}/kwin-x11/effects/plugins/kwin4_effect_shapecorners.so
-%{_kf6_datadir}/kwin-x11/shaders/shapecorners.frag
-%{_kf6_datadir}/kwin-x11/shaders/shapecorners_core.frag
+%{_kf6_datadir}/kwin/shaders/shapecorners.frag
+%{_kf6_datadir}/kwin/shaders/shapecorners_core.frag
 %{_kf6_datadir}/locale/*/LC_MESSAGES/kcmcorners.mo*
 
 %changelog

@@ -38,30 +38,39 @@
 #include <kwinglutils.h>
 #endif
 
-void ShapeCorners::Effect::WriteBreezeConfigOutlineIntensity(const QString &value)
+void ShapeCorners::Effect::WriteBreezeConfig(bool set_disabled)
 {
     // Ignore if the last change was less than 10 seconds ago.
     // This is a workaround to prevent infinite loops in X11
     const auto now  = std::chrono::system_clock::now();
     const auto diff = std::chrono::duration_cast<std::chrono::seconds>(now - lastConfigReloadTime).count();
     if (std::abs(diff) < 10) {
-        qWarning() << "ShapeCorners: Skipped writing Breeze outline intensity config" << value
+        qWarning() << "ShapeCorners: Skipped writing Breeze config"
                    << "because the last change was" << diff << "seconds ago.";
         return;
     }
 
     const auto cfg      = KSharedConfig::openConfig(QStringLiteral("breezerc"), KConfig::NoGlobals);
     auto       cfgGroup = cfg->group(QStringLiteral("Common"));
-    const auto entry    = cfgGroup.readEntry(QStringLiteral("OutlineIntensity"), QStringLiteral("OutlineMedium"));
-    if (entry == value) {
-        qWarning() << "ShapeCorners: Skipped writing Breeze outline intensity config" << value
+
+    const static auto defaultOutlineIntensity = QStringLiteral("OutlineMedium");
+    const static auto defaultRoundedCorners   = QStringLiteral("true");
+    const auto        valueOutlineIntensity   = set_disabled ? QStringLiteral("OutlineOff") : defaultOutlineIntensity;
+    const auto        valueRoundedCorners     = set_disabled ? QStringLiteral("false") : defaultRoundedCorners;
+    const auto entryOutlineIntensity = cfgGroup.readEntry(QStringLiteral("OutlineIntensity"), defaultOutlineIntensity);
+    const auto entryRoundedCorners   = cfgGroup.readEntry(QStringLiteral("RoundedCorners"), defaultRoundedCorners);
+
+    if (entryOutlineIntensity == valueOutlineIntensity && entryRoundedCorners == valueRoundedCorners) {
+        qWarning() << "ShapeCorners: Skipped writing Breeze config"
                    << "because it is already set.";
         return;
     }
 
-    qInfo() << "ShapeCorners: Writing Breeze outline intensity config" << value;
-    cfgGroup.writeEntry(QStringLiteral("OutlineIntensity"), value);
+    qInfo() << "ShapeCorners: Writing Breeze config";
+    cfgGroup.writeEntry(QStringLiteral("OutlineIntensity"), valueOutlineIntensity);
+    cfgGroup.writeEntry(QStringLiteral("RoundedCorners"), valueRoundedCorners);
     cfg->sync();
+
     QDBusConnection::sessionBus().send(QDBusMessage::createSignal(
             QStringLiteral("/KWin"), QStringLiteral("org.kde.KWin"), QStringLiteral("reloadConfig")));
     lastConfigReloadTime = now;
@@ -75,7 +84,7 @@ ShapeCorners::Effect::Effect()
     // If the shader is valid, create the window manager and connect the windowAdded signal.
     if (m_shaderManager.IsValid()) {
         // Disable Breeze window outline when this effect loads:
-        WriteBreezeConfigOutlineIntensity(QStringLiteral("OutlineOff"));
+        WriteBreezeConfig(true);
         // Create the window manager with the inactive configuration.
         m_windowManager = std::make_unique<WindowManager>();
         // Connect the windowAdded signal to handle new windows.
@@ -88,7 +97,7 @@ ShapeCorners::Effect::~Effect()
     // If the shader manager is valid, then the effect has been active, so some cleanup is needed.
     if (m_shaderManager.IsValid()) {
         // Restore Breeze outline setting when effect is unloaded:
-        WriteBreezeConfigOutlineIntensity(QStringLiteral("OutlineMedium"));
+        WriteBreezeConfig(false);
     }
 };
 
@@ -104,15 +113,22 @@ void ShapeCorners::Effect::reconfigure(const ReconfigureFlags flags)
     }
 }
 
-void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::WindowPrePaintData &data,
-                                          std::chrono::milliseconds time)
+void ShapeCorners::Effect::prePaintWindow(
+#if KWIN_EFFECT_API_VERSION >= 237
+        KWin::RenderView *view,
+#endif
+        KWin::EffectWindow *kwindow, KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
 {
     // Find the managed window structure.
     auto *window = m_windowManager->findWindow(kwindow);
 
     // If the shader is not valid or the window is not managed or doesn't need the effect, fall back to default.
     if (!m_shaderManager.IsValid() || window == nullptr || !window->hasEffect()) {
-        OffscreenEffect::prePaintWindow(kwindow, data, time);
+        OffscreenEffect::prePaintWindow(
+#if KWIN_EFFECT_API_VERSION >= 237
+                view,
+#endif
+                kwindow, data, time);
         return;
     }
 
@@ -135,22 +151,35 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
 #endif
 
         // Create a region for each rounded corner.
+#if KWIN_EFFECT_API_VERSION >= 237
+        KWin::Region reg{};
+#else
         QRegion reg{};
+#endif
         reg += QRect(geo.x(), geo.y(), size, size);
         reg += QRect(geo.x() + geo.width() - size, geo.y(), size, size);
         reg += QRect(geo.x(), geo.y() + geo.height() - size, size, size);
         reg += QRect(geo.x() + geo.width() - size, geo.y() + geo.height() - size, size, size);
 
-        // Remove the rounded corners from the opaque region and add them to the paint region.
+// Remove the rounded corners from the opaque region and add them to the paint region.
+#if KWIN_EFFECT_API_VERSION >= 237
+        data.deviceOpaque -= reg;
+        data.devicePaint += reg;
+#else
         data.opaque -= reg;
         data.paint += reg;
+#endif
 
         // Mark the window as having translucent regions.
         data.setTranslucent();
     }
 
     // Call the base implementation.
-    OffscreenEffect::prePaintWindow(kwindow, data, time);
+    OffscreenEffect::prePaintWindow(
+#if KWIN_EFFECT_API_VERSION >= 237
+            view,
+#endif
+            kwindow, data, time);
 }
 
 bool ShapeCorners::Effect::supported()
@@ -161,7 +190,12 @@ bool ShapeCorners::Effect::supported()
 
 #if QT_VERSION_MAJOR >= 6
 void ShapeCorners::Effect::drawWindow(const KWin::RenderTarget &renderTarget, const KWin::RenderViewport &viewport,
-                                      KWin::EffectWindow *kwindow, int mask, const QRegion &region,
+                                      KWin::EffectWindow *kwindow, int mask,
+#if KWIN_EFFECT_API_VERSION >= 237
+                                      const KWin::Region &region,
+#else
+                                      const QRegion &region,
+#endif
                                       KWin::WindowPaintData &data)
 {
 #else

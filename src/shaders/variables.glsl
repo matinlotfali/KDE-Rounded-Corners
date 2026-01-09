@@ -24,7 +24,7 @@ vec2 pixel_to_tex(vec2 pixelcoord)
     return vec2((pixelcoord.x + windowTopLeft.x) / windowExpandedSize.x,
                 1.0 - (pixelcoord.y + windowTopLeft.y) / windowExpandedSize.y);
 }
-bool hasExpandedSize() { return windowSize != windowExpandedSize; }
+bool hasExpandedSize() { return windowTopLeft.x >= 1.0 && windowTopLeft.y >= 1.0; }
 bool hasPrimaryOutline() { return outlineColor.a > 0.0 && outlineThickness > 0.0; }
 bool hasSecondOutline() { return secondOutlineColor.a > 0.0 && secondOutlineThickness > 0.0; }
 bool hasOuterOutline() { return hasExpandedSize() && outerOutlineColor.a > 0.0 && outerOutlineThickness > 0.0; }

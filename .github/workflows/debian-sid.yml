@@ -29,12 +29,12 @@ jobs:
 
     steps:
     - name: Check out repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Install Dependencies
       run: |
         apt-get update
-        apt-get install -y -f --no-install-recommends cmake g++ gettext extra-cmake-modules qt6-base-private-dev qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev
+        apt-get install -y -f --no-install-recommends cmake g++ gettext extra-cmake-modules qt6-base-private-dev qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev libdrm-dev
         apt-get install -y -f --no-install-recommends dpkg-dev file
         
     
@@ -58,7 +58,7 @@ jobs:
         echo "HOST: $HOST"
 
     - name: Upload Package to Workflow Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: ${{ env.DEB_NAME }}
         path: ${{ env.DEB_FILE }}
