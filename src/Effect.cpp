@@ -40,6 +40,8 @@
 
 void ShapeCorners::Effect::WriteBreezeConfig(bool set_disabled)
 {
+    return;
+
     // Ignore if the last change was less than 10 seconds ago.
     // This is a workaround to prevent infinite loops in X11
     const auto now  = std::chrono::system_clock::now();
