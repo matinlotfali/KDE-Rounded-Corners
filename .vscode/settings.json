@@ -60,5 +60,9 @@
         "--P",
         "#extension GL_ARB_shading_language_include : enable"
     ],
-    "task.allowAutomaticTasks": "on"
+    // ==============================================================
+    // other
+    // ==============================================================
+    "task.allowAutomaticTasks": "on",
+    "qt-ui.customWidgetsDesignerExePath": "/usr/bin/designer-qt6"
 }

@@ -170,8 +170,10 @@ void ShapeCorners::Effect::prePaintWindow(
         data.paint += reg;
 #endif
 
-        // Mark the window as having translucent regions.
-        data.setTranslucent();
+        if (Config::setTranslucent()) {
+            // Mark the window as having translucent regions.
+            data.setTranslucent();
+        }
     }
 
     // Call the base implementation.
