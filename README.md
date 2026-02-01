@@ -65,12 +65,12 @@ This effect is maintained on KDE Plasma desktop versions 5.27 to 6.5+ in various
 # Contributions:
 
 - Compatibility of the effect with other effects like Wobbly windows
-- Compatibility with KWin for Plasma versions 5.27 to 6.5
+- Compatibility with KWin for Plasma versions 5.27 to 6.5+
 - Compatibility with HDR in Plasma 6.0
 - Compatibility with split KWin codebase dependency starting version 6.4 - see [#383](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/383)
 - Optimize the effect to render once instead of 5 times - see [#49](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/49)
 - Smooth animation when a window moves to an active state
-- Reimplementation with shaders, including shadows at corners and two outlines
+- Reimplementation with shaders, including shadows at corners and three outlines
 - Ability to disable the effect when windows get maximized or tiled
 - Cleanups for the plugin logic, remove unneeded dependencies from CMakeLists.txt file - by [alex1701c](https://github.com/alex1701c)
 - Separate outline color for active and inactive windows - by [OrkenWhite](https://github.com/OrkenWhite)
@@ -95,7 +95,7 @@ AUR package by [xiota](https://aur.archlinux.org/account/xiota)
 sudo pamac build kwin-effect-rounded-corners-git # or kwin-effect-rounded-corners-x11-git
 ```
 
-NixOS package by [flexagoon](https:///flexagoon)
+NixOS package by [flexagoon](https://github.com/flexagoon)
 
 ```bash
 nix-env -iA nixos.kde-rounded-corners
@@ -270,7 +270,7 @@ After that, the Steam window gets its shadows back.
 When troubleshooting or reporting an issue, it might be useful to enable Debug logs during the build time using:
 
 ```bash
-cmake .. --DCMAKE_BUILD_TYPE=Debug
+cmake .. -DCMAKE_BUILD_TYPE=Debug
 cmake --build . -j
 ```
 

@@ -14,7 +14,7 @@
 #include <kwinglutils.h>
 #endif
 
-namespace ShapeCorners
+namespace
 {
     /**
      * @brief Converts a QSizeF to a QVector2D.
@@ -25,7 +25,7 @@ namespace ShapeCorners
     {
         return {static_cast<float>(size.width()), static_cast<float>(size.height())};
     }
-} // namespace ShapeCorners
+} // namespace
 
 ShapeCorners::Shader::Shader()
 {

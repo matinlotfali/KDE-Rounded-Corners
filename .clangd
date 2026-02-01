@@ -1,0 +1,31 @@
+Diagnostics:
+  ClangTidy:
+    Add:
+      - modernize-*
+      - performance-*
+      - bugprone-*
+      - readability-*
+      - clang-analyzer-*
+      - concurrency-*
+      - cppcoreguidelines-*
+      - portability-*
+      - cert-*
+      - misc-*
+    Remove:
+      - modernize-use-trailing-return-type
+      - readability-identifier-length
+      - readability-redundant-access-specifiers
+      - bugprone-easily-swappable-parameters
+      - bugprone-implicit-widening-of-multiplication-result
+      - performance-avoid-endl
+      - cppcoreguidelines-pro-bounds-pointer-arithmetic
+      - cppcoreguidelines-non-private-member-variables-in-classes
+      - cppcoreguidelines-pro-type-reinterpret-cast
+      - cppcoreguidelines-pro-type-vararg
+      - concurrency-mt-unsafe
+  UnusedIncludes: Strict
+
+InlayHints:
+  Enabled: Yes
+  ParameterNames: Yes
+  DeducedTypes: Yes

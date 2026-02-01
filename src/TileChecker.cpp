@@ -34,7 +34,7 @@ bool ShapeCorners::TileChecker::checkTiled_Recursive(double window_start, const 
     }
 
     bool found_last_chain = false;
-    for (auto &[kwindow, window]: WindowManager::instance()->getWindows()) {
+    for (const auto &[kwindow, window]: WindowManager::instance()->getWindows()) {
         // Skip windows without an effect
         if (!window->hasEffect()) {
             continue;
@@ -73,7 +73,7 @@ bool ShapeCorners::TileChecker::checkTiled_Recursive(double window_start, const 
 void ShapeCorners::TileChecker::clearTiles()
 {
     // Iterate over all managed windows and reset their isTiled flag
-    for (const auto window: WindowManager::instance()->getWindows() | std::views::values) {
+    for (const auto &window: WindowManager::instance()->getWindows() | std::views::values) {
         window->isTiled = false;
     }
 }

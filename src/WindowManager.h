@@ -9,6 +9,7 @@
 #pragma once
 
 #include <QObject>
+#include <memory>
 #include <unordered_map>
 #include <vector>
 
@@ -26,7 +27,7 @@ namespace ShapeCorners
      * @brief Alias for a map of managed windows.
      * Maps KWin::EffectWindow pointers to ShapeCorners::Window pointers.
      */
-    using WindowList = std::unordered_map<const KWin::EffectWindow *, Window *>;
+    using WindowList = std::unordered_map<const KWin::EffectWindow *, std::unique_ptr<Window>>;
 
     /**
      * @brief Alias for a vector of managed menus.
@@ -124,6 +125,11 @@ namespace ShapeCorners
          * @brief List of managed menu bar windows.
          */
         MenuBarList m_menuBars;
+
+        /**
+         * @brief Instance pointer for assigning singleton
+         */
+        const static WindowManager *self;
 
         /**
          * @brief Register D-Bus service and object for external communication
