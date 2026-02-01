@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <QPointer>
+
 namespace ShapeCorners
 {
     class Window;
@@ -36,9 +38,11 @@ namespace ShapeCorners
         void setActiveWindowChanged(Window *window);
 
         /// Pointer to the current active window, only used to detect changes.
-        Window *currentActiveWindow = nullptr;
+        /// QPointer automatically becomes null when the Window is deleted.
+        QPointer<Window> currentActiveWindow;
 
         /// Pointer to the last active window, only used to detect changes.
-        Window *lastActiveWindow = nullptr;
+        /// QPointer automatically becomes null when the Window is deleted.
+        QPointer<Window> lastActiveWindow;
     };
 } // namespace ShapeCorners

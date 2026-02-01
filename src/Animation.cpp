@@ -22,9 +22,10 @@ ShapeCorners::Animation::Animation() = default;
 
 void ShapeCorners::Animation::update(Window &window)
 {
-    if (const auto active = KWin::effects->activeWindow();
-        (active && !currentActiveWindow) || (currentActiveWindow && active != currentActiveWindow->w)) {
-        const auto activeWindow = WindowManager::instance()->findWindow(active);
+    if (auto *const active = KWin::effects->activeWindow();
+        ((active != nullptr) && (currentActiveWindow == nullptr)) ||
+        ((currentActiveWindow != nullptr) && active != currentActiveWindow->w)) {
+        auto *const activeWindow = WindowManager::instance()->findWindow(active);
         setActiveWindowChanged(activeWindow);
     }
 
@@ -70,7 +71,7 @@ void ShapeCorners::Animation::update(Window &window)
 void ShapeCorners::Animation::setActiveWindowChanged(Window *window)
 {
 #ifdef QT_DEBUG
-    if (window) {
+    if (window != nullptr) {
         qDebug() << "ShapeCorners: Window activated" << *window;
     } else {
         qDebug() << "ShapeCorners: No window activated";
@@ -82,24 +83,24 @@ void ShapeCorners::Animation::setActiveWindowChanged(Window *window)
 
     // If animation is disabled, just set the config and skip animation settings
     if (Config::animationDuration() == 0) {
-        if (currentActiveWindow) {
+        if (currentActiveWindow != nullptr) {
             currentActiveWindow->currentConfig = WindowConfig::activeWindowConfig();
         }
-        if (lastActiveWindow) {
+        if (lastActiveWindow != nullptr) {
             lastActiveWindow->currentConfig = WindowConfig::inactiveWindowConfig();
         }
         return;
     }
 
     // If not animating, start a new animation cycle for the newly activated window.
-    if (currentActiveWindow && !currentActiveWindow->isAnimating) {
+    if ((currentActiveWindow != nullptr) && !currentActiveWindow->isAnimating) {
         currentActiveWindow->lastActiveChangedTime = system_clock::now();
         currentActiveWindow->lastAnimationDuration = Config::animationDuration();
         currentActiveWindow->isAnimating           = currentActiveWindow->lastAnimationDuration > 0;
     }
 
     // If not animating, start a new animation cycle for the non-activated window.
-    if (lastActiveWindow && !lastActiveWindow->isAnimating) {
+    if ((lastActiveWindow != nullptr) && !lastActiveWindow->isAnimating) {
         lastActiveWindow->lastActiveChangedTime = system_clock::now();
         lastActiveWindow->lastAnimationDuration = Config::animationDuration();
         lastActiveWindow->isAnimating           = lastActiveWindow->lastAnimationDuration > 0;

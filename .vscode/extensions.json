@@ -5,6 +5,6 @@
         "bpruitt-goddard.mermaid-markdown-syntax-highlighting",
         "slevesque.shader",
         "dtoplak.vscode-glsllint",
-        "xaver.clang-format"
+        "llvm-vs-code-extensions.vscode-clangd"
     ],
 }

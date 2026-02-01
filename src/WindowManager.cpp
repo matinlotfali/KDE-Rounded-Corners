@@ -3,6 +3,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QtDBus/QDBusConnection>
+#include <memory>
 #include <ranges>
 #include "Config.h"
 #include "TileChecker.h"
@@ -17,7 +18,7 @@
 /**
  * @brief Pointer to the singleton instance of WindowManager.
  */
-static const ShapeCorners::WindowManager *self;
+const ShapeCorners::WindowManager *ShapeCorners::WindowManager::self = nullptr;
 
 ShapeCorners::WindowManager::WindowManager()
 {
@@ -42,7 +43,7 @@ ShapeCorners::Window *ShapeCorners::WindowManager::findWindow(const KWin::Effect
 {
     const auto iterator = m_managed.find(kwindow);
     if (iterator != m_managed.end()) {
-        return iterator->second;
+        return iterator->second.get();
     }
     return nullptr;
 }
@@ -92,8 +93,7 @@ bool ShapeCorners::WindowManager::addWindow(KWin::EffectWindow *kwindow)
     }
 
     // Create and add the managed window
-    auto *window          = new Window(kwindow);
-    const auto &[iter, r] = m_managed.emplace(kwindow, window);
+    const auto &[iter, r] = m_managed.emplace(kwindow, std::make_unique<Window>(kwindow));
     if (!r) {
 #ifdef QT_DEBUG
         qWarning() << "ShapeCorners: ignoring duplicate window.";
@@ -118,7 +118,6 @@ void ShapeCorners::WindowManager::windowRemoved(KWin::EffectWindow *kwindow)
     if (kwindow == nullptr) {
         qDebug() << "ShapeCorners: null window removed";
     } else if (const auto iterator = m_managed.find(kwindow); iterator != m_managed.end()) {
-        iterator->second->deleteLater();
         m_managed.erase(iterator);
         qDebug() << "ShapeCorners: window removed" << kwindow->windowClass();
     } else if (const auto iterator2 = std::ranges::find(m_menuBars, kwindow); iterator2 != m_menuBars.end()) {
@@ -239,7 +238,7 @@ void ShapeCorners::WindowManager::windowResized(KWin::EffectWindow *kwindow, con
 
 void ShapeCorners::WindowManager::checkMaximized()
 {
-    for (const auto *window: m_managed | std::views::values) {
+    for (const auto &window: m_managed | std::views::values) {
         checkMaximized(window->w);
     }
 }

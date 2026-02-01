@@ -51,6 +51,13 @@ namespace ShapeCorners
          */
         Effect();
 
+        // don't allow copying
+        Effect(const Effect &)  = delete;
+        Effect(const Effect &&) = delete;
+
+        Effect &operator=(const Effect &)  = delete;
+        Effect &operator=(const Effect &&) = delete;
+
         /**
          * @brief Destructor.
          */
