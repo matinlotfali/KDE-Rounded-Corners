@@ -116,8 +116,8 @@ jobs:
     - name: Trigger Copr Rebuild
       if: github.ref == 'refs/heads/master' && env.CURRENT_BUILD_VERSION != env.COPR_BUILD_VERSION
       run:
-        curl -X POST ${{ secrets.COPR_WEBHOOK_URL }}/kwin-effect-roundcorners
-        curl -X POST ${{ secrets.COPR_WEBHOOK_URL }}/kwin-effect-roundcorners-x11
+        curl -X POST ${{ secrets.COPR_WEBHOOK_URL }}/kwin-effect-roundcorners/
+        curl -X POST ${{ secrets.COPR_WEBHOOK_URL }}/kwin-effect-roundcorners-x11/
 
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build
