@@ -25,6 +25,10 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle, vec4 coord_shad
     vec2  secondOutlineStart   = start + (outlineThickness + secondOutlineThickness) * angle_vector * corner_length;
     vec2  outerOutlineEnd      = start - outerOutlineThickness * angle_vector * corner_length;
     float distance_from_center = distance(coord0, roundness_center);
+    bool  inOutlineZone =
+            (hasPrimaryOutline() && outlineThickness >= radius && is_within(coord0, outlineStart, start)) ||
+            (hasSecondOutline() && outlineThickness + secondOutlineThickness >= radius &&
+             is_within(coord0, secondOutlineStart, start));
 
     if (hasOuterOutline()) {
         vec4 outerOutlineOverlay = mix(coord_shadowColor, outerOutlineColor, outerOutlineColor.a);
@@ -32,7 +36,7 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle, vec4 coord_shad
             // antialiasing for the outer outline to shadow
             float antialiasing = clamp(distance_from_center - radius - outerOutlineThickness + 0.5, 0.0, 1.0);
             return mix(outerOutlineOverlay, coord_shadowColor, antialiasing);
-        } else if (distance_from_center > radius - 0.5) {
+        } else if (!inOutlineZone && distance_from_center > radius - 0.5) {
             // antialiasing for the outer outline to the window edge
             float antialiasing = clamp(distance_from_center - radius + 0.5, 0.0, 1.0);
             if (hasPrimaryOutline()) {
@@ -49,7 +53,7 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle, vec4 coord_shad
             }
         }
     } else {
-        if (distance_from_center > radius - 0.5) {
+        if (!inOutlineZone && distance_from_center > radius - 0.5) {
             // antialiasing for the outer outline to the window edge
             float antialiasing = clamp(distance_from_center - radius + 0.5, 0.0, 1.0);
             if (hasPrimaryOutline()) {
