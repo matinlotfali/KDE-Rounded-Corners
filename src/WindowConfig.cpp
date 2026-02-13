@@ -1,5 +1,6 @@
 #include "WindowConfig.h"
-#include <QWidget>
+#include <QGuiApplication>
+#include <QPalette>
 #include "Config.h"
 
 namespace
@@ -32,19 +33,20 @@ namespace
         constexpr float ROUNDING_FACTOR = 100.0F; // Factor for rounding to two decimal places
         return std::round(value * ROUNDING_FACTOR) / ROUNDING_FACTOR;
     }
-} // namespace
 
-namespace ShapeCorners
-{
     /**
-     * \brief Used only for its `palette()` function which holds the currently active highlight colors.
+     * @brief Returns the application palette for color lookups.
+     * @return The current application palette.
      */
-    const static QWidget m_widget{};
-} // namespace ShapeCorners
+    QPalette getApplicationPalette()
+    {
+        return QGuiApplication::palette();
+    }
+} // namespace
 
 ShapeCorners::WindowConfig ShapeCorners::WindowConfig::activeWindowConfig()
 {
-    const QPalette &m_palette = m_widget.palette();
+    const QPalette m_palette = getApplicationPalette();
     WindowConfig    config    = {
                   .cornerRadius      = static_cast<float>(Config::size()),
                   .shadowSize        = static_cast<float>(Config::shadowSize()),
@@ -81,7 +83,7 @@ ShapeCorners::WindowConfig ShapeCorners::WindowConfig::activeWindowConfig()
 
 ShapeCorners::WindowConfig ShapeCorners::WindowConfig::inactiveWindowConfig()
 {
-    const QPalette &m_palette = m_widget.palette();
+    const QPalette m_palette = getApplicationPalette();
     WindowConfig    config    = {
                   .cornerRadius      = static_cast<float>(Config::inactiveCornerRadius()),
                   .shadowSize        = static_cast<float>(Config::inactiveShadowSize()),
