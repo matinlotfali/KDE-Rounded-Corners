@@ -43,7 +43,7 @@ jobs:
         export LAST_RELEASE_TAG=$(git describe --tags --abbrev=0);
         export REV_COUNT=$(git rev-list --count ${LAST_RELEASE_TAG}..HEAD);
         export PKG_VERSION=$(echo ${LAST_RELEASE_TAG} | sed 's/^v//');
-        export KWIN_VERSION=$(dnf info -y kwin | awk '$1=="Version" {print $3}');
+        export KWIN_VERSION=$(dnf info kwin | awk '$1=="Version" {print $3}' | head -1);
         export CURRENT_BUILD_VERSION=${PKG_VERSION}.${REV_COUNT}-${KWIN_VERSION};
         echo "Current build version: ${CURRENT_BUILD_VERSION}";
         echo "CURRENT_BUILD_VERSION=${CURRENT_BUILD_VERSION}" >> $GITHUB_ENV
