@@ -53,22 +53,30 @@ void ShapeCorners::Effect::WriteBreezeConfig(bool set_disabled)
     const auto cfg      = KSharedConfig::openConfig(QStringLiteral("breezerc"), KConfig::NoGlobals);
     auto       cfgGroup = cfg->group(QStringLiteral("Common"));
 
+    const static auto keyOutlineIntensity     = QStringLiteral("OutlineIntensity");
+    const static auto keyRoundedCorners       = QStringLiteral("RoundedCorners");
+    const static auto keyOutlineEnabled       = QStringLiteral("OutlineEnabled");
     const static auto defaultOutlineIntensity = QStringLiteral("OutlineMedium");
     const static auto defaultRoundedCorners   = QStringLiteral("true");
+    const static auto defaultOutlineEnabled   = QStringLiteral("true");
     const auto        valueOutlineIntensity   = set_disabled ? QStringLiteral("OutlineOff") : defaultOutlineIntensity;
     const auto        valueRoundedCorners     = set_disabled ? QStringLiteral("false") : defaultRoundedCorners;
-    const auto entryOutlineIntensity = cfgGroup.readEntry(QStringLiteral("OutlineIntensity"), defaultOutlineIntensity);
-    const auto entryRoundedCorners   = cfgGroup.readEntry(QStringLiteral("RoundedCorners"), defaultRoundedCorners);
+    const auto        valueOutlineEnabled     = set_disabled ? QStringLiteral("false") : defaultOutlineEnabled;
+    const auto        entryOutlineIntensity   = cfgGroup.readEntry(keyOutlineIntensity, defaultOutlineIntensity);
+    const auto        entryRoundedCorners     = cfgGroup.readEntry(keyRoundedCorners, defaultRoundedCorners);
+    const auto        entryOutlineEnabled     = cfgGroup.readEntry(keyOutlineEnabled, defaultOutlineIntensity);
 
-    if (entryOutlineIntensity == valueOutlineIntensity && entryRoundedCorners == valueRoundedCorners) {
+    if (entryOutlineIntensity == valueOutlineIntensity && entryRoundedCorners == valueRoundedCorners &&
+        entryOutlineEnabled == valueOutlineEnabled) {
         qWarning() << "ShapeCorners: Skipped writing Breeze config"
                    << "because it is already set.";
         return;
     }
 
     qInfo() << "ShapeCorners: Writing Breeze config";
-    cfgGroup.writeEntry(QStringLiteral("OutlineIntensity"), valueOutlineIntensity);
-    cfgGroup.writeEntry(QStringLiteral("RoundedCorners"), valueRoundedCorners);
+    cfgGroup.writeEntry(keyOutlineIntensity, valueOutlineIntensity);
+    cfgGroup.writeEntry(keyRoundedCorners, valueRoundedCorners);
+    cfgGroup.writeEntry(keyOutlineEnabled, valueOutlineEnabled);
     cfg->sync();
 
     QDBusConnection::sessionBus().send(QDBusMessage::createSignal(
@@ -142,12 +150,12 @@ void ShapeCorners::Effect::prePaintWindow(
     if (window->hasRoundCorners()) {
 #if QT_VERSION_MAJOR >= 6
         // Calculate geometry and corner size for Qt6.
-        const auto geo  = kwindow->frameGeometry() * kwindow->screen()->scale();
-        const auto size = window->currentConfig.cornerRadius * kwindow->screen()->scale();
+        const auto geo  = (kwindow->frameGeometry() * kwindow->screen()->scale()).toRect();
+        const auto size = (int) (window->currentConfig.cornerRadius * kwindow->screen()->scale());
 #else
         // Calculate geometry and corner size for Qt5.
-        const auto geo  = kwindow->frameGeometry() * KWin::effects->renderTargetScale();
-        const auto size = window->currentConfig.cornerRadius * KWin::effects->renderTargetScale();
+        const auto geo  = (kwindow->frameGeometry() * KWin::effects->renderTargetScale()).toRect();
+        const auto size = (int) (window->currentConfig.cornerRadius * KWin::effects->renderTargetScale());
 #endif
 
         // Create a region for each rounded corner.
