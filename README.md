@@ -21,10 +21,10 @@ This effect is maintained on KDE Plasma desktop versions 5.27 to 6.6+ in various
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)
   [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Fkubuntu?label=Download%20%5Bkwin4_effect_shapecorners_kubuntu2404.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/kubuntu/kwin4_effect_shapecorners_kubuntu2404.deb/download)
-- [![Kubuntu 25.04 Plucky](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2504.yml?label=Kubuntu%2025.04&logo=kubuntu&branch=master)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/kubuntu2504.yml)
+- [![Kubuntu 26.04](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2604.yml?label=Kubuntu%2026.04&logo=kubuntu&branch=master)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/kubuntu2604.yml)
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  ![](https://img.shields.io/badge/Plasma-6.3-lightblue)
-  [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Fkubuntu2504?label=Download%20%5Bkwin4_effect_shapecorners_kubuntu2504.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/kubuntu2504/kwin4_effect_shapecorners_kubuntu2504.deb/download)
+  ![](https://img.shields.io/badge/Plasma-6.6-brightgreen)
+  [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Fkubuntu2604?label=Download%20%5Bkwin4_effect_shapecorners_kubuntu2604.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/kubuntu2604/kwin4_effect_shapecorners_kubuntu2604.deb/download)
 - [![Debian 12 Bookworm](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/debian12.yml?branch=master&label=Debian%2012&logo=debian)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/debian12.yml)
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
