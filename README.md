@@ -40,7 +40,7 @@ This effect is maintained on KDE Plasma desktop versions 5.27 to 6.6+ in various
   ![](https://img.shields.io/badge/Plasma-6.5-blue)
 - [![openSUSE Leap 16](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/leap16.yml?branch=master&label=openSUSE%20Leap%2016&logo=opensuse&logoColor=white)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/leap16.yml)
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  ![](https://img.shields.io/badge/Plasma-6.4-blue)
+  ![](https://img.shields.io/badge/Plasma-6.4-lightgreen)
   [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Fleap16?label=Download%20%5Bkwin4_effect_shapecorners_leap16.rpm%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/leap16/kwin4_effect_shapecorners_leap16.rpm/download)
 - [![openSUSE Tumbleweed](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/tumbleweed.yml?branch=master&label=openSUSE%20Tumbleweed&logo=opensuse&logoColor=white)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/tumbleweed.yml)
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
