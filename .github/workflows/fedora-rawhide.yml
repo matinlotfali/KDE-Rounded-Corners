@@ -1,0 +1,46 @@
+name: Fedora Rawhide
+
+on:
+  push:
+    branches: [ master ]
+    paths-ignore: [ '**.md', '**.png' ]
+  pull_request:
+    branches: [ master ]
+    paths: [ '**/fedora-rawhide.yml' ]
+  workflow_dispatch:
+  schedule:
+    - cron: "0 * * * *"
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  fedora-rawhide:
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:rawhide
+      options: --user root
+
+    steps:
+    - name: Install CLI Dependencies
+      run: |
+        dnf -y install git
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+    - name: Check out repository
+      uses: actions/checkout@v6
+
+    - name: Install Build Dependencies
+      run: |
+        dnf -y install cmake gcc-c++ extra-cmake-modules kwin-devel kf6-kconfigwidgets-devel libepoxy-devel kf6-kcmutils-devel kf6-ki18n-devel qt6-qtbase-private-devel wayland-devel libdrm-devel
+
+    - name: Configure & Build For Wayland
+      run: |
+        cmake . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        cmake --build . --config ${{env.BUILD_TYPE}} -j
+
+    - name: Configure & Build For X11
+      run: |
+        dnf -y install kwin-x11-devel
+        cmake . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DKWIN_X11=ON
+        cmake --build . --config ${{env.BUILD_TYPE}} -j
