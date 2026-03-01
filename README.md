@@ -52,9 +52,10 @@ This effect is maintained on KDE Plasma desktop versions 5.27 to 6.6+ in various
   ![](https://img.shields.io/badge/Plasma-6.6-brightgreen)
   ![](https://img.shields.io/badge/Copr-gray)[![Copr build status](https://copr.fedorainfracloud.org/coprs/matinlotfali/KDE-Rounded-Corners/package/kwin-effect-roundcorners/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/matinlotfali/KDE-Rounded-Corners/package/kwin-effect-roundcorners/)
 - [![Fedora Rawhide](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/fedora-rawhide.yml?branch=master&label=Fedora%20Rawhide&logo=fedora&logoColor=white)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/fedora-rawhide.yml)
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   ![](https://img.shields.io/badge/Plasma-6.6-brightgreen)
+  ![](https://img.shields.io/badge/Copr-gray)[![Copr build status](https://copr.fedorainfracloud.org/coprs/matinlotfali/KDE-Rounded-Corners/package/kwin-effect-roundcorners/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/matinlotfali/KDE-Rounded-Corners/package/kwin-effect-roundcorners/)
 - [![Arch](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/arch.yml?branch=master&label=Arch%20Linux&logo=archlinux&logoColor=white)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/arch.yml)
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
