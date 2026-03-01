@@ -19,7 +19,7 @@ jobs:
   leap16:
     runs-on: ubuntu-latest
     container:
-      image: opensuse/leap:16
+      image: opensuse/leap:16.0
       options: --user root
 
     steps:
