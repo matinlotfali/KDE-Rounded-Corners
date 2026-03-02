@@ -1,24 +1,24 @@
 #!/bin/bash
 # Upload pre-built .deb to Launchpad PPA
-# Usage: ./upload-to-launchpad.sh <deb_file> <package_name> <distro_codename> <ubuntu_series>
-# Example: ./upload-to-launchpad.sh shapecorners.deb kwin4-effect-shapecorners-neon neon noble
+# Usage: ./upload-to-launchpad.sh <deb_file> <package_name> <version> <distro_codename> <ubuntu_series>
+# Example: ./upload-to-launchpad.sh shapecorners.deb kwin-effect-roundcorners-neon 0.7.2.5-6.5.3 neon noble
 
 set -e
 
 DEB_FILE="$1"
 PACKAGE_NAME="$2"
-DISTRO_CODENAME="$3"
-UBUNTU_SERIES="$4"
+PKG_VERSION="$3"
+DISTRO_CODENAME="$4"
+UBUNTU_SERIES="$5"
 PPA="ppa:matinlotfali/kde-rounded-corners"
 
-if [ -z "$DEB_FILE" ] || [ -z "$PACKAGE_NAME" ] || [ -z "$DISTRO_CODENAME" ] || [ -z "$UBUNTU_SERIES" ]; then
-    echo "Usage: $0 <deb_file> <package_name> <distro_codename> <ubuntu_series>"
+if [ -z "$DEB_FILE" ] || [ -z "$PACKAGE_NAME" ] || [ -z "$PKG_VERSION" ] || [ -z "$DISTRO_CODENAME" ] || [ -z "$UBUNTU_SERIES" ]; then
+    echo "Usage: $0 <deb_file> <package_name> <version> <distro_codename> <ubuntu_series>"
     exit 1
 fi
 
-# Extract version from the .deb file
-DEB_VERSION=$(dpkg-deb -f "$DEB_FILE" Version)
-VERSION="${DEB_VERSION}~${DISTRO_CODENAME}1"
+# Version format: <pkg_version>~<distro>1 (e.g., 0.7.2.5-6.5.3~neon1)
+VERSION="${PKG_VERSION}~${DISTRO_CODENAME}1"
 
 echo "Creating source package for $PACKAGE_NAME version $VERSION..."
 
@@ -62,8 +62,6 @@ override_dh_auto_install:
 	dpkg-deb -x ${DEB_BASENAME} debian/${PACKAGE_NAME}
 EOF
 chmod +x "$SRC_DIR/debian/rules"
-
-echo "13" > "$SRC_DIR/debian/compat"
 
 cat > "$SRC_DIR/debian/changelog" <<EOF
 ${PACKAGE_NAME} (${VERSION}) ${UBUNTU_SERIES}; urgency=medium

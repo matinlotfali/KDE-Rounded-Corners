@@ -85,4 +85,12 @@ jobs:
       run: |
         sudo apt-get install -y debhelper dput devscripts
         echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-        sh tools/upload-to-launchpad.sh "$DEB_FILE" kwin-effect-roundcorners kubuntu2204 jammy
+
+        # Compute version: <tag_version>.<rev_count>.<kwin_version>
+        LAST_TAG=$(git describe --tags --abbrev=0)
+        REV_COUNT=$(git rev-list --count ${LAST_TAG}..HEAD)
+        TAG_VERSION=$(echo ${LAST_TAG} | sed 's/^v//')
+        KWIN_VERSION=$(dpkg -s kwin-dev | grep '^Version:' | cut -d' ' -f2 | cut -d'-' -f1)
+        PKG_VERSION="${TAG_VERSION}.${REV_COUNT}.${KWIN_VERSION}"
+
+        sh tools/upload-to-launchpad.sh "$DEB_FILE" kwin-effect-roundcorners "$PKG_VERSION" kubuntu2204 jammy
