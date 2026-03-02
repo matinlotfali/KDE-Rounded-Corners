@@ -90,21 +90,29 @@ jobs:
         compression-level: 0
         if-no-files-found: error
 
-    - name: Upload to SourceForge
+    - name: Upload Wayland to SourceForge
       if: github.ref == 'refs/heads/master'
-      env:
-        SOURCEFORGE_HOST: ${{ secrets.SOURCEFORGE_HOST }}
-        SOURCEFORGE_USERNAME: ${{ secrets.SOURCEFORGE_USERNAME }}
-        SOURCEFORGE_KEY: ${{ secrets.SOURCEFORGE_KEY }}
-        SOURCEFORGE_HOST_FINGERPRINT: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
-      run: |
-        sudo apt-get install -y --no-install-recommends openssh-client
-        mkdir -p ~/.ssh
-        chmod 700 ~/.ssh
-        printf '%s\n' "$SOURCEFORGE_KEY" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${SOURCEFORGE_HOST} >> ~/.ssh/known_hosts 2>/dev/null
-        scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=accept-new -o BatchMode=yes artifacts/* ${SOURCEFORGE_USERNAME}@${SOURCEFORGE_HOST}:/home/frs/project/kde-rounded-corners/nightly/neon/
+      uses: nicklasfrahm/scp-action@main
+      with:
+        direction: upload
+        host: ${{ secrets.SOURCEFORGE_HOST }}
+        username: ${{ secrets.SOURCEFORGE_USERNAME }}
+        key: ${{ secrets.SOURCEFORGE_KEY }}
+        fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
+        source: ${{ env.DEB_FILE_WAYLAND }}
+        target: /home/frs/project/kde-rounded-corners/nightly/neon/
+
+    - name: Upload X11 to SourceForge
+      if: github.ref == 'refs/heads/master'
+      uses: nicklasfrahm/scp-action@main
+      with:
+        direction: upload
+        host: ${{ secrets.SOURCEFORGE_HOST }}
+        username: ${{ secrets.SOURCEFORGE_USERNAME }}
+        key: ${{ secrets.SOURCEFORGE_KEY }}
+        fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
+        source: ${{ env.DEB_FILE_X11 }}
+        target: /home/frs/project/kde-rounded-corners/nightly/neon/
 
     - name: Upload to Launchpad PPA
       if: github.ref == 'refs/heads/master'
