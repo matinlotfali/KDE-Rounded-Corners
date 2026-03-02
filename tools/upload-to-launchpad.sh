@@ -76,9 +76,9 @@ EOF
 mkdir -p "$SRC_DIR/debian/source"
 echo "3.0 (native)" > "$SRC_DIR/debian/source/format"
 
-# Build source package
+# Build source package (-d to skip dependency checks since we're wrapping pre-built binary)
 cd "$SRC_DIR"
-dpkg-buildpackage -S -sa -us -uc
+dpkg-buildpackage -S -sa -us -uc -d
 
 # Sign the source package
 cd "$WORK_DIR"
