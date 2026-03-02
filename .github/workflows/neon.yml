@@ -36,6 +36,8 @@ jobs:
     steps:
     - name: Check out repository
       uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
 
     - name: Refresh Ubuntu Packages
       run: sudo apt-get update && sudo apt-get full-upgrade -y --allow-downgrades
