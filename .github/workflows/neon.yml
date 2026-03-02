@@ -120,6 +120,7 @@ jobs:
         GPG_PRIVATE_KEY: ${{ secrets.LAUNCHPAD_GPG_PRIVATE_KEY }}
         GPG_KEY_ID: DCCACDF0AE2E535CEF20ABC1916523094AD3BA70
       run: |
+        cd $GITHUB_WORKSPACE
         sudo apt-get install -y debhelper dput devscripts git
         echo "$GPG_PRIVATE_KEY" | gpg --batch --import
 
