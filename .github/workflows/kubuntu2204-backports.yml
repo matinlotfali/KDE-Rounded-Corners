@@ -76,3 +76,13 @@ jobs:
         fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
         source: ${{ env.DEB_FILE }}
         target: /home/frs/project/kde-rounded-corners/nightly/kubuntu2204/${{ env.DEB_NAME }}_${{ github.job }}.deb
+
+    - name: Upload to Launchpad PPA
+      if: github.ref == 'refs/heads/master'
+      env:
+        GPG_PRIVATE_KEY: ${{ secrets.LAUNCHPAD_GPG_PRIVATE_KEY }}
+        GPG_KEY_ID: DCCACDF0AE2E535CEF20ABC1916523094AD3BA70
+      run: |
+        sudo apt-get install -y debhelper dput devscripts
+        echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+        sh tools/upload-to-launchpad.sh "$DEB_FILE" kwin-effect-roundcorners kubuntu2204 jammy

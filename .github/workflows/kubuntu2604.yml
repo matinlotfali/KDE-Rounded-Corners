@@ -46,7 +46,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        apt-get install -y --no-install-recommends cmake g++ gettext extra-cmake-modules qt6-base-private-dev qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev libdrm-dev
+        apt-get install -y --no-install-recommends cmake g++ gettext extra-cmake-modules qt6-base-private-dev qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev kwin-x11-dev libdrm-dev
         apt-get install -y --no-install-recommends dpkg-dev file
 
     - name: Initialize CodeQL
@@ -55,37 +55,43 @@ jobs:
         languages: c-cpp
         build-mode: manual
 
-    - name: Configure CMake
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-
-    - name: Build
-      # Build your program with the given configuration
-      run: cmake --build . --config ${{env.BUILD_TYPE}} -j
+    - name: Configure & Build Wayland
+      run: |
+        cmake . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        cmake --build . --config ${{env.BUILD_TYPE}} -j
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v4
       with:
         category: "/language:c-cpp"
 
-    - name: Package
+    - name: Package Wayland
       run: |
         cpack -V -G DEB
-        DEB_FILE=artifacts/${DEB_NAME}_${GITHUB_JOB}.deb
-        mkdir artifacts
-        mv ${DEB_NAME}.deb ${DEB_FILE}
-        echo "DEB_FILE=${DEB_FILE}" >> $GITHUB_ENV
+        mkdir -p artifacts
+        mv ${DEB_NAME}.deb artifacts/${DEB_NAME}_${GITHUB_JOB}.deb
+        echo "DEB_FILE_WAYLAND=artifacts/${DEB_NAME}_${GITHUB_JOB}.deb" >> $GITHUB_ENV
 
-    - name: Upload Workflow Artifact
+    - name: Configure & Build X11
+      run: |
+        cmake . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DKWIN_X11=ON
+        cmake --build . --config ${{env.BUILD_TYPE}} -j
+
+    - name: Package X11
+      run: |
+        cpack -V -G DEB
+        mv ${DEB_NAME}_x11.deb artifacts/${DEB_NAME}_${GITHUB_JOB}_x11.deb
+        echo "DEB_FILE_X11=artifacts/${DEB_NAME}_${GITHUB_JOB}_x11.deb" >> $GITHUB_ENV
+
+    - name: Upload Workflow Artifacts
       uses: actions/upload-artifact@v6
       with:
         name: ${{ env.DEB_NAME }}
-        path: ${{ env.DEB_FILE }}
+        path: artifacts/
         compression-level: 0
         if-no-files-found: error
 
-    - name: Upload Release Asset
+    - name: Upload to SourceForge
       if: github.ref == 'refs/heads/master'
       uses: nicklasfrahm/scp-action@main
       with:
@@ -94,5 +100,16 @@ jobs:
         username: ${{ secrets.SOURCEFORGE_USERNAME }}
         key: ${{ secrets.SOURCEFORGE_KEY }}
         fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
-        source: ${{ env.DEB_FILE }}
-        target: /home/frs/project/kde-rounded-corners/nightly/${{ github.job }}/${{ env.DEB_NAME }}_${{ github.job }}.deb
+        source: "artifacts/*"
+        target: /home/frs/project/kde-rounded-corners/nightly/${{ github.job }}/
+
+    - name: Upload to Launchpad PPA
+      if: github.ref == 'refs/heads/master'
+      env:
+        GPG_PRIVATE_KEY: ${{ secrets.LAUNCHPAD_GPG_PRIVATE_KEY }}
+        GPG_KEY_ID: DCCACDF0AE2E535CEF20ABC1916523094AD3BA70
+      run: |
+        apt-get install -y debhelper dput devscripts
+        echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+        sh tools/upload-to-launchpad.sh "$DEB_FILE_WAYLAND" kwin-effect-roundcorners kubuntu2604 plucky
+        sh tools/upload-to-launchpad.sh "$DEB_FILE_X11" kwin-effect-roundcorners-x11 kubuntu2604 plucky
