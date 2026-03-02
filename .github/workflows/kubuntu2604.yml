@@ -103,10 +103,11 @@ jobs:
       run: |
         apt-get install -y --no-install-recommends openssh-client
         mkdir -p ~/.ssh
-        echo "$SOURCEFORGE_KEY" > ~/.ssh/id_rsa
+        chmod 700 ~/.ssh
+        printf '%s\n' "$SOURCEFORGE_KEY" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        echo "$SOURCEFORGE_HOST_FINGERPRINT" >> ~/.ssh/known_hosts
-        scp -o StrictHostKeyChecking=no artifacts/* ${SOURCEFORGE_USERNAME}@${SOURCEFORGE_HOST}:/home/frs/project/kde-rounded-corners/nightly/${{ github.job }}/
+        ssh-keyscan -H ${SOURCEFORGE_HOST} >> ~/.ssh/known_hosts 2>/dev/null
+        scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=accept-new -o BatchMode=yes artifacts/* ${SOURCEFORGE_USERNAME}@${SOURCEFORGE_HOST}:/home/frs/project/kde-rounded-corners/nightly/${{ github.job }}/
 
     - name: Upload to Launchpad PPA
       if: github.ref == 'refs/heads/master'
