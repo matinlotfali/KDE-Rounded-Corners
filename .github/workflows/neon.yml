@@ -115,7 +115,7 @@ jobs:
         LAST_TAG=$(git describe --tags --abbrev=0)
         REV_COUNT=$(git rev-list --count ${LAST_TAG}..HEAD)
         TAG_VERSION=$(echo ${LAST_TAG} | sed 's/^v//')
-        KWIN_VERSION=$(dpkg -s kwin-dev | grep '^Version:' | cut -d' ' -f2 | cut -d'-' -f1)
+        KWIN_VERSION=$(dpkg -s kwin-dev | grep '^Version:' | cut -d' ' -f2 | sed 's/^[0-9]*://' | cut -d'-' -f1)
         PKG_VERSION="${TAG_VERSION}.${REV_COUNT}.${KWIN_VERSION}"
 
         sh tools/upload-to-launchpad.sh "$DEB_FILE_WAYLAND" kwin-effect-roundcorners-neon "$PKG_VERSION" neon noble
