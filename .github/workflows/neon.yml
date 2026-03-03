@@ -34,23 +34,21 @@ jobs:
       packages: read
 
     steps:
-    - name: Install Git Dependencies
-      run: |
-        apt-get install -y --no-install-recommends git
-        git config --global --add safe.directory "$GITHUB_WORKSPACE"
-    
-    - name: Check out repository
-      uses: actions/checkout@v6
-      with:
-        fetch-depth: 0
-
     - name: Refresh Ubuntu Packages
-      run: sudo apt-get update && sudo apt-get full-upgrade -y --allow-downgrades
+      run: |
+        sudo apt-get update
+        sudo apt-get full-upgrade -y --allow-downgrades
 
     - name: Install Dependencies
       run: |
         sudo apt-get -y install --no-install-recommends cmake g++ gettext extra-cmake-modules qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev kwin-x11-dev
-        sudo apt-get -y install --no-install-recommends dpkg-dev file
+        sudo apt-get -y install --no-install-recommends dpkg-dev file git
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+    - name: Check out repository
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
         
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v4
@@ -125,7 +123,7 @@ jobs:
         GPG_PRIVATE_KEY: ${{ secrets.LAUNCHPAD_GPG_PRIVATE_KEY }}
         GPG_KEY_ID: DCCACDF0AE2E535CEF20ABC1916523094AD3BA70
       run: |
-        sudo apt-get install -y debhelper dput devscripts git
+        sudo apt-get install -y --no-install-recommends debhelper dput devscripts
         echo "$GPG_PRIVATE_KEY" | gpg --batch --import
 
         # Compute version: <tag_version>.<rev_count>-<kwin_version>

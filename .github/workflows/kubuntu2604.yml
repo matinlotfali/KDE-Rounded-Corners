@@ -35,16 +35,6 @@ jobs:
       packages: read
 
     steps:
-    - name: Install Git Dependencies
-      run: |
-        apt-get install -y --no-install-recommends git
-        git config --global --add safe.directory "$GITHUB_WORKSPACE"
-
-    - name: Check out repository
-      uses: actions/checkout@v6
-      with:
-        fetch-depth: 0
-
     - name: Refresh Ubuntu Packages
       # automatically use a local mirror when fetching from the network
       run: |
@@ -52,9 +42,15 @@ jobs:
         apt-get update
 
     - name: Install Dependencies
-      run: |
+      run: |        
         apt-get install -y --no-install-recommends cmake g++ gettext extra-cmake-modules qt6-base-private-dev qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev kwin-x11-dev libdrm-dev
-        apt-get install -y --no-install-recommends dpkg-dev file
+        apt-get install -y --no-install-recommends dpkg-dev file git
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+    - name: Check out repository
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v4
