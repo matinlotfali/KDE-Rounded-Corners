@@ -90,6 +90,25 @@ jobs:
         compression-level: 0
         if-no-files-found: error
 
+    - name: Upload to Launchpad PPA
+      if: github.ref == 'refs/heads/master'
+      env:
+        GPG_PRIVATE_KEY: ${{ secrets.LAUNCHPAD_GPG_PRIVATE_KEY }}
+        GPG_KEY_ID: DCCACDF0AE2E535CEF20ABC1916523094AD3BA70
+      run: |
+        sudo apt-get install -y debhelper dput devscripts git
+        echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+
+        # Compute version: <tag_version>.<rev_count>-<kwin_version>
+        LAST_TAG=$(git describe --tags --abbrev=0)
+        REV_COUNT=$(git rev-list --count ${LAST_TAG}..HEAD)
+        TAG_VERSION=$(echo ${LAST_TAG} | sed 's/^v//')
+        KWIN_VERSION=$(dpkg -s kwin-dev | grep '^Version:' | cut -d' ' -f2 | sed 's/^[0-9]*://' | cut -d'-' -f1)
+        PKG_VERSION="${TAG_VERSION}.${REV_COUNT}.${KWIN_VERSION}"
+
+        sh tools/upload-to-launchpad.sh "$DEB_FILE_WAYLAND" kwin-effect-roundcorners-neon "$PKG_VERSION" neon noble
+        sh tools/upload-to-launchpad.sh "$DEB_FILE_X11" kwin-effect-roundcorners-x11-neon "$PKG_VERSION" neon noble
+
     - name: Upload Wayland to SourceForge
       if: github.ref == 'refs/heads/master'
       uses: nicklasfrahm/scp-action@main
@@ -113,26 +132,6 @@ jobs:
         fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
         source: ${{ env.DEB_FILE_X11 }}
         target: /home/frs/project/kde-rounded-corners/nightly/neon/
-
-    - name: Upload to Launchpad PPA
-      if: github.ref == 'refs/heads/master'
-      working-directory: ${{ github.workspace }}
-      env:
-        GPG_PRIVATE_KEY: ${{ secrets.LAUNCHPAD_GPG_PRIVATE_KEY }}
-        GPG_KEY_ID: DCCACDF0AE2E535CEF20ABC1916523094AD3BA70
-      run: |
-        sudo apt-get install -y debhelper dput devscripts git
-        echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-
-        # Compute version: <tag_version>.<rev_count>-<kwin_version>
-        LAST_TAG=$(git describe --tags --abbrev=0)
-        REV_COUNT=$(git rev-list --count ${LAST_TAG}..HEAD)
-        TAG_VERSION=$(echo ${LAST_TAG} | sed 's/^v//')
-        KWIN_VERSION=$(dpkg -s kwin-dev | grep '^Version:' | cut -d' ' -f2 | sed 's/^[0-9]*://' | cut -d'-' -f1)
-        PKG_VERSION="${TAG_VERSION}.${REV_COUNT}.${KWIN_VERSION}"
-
-        sh tools/upload-to-launchpad.sh "$DEB_FILE_WAYLAND" kwin-effect-roundcorners-neon "$PKG_VERSION" neon noble
-        sh tools/upload-to-launchpad.sh "$DEB_FILE_X11" kwin-effect-roundcorners-x11-neon "$PKG_VERSION" neon noble
 
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build
