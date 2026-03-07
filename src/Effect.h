@@ -83,7 +83,7 @@ namespace ShapeCorners
          */
 #if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
         void prePaintWindow(KWin::RenderView *view, KWin::EffectWindow *w, KWin::WindowPrePaintData &data) override;
-#elif KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 5, 90)
+#elif KWIN_EFFECT_API_VERSION >= 237
         void prePaintWindow(KWin::RenderView *view, KWin::EffectWindow *w, KWin::WindowPrePaintData &data,
                             std::chrono::milliseconds time) override;
 #else
@@ -103,7 +103,7 @@ namespace ShapeCorners
          */
         void drawWindow(const KWin::RenderTarget &RenderTarget, const KWin::RenderViewport &viewport,
                         KWin::EffectWindow *w, int mask,
-#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 5, 90)
+#if KWIN_EFFECT_API_VERSION >= 237
                         const KWin::Region &region,
 #else
                         const QRegion &region,
