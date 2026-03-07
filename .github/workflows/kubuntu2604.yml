@@ -88,7 +88,7 @@ jobs:
         echo "DEB_FILE_X11=artifacts/${DEB_NAME}_${GITHUB_JOB}_x11.deb" >> $GITHUB_ENV
 
     - name: Upload Workflow Artifacts
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ env.DEB_NAME }}
         path: artifacts/
