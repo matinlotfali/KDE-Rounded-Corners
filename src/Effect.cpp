@@ -121,10 +121,10 @@ void ShapeCorners::Effect::reconfigure(const ReconfigureFlags flags)
     }
 }
 
-#if KWIN_EFFECT_API_VERSION >= 238
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
 void ShapeCorners::Effect::prePaintWindow(KWin::RenderView *view, KWin::EffectWindow *kwindow,
                                           KWin::WindowPrePaintData &data)
-#elif KWIN_EFFECT_API_VERSION >= 237
+#elif KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 5, 90)
 void ShapeCorners::Effect::prePaintWindow(KWin::RenderView *view, KWin::EffectWindow *kwindow,
                                           KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
 #else
@@ -137,9 +137,9 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
 
     // If the shader is not valid or the window is not managed or doesn't need the effect, fall back to default.
     if (!m_shaderManager.IsValid() || window == nullptr || !window->hasEffect()) {
-#if KWIN_EFFECT_API_VERSION >= 238
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
         OffscreenEffect::prePaintWindow(view, kwindow, data);
-#elif KWIN_EFFECT_API_VERSION >= 237
+#elif KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 5, 90)
         OffscreenEffect::prePaintWindow(view, kwindow, data, time);
 #else
         OffscreenEffect::prePaintWindow(kwindow, data, time);
@@ -166,7 +166,7 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
 #endif
 
         // Create a region for each rounded corner.
-#if KWIN_EFFECT_API_VERSION >= 237
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 5, 90)
         KWin::Region reg{};
 #else
         QRegion reg{};
@@ -177,7 +177,7 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
         reg += QRect(geo.x() + geo.width() - size, geo.y() + geo.height() - size, size, size);
 
 // Remove the rounded corners from the opaque region and add them to the paint region.
-#if KWIN_EFFECT_API_VERSION >= 237
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 5, 90)
         data.deviceOpaque -= reg;
         data.devicePaint += reg;
 #else
@@ -190,9 +190,9 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
     }
 
     // Call the base implementation.
-#if KWIN_EFFECT_API_VERSION >= 238
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
     OffscreenEffect::prePaintWindow(view, kwindow, data);
-#elif KWIN_EFFECT_API_VERSION >= 237
+#elif KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 5, 90)
     OffscreenEffect::prePaintWindow(view, kwindow, data, time);
 #else
     OffscreenEffect::prePaintWindow(kwindow, data, time);
@@ -208,7 +208,7 @@ bool ShapeCorners::Effect::supported()
 #if QT_VERSION_MAJOR >= 6
 void ShapeCorners::Effect::drawWindow(const KWin::RenderTarget &renderTarget, const KWin::RenderViewport &viewport,
                                       KWin::EffectWindow *kwindow, int mask,
-#if KWIN_EFFECT_API_VERSION >= 237
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 5, 90)
                                       const KWin::Region &region,
 #else
                                       const QRegion &region,
