@@ -121,22 +121,29 @@ void ShapeCorners::Effect::reconfigure(const ReconfigureFlags flags)
     }
 }
 
-void ShapeCorners::Effect::prePaintWindow(
-#if KWIN_EFFECT_API_VERSION >= 237
-        KWin::RenderView *view,
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
+void ShapeCorners::Effect::prePaintWindow(KWin::RenderView *view, KWin::EffectWindow *kwindow,
+                                          KWin::WindowPrePaintData &data)
+#elif KWIN_EFFECT_API_VERSION >= 237
+void ShapeCorners::Effect::prePaintWindow(KWin::RenderView *view, KWin::EffectWindow *kwindow,
+                                          KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
+#else
+void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::WindowPrePaintData &data,
+                                          std::chrono::milliseconds time)
 #endif
-        KWin::EffectWindow *kwindow, KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
 {
     // Find the managed window structure.
     auto *window = m_windowManager->findWindow(kwindow);
 
     // If the shader is not valid or the window is not managed or doesn't need the effect, fall back to default.
     if (!m_shaderManager.IsValid() || window == nullptr || !window->hasEffect()) {
-        OffscreenEffect::prePaintWindow(
-#if KWIN_EFFECT_API_VERSION >= 237
-                view,
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
+        OffscreenEffect::prePaintWindow(view, kwindow, data);
+#elif KWIN_EFFECT_API_VERSION >= 237
+        OffscreenEffect::prePaintWindow(view, kwindow, data, time);
+#else
+        OffscreenEffect::prePaintWindow(kwindow, data, time);
 #endif
-                kwindow, data, time);
         return;
     }
 
@@ -183,11 +190,13 @@ void ShapeCorners::Effect::prePaintWindow(
     }
 
     // Call the base implementation.
-    OffscreenEffect::prePaintWindow(
-#if KWIN_EFFECT_API_VERSION >= 237
-            view,
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
+    OffscreenEffect::prePaintWindow(view, kwindow, data);
+#elif KWIN_EFFECT_API_VERSION >= 237
+    OffscreenEffect::prePaintWindow(view, kwindow, data, time);
+#else
+    OffscreenEffect::prePaintWindow(kwindow, data, time);
 #endif
-            kwindow, data, time);
 }
 
 bool ShapeCorners::Effect::supported()
