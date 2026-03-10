@@ -135,5 +135,5 @@ jobs:
         KWIN_VERSION=$(dpkg -s kwin-dev | grep '^Version:' | cut -d' ' -f2 | sed 's/^[0-9]*://' | cut -d'-' -f1)
         PKG_VERSION="${TAG_VERSION}.${REV_COUNT}.${KWIN_VERSION}"
 
-        sh tools/upload-to-launchpad.sh "$DEB_FILE_WAYLAND" kwin-effect-roundcorners "$PKG_VERSION" kubuntu2604 plucky
-        sh tools/upload-to-launchpad.sh "$DEB_FILE_X11" kwin-effect-roundcorners-x11 "$PKG_VERSION" kubuntu2604 plucky
+        sh tools/upload-to-launchpad.sh "$DEB_FILE_WAYLAND" kwin-effect-roundcorners "$PKG_VERSION" kubuntu2604 resolute
+        sh tools/upload-to-launchpad.sh "$DEB_FILE_X11" kwin-effect-roundcorners-x11 "$PKG_VERSION" kubuntu2604 resolute
