@@ -24,12 +24,16 @@ template<bool vertical>
 bool ShapeCorners::TileChecker::checkTiled_Recursive(double window_start, const uint8_t depth)
 {
     if (window_start == screen_end) {
-        return true; // Found the last chain of tiles
+        // Found the last chain of tiles.
+        // A single window spanning the screen is not a tile, so require at least 2.
+        return depth >= 2;
     }
     if (window_start > screen_end) {
+        // Window extends beyond the screen edge, not a valid tile chain.
         return false;
     }
     if (depth > MAX_TILE_DEPTH) {
+        // Prevent excessive recursion for too many tiles.
         return false;
     }
 
