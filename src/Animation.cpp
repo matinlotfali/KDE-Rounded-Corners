@@ -22,6 +22,7 @@ ShapeCorners::Animation::Animation() = default;
 
 void ShapeCorners::Animation::update(Window &window)
 {
+    // If the active window has changed, start a new animation cycle.
     if (auto *const active = KWin::effects->activeWindow();
         ((active != nullptr) && (currentActiveWindow == nullptr)) ||
         ((currentActiveWindow != nullptr) && active != currentActiveWindow->w)) {
@@ -29,8 +30,13 @@ void ShapeCorners::Animation::update(Window &window)
         setActiveWindowChanged(activeWindow);
     }
 
+    // Fetch the current active and inactive configs from the palette once per update.
+    const auto activeConfig   = WindowConfig::activeWindowConfig();
+    const auto inactiveConfig = WindowConfig::inactiveWindowConfig();
+
     // If not animating, skip update.
     if (!window.isAnimating) {
+        window.currentConfig = window.isActive() ? activeConfig : inactiveConfig;
         return;
     }
 
@@ -50,20 +56,19 @@ void ShapeCorners::Animation::update(Window &window)
     // If animation is over, set configs to their final values.
     if (window.lastAnimationDuration < 0) {
         window.lastAnimationDuration = 0;
-        window.currentConfig =
-                window.isActive() ? WindowConfig::activeWindowConfig() : WindowConfig::inactiveWindowConfig();
+        window.currentConfig = window.isActive() ? activeConfig : inactiveConfig;
         return;
     }
 
     // Interpolate between active and inactive configs based on animation progress.
     const auto deltaTime  = static_cast<float>(window.lastAnimationDuration) / static_cast<float>(animationDuration);
-    const auto configDiff = WindowConfig::activeWindowConfig() - WindowConfig::inactiveWindowConfig();
+    const auto configDiff = activeConfig - inactiveConfig;
     const auto deltaConf  = configDiff * deltaTime;
 
     if (window.isActive()) {
-        window.currentConfig = WindowConfig::activeWindowConfig() - deltaConf;
+        window.currentConfig = activeConfig - deltaConf;
     } else {
-        window.currentConfig = WindowConfig::inactiveWindowConfig() + deltaConf;
+        window.currentConfig = inactiveConfig + deltaConf;
     }
     window.isAnimating = true;
 }
