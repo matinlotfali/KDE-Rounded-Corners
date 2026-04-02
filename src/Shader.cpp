@@ -43,7 +43,7 @@ ShapeCorners::Shader::Shader()
     // Generate the shader from file using the ShaderManager
     m_shader = KWin::ShaderManager::instance()->generateShaderFromFile(KWin::ShaderTrait::MapTexture, QString(),
                                                                        shaderFilePath);
-    if (!m_shader->isValid()) {
+    if (!IsValid()) {
         qCritical() << "ShapeCorners: no valid shaders found! effect will not work.";
         return;
     }
@@ -66,7 +66,14 @@ ShapeCorners::Shader::Shader()
     qInfo() << "ShapeCorners: shaders loaded.";
 }
 
-bool ShapeCorners::Shader::IsValid() const { return m_shader && m_shader->isValid(); }
+bool ShapeCorners::Shader::IsValid() const
+{
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
+    return m_shader != nullptr;
+#else
+    return m_shader != nullptr && m_shader->isValid();
+#endif
+}
 
 void ShapeCorners::Shader::Bind(const Window &window, const double scale) const
 {

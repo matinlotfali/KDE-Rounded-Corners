@@ -155,6 +155,8 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
 
     // If the window should have rounded corners, adjust the paint and opaque regions.
     if (window->hasRoundCorners()) {
+
+#if KWIN_PLUGIN_VERSION_NUM < QT_VERSION_CHECK(6, 6, 80)
 #if QT_VERSION_MAJOR >= 6
         // Calculate geometry and corner size for Qt6.
         const auto geo  = (kwindow->frameGeometry() * kwindow->screen()->scale()).toRect();
@@ -184,6 +186,7 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
         data.opaque -= reg;
         data.paint += reg;
 #endif
+#endif // KWIN_PLUGIN_VERSION_NUM < QT_VERSION_CHECK(6, 6, 80)
 
         // Mark the window as having translucent regions.
         data.setTranslucent();
