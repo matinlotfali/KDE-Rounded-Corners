@@ -10,16 +10,25 @@ fi
 if ctest > /dev/null; then
     echo "Desktop effect \"KDE-Rounded-Corners\" is compatible with KWin and doesn't need re-installation."
 else
+
+    # Find available qdbus binary
+    QDBUS_BIN=$(which qdbus6 qdbus-qt6 qdbus 2>/dev/null | head -n 1)
+    
+    if [ -z "$QDBUS_BIN" ]; then
+        echo "qdbus not found. Exiting."
+        exit 1
+    fi
+
     kdialog --msgbox "Desktop effect \"KDE-Rounded-Corners\" is not compatible with KWin anymore.\n\nThis can probably be for an update.\nWe will now rebuild and reinstall the effect."
     p=$(kdialog --progressbar "Building KDE-Rounded-Corners...")
-    qdbus-qt6 $p showCancelButton false
-    qdbus-qt6 $p Set "" maximum "26"
+    $QDBUS_BIN $p showCancelButton false
+    $QDBUS_BIN $p Set "" maximum "26"
 
     rm -rf ./*
-    qdbus-qt6 $p Set "" value "1"
+    $QDBUS_BIN $p Set "" value "1"
 
     cmake .. --install-prefix /usr
-    qdbus-qt6 $p Set "" value "2"
+    $QDBUS_BIN $p Set "" value "2"
 
     cmake --build . -j &
     pid=$!
@@ -31,14 +40,14 @@ else
         maximum=$(( $(tail -n 1 CMakeFiles/Progress/count.txt 2>/dev/null || :) + 4))
         if [ "$maximum" -gt "0" ]; then
           value=$(( $(find CMakeFiles/Progress/ | wc -l) + 2))
-          qdbus-qt6 $p Set "" value "$value"
-          qdbus-qt6 $p Set "" maximum "$maximum"
+          $QDBUS_BIN $p Set "" value "$value"
+          $QDBUS_BIN $p Set "" maximum "$maximum"
         fi
 
         # Sleep for a short duration to avoid excessive CPU usage
         sleep 0.1
     done
-    qdbus-qt6 $p close
+    $QDBUS_BIN $p close
 
 
     kdialog --password "Enter password to install KDE-Rounded-Corners: " | sudo -S cmake --install .
