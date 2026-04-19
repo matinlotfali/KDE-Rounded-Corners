@@ -126,7 +126,7 @@ vec4 getNativeShadow(vec2 coord0, float r, vec4 default_tex)
 vec4 getShadow(vec2 coord0, float r, vec4 default_tex)
 {
     if (!isDrawingShadows()) {
-        return vec4(default_tex.rgb, 0.0);
+        return vec4(default_tex.rgb * default_tex.a, 0.0);
     } else if (usesNativeShadows) {
         return getNativeShadow(coord0, r, default_tex);
     } else {
