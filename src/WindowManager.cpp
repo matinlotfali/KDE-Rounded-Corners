@@ -15,6 +15,18 @@
 #include <kwineffects.h>
 #endif
 
+namespace
+{
+auto screenRegion(const auto *screen)
+{
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 0)
+    return KWin::Region(screen->geometry());
+#else
+    return QRegion(screen->geometry());
+#endif
+}
+} // namespace
+
 /**
  * @brief Pointer to the singleton instance of WindowManager.
  */
@@ -176,15 +188,15 @@ void ShapeCorners::WindowManager::checkTiled() const
     TileChecker tileChecker;
     // Check tiling for each screen, excluding menu bars
     for (const auto &screen: KWin::effects->screens()) {
-        const auto screen_region = getRegionWithoutMenus(screen->geometry());
+        const auto screen_region = getRegionWithoutMenus(screenRegion(screen));
         const auto geometry      = screen_region.boundingRect();
         tileChecker.checkTiles(geometry);
     }
 }
 
-QRegion ShapeCorners::WindowManager::getRegionWithoutMenus(const QRect &screen_geometry) const
+template<typename T>
+T ShapeCorners::WindowManager::getRegionWithoutMenus(T screen_region) const
 {
-    auto screen_region = QRegion(screen_geometry);
 #ifdef DEBUG_MAXIMIZED
     qDebug() << "ShapeCorners: screen region" << screen_region;
 #endif
@@ -213,7 +225,7 @@ void ShapeCorners::WindowManager::checkMaximized(KWin::EffectWindow *kwindow)
 
     window->isMaximized = false;
 
-    const auto screen_region = getRegionWithoutMenus(kwindow->screen()->geometry());
+    const auto screen_region = getRegionWithoutMenus(screenRegion(kwindow->screen()));
 
     // Check if the window fills the screen region
     auto remaining = screen_region - kwindow->frameGeometry().toRect();

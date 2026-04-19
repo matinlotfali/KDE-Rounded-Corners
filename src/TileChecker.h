@@ -10,8 +10,6 @@
 
 #include <cstdint>
 
-class QRect;
-
 namespace KWin
 {
     class EffectWindow;
@@ -43,9 +41,10 @@ namespace ShapeCorners
 
         /**
          * @brief Checks and marks tiled windows based on the given screen geometry.
-         * @param screen The QRect representing the screen area to check.
+         * @param screen The Rect representing the screen area to check.
          */
-        void checkTiles(const QRect &screen);
+        template<typename T>
+        void checkTiles(const T &screen_rect);
 
     private:
         /**
