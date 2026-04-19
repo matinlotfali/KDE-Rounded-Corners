@@ -19,7 +19,7 @@ namespace
 {
 auto screenRegion(const auto *screen)
 {
-#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 0)
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
     return KWin::Region(screen->geometry());
 #else
     return QRegion(screen->geometry());

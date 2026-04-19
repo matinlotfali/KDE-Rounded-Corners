@@ -94,7 +94,7 @@ void ShapeCorners::TileChecker::checkTiles(const T &screen_rect)
     checkTiled_Recursive<true>(screen_rect.y(), 0);
 }
 
-#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 0)
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
 template void ShapeCorners::TileChecker::checkTiles<KWin::Rect>(const KWin::Rect &);
 #else
 template void ShapeCorners::TileChecker::checkTiles<QRect>(const QRect &);
