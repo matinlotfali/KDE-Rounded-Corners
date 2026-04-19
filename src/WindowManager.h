@@ -16,7 +16,7 @@
 namespace KWin
 {
     class EffectWindow;
-}
+} // namespace KWin
 
 namespace ShapeCorners
 {
@@ -148,10 +148,11 @@ namespace ShapeCorners
 
         /**
          * @brief Returns the region of the screen excluding menu bars.
-         * @param screen_geometry The geometry of the screen.
-         * @return QRegion without menu bars.
+         * @param screen_geometry The region of the screen.
+         * @return Region without menu bars.
          */
+        template<typename T>
         [[nodiscard]]
-        QRegion getRegionWithoutMenus(const QRect &screen_geometry) const;
+        T getRegionWithoutMenus(T screen_region) const;
     };
 } // namespace ShapeCorners

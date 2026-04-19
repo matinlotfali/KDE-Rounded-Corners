@@ -82,13 +82,20 @@ void ShapeCorners::TileChecker::clearTiles()
     }
 }
 
-void ShapeCorners::TileChecker::checkTiles(const QRect &screen)
+template<typename T>
+void ShapeCorners::TileChecker::checkTiles(const T &screen_rect)
 {
     // Check horizontally
-    screen_end = screen.x() + screen.width();
-    checkTiled_Recursive<false>(screen.x(), 0);
+    screen_end = screen_rect.x() + screen_rect.width();
+    checkTiled_Recursive<false>(screen_rect.x(), 0);
 
     // Check vertically
-    screen_end = screen.y() + screen.height();
-    checkTiled_Recursive<true>(screen.y(), 0);
+    screen_end = screen_rect.y() + screen_rect.height();
+    checkTiled_Recursive<true>(screen_rect.y(), 0);
 }
+
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
+template void ShapeCorners::TileChecker::checkTiles<KWin::Rect>(const KWin::Rect &);
+#else
+template void ShapeCorners::TileChecker::checkTiles<QRect>(const QRect &);
+#endif

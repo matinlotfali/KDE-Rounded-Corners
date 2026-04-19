@@ -1,3 +1,7 @@
+CompileFlags:
+  Remove:
+    - -mno-direct-extern-access
+
 Diagnostics:
   ClangTidy:
     Add:
