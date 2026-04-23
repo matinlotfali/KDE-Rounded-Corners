@@ -126,7 +126,13 @@ vec4 getNativeShadow(vec2 coord0, float r, vec4 default_tex)
 vec4 getShadow(vec2 coord0, float r, vec4 default_tex)
 {
     if (!isDrawingShadows()) {
-        return vec4(default_tex.rgb * default_tex.a, 0.0);
+        if (hasExpandedSize()) {
+            // Preserve RGB so anti-aliasing only fades alpha (fix for #430)
+            return vec4(default_tex.rgb, 0.0);
+        }
+        // Windows without a shadow buffer (e.g. CSD XWayland apps like Steam)
+        // need premultiplied-valid output or the compositor brightens edge pixels (#491)
+        return vec4(0.0, 0.0, 0.0, 0.0);
     } else if (usesNativeShadows) {
         return getNativeShadow(coord0, r, default_tex);
     } else {
