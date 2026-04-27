@@ -12,6 +12,14 @@
         <entry name="InactiveCornerRadius" type="UInt">
             <default>10</default>
         </entry>
+        <entry name="UseSquircleShape" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="Squircleness" type="Double">
+            <default>0.55</default>
+            <min>0</min>
+            <max>1</max>
+        </entry>
         <entry name="AnimationDuration" type="UInt">
             <default>250</default>
             <min>0</min>
