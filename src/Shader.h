@@ -96,6 +96,24 @@ namespace ShapeCorners
         int m_shader_radius = 0;
 
         /**
+         * \brief Reference to `uniform bool useSquircleShape;`
+         *        Whether corners should use a superellipse/squircle curve instead of a circular arc.
+         */
+        int m_shader_useSquircleShape = 0;
+
+        /**
+         * \brief Reference to `uniform float squircleBlend;`
+         *        Controls how strongly the corner distance blends from circular to squircle.
+         */
+        int m_shader_squircleBlend = 0;
+
+        /**
+         * \brief Reference to `uniform float squircleMagicRatio;`
+         *        Precomputed radius correction for the configured squircle blend.
+         */
+        int m_shader_squircleMagicRatio = 0;
+
+        /**
          * \brief Reference to `uniform bool usesNativeShadows;`
          *        Whether the window has custom shadows.
          */
