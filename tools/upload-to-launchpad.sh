@@ -138,14 +138,25 @@ echo "3.0 (native)" > "$SRC_DIR/debian/source/format"
 cd "$SRC_DIR"
 dpkg-buildpackage -S -sa -us -uc -d
 
-# Sign the source package
 cd "$WORK_DIR"
-debsign -k"${GPG_KEY_ID}" "${PACKAGE_NAME}_${VERSION}_source.changes"
+
+# Strip the source-only buildinfo from the upload. Launchpad's PPA FTP intermittently
+# rejects _source.buildinfo files with "550 Requested action not taken: internal server
+# error", failing the entire upload. The buildinfo is purely informational for source-only
+# uploads (no binary build environment to record), so dropping it is safe and unblocks
+# uploads. Done before debsign so the changes-file signature covers the modified content.
+CHANGES_FILE="${PACKAGE_NAME}_${VERSION}_source.changes"
+BUILDINFO_FILE="${PACKAGE_NAME}_${VERSION}_source.buildinfo"
+sed -i "/_source\\.buildinfo/d" "$CHANGES_FILE"
+rm -f "$BUILDINFO_FILE"
+
+# Sign the source package
+debsign -k"${GPG_KEY_ID}" "$CHANGES_FILE"
 
 # Upload to Launchpad. -u skips dput's local pre-upload GPG verification, which
 # fails on Ubuntu 24.04's GPG 2.4 with "SignatureVerifyError: 0" even when the
 # signature is valid. Launchpad re-verifies the signature on its end.
-dput -u "$PPA" "${PACKAGE_NAME}_${VERSION}_source.changes"
+dput -u "$PPA" "$CHANGES_FILE"
 
 echo "Upload complete!"
 rm -rf "$WORK_DIR"

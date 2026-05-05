@@ -32,9 +32,9 @@ jobs:
 
     steps:
     - name: Refresh Ubuntu Packages
-      # automatically use a local mirror when fetching from the network
+      # Switch to the Azure mirror — much faster than the default archive.ubuntu.com on GHA runners.
       run: |
-        sed -i 's|archive.ubuntu.com|us.archive.ubuntu.com|' /etc/apt/sources.list.d/ubuntu.sources
+        sed -i 's|archive.ubuntu.com|azure.archive.ubuntu.com|' /etc/apt/sources.list.d/ubuntu.sources
         apt-get update
 
     - name: Install Dependencies
