@@ -15,17 +15,19 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
   RPM_NAME: kwin4_effect_shapecorners
+  DISTRO_SUFFIX: fedora
 
 jobs:
-  fedora:
-    # The CMake configure and build commands are platform agnostic and should work equally
-    # well on Windows or Mac.  You can convert this to a matrix build if you need
-    # cross-platform coverage.
-    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+  build:
     runs-on: ubuntu-latest
     container:
       image: fedora:43
       options: --user root
+
+    outputs:
+      version_changed: ${{ steps.version.outputs.version_changed }}
+      rpm_file: ${{ steps.package.outputs.rpm_file }}
+      rpm_file_x11: ${{ steps.package.outputs.rpm_file_x11 }}
 
     steps:
     - name: Install CLI Dependencies
@@ -39,6 +41,7 @@ jobs:
         fetch-depth: 0 # Fetch all history for accurate versioning
 
     - name: Fetch Build Versions
+      id: version
       run: |
         export LAST_RELEASE_TAG=$(git describe --tags --abbrev=0);
         export REV_COUNT=$(git rev-list --count ${LAST_RELEASE_TAG}..HEAD);
@@ -47,50 +50,64 @@ jobs:
         export CURRENT_BUILD_VERSION=${PKG_VERSION}.${REV_COUNT}-${KWIN_VERSION};
         echo "Current build version: ${CURRENT_BUILD_VERSION}";
         echo "CURRENT_BUILD_VERSION=${CURRENT_BUILD_VERSION}" >> $GITHUB_ENV
-        
+
         export COPR_BUILD_VERSION=$(copr monitor matinlotfali/KDE-Rounded-Corners | jq -r 'first["pkg_version"]');
         echo "Copr build version: ${COPR_BUILD_VERSION}";
         echo "COPR_BUILD_VERSION=${COPR_BUILD_VERSION}" >> $GITHUB_ENV
-    
+
+        if [ "${CURRENT_BUILD_VERSION}" != "${COPR_BUILD_VERSION}" ]; then
+          echo "version_changed=true" >> $GITHUB_OUTPUT
+        else
+          echo "version_changed=false" >> $GITHUB_OUTPUT
+        fi
+
     - name: Install Build Dependencies
       if: env.CURRENT_BUILD_VERSION != env.COPR_BUILD_VERSION
       run: |
         dnf -y install cmake gcc-c++ extra-cmake-modules kwin-devel kwin-x11-devel kf6-kconfigwidgets-devel libepoxy-devel kf6-kcmutils-devel kf6-ki18n-devel qt6-qtbase-private-devel wayland-devel libdrm-devel
-    
+
     - name: Configure & Build For Wayland
       if: env.CURRENT_BUILD_VERSION != env.COPR_BUILD_VERSION
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: |
         cmake . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
         cmake --build . --config ${{env.BUILD_TYPE}} -j
         cpack -V -G RPM
-        RPM_FILE=artifacts/${RPM_NAME}_${GITHUB_JOB}.rpm
         mkdir -p artifacts
-        mv ${RPM_NAME}.rpm ${RPM_FILE}
-        echo "RPM_FILE=${RPM_FILE}" >> $GITHUB_ENV
+        mv ${RPM_NAME}.rpm artifacts/${RPM_NAME}_${DISTRO_SUFFIX}.rpm
 
     - name: Configure & Build For X11
       if: env.CURRENT_BUILD_VERSION != env.COPR_BUILD_VERSION
+      id: package
       run: |
         cmake . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DKWIN_X11=ON
         cmake --build . --config ${{env.BUILD_TYPE}} -j
         cpack -V -G RPM
-        RPM_FILE=artifacts/${RPM_NAME}_${GITHUB_JOB}_x11.rpm
-        mv ${RPM_NAME}_x11.rpm ${RPM_FILE}
-        echo "RPM_FILE_X11=${RPM_FILE}" >> $GITHUB_ENV
+        mv ${RPM_NAME}_x11.rpm artifacts/${RPM_NAME}_${DISTRO_SUFFIX}_x11.rpm
+        echo "rpm_file=artifacts/${RPM_NAME}_${DISTRO_SUFFIX}.rpm" >> $GITHUB_OUTPUT
+        echo "rpm_file_x11=artifacts/${RPM_NAME}_${DISTRO_SUFFIX}_x11.rpm" >> $GITHUB_OUTPUT
 
     - name: Upload Workflow Artifact
       if: env.CURRENT_BUILD_VERSION != env.COPR_BUILD_VERSION
       uses: actions/upload-artifact@v7
       with:
         name: ${{ env.RPM_NAME }}
-        path: "artifacts"
+        path: artifacts/
         compression-level: 0
         if-no-files-found: error
 
-    - name: Upload Release Asset For Wayland
-      if: github.ref == 'refs/heads/master' && env.CURRENT_BUILD_VERSION != env.COPR_BUILD_VERSION
+  upload-sourceforge:
+    needs: build
+    if: needs.build.outputs.version_changed == 'true' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download Workflow Artifact
+      uses: actions/download-artifact@v7
+      with:
+        name: ${{ env.RPM_NAME }}
+        path: artifacts/
+
+    - name: Upload Wayland to SourceForge
       uses: nicklasfrahm/scp-action@main
       with:
         direction: upload
@@ -98,11 +115,10 @@ jobs:
         username: ${{ secrets.SOURCEFORGE_USERNAME }}
         key: ${{ secrets.SOURCEFORGE_KEY }}
         fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
-        source: ${{ env.RPM_FILE }}
-        target: /home/frs/project/kde-rounded-corners/nightly/${{ github.job }}/${{ env.RPM_NAME }}_${{ github.job }}.rpm
-    
-    - name: Upload Release Asset For X11
-      if: github.ref == 'refs/heads/master' && env.CURRENT_BUILD_VERSION != env.COPR_BUILD_VERSION
+        source: ${{ needs.build.outputs.rpm_file }}
+        target: /home/frs/project/kde-rounded-corners/nightly/${{ env.DISTRO_SUFFIX }}/${{ env.RPM_NAME }}_${{ env.DISTRO_SUFFIX }}.rpm
+
+    - name: Upload X11 to SourceForge
       uses: nicklasfrahm/scp-action@main
       with:
         direction: upload
@@ -110,18 +126,16 @@ jobs:
         username: ${{ secrets.SOURCEFORGE_USERNAME }}
         key: ${{ secrets.SOURCEFORGE_KEY }}
         fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
-        source: ${{ env.RPM_FILE_X11 }}
-        target: /home/frs/project/kde-rounded-corners/nightly/${{ github.job }}/${{ env.RPM_NAME }}_${{ github.job }}_x11.rpm
-    
+        source: ${{ needs.build.outputs.rpm_file_x11 }}
+        target: /home/frs/project/kde-rounded-corners/nightly/${{ env.DISTRO_SUFFIX }}/${{ env.RPM_NAME }}_${{ env.DISTRO_SUFFIX }}_x11.rpm
+
+  trigger-copr:
+    needs: build
+    if: needs.build.outputs.version_changed == 'true' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    steps:
     - name: Trigger Copr Rebuild
-      if: github.ref == 'refs/heads/master' && env.CURRENT_BUILD_VERSION != env.COPR_BUILD_VERSION
-      run:
+      run: |
         curl -X POST ${{ secrets.COPR_WEBHOOK_URL }}/kwin-effect-roundcorners
         curl -X POST ${{ secrets.COPR_WEBHOOK_URL }}/kwin-effect-roundcorners-x11
-
-#     - name: Test
-#       working-directory: ${{github.workspace}}/build
-#       # Execute tests defined by the CMake configuration.  
-#       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-#       run: ctest -C ${{env.BUILD_TYPE}}
-      

@@ -15,17 +15,20 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
   DEB_NAME: kwin4_effect_shapecorners
+  DISTRO_SUFFIX: kubuntu2604
 
 jobs:
-  kubuntu2604:
-    # The CMake configure and build commands are platform agnostic and should work equally
-    # well on Windows or Mac.  You can convert this to a matrix build if you need
-    # cross-platform coverage.
-    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+  build:
     runs-on: ubuntu-latest
     container:
       image: ubuntu:26.04
       options: --user root
+
+    outputs:
+      pkg_version: ${{ steps.version.outputs.pkg_version }}
+      deb_file_wayland: ${{ steps.package.outputs.deb_file_wayland }}
+      deb_file_x11: ${{ steps.package.outputs.deb_file_x11 }}
+      version_changed: ${{ steps.lp_check.outputs.version_changed }}
 
     steps:
     - name: Refresh Ubuntu Packages
@@ -35,9 +38,9 @@ jobs:
         apt-get update
 
     - name: Install Dependencies
-      run: |        
+      run: |
         apt-get install -y --no-install-recommends cmake g++ gettext extra-cmake-modules qt6-base-private-dev qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev kwin-x11-dev libdrm-dev
-        apt-get install -y --no-install-recommends dpkg-dev file git ca-certificates
+        apt-get install -y --no-install-recommends dpkg-dev file git ca-certificates curl jq
         update-ca-certificates
         git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
@@ -55,8 +58,7 @@ jobs:
       run: |
         cpack -V -G DEB
         mkdir -p artifacts
-        mv ${DEB_NAME}.deb artifacts/${DEB_NAME}_${GITHUB_JOB}.deb
-        echo "DEB_FILE_WAYLAND=artifacts/${DEB_NAME}_${GITHUB_JOB}.deb" >> $GITHUB_ENV
+        mv ${DEB_NAME}.deb artifacts/${DEB_NAME}_${DISTRO_SUFFIX}.deb
 
     - name: Configure & Build X11
       run: |
@@ -64,10 +66,35 @@ jobs:
         cmake --build . --config ${{env.BUILD_TYPE}} -j
 
     - name: Package X11
+      id: package
       run: |
         cpack -V -G DEB
-        mv ${DEB_NAME}_x11.deb artifacts/${DEB_NAME}_${GITHUB_JOB}_x11.deb
-        echo "DEB_FILE_X11=artifacts/${DEB_NAME}_${GITHUB_JOB}_x11.deb" >> $GITHUB_ENV
+        mv ${DEB_NAME}_x11.deb artifacts/${DEB_NAME}_${DISTRO_SUFFIX}_x11.deb
+        echo "deb_file_wayland=artifacts/${DEB_NAME}_${DISTRO_SUFFIX}.deb" >> $GITHUB_OUTPUT
+        echo "deb_file_x11=artifacts/${DEB_NAME}_${DISTRO_SUFFIX}_x11.deb" >> $GITHUB_OUTPUT
+
+    - name: Compute Package Version
+      id: version
+      run: |
+        LAST_TAG=$(git describe --tags --abbrev=0)
+        REV_COUNT=$(git rev-list --count ${LAST_TAG}..HEAD)
+        TAG_VERSION=$(echo ${LAST_TAG} | sed 's/^v//')
+        KWIN_VERSION=$(dpkg -s kwin-dev | grep '^Version:' | cut -d' ' -f2 | sed 's/^[0-9]*://' | cut -d'-' -f1)
+        PKG_VERSION="${TAG_VERSION}.${REV_COUNT}.${KWIN_VERSION}"
+        echo "pkg_version=${PKG_VERSION}" >> $GITHUB_OUTPUT
+
+    - name: Check Launchpad PPA For Existing Version
+      id: lp_check
+      env:
+        PKG_VERSION: ${{ steps.version.outputs.pkg_version }}
+      run: |
+        VERSION_CHANGED=false
+        for pkg in kwin-effect-roundcorners kwin-effect-roundcorners-x11; do
+          if ! sh tools/upload-to-launchpad.sh --check "$pkg" "$PKG_VERSION" kubuntu2604; then
+            VERSION_CHANGED=true
+          fi
+        done
+        echo "version_changed=${VERSION_CHANGED}" >> $GITHUB_OUTPUT
 
     - name: Upload Workflow Artifacts
       uses: actions/upload-artifact@v7
@@ -77,8 +104,19 @@ jobs:
         compression-level: 0
         if-no-files-found: error
 
+  upload-sourceforge:
+    needs: build
+    if: needs.build.outputs.version_changed == 'true' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download Workflow Artifact
+      uses: actions/download-artifact@v7
+      with:
+        name: ${{ env.DEB_NAME }}
+        path: artifacts/
+
     - name: Upload Wayland to SourceForge
-      if: github.ref == 'refs/heads/master'
       uses: nicklasfrahm/scp-action@main
       with:
         direction: upload
@@ -86,11 +124,10 @@ jobs:
         username: ${{ secrets.SOURCEFORGE_USERNAME }}
         key: ${{ secrets.SOURCEFORGE_KEY }}
         fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
-        source: ${{ env.DEB_FILE_WAYLAND }}
-        target: /home/frs/project/kde-rounded-corners/nightly/${{ github.job }}/
+        source: ${{ needs.build.outputs.deb_file_wayland }}
+        target: /home/frs/project/kde-rounded-corners/nightly/${{ env.DISTRO_SUFFIX }}/
 
     - name: Upload X11 to SourceForge
-      if: github.ref == 'refs/heads/master'
       uses: nicklasfrahm/scp-action@main
       with:
         direction: upload
@@ -98,24 +135,37 @@ jobs:
         username: ${{ secrets.SOURCEFORGE_USERNAME }}
         key: ${{ secrets.SOURCEFORGE_KEY }}
         fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
-        source: ${{ env.DEB_FILE_X11 }}
-        target: /home/frs/project/kde-rounded-corners/nightly/${{ github.job }}/
+        source: ${{ needs.build.outputs.deb_file_x11 }}
+        target: /home/frs/project/kde-rounded-corners/nightly/${{ env.DISTRO_SUFFIX }}/
+
+  upload-launchpad:
+    needs: build
+    if: needs.build.outputs.version_changed == 'true' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v6
+
+    - name: Download Workflow Artifact
+      uses: actions/download-artifact@v7
+      with:
+        name: ${{ env.DEB_NAME }}
+        path: artifacts/
+
+    - name: Install Launchpad Tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends debhelper dput devscripts
 
     - name: Upload to Launchpad PPA
-      if: github.ref == 'refs/heads/master'
       env:
         GPG_PRIVATE_KEY: ${{ secrets.LAUNCHPAD_GPG_PRIVATE_KEY }}
         GPG_KEY_ID: DCCACDF0AE2E535CEF20ABC1916523094AD3BA70
+        DEB_FILE_WAYLAND: ${{ needs.build.outputs.deb_file_wayland }}
+        DEB_FILE_X11: ${{ needs.build.outputs.deb_file_x11 }}
+        PKG_VERSION: ${{ needs.build.outputs.pkg_version }}
       run: |
-        apt-get install -y --no-install-recommends debhelper dput devscripts
         echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-
-        # Compute version: <tag_version>.<rev_count>.<kwin_version>
-        LAST_TAG=$(git describe --tags --abbrev=0)
-        REV_COUNT=$(git rev-list --count ${LAST_TAG}..HEAD)
-        TAG_VERSION=$(echo ${LAST_TAG} | sed 's/^v//')
-        KWIN_VERSION=$(dpkg -s kwin-dev | grep '^Version:' | cut -d' ' -f2 | sed 's/^[0-9]*://' | cut -d'-' -f1)
-        PKG_VERSION="${TAG_VERSION}.${REV_COUNT}.${KWIN_VERSION}"
-
         sh tools/upload-to-launchpad.sh "$DEB_FILE_WAYLAND" kwin-effect-roundcorners "$PKG_VERSION" kubuntu2604 resolute
         sh tools/upload-to-launchpad.sh "$DEB_FILE_X11" kwin-effect-roundcorners-x11 "$PKG_VERSION" kubuntu2604 resolute

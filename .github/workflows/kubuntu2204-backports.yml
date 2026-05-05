@@ -15,14 +15,16 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
   DEB_NAME: kwin4_effect_shapecorners
+  DISTRO_SUFFIX: kubuntu2204
 
 jobs:
-  kubuntu2204:
-    # The CMake configure and build commands are platform agnostic and should work equally
-    # well on Windows or Mac.  You can convert this to a matrix build if you need
-    # cross-platform coverage.
-    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+  build:
     runs-on: ubuntu-22.04
+
+    outputs:
+      pkg_version: ${{ steps.version.outputs.pkg_version }}
+      deb_file: ${{ steps.package.outputs.deb_file }}
+      version_changed: ${{ steps.lp_check.outputs.version_changed }}
 
     steps:
     - name: Check out repository
@@ -41,34 +43,64 @@ jobs:
 
     - name: Install Dependencies
       run: sudo aptitude install -y --without-recommends gettext extra-cmake-modules qttools5-dev libkf5configwidgets-dev kwin-dev
-    
+
     - name: Configure CMake
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: cmake . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build
-      # Build your program with the given configuration
       run: cmake --build . --config ${{env.BUILD_TYPE}} -j
 
     - name: Package
+      id: package
       run: |
         cpack -V -G DEB
-        DEB_FILE=artifacts/${DEB_NAME}_${GITHUB_JOB}.deb
+        DEB_FILE=artifacts/${DEB_NAME}_${DISTRO_SUFFIX}.deb
         mkdir artifacts
         mv ${DEB_NAME}.deb ${DEB_FILE}
-        echo "DEB_FILE=${DEB_FILE}" >> $GITHUB_ENV
+        echo "deb_file=${DEB_FILE}" >> $GITHUB_OUTPUT
+
+    - name: Compute Package Version
+      id: version
+      run: |
+        LAST_TAG=$(git describe --tags --abbrev=0)
+        REV_COUNT=$(git rev-list --count ${LAST_TAG}..HEAD)
+        TAG_VERSION=$(echo ${LAST_TAG} | sed 's/^v//')
+        KWIN_VERSION=$(dpkg -s kwin-dev | grep '^Version:' | cut -d' ' -f2 | sed 's/^[0-9]*://' | cut -d'-' -f1)
+        PKG_VERSION="${TAG_VERSION}.${REV_COUNT}.${KWIN_VERSION}"
+        echo "pkg_version=${PKG_VERSION}" >> $GITHUB_OUTPUT
+
+    - name: Check Launchpad PPA For Existing Version
+      id: lp_check
+      env:
+        PKG_VERSION: ${{ steps.version.outputs.pkg_version }}
+      run: |
+        if sh tools/upload-to-launchpad.sh --check kwin-effect-roundcorners "$PKG_VERSION" kubuntu2204; then
+          echo "version_changed=false" >> $GITHUB_OUTPUT
+        else
+          echo "version_changed=true" >> $GITHUB_OUTPUT
+        fi
 
     - name: Upload Workflow Artifact
       uses: actions/upload-artifact@v7
       with:
         name: ${{ env.DEB_NAME }}
-        path: ${{ env.DEB_FILE }}
+        path: artifacts/
         compression-level: 0
         if-no-files-found: error
 
+  upload-sourceforge:
+    needs: build
+    if: needs.build.outputs.version_changed == 'true' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download Workflow Artifact
+      uses: actions/download-artifact@v7
+      with:
+        name: ${{ env.DEB_NAME }}
+        path: artifacts/
+
     - name: Upload to SourceForge
-      if: github.ref == 'refs/heads/master'
       uses: nicklasfrahm/scp-action@main
       with:
         direction: upload
@@ -76,23 +108,35 @@ jobs:
         username: ${{ secrets.SOURCEFORGE_USERNAME }}
         key: ${{ secrets.SOURCEFORGE_KEY }}
         fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
-        source: ${{ env.DEB_FILE }}
-        target: /home/frs/project/kde-rounded-corners/nightly/kubuntu2204/${{ env.DEB_NAME }}_${{ github.job }}.deb
+        source: ${{ needs.build.outputs.deb_file }}
+        target: /home/frs/project/kde-rounded-corners/nightly/kubuntu2204/${{ env.DEB_NAME }}_${{ env.DISTRO_SUFFIX }}.deb
+
+  upload-launchpad:
+    needs: build
+    if: needs.build.outputs.version_changed == 'true' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v6
+
+    - name: Download Workflow Artifact
+      uses: actions/download-artifact@v7
+      with:
+        name: ${{ env.DEB_NAME }}
+        path: artifacts/
+
+    - name: Install Launchpad Tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y debhelper dput devscripts
 
     - name: Upload to Launchpad PPA
-      if: github.ref == 'refs/heads/master'
       env:
         GPG_PRIVATE_KEY: ${{ secrets.LAUNCHPAD_GPG_PRIVATE_KEY }}
         GPG_KEY_ID: DCCACDF0AE2E535CEF20ABC1916523094AD3BA70
+        DEB_FILE: ${{ needs.build.outputs.deb_file }}
+        PKG_VERSION: ${{ needs.build.outputs.pkg_version }}
       run: |
-        sudo apt-get install -y debhelper dput devscripts
         echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-
-        # Compute version: <tag_version>.<rev_count>.<kwin_version>
-        LAST_TAG=$(git describe --tags --abbrev=0)
-        REV_COUNT=$(git rev-list --count ${LAST_TAG}..HEAD)
-        TAG_VERSION=$(echo ${LAST_TAG} | sed 's/^v//')
-        KWIN_VERSION=$(dpkg -s kwin-dev | grep '^Version:' | cut -d' ' -f2 | sed 's/^[0-9]*://' | cut -d'-' -f1)
-        PKG_VERSION="${TAG_VERSION}.${REV_COUNT}.${KWIN_VERSION}"
-
         sh tools/upload-to-launchpad.sh "$DEB_FILE" kwin-effect-roundcorners "$PKG_VERSION" kubuntu2204 jammy

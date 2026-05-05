@@ -1,24 +1,60 @@
 #!/bin/bash
-# Upload pre-built .deb to Launchpad PPA
-# Usage: ./upload-to-launchpad.sh <deb_file> <package_name> <version> <distro_codename> <ubuntu_series>
+# Upload pre-built .deb to Launchpad PPA, or check whether a version is already published.
+# Usage:
+#   Upload: ./upload-to-launchpad.sh <deb_file> <package_name> <version> <distro_codename> <ubuntu_series>
+#   Check:  ./upload-to-launchpad.sh --check <package_name> <version> <distro_codename>
+#           Exits 0 if the source version is already on the PPA, non-zero otherwise.
 # Example: ./upload-to-launchpad.sh shapecorners.deb kwin-effect-roundcorners-neon 0.7.2.5-6.5.3 neon noble
 
 set -e
+
+PPA="ppa:matinlotfali/kde-rounded-corners"
+
+# Returns 0 if <pkg_name> at version <pkg_version>~<distro>1 is already published on the PPA.
+# Fail-open on API errors: callers proceed with upload when Launchpad is unreachable.
+launchpad_version_present() {
+    LP_PKG="$1"
+    LP_VERSION="${2}~${3}1"
+    LP_URL="https://api.launchpad.net/1.0/~matinlotfali/+archive/ubuntu/kde-rounded-corners?ws.op=getPublishedSources&source_name=${LP_PKG}&version=${LP_VERSION}&exact_match=true"
+    LP_COUNT=$(curl -fsS --max-time 30 "$LP_URL" 2>/dev/null | jq '.entries | length' 2>/dev/null || echo 0)
+    [ "$LP_COUNT" -gt 0 ]
+}
+
+# Check-only mode
+if [ "${1:-}" = "--check" ]; then
+    PACKAGE_NAME="$2"
+    PKG_VERSION="$3"
+    DISTRO_CODENAME="$4"
+    if launchpad_version_present "$PACKAGE_NAME" "$PKG_VERSION" "$DISTRO_CODENAME"; then
+        echo "Found ${PACKAGE_NAME} ${PKG_VERSION}~${DISTRO_CODENAME}1 on Launchpad PPA."
+        exit 0
+    else
+        echo "Did NOT find ${PACKAGE_NAME} ${PKG_VERSION}~${DISTRO_CODENAME}1 on Launchpad PPA."
+        exit 1
+    fi
+fi
 
 DEB_FILE="$1"
 PACKAGE_NAME="$2"
 PKG_VERSION="$3"
 DISTRO_CODENAME="$4"
 UBUNTU_SERIES="$5"
-PPA="ppa:matinlotfali/kde-rounded-corners"
 
 if [ -z "$DEB_FILE" ] || [ -z "$PACKAGE_NAME" ] || [ -z "$PKG_VERSION" ] || [ -z "$DISTRO_CODENAME" ] || [ -z "$UBUNTU_SERIES" ]; then
     echo "Usage: $0 <deb_file> <package_name> <version> <distro_codename> <ubuntu_series>"
+    echo "       $0 --check <package_name> <version> <distro_codename>"
     exit 1
 fi
 
 # Version format: <pkg_version>~<distro>1 (e.g., 0.7.2.5-6.5.3~neon1)
 VERSION="${PKG_VERSION}~${DISTRO_CODENAME}1"
+
+# Skip the upload if this exact source version is already published on the PPA.
+# Avoids the 550 buildinfo conflict that Launchpad's FTP returns for re-uploads.
+if launchpad_version_present "$PACKAGE_NAME" "$PKG_VERSION" "$DISTRO_CODENAME"; then
+    echo "${PACKAGE_NAME} ${VERSION} is already on Launchpad PPA. Skipping upload."
+    exit 0
+fi
 
 echo "Creating source package for $PACKAGE_NAME version $VERSION..."
 
