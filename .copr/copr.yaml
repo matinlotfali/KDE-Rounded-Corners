@@ -1,0 +1,2 @@
+srpm_build_method: make_srpm
+srpm_build_chroot: fedora-44-x86_64
