@@ -1,5 +1,6 @@
 # .copr/Makefile
 srpm:
+	dnf makecache --refresh
 	dnf install -y git
 
 	# derive version from the latest tag, count revisions, strip leading 'v', patch spec
