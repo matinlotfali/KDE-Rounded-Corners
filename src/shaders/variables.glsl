@@ -1,5 +1,8 @@
 uniform sampler2D sampler;            // The painted contents of the window.
 uniform float     radius;             // The thickness of the outline in pixels specified in settings.
+uniform bool      useSquircleShape;   // Whether to use a superellipse/squircle curve for corners.
+uniform float     squircleBlend;      // How strongly to blend circular corners toward a squircle.
+uniform float     squircleMagicRatio; // Precomputed radius correction for the current squircleBlend.
 uniform vec2      windowSize;         // Containing `window->frameGeometry().size()`
 uniform vec2      windowExpandedSize; // Containing `window->expandedGeometry().size()`
 

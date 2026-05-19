@@ -6,6 +6,33 @@ bool is_within(vec2 point, vec2 corner_a, vec2 corner_b)
     return is_within(point.x, corner_a.x, corner_b.x) && is_within(point.y, corner_a.y, corner_b.y);
 }
 
+float squircleDistance(vec2 delta)
+{
+    vec2 d = abs(delta);
+
+    const float squircle_power = 4.0;
+    float       circle         = length(d);
+    float       squircle       = pow(pow(d.x, squircle_power) + pow(d.y, squircle_power), 1.0 / squircle_power);
+
+    return mix(circle, squircle, squircleBlend);
+}
+
+float shape_distance(vec2 point, vec2 center, float radius)
+{
+    vec2 delta = point - center;
+    if (!useSquircleShape) {
+        return length(delta);
+    }
+
+    float       effective_radius = radius * squircleMagicRatio;
+    float       center_shift     = effective_radius - radius;
+    vec2        d                = abs(delta);
+    vec2        shifted_d        = d + center_shift;
+    float       dist             = squircleDistance(shifted_d);
+
+    return dist - effective_radius + radius;
+}
+
 /*
  *  \brief This function is used to choose the pixel color based on its distance to the center input.
  *  \param coord0: The XY point
@@ -24,7 +51,7 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle, vec4 coord_shad
     vec2  outlineStart         = start + outlineThickness * angle_vector * corner_length;
     vec2  secondOutlineStart   = start + (outlineThickness + secondOutlineThickness) * angle_vector * corner_length;
     vec2  outerOutlineEnd      = start - outerOutlineThickness * angle_vector * corner_length;
-    float distance_from_center = distance(coord0, roundness_center);
+    float distance_from_center = shape_distance(coord0, roundness_center, radius);
     bool  inOutlineZone =
             (hasPrimaryOutline() && outlineThickness >= radius && is_within(coord0, outlineStart, start)) ||
             (hasSecondOutline() && outlineThickness + secondOutlineThickness >= radius &&

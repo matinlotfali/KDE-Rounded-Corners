@@ -2,6 +2,7 @@
 #include "Shader.h"
 #include <QFile>
 #include <QStandardPaths>
+#include <cmath>
 #include "Config.h"
 #include "Utils.h"
 #include "Window.h"
@@ -24,6 +25,30 @@ namespace
     constexpr QVector2D toVector2D(const QSizeF &size)
     {
         return {static_cast<float>(size.width()), static_cast<float>(size.height())};
+    }
+
+    float calculateMagicRatio(const float squircle_power, const float squircle_blend)
+    {
+        const float circle_dist   = std::sqrt(2.0F);
+        const float squircle_dist = std::pow(2.0F, 1.0F / squircle_power);
+        const float blended_dist  = circle_dist * (1.0F - squircle_blend) + squircle_dist * squircle_blend;
+        const float numerator     = 1.0F - (1.0F / circle_dist);
+        const float denominator   = 1.0F - (1.0F / blended_dist);
+
+        return numerator / denominator;
+    }
+
+    float cachedMagicRatio(const float squircle_blend)
+    {
+        static float cached_blend = -1.0F;
+        static float cached_ratio = 1.0F;
+
+        if (cached_blend != squircle_blend) {
+            cached_blend = squircle_blend;
+            cached_ratio = calculateMagicRatio(4.0F, squircle_blend);
+        }
+
+        return cached_ratio;
     }
 } // namespace
 
@@ -56,6 +81,9 @@ ShapeCorners::Shader::Shader()
     m_shader_shadowColor            = m_shader->uniformLocation("shadowColor");
     m_shader_shadowSize             = m_shader->uniformLocation("shadowSize");
     m_shader_radius                 = m_shader->uniformLocation("radius");
+    m_shader_useSquircleShape       = m_shader->uniformLocation("useSquircleShape");
+    m_shader_squircleBlend          = m_shader->uniformLocation("squircleBlend");
+    m_shader_squircleMagicRatio     = m_shader->uniformLocation("squircleMagicRatio");
     m_shader_outlineColor           = m_shader->uniformLocation("outlineColor");
     m_shader_outlineThickness       = m_shader->uniformLocation("outlineThickness");
     m_shader_secondOutlineColor     = m_shader->uniformLocation("secondOutlineColor");
@@ -96,6 +124,10 @@ void ShapeCorners::Shader::Bind(const Window &window, const double scale) const
     m_shader->setUniform(m_shader_windowExpandedSize, toVector2D(expandedGeometry.size()));
     m_shader->setUniform(m_shader_windowTopLeft, frameOffset);
     m_shader->setUniform(m_shader_usesNativeShadows, static_cast<int>(Config::useNativeDecorationShadows()));
+    m_shader->setUniform(m_shader_useSquircleShape, static_cast<int>(Config::useSquircleShape()));
+    const auto squircleBlend = static_cast<float>(Config::squircleness());
+    m_shader->setUniform(m_shader_squircleBlend, squircleBlend);
+    m_shader->setUniform(m_shader_squircleMagicRatio, cachedMagicRatio(squircleBlend));
     m_shader->setUniform(m_shader_front, 0);
     m_shader->setUniform(m_shader_outlineThickness, static_cast<float>(window.currentConfig.outlineSize * scale));
     m_shader->setUniform(m_shader_secondOutlineThickness,
