@@ -197,13 +197,15 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
     }
 
     // Call the base implementation.
+#if KWIN_EFFECT_API_VERSION >= 237
 #if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
     OffscreenEffect::prePaintWindow(view, kwindow, data);
-#elif KWIN_EFFECT_API_VERSION >= 237
+#else
     OffscreenEffect::prePaintWindow(view, kwindow, data, time);
+#endif // KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
 #else
     OffscreenEffect::prePaintWindow(kwindow, data, time);
-#endif
+#endif // KWIN_EFFECT_API_VERSION >= 237
 }
 
 bool ShapeCorners::Effect::supported()
