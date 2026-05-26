@@ -121,29 +121,33 @@ void ShapeCorners::Effect::reconfigure(const ReconfigureFlags flags)
     }
 }
 
+#if KWIN_EFFECT_API_VERSION >= 237
 #if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
 void ShapeCorners::Effect::prePaintWindow(KWin::RenderView *view, KWin::EffectWindow *kwindow,
                                           KWin::WindowPrePaintData &data)
-#elif KWIN_EFFECT_API_VERSION >= 237
+#else
 void ShapeCorners::Effect::prePaintWindow(KWin::RenderView *view, KWin::EffectWindow *kwindow,
                                           KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
+#endif // KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
 #else
 void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::WindowPrePaintData &data,
                                           std::chrono::milliseconds time)
-#endif
+#endif // KWIN_EFFECT_API_VERSION >= 237
 {
     // Find the managed window structure.
     auto *window = m_windowManager->findWindow(kwindow);
 
     // If the shader is not valid or the window is not managed or doesn't need the effect, fall back to default.
     if (!m_shaderManager.IsValid() || window == nullptr || !window->hasEffect()) {
+#if KWIN_EFFECT_API_VERSION >= 237
 #if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
         OffscreenEffect::prePaintWindow(view, kwindow, data);
-#elif KWIN_EFFECT_API_VERSION >= 237
+#else
         OffscreenEffect::prePaintWindow(view, kwindow, data, time);
+#endif // KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
 #else
         OffscreenEffect::prePaintWindow(kwindow, data, time);
-#endif
+#endif // KWIN_EFFECT_API_VERSION >= 237
         return;
     }
 
@@ -165,14 +169,14 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
         // Calculate geometry and corner size for Qt5.
         const auto geo  = (kwindow->frameGeometry() * KWin::effects->renderTargetScale()).toRect();
         const auto size = (int) (window->currentConfig.cornerRadius * KWin::effects->renderTargetScale());
-#endif
+#endif // QT_VERSION_MAJOR >= 6
 
         // Create a region for each rounded corner.
 #if KWIN_EFFECT_API_VERSION >= 237
         KWin::Region reg{};
 #else
         QRegion reg{};
-#endif
+#endif // KWIN_EFFECT_API_VERSION >= 237
         reg += QRect(geo.x(), geo.y(), size, size);
         reg += QRect(geo.x() + geo.width() - size, geo.y(), size, size);
         reg += QRect(geo.x(), geo.y() + geo.height() - size, size, size);
@@ -185,7 +189,7 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
 #else
         data.opaque -= reg;
         data.paint += reg;
-#endif
+#endif // KWIN_EFFECT_API_VERSION >= 237
 #endif // KWIN_PLUGIN_VERSION_NUM < QT_VERSION_CHECK(6, 6, 80)
 
         // Mark the window as having translucent regions.

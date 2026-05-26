@@ -94,7 +94,8 @@ void ShapeCorners::TileChecker::checkTiles(const T &screen_rect)
     checkTiled_Recursive<true>(screen_rect.y(), 0);
 }
 
-#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
+// kwin-x11 keeps a high plugin version but an old effect API without KWin::Rect, so gate on the API too.
+#if KWIN_EFFECT_API_VERSION >= 237 && KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
 template void ShapeCorners::TileChecker::checkTiles<KWin::Rect>(const KWin::Rect &);
 #else
 template void ShapeCorners::TileChecker::checkTiles<QRect>(const QRect &);
