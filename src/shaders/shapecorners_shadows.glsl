@@ -1,3 +1,4 @@
+#include "squircles.glsl"
 #include "variables.glsl"
 
 uniform bool  usesNativeShadows;
@@ -20,10 +21,16 @@ float parametricBlend(float t)
  */
 vec4 getShadowByDistance(vec2 coord0, vec2 center)
 {
-    float distance_from_center = distance(coord0, center);
-    float percent              = 1.0 - distance_from_center / shadowSize;
-    percent                    = clamp(percent, 0.0, 1.0);
-    percent                    = parametricBlend(percent);
+    float distance_from_center;
+    if (useSquircleShape) {
+        distance_from_center = squircle_distance(coord0, center);
+    } else {
+        distance_from_center = distance(coord0, center);
+    }
+
+    float percent = 1.0 - distance_from_center / shadowSize;
+    percent       = clamp(percent, 0.0, 1.0);
+    percent       = parametricBlend(percent);
     if (percent < 0.0) {
         return vec4(0.0, 0.0, 0.0, 0.0);
     }

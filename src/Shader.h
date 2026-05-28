@@ -108,12 +108,6 @@ namespace ShapeCorners
         int m_shader_squircleBlend = 0;
 
         /**
-         * \brief Reference to `uniform float squircleMagicRatio;`
-         *        Precomputed radius correction for the configured squircle blend.
-         */
-        int m_shader_squircleMagicRatio = 0;
-
-        /**
          * \brief Reference to `uniform bool usesNativeShadows;`
          *        Whether the window has custom shadows.
          */

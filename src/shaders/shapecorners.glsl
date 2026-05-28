@@ -6,31 +6,27 @@ bool is_within(vec2 point, vec2 corner_a, vec2 corner_b)
     return is_within(point.x, corner_a.x, corner_b.x) && is_within(point.y, corner_a.y, corner_b.y);
 }
 
-float squircleDistance(vec2 delta)
-{
-    vec2 d = abs(delta);
-
-    const float squircle_power = 4.0;
-    float       circle         = length(d);
-    float       squircle       = pow(pow(d.x, squircle_power) + pow(d.y, squircle_power), 1.0 / squircle_power);
-
-    return mix(circle, squircle, squircleBlend);
-}
-
+/*
+ *  \brief Distance from a point to a corner center, as a circular arc or a squircle curve.
+ *  \param point: The XY point being shaded.
+ *  \param center: The XY center of the corner roundness.
+ *  \param radius: The corner radius in pixels.
+ *  \return A field whose value equals `radius` on the corner boundary.
+ */
 float shape_distance(vec2 point, vec2 center, float radius)
 {
-    vec2 delta = point - center;
     if (!useSquircleShape) {
-        return length(delta);
+        return distance(point, center);
     }
 
-    float       effective_radius = radius * squircleMagicRatio;
-    float       center_shift     = effective_radius - radius;
-    vec2        d                = abs(delta);
-    vec2        shifted_d        = d + center_shift;
-    float       dist             = squircleDistance(shifted_d);
+    // Pure circle/superellipse blend: on a straight edge the offset is axis-aligned, so this
+    // equals distance(point, center) and leaves the edge undistorted; only the corners curve.
+    float dist = squircle_distance(point, center);
 
-    return dist - effective_radius + radius;
+    // Renormalize to ~unit gradient so the outline and antialiasing bands keep a uniform
+    // width at the corners, where the raw superellipse gradient would otherwise dip below 1.
+    float grad = squircle_gradient(point, center);
+    return radius + (dist - radius) / max(grad, 1e-4);
 }
 
 /*
