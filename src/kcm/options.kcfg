@@ -7,10 +7,10 @@
 
     <group name="Round-Corners">
         <entry name="Size" type="UInt">
-            <default>10</default>
+            <default>20</default>
         </entry>
         <entry name="InactiveCornerRadius" type="UInt">
-            <default>10</default>
+            <default>20</default>
         </entry>
         <entry name="UseSquircleShape" type="Bool">
             <default>false</default>
