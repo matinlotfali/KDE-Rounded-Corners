@@ -13,7 +13,7 @@
             <default>20</default>
         </entry>
         <entry name="UseSquircleShape" type="Bool">
-            <default>false</default>
+            <default>true</default>
         </entry>
         <entry name="Squircleness" type="Double">
             <default>0.55</default>
