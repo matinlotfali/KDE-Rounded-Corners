@@ -56,6 +56,8 @@ ShapeCorners::Shader::Shader()
     m_shader_shadowColor            = m_shader->uniformLocation("shadowColor");
     m_shader_shadowSize             = m_shader->uniformLocation("shadowSize");
     m_shader_radius                 = m_shader->uniformLocation("radius");
+    m_shader_useSquircleShape       = m_shader->uniformLocation("useSquircleShape");
+    m_shader_squircleBlend          = m_shader->uniformLocation("squircleBlend");
     m_shader_outlineColor           = m_shader->uniformLocation("outlineColor");
     m_shader_outlineThickness       = m_shader->uniformLocation("outlineThickness");
     m_shader_secondOutlineColor     = m_shader->uniformLocation("secondOutlineColor");
@@ -96,6 +98,8 @@ void ShapeCorners::Shader::Bind(const Window &window, const double scale) const
     m_shader->setUniform(m_shader_windowExpandedSize, toVector2D(expandedGeometry.size()));
     m_shader->setUniform(m_shader_windowTopLeft, frameOffset);
     m_shader->setUniform(m_shader_usesNativeShadows, static_cast<int>(Config::useNativeDecorationShadows()));
+    m_shader->setUniform(m_shader_useSquircleShape, static_cast<int>(Config::useSquircleShape()));
+    m_shader->setUniform(m_shader_squircleBlend, static_cast<float>(Config::squircleness()));
     m_shader->setUniform(m_shader_front, 0);
     m_shader->setUniform(m_shader_outlineThickness, static_cast<float>(window.currentConfig.outlineSize * scale));
     m_shader->setUniform(m_shader_secondOutlineThickness,

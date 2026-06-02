@@ -88,6 +88,12 @@ ShapeCorners::KCM::KCM(QWidget *parent, const QVariantList &args) : KCModule(par
         ui->inactiveShadowGroupBox->setEnabled(useCustomShadows);
     });
 
+    // Enable/disable the squircleness control based on whether squircle corners are used
+    connect(ui->kcfg_UseSquircleShape, &QCheckBox::toggled, [=, this](bool useSquircle) {
+        ui->squirclenessLabel->setEnabled(useSquircle);
+        ui->kcfg_Squircleness->setEnabled(useSquircle);
+    });
+
     // It was expected that the Apply button would get enabled automatically as the gradient sliders move, but it
     // doesn't. Maybe it is a bug on the KCM side. Need to check and delete these lines later.
     connect(ui->kcfg_ActiveShadowAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);

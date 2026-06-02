@@ -84,6 +84,7 @@ This effect is maintained on KDE Plasma desktop versions 5.27 to 6.6+ in various
 - Cleanups for the plugin logic, remove unneeded dependencies from CMakeLists.txt file - by [alex1701c](https://github.com/alex1701c)
 - Separate outline color for active and inactive windows - by [OrkenWhite](https://github.com/OrkenWhite)
 - Support for language translations - by [VictorR2007](https://github.com/VictorR2007) (See [How to add more translations?](#how-to-add-more-languages-to-the-translation))
+- Squircle corner shape - by [zxsleebu](https://github.com/zxsleebu) (See [#503](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/503))
 
 <a href="https://github.com/matinlotfali/KDE-Rounded-Corners/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=matinlotfali/KDE-Rounded-Corners" />
