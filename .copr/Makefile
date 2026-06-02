@@ -9,7 +9,7 @@ srpm:
 	sed -e "s/^Version:.*/Version: $${PKG_VERSION}.$${REV_COUNT}/" $(spec) > patched.spec
 
 	# derive kwin package version from dnf
-	sed -i -e "s/^Release:.*/Release: $$(dnf info -y kwin | awk '$$1=="Version" {print $$3}')%{?dist}/" patched.spec
+	sed -i -e "s/^Release:.*/Release: $$(dnf info --releasever=44 kwin | awk '$$1=="Version" {print $$3}' | head -1)%{?dist}/" patched.spec
 
 	# build the SRPM into the outdir
 	rpmbuild -bs \

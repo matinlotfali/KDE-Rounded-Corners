@@ -17,14 +17,15 @@
 
 namespace
 {
-auto screenRegion(const auto *screen)
-{
-#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
-    return KWin::Region(screen->geometry());
+    auto screenRegion(const auto *screen)
+    {
+// kwin-x11 keeps a high plugin version but an old effect API without KWin::Region, so gate on the API too.
+#if KWIN_EFFECT_API_VERSION >= 237 && KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
+        return KWin::Region(screen->geometry());
 #else
-    return QRegion(screen->geometry());
+        return QRegion(screen->geometry());
 #endif
-}
+    }
 } // namespace
 
 /**

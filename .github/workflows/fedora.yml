@@ -21,7 +21,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: fedora:43
+      image: fedora:44
       options: --user root
 
     outputs:

@@ -81,15 +81,17 @@ namespace ShapeCorners
          * @param data The window pre-paint data.
          * @param time The time since the last frame.
          */
+#if KWIN_EFFECT_API_VERSION >= 237
 #if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
         void prePaintWindow(KWin::RenderView *view, KWin::EffectWindow *w, KWin::WindowPrePaintData &data) override;
-#elif KWIN_EFFECT_API_VERSION >= 237
+#else
         void prePaintWindow(KWin::RenderView *view, KWin::EffectWindow *w, KWin::WindowPrePaintData &data,
                             std::chrono::milliseconds time) override;
+#endif // KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
 #else
         void prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data,
                             std::chrono::milliseconds time) override;
-#endif
+#endif // KWIN_EFFECT_API_VERSION >= 237
 
 #if QT_VERSION_MAJOR >= 6
         /**
