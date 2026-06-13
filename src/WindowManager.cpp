@@ -15,19 +15,6 @@
 #include <kwineffects.h>
 #endif
 
-namespace
-{
-    auto screenRegion(const auto *screen)
-    {
-// kwin-x11 keeps a high plugin version but an old effect API without KWin::Region, so gate on the API too.
-#if KWIN_EFFECT_API_VERSION >= 237 && KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
-        return KWin::Region(screen->geometry());
-#else
-        return QRegion(screen->geometry());
-#endif
-    }
-} // namespace
-
 /**
  * @brief Pointer to the singleton instance of WindowManager.
  */
@@ -189,32 +176,9 @@ void ShapeCorners::WindowManager::checkTiled() const
     TileChecker tileChecker;
     // Check tiling for each screen, excluding menu bars
     for (const auto &screen: KWin::effects->screens()) {
-        const auto screen_region = getRegionWithoutMenus(screenRegion(screen));
-        const auto geometry      = screen_region.boundingRect();
+        const auto geometry = KWin::effects->clientArea(KWin::MaximizeArea, screen, KWin::effects->currentDesktop());
         tileChecker.checkTiles(geometry);
     }
-}
-
-template<typename T>
-T ShapeCorners::WindowManager::getRegionWithoutMenus(T screen_region) const
-{
-#ifdef DEBUG_MAXIMIZED
-    qDebug() << "ShapeCorners: screen region" << screen_region;
-#endif
-
-    // Subtract all menu bar geometries from the screen region
-    for (const auto &ptr: m_menuBars) {
-#ifdef DEBUG_MAXIMIZED
-        qDebug() << "ShapeCorners: menu is" << ptr->frameGeometry();
-#endif
-        screen_region -= ptr->frameGeometry().toRect();
-    }
-
-#ifdef DEBUG_MAXIMIZED
-    qDebug() << "ShapeCorners: screen region without menus" << screen_region;
-#endif
-
-    return screen_region;
 }
 
 void ShapeCorners::WindowManager::checkMaximized(KWin::EffectWindow *kwindow) const

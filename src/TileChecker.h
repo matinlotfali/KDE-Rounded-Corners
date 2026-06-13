@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <QRectF>
 #include <cstdint>
 
 namespace KWin
@@ -41,10 +42,9 @@ namespace ShapeCorners
 
         /**
          * @brief Checks and marks tiled windows based on the given screen geometry.
-         * @param screen The Rect representing the screen area to check.
+         * @param screen_rect The rectangle representing the screen area to check.
          */
-        template<typename T>
-        void checkTiles(const T &screen_rect);
+        void checkTiles(const QRectF &screen_rect);
 
     private:
         /**
