@@ -106,7 +106,7 @@ namespace ShapeCorners
          * @brief Checks if a window is maximized by comparing its geometry to the screen region.
          * @param kwindow The EffectWindow to check.
          */
-        void checkMaximized(KWin::EffectWindow *kwindow);
+        void checkMaximized(KWin::EffectWindow *kwindow) const;
 
         /**
          * @brief Handles window resize events by updating tiling and maximized state.
@@ -145,14 +145,5 @@ namespace ShapeCorners
          * @brief Checks and marks maximized for all windows.
          */
         void checkMaximized();
-
-        /**
-         * @brief Returns the region of the screen excluding menu bars.
-         * @param screen_geometry The region of the screen.
-         * @return Region without menu bars.
-         */
-        template<typename T>
-        [[nodiscard]]
-        T getRegionWithoutMenus(T screen_region) const;
     };
 } // namespace ShapeCorners
