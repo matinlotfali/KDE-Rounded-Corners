@@ -176,11 +176,17 @@ void ShapeCorners::WindowManager::checkTiled() const
     TileChecker tileChecker;
     // Check tiling for each screen, excluding menu bars
     for (const auto &screen: KWin::effects->screens()) {
+
+#if KWIN_EFFECT_API_VERSION >= 237
 #if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 90)
         const auto geometry = KWin::effects->clientArea(KWin::MaximizeArea, screen);
 #else
         const auto geometry = KWin::effects->clientArea(KWin::MaximizeArea, screen, KWin::effects->currentDesktop());
-#endif
+#endif // KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 90)
+#else
+        const auto geometry = KWin::effects->clientArea(KWin::MaximizeArea, screen, KWin::effects->currentDesktop());
+#endif // KWIN_EFFECT_API_VERSION >= 237
+
         tileChecker.checkTiles(geometry);
     }
 }
