@@ -217,28 +217,22 @@ T ShapeCorners::WindowManager::getRegionWithoutMenus(T screen_region) const
     return screen_region;
 }
 
-void ShapeCorners::WindowManager::checkMaximized(KWin::EffectWindow *kwindow)
+void ShapeCorners::WindowManager::checkMaximized(KWin::EffectWindow *kwindow) const
 {
     auto *const window = findWindow(kwindow);
     if (window == nullptr) {
         return;
     }
 
-    window->isMaximized = false;
+    const auto maxArea  = KWin::effects->clientArea(KWin::MaximizeArea, kwindow);
+    window->isMaximized = (kwindow->frameGeometry() == maxArea);
 
-    const auto screen_region = getRegionWithoutMenus(screenRegion(kwindow->screen()));
-
-    // Check if the window fills the screen region
-    auto remaining = screen_region - kwindow->frameGeometry().toRect();
 #ifdef DEBUG_MAXIMIZED
-    qDebug() << "ShapeCorners: active window remaining region" << remaining;
-#endif
-    if (remaining.isEmpty()) {
-        window->isMaximized = true;
-#ifdef DEBUG_MAXIMIZED
+    qDebug() << "ShapeCorners: maximize area" << maxArea << "window" << kwindow->frameGeometry();
+    if (window->isMaximized) {
         qInfo() << "ShapeCorners: window maximized" << kwindow->windowClass();
-#endif
     }
+#endif
 }
 
 void ShapeCorners::WindowManager::windowResized(KWin::EffectWindow *kwindow, const QRectF &size)

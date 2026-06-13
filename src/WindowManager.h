@@ -106,7 +106,7 @@ namespace ShapeCorners
          * @brief Checks if a window is maximized by comparing its geometry to the screen region.
          * @param kwindow The EffectWindow to check.
          */
-        void checkMaximized(KWin::EffectWindow *kwindow);
+        void checkMaximized(KWin::EffectWindow *kwindow) const;
 
         /**
          * @brief Handles window resize events by updating tiling and maximized state.
