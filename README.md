@@ -146,7 +146,7 @@ You need to install development packages for your distribution first:
 
 - Plasma 6
   ```bash
-  sudo pacman -S git cmake extra-cmake-modules base-devel
+  sudo pacman -S git cmake extra-cmake-modules base-devel vulkan-headers
   ```
 - Plasma 5
   ```bash
