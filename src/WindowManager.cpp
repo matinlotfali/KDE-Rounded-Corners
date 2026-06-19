@@ -198,8 +198,14 @@ void ShapeCorners::WindowManager::checkMaximized(KWin::EffectWindow *kwindow) co
         return;
     }
 
-    const auto maxArea  = KWin::effects->clientArea(KWin::MaximizeArea, kwindow);
-    window->isMaximized = (kwindow->frameGeometry() == maxArea);
+    const auto frame   = kwindow->frameGeometry();
+    const auto maxArea = KWin::effects->clientArea(KWin::MaximizeArea, kwindow);
+
+    constexpr qreal tolerance = 1.0;
+    window->isMaximized = qAbs(frame.x() - maxArea.x()) <= tolerance
+                       && qAbs(frame.y() - maxArea.y()) <= tolerance
+                       && qAbs(frame.width() - maxArea.width()) <= tolerance
+                       && qAbs(frame.height() - maxArea.height()) <= tolerance;
 
 #ifdef DEBUG_MAXIMIZED
     qDebug() << "ShapeCorners: maximize area" << maxArea << "window" << kwindow->frameGeometry();
