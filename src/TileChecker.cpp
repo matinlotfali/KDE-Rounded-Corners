@@ -20,10 +20,15 @@ constexpr static uint8_t MAX_TILE_DEPTH = 5;
  */
 constexpr static uint8_t MAX_GAP_SIZE = 40;
 
+/**
+ * @brief Tolerance for comparing tile edge positions, in logical pixels.
+ */
+constexpr static double TILE_TOLERANCE = 1.0;
+
 template<bool vertical>
 bool ShapeCorners::TileChecker::checkTiled_Recursive(double window_start, const uint8_t depth)
 {
-    if (window_start == screen_end) {
+    if (qAbs(window_start - screen_end) <= TILE_TOLERANCE) {
         // Found the last chain of tiles.
         // A single window spanning the screen is not a tile, so require at least 2.
         return depth >= 2;
@@ -58,7 +63,7 @@ bool ShapeCorners::TileChecker::checkTiled_Recursive(double window_start, const 
         }
 
         // If the window starts at the expected position and has a positive size
-        if (orientation_x == window_start && orientation_width > 0) {
+        if (qAbs(orientation_x - window_start) <= TILE_TOLERANCE && orientation_width > 0) {
             // Recursively check the next tile in the chain
             if (checkTiled_Recursive<vertical>(window_start + orientation_width + gap, depth + 1)) {
                 window->isTiled  = true; // Mark every tile as you go back to the first.
