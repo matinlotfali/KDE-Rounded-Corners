@@ -32,10 +32,18 @@ ShapeCorners::Shader::Shader()
 
     qInfo() << "ShapeCorners: loading shaders...";
 
-#ifdef KWIN_X11
-    const QString shaderFileRelativePath = QStringLiteral("kwin-x11/shaders/shapecorners.frag");
+    // KWin 6.7 ports effect shaders to the GLSL version of the live context and stops back-porting
+    // modern syntax onto the legacy variant, so the core-profile shader is required from 6.7 onwards.
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 0)
+    const auto shaderFileName = QStringLiteral("shapecorners_core.frag");
 #else
-    const QString shaderFileRelativePath = QStringLiteral("kwin/shaders/shapecorners.frag");
+    const auto shaderFileName = QStringLiteral("shapecorners.frag");
+#endif
+
+#ifdef KWIN_X11
+    const QString shaderFileRelativePath = QStringLiteral("kwin-x11/shaders/") + shaderFileName;
+#else
+    const QString shaderFileRelativePath = QStringLiteral("kwin/shaders/") + shaderFileName;
 #endif
 
     // Locate the shader file in the standard data locations
