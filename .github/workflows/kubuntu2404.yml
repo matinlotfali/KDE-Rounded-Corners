@@ -84,29 +84,6 @@ jobs:
         compression-level: 0
         if-no-files-found: error
 
-  upload-sourceforge:
-    needs: build
-    if: needs.build.outputs.version_changed == 'true' && github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Download Workflow Artifact
-      uses: actions/download-artifact@v8
-      with:
-        name: ${{ env.DEB_NAME }}
-        path: artifacts/
-
-    - name: Upload to SourceForge
-      uses: nicklasfrahm/scp-action@main
-      with:
-        direction: upload
-        host: ${{ secrets.SOURCEFORGE_HOST }}
-        username: ${{ secrets.SOURCEFORGE_USERNAME }}
-        key: ${{ secrets.SOURCEFORGE_KEY }}
-        fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
-        source: ${{ needs.build.outputs.deb_file }}
-        target: /home/frs/project/kde-rounded-corners/nightly/kubuntu/${{ env.DEB_NAME }}_${{ env.DISTRO_SUFFIX }}.deb
-
   upload-launchpad:
     needs: build
     if: needs.build.outputs.version_changed == 'true' && github.ref == 'refs/heads/master'

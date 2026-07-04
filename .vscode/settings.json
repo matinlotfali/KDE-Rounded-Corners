@@ -19,6 +19,7 @@
     // ==============================================================
     // cmake
     // ==============================================================
+    "cmake.generator": "Unix Makefiles",
     "cmake.configureOnOpen": true,
     "cmake.automaticReconfigure": true,
     "cmake.buildDirectory": "${workspaceFolder}/build",
