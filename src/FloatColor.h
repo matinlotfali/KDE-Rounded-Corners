@@ -12,7 +12,7 @@
 #pragma once
 
 #include <QColor>
-#include <math.h>
+#include <cmath>
 #ifdef QT_DEBUG
 #include <sstream>
 #endif

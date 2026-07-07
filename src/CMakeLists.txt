@@ -36,6 +36,13 @@ else()
     )
 endif()
 
+string(REPLACE "." ";" _kwin_ver_list "${KWIN_VERSION}")
+list(GET _kwin_ver_list 0 _kwin_ver_major)
+list(GET _kwin_ver_list 1 _kwin_ver_minor)
+list(GET _kwin_ver_list 2 _kwin_ver_patch)
+math(EXPR _kwin_ver_num "(${_kwin_ver_major} << 16) | (${_kwin_ver_minor} << 8) | ${_kwin_ver_patch}")
+target_compile_definitions(kwin4_effect_shapecorners PRIVATE KWIN_PLUGIN_VERSION_NUM=${_kwin_ver_num})
+
 option(DEBUG_INCLUSIONS "Add debug logs for inclusion & exclusion lists" OFF)
 option(DEBUG_MAXIMIZED "Add debug logs for maximized windows" OFF)
 

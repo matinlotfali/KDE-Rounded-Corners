@@ -1,4 +1,4 @@
-name: openSUSE Tumbleweed
+name: openSUSE Leap 16
 
 on:
   push:
@@ -6,47 +6,39 @@ on:
     paths-ignore: [ '**.md', '**.png' ]
   pull_request:
     branches: [ master ]
-    paths: [ '**/tumbleweed.yml' ]
+    paths: [ '**/leap16.yml' ]
   workflow_dispatch:
   schedule:
     - cron: "0 0 * * *"
 
 env:
-  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
   RPM_NAME: kwin4_effect_shapecorners
 
 jobs:
-  tumbleweed:
-    # The CMake configure and build commands are platform agnostic and should work equally
-    # well on Windows or Mac.  You can convert this to a matrix build if you need
-    # cross-platform coverage.
-    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+  leap16:
     runs-on: ubuntu-latest
     container:
-      image: opensuse/tumbleweed
+      image: opensuse/leap:16.0
       options: --user root
 
     steps:
     - name: Check out repository
       uses: actions/checkout@v7
 
-    - name: Refresh Fedora Packages
+    - name: Refresh Packages
       run: zypper ref
       continue-on-error: true
 
     - name: Install Dependencies
       run: |
-        zypper in -y --no-recommends --force-resolution git cmake gcc-c++ kf6-kconfigwidgets-devel kf6-kcmutils-devel kwin6-devel kwin6-x11-devel kf6-kwindowsystem-devel qt6-quick-devel qt6-core-private-devel
+        zypper in -y --no-recommends --force-resolution git cmake gcc-c++ kf6-kconfigwidgets-devel kf6-kcmutils-devel kwin6-devel kf6-kwindowsystem-devel qt6-quick-devel qt6-core-private-devel
         zypper in -y --no-recommends --force-resolution rpm-build
-    
+
     - name: Configure CMake
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: cmake . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build
-      # Build your program with the given configuration
       run: cmake --build . --config ${{env.BUILD_TYPE}} -j
 
     - name: Package
@@ -75,11 +67,4 @@ jobs:
         key: ${{ secrets.SOURCEFORGE_KEY }}
         fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
         source: ${{ env.RPM_FILE }}
-        target: /home/frs/project/kde-rounded-corners/nightly/tumbleweed/${{ env.RPM_NAME }}_${{ github.job }}.rpm
-
-#     - name: Test
-#       working-directory: ${{github.workspace}}/build
-#       # Execute tests defined by the CMake configuration.  
-#       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-#       run: ctest -C ${{env.BUILD_TYPE}}
-      
+        target: /home/frs/project/kde-rounded-corners/nightly/leap16/${{ env.RPM_NAME }}_${{ github.job }}.rpm

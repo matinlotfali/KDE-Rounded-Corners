@@ -14,8 +14,6 @@ set(CPACK_DEBIAN_PACKAGE_SECTION "kde")
 
 # autogenerate dependency information
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
-set(CPACK_DEBIAN_PACKAGE_GENERATE_SHLIBS ON)
-set(CPACK_DEBIAN_PACKAGE_GENERATE_SHLIBS_POLICY "=")
 
 include(CPack)
 # To generate deb files, install 'dpkg-dev' package and then run 'cpack -G DEB'

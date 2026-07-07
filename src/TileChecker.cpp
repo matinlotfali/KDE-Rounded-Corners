@@ -20,21 +20,30 @@ constexpr static uint8_t MAX_TILE_DEPTH = 5;
  */
 constexpr static uint8_t MAX_GAP_SIZE = 40;
 
+/**
+ * @brief Tolerance for comparing tile edge positions, in logical pixels.
+ */
+constexpr static double TILE_TOLERANCE = 1.0;
+
 template<bool vertical>
 bool ShapeCorners::TileChecker::checkTiled_Recursive(double window_start, const uint8_t depth)
 {
-    if (window_start == screen_end) {
-        return true; // Found the last chain of tiles
+    if (qAbs(window_start - screen_end) <= TILE_TOLERANCE) {
+        // Found the last chain of tiles.
+        // A single window spanning the screen is not a tile, so require at least 2.
+        return depth >= 2;
     }
     if (window_start > screen_end) {
+        // Window extends beyond the screen edge, not a valid tile chain.
         return false;
     }
     if (depth > MAX_TILE_DEPTH) {
+        // Prevent excessive recursion for too many tiles.
         return false;
     }
 
     bool found_last_chain = false;
-    for (auto &[kwindow, window]: WindowManager::instance()->getWindows()) {
+    for (const auto &[kwindow, window]: WindowManager::instance()->getWindows()) {
         // Skip windows without an effect
         if (!window->hasEffect()) {
             continue;
@@ -54,7 +63,7 @@ bool ShapeCorners::TileChecker::checkTiled_Recursive(double window_start, const 
         }
 
         // If the window starts at the expected position and has a positive size
-        if (orientation_x == window_start && orientation_width > 0) {
+        if (qAbs(orientation_x - window_start) <= TILE_TOLERANCE && orientation_width > 0) {
             // Recursively check the next tile in the chain
             if (checkTiled_Recursive<vertical>(window_start + orientation_width + gap, depth + 1)) {
                 window->isTiled  = true; // Mark every tile as you go back to the first.
@@ -73,18 +82,18 @@ bool ShapeCorners::TileChecker::checkTiled_Recursive(double window_start, const 
 void ShapeCorners::TileChecker::clearTiles()
 {
     // Iterate over all managed windows and reset their isTiled flag
-    for (const auto window: WindowManager::instance()->getWindows() | std::views::values) {
+    for (const auto &window: WindowManager::instance()->getWindows() | std::views::values) {
         window->isTiled = false;
     }
 }
 
-void ShapeCorners::TileChecker::checkTiles(const QRect &screen)
+void ShapeCorners::TileChecker::checkTiles(const QRectF &screen_rect)
 {
     // Check horizontally
-    screen_end = screen.x() + screen.width();
-    checkTiled_Recursive<false>(screen.x(), 0);
+    screen_end = screen_rect.x() + screen_rect.width();
+    checkTiled_Recursive<false>(screen_rect.x(), 0);
 
     // Check vertically
-    screen_end = screen.y() + screen.height();
-    checkTiled_Recursive<true>(screen.y(), 0);
+    screen_end = screen_rect.y() + screen_rect.height();
+    checkTiled_Recursive<true>(screen_rect.y(), 0);
 }

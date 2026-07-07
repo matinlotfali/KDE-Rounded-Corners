@@ -51,6 +51,13 @@ namespace ShapeCorners
          */
         Effect();
 
+        // don't allow copying
+        Effect(const Effect &)  = delete;
+        Effect(const Effect &&) = delete;
+
+        Effect &operator=(const Effect &)  = delete;
+        Effect &operator=(const Effect &&) = delete;
+
         /**
          * @brief Destructor.
          */
@@ -74,11 +81,17 @@ namespace ShapeCorners
          * @param data The window pre-paint data.
          * @param time The time since the last frame.
          */
-        void prePaintWindow(
 #if KWIN_EFFECT_API_VERSION >= 237
-                KWin::RenderView *view,
-#endif
-                KWin::EffectWindow *w, KWin::WindowPrePaintData &data, std::chrono::milliseconds time) override;
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
+        void prePaintWindow(KWin::RenderView *view, KWin::EffectWindow *w, KWin::WindowPrePaintData &data) override;
+#else
+        void prePaintWindow(KWin::RenderView *view, KWin::EffectWindow *w, KWin::WindowPrePaintData &data,
+                            std::chrono::milliseconds time) override;
+#endif // KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
+#else
+        void prePaintWindow(KWin::EffectWindow *w, KWin::WindowPrePaintData &data,
+                            std::chrono::milliseconds time) override;
+#endif // KWIN_EFFECT_API_VERSION >= 237
 
 #if QT_VERSION_MAJOR >= 6
         /**

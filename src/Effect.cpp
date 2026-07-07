@@ -53,22 +53,30 @@ void ShapeCorners::Effect::WriteBreezeConfig(bool set_disabled)
     const auto cfg      = KSharedConfig::openConfig(QStringLiteral("breezerc"), KConfig::NoGlobals);
     auto       cfgGroup = cfg->group(QStringLiteral("Common"));
 
+    const static auto keyOutlineIntensity     = QStringLiteral("OutlineIntensity");
+    const static auto keyRoundedCorners       = QStringLiteral("RoundedCorners");
+    const static auto keyOutlineEnabled       = QStringLiteral("OutlineEnabled");
     const static auto defaultOutlineIntensity = QStringLiteral("OutlineMedium");
     const static auto defaultRoundedCorners   = QStringLiteral("true");
+    const static auto defaultOutlineEnabled   = QStringLiteral("true");
     const auto        valueOutlineIntensity   = set_disabled ? QStringLiteral("OutlineOff") : defaultOutlineIntensity;
     const auto        valueRoundedCorners     = set_disabled ? QStringLiteral("false") : defaultRoundedCorners;
-    const auto entryOutlineIntensity = cfgGroup.readEntry(QStringLiteral("OutlineIntensity"), defaultOutlineIntensity);
-    const auto entryRoundedCorners   = cfgGroup.readEntry(QStringLiteral("RoundedCorners"), defaultRoundedCorners);
+    const auto        valueOutlineEnabled     = set_disabled ? QStringLiteral("false") : defaultOutlineEnabled;
+    const auto        entryOutlineIntensity   = cfgGroup.readEntry(keyOutlineIntensity, defaultOutlineIntensity);
+    const auto        entryRoundedCorners     = cfgGroup.readEntry(keyRoundedCorners, defaultRoundedCorners);
+    const auto        entryOutlineEnabled     = cfgGroup.readEntry(keyOutlineEnabled, defaultOutlineIntensity);
 
-    if (entryOutlineIntensity == valueOutlineIntensity && entryRoundedCorners == valueRoundedCorners) {
+    if (entryOutlineIntensity == valueOutlineIntensity && entryRoundedCorners == valueRoundedCorners &&
+        entryOutlineEnabled == valueOutlineEnabled) {
         qWarning() << "ShapeCorners: Skipped writing Breeze config"
                    << "because it is already set.";
         return;
     }
 
     qInfo() << "ShapeCorners: Writing Breeze config";
-    cfgGroup.writeEntry(QStringLiteral("OutlineIntensity"), valueOutlineIntensity);
-    cfgGroup.writeEntry(QStringLiteral("RoundedCorners"), valueRoundedCorners);
+    cfgGroup.writeEntry(keyOutlineIntensity, valueOutlineIntensity);
+    cfgGroup.writeEntry(keyRoundedCorners, valueRoundedCorners);
+    cfgGroup.writeEntry(keyOutlineEnabled, valueOutlineEnabled);
     cfg->sync();
 
     QDBusConnection::sessionBus().send(QDBusMessage::createSignal(
@@ -113,22 +121,33 @@ void ShapeCorners::Effect::reconfigure(const ReconfigureFlags flags)
     }
 }
 
-void ShapeCorners::Effect::prePaintWindow(
 #if KWIN_EFFECT_API_VERSION >= 237
-        KWin::RenderView *view,
-#endif
-        KWin::EffectWindow *kwindow, KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
+void ShapeCorners::Effect::prePaintWindow(KWin::RenderView *view, KWin::EffectWindow *kwindow,
+                                          KWin::WindowPrePaintData &data)
+#else
+void ShapeCorners::Effect::prePaintWindow(KWin::RenderView *view, KWin::EffectWindow *kwindow,
+                                          KWin::WindowPrePaintData &data, std::chrono::milliseconds time)
+#endif // KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
+#else
+void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::WindowPrePaintData &data,
+                                          std::chrono::milliseconds time)
+#endif // KWIN_EFFECT_API_VERSION >= 237
 {
     // Find the managed window structure.
     auto *window = m_windowManager->findWindow(kwindow);
 
     // If the shader is not valid or the window is not managed or doesn't need the effect, fall back to default.
     if (!m_shaderManager.IsValid() || window == nullptr || !window->hasEffect()) {
-        OffscreenEffect::prePaintWindow(
 #if KWIN_EFFECT_API_VERSION >= 237
-                view,
-#endif
-                kwindow, data, time);
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
+        OffscreenEffect::prePaintWindow(view, kwindow, data);
+#else
+        OffscreenEffect::prePaintWindow(view, kwindow, data, time);
+#endif // KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
+#else
+        OffscreenEffect::prePaintWindow(kwindow, data, time);
+#endif // KWIN_EFFECT_API_VERSION >= 237
         return;
     }
 
@@ -140,22 +159,24 @@ void ShapeCorners::Effect::prePaintWindow(
 
     // If the window should have rounded corners, adjust the paint and opaque regions.
     if (window->hasRoundCorners()) {
+
+#if KWIN_PLUGIN_VERSION_NUM < QT_VERSION_CHECK(6, 6, 80)
 #if QT_VERSION_MAJOR >= 6
         // Calculate geometry and corner size for Qt6.
-        const auto geo  = kwindow->frameGeometry() * kwindow->screen()->scale();
-        const auto size = window->currentConfig.cornerRadius * kwindow->screen()->scale();
+        const auto geo  = (kwindow->frameGeometry() * kwindow->screen()->scale()).toRect();
+        const auto size = (int) (window->currentConfig.cornerRadius * kwindow->screen()->scale());
 #else
         // Calculate geometry and corner size for Qt5.
-        const auto geo  = kwindow->frameGeometry() * KWin::effects->renderTargetScale();
-        const auto size = window->currentConfig.cornerRadius * KWin::effects->renderTargetScale();
-#endif
+        const auto geo  = (kwindow->frameGeometry() * KWin::effects->renderTargetScale()).toRect();
+        const auto size = (int) (window->currentConfig.cornerRadius * KWin::effects->renderTargetScale());
+#endif // QT_VERSION_MAJOR >= 6
 
         // Create a region for each rounded corner.
 #if KWIN_EFFECT_API_VERSION >= 237
         KWin::Region reg{};
 #else
         QRegion reg{};
-#endif
+#endif // KWIN_EFFECT_API_VERSION >= 237
         reg += QRect(geo.x(), geo.y(), size, size);
         reg += QRect(geo.x() + geo.width() - size, geo.y(), size, size);
         reg += QRect(geo.x(), geo.y() + geo.height() - size, size, size);
@@ -168,18 +189,23 @@ void ShapeCorners::Effect::prePaintWindow(
 #else
         data.opaque -= reg;
         data.paint += reg;
-#endif
+#endif // KWIN_EFFECT_API_VERSION >= 237
+#endif // KWIN_PLUGIN_VERSION_NUM < QT_VERSION_CHECK(6, 6, 80)
 
         // Mark the window as having translucent regions.
         data.setTranslucent();
     }
 
     // Call the base implementation.
-    OffscreenEffect::prePaintWindow(
 #if KWIN_EFFECT_API_VERSION >= 237
-            view,
-#endif
-            kwindow, data, time);
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
+    OffscreenEffect::prePaintWindow(view, kwindow, data);
+#else
+    OffscreenEffect::prePaintWindow(view, kwindow, data, time);
+#endif // KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
+#else
+    OffscreenEffect::prePaintWindow(kwindow, data, time);
+#endif // KWIN_EFFECT_API_VERSION >= 237
 }
 
 bool ShapeCorners::Effect::supported()

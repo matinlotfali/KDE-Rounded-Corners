@@ -3,6 +3,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QtDBus/QDBusConnection>
+#include <memory>
 #include <ranges>
 #include "Config.h"
 #include "TileChecker.h"
@@ -17,7 +18,7 @@
 /**
  * @brief Pointer to the singleton instance of WindowManager.
  */
-static const ShapeCorners::WindowManager *self;
+const ShapeCorners::WindowManager *ShapeCorners::WindowManager::self = nullptr;
 
 ShapeCorners::WindowManager::WindowManager()
 {
@@ -42,7 +43,7 @@ ShapeCorners::Window *ShapeCorners::WindowManager::findWindow(const KWin::Effect
 {
     const auto iterator = m_managed.find(kwindow);
     if (iterator != m_managed.end()) {
-        return iterator->second;
+        return iterator->second.get();
     }
     return nullptr;
 }
@@ -92,8 +93,7 @@ bool ShapeCorners::WindowManager::addWindow(KWin::EffectWindow *kwindow)
     }
 
     // Create and add the managed window
-    auto *window          = new Window(kwindow);
-    const auto &[iter, r] = m_managed.emplace(kwindow, window);
+    const auto &[iter, r] = m_managed.emplace(kwindow, std::make_unique<Window>(kwindow));
     if (!r) {
 #ifdef QT_DEBUG
         qWarning() << "ShapeCorners: ignoring duplicate window.";
@@ -118,7 +118,6 @@ void ShapeCorners::WindowManager::windowRemoved(KWin::EffectWindow *kwindow)
     if (kwindow == nullptr) {
         qDebug() << "ShapeCorners: null window removed";
     } else if (const auto iterator = m_managed.find(kwindow); iterator != m_managed.end()) {
-        iterator->second->deleteLater();
         m_managed.erase(iterator);
         qDebug() << "ShapeCorners: window removed" << kwindow->windowClass();
     } else if (const auto iterator2 = std::ranges::find(m_menuBars, kwindow); iterator2 != m_menuBars.end()) {
@@ -177,56 +176,43 @@ void ShapeCorners::WindowManager::checkTiled() const
     TileChecker tileChecker;
     // Check tiling for each screen, excluding menu bars
     for (const auto &screen: KWin::effects->screens()) {
-        const auto screen_region = getRegionWithoutMenus(screen->geometry());
-        const auto geometry      = screen_region.boundingRect();
+
+#if KWIN_EFFECT_API_VERSION >= 237
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 90)
+        const auto geometry = KWin::effects->clientArea(KWin::MaximizeArea, screen);
+#else
+        const auto geometry = KWin::effects->clientArea(KWin::MaximizeArea, screen, KWin::effects->currentDesktop());
+#endif // KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 90)
+#else
+        const auto geometry = KWin::effects->clientArea(KWin::MaximizeArea, screen, KWin::effects->currentDesktop());
+#endif // KWIN_EFFECT_API_VERSION >= 237
+
         tileChecker.checkTiles(geometry);
     }
 }
 
-QRegion ShapeCorners::WindowManager::getRegionWithoutMenus(const QRect &screen_geometry) const
-{
-    auto screen_region = QRegion(screen_geometry);
-#ifdef DEBUG_MAXIMIZED
-    qDebug() << "ShapeCorners: screen region" << screen_region;
-#endif
-
-    // Subtract all menu bar geometries from the screen region
-    for (const auto &ptr: m_menuBars) {
-#ifdef DEBUG_MAXIMIZED
-        qDebug() << "ShapeCorners: menu is" << ptr->frameGeometry();
-#endif
-        screen_region -= ptr->frameGeometry().toRect();
-    }
-
-#ifdef DEBUG_MAXIMIZED
-    qDebug() << "ShapeCorners: screen region without menus" << screen_region;
-#endif
-
-    return screen_region;
-}
-
-void ShapeCorners::WindowManager::checkMaximized(KWin::EffectWindow *kwindow)
+void ShapeCorners::WindowManager::checkMaximized(KWin::EffectWindow *kwindow) const
 {
     auto *const window = findWindow(kwindow);
     if (window == nullptr) {
         return;
     }
 
-    window->isMaximized = false;
+    const auto frame   = kwindow->frameGeometry();
+    const auto maxArea = KWin::effects->clientArea(KWin::MaximizeArea, kwindow);
 
-    const auto screen_region = getRegionWithoutMenus(kwindow->screen()->geometry());
+    constexpr qreal tolerance = 1.0;
+    window->isMaximized = qAbs(frame.x() - maxArea.x()) <= tolerance
+                       && qAbs(frame.y() - maxArea.y()) <= tolerance
+                       && qAbs(frame.width() - maxArea.width()) <= tolerance
+                       && qAbs(frame.height() - maxArea.height()) <= tolerance;
 
-    // Check if the window fills the screen region
-    auto remaining = screen_region - kwindow->frameGeometry().toRect();
 #ifdef DEBUG_MAXIMIZED
-    qDebug() << "ShapeCorners: active window remaining region" << remaining;
-#endif
-    if (remaining.isEmpty()) {
-        window->isMaximized = true;
-#ifdef DEBUG_MAXIMIZED
+    qDebug() << "ShapeCorners: maximize area" << maxArea << "window" << kwindow->frameGeometry();
+    if (window->isMaximized) {
         qInfo() << "ShapeCorners: window maximized" << kwindow->windowClass();
-#endif
     }
+#endif
 }
 
 void ShapeCorners::WindowManager::windowResized(KWin::EffectWindow *kwindow, const QRectF &size)
@@ -239,7 +225,7 @@ void ShapeCorners::WindowManager::windowResized(KWin::EffectWindow *kwindow, con
 
 void ShapeCorners::WindowManager::checkMaximized()
 {
-    for (const auto *window: m_managed | std::views::values) {
+    for (const auto &window: m_managed | std::views::values) {
         checkMaximized(window->w);
     }
 }

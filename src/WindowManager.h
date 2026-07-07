@@ -9,13 +9,14 @@
 #pragma once
 
 #include <QObject>
+#include <memory>
 #include <unordered_map>
 #include <vector>
 
 namespace KWin
 {
     class EffectWindow;
-}
+} // namespace KWin
 
 namespace ShapeCorners
 {
@@ -26,7 +27,7 @@ namespace ShapeCorners
      * @brief Alias for a map of managed windows.
      * Maps KWin::EffectWindow pointers to ShapeCorners::Window pointers.
      */
-    using WindowList = std::unordered_map<const KWin::EffectWindow *, Window *>;
+    using WindowList = std::unordered_map<const KWin::EffectWindow *, std::unique_ptr<Window>>;
 
     /**
      * @brief Alias for a vector of managed menus.
@@ -105,7 +106,7 @@ namespace ShapeCorners
          * @brief Checks if a window is maximized by comparing its geometry to the screen region.
          * @param kwindow The EffectWindow to check.
          */
-        void checkMaximized(KWin::EffectWindow *kwindow);
+        void checkMaximized(KWin::EffectWindow *kwindow) const;
 
         /**
          * @brief Handles window resize events by updating tiling and maximized state.
@@ -126,6 +127,11 @@ namespace ShapeCorners
         MenuBarList m_menuBars;
 
         /**
+         * @brief Instance pointer for assigning singleton
+         */
+        const static WindowManager *self;
+
+        /**
          * @brief Register D-Bus service and object for external communication
          */
         void registerDBus();
@@ -139,13 +145,5 @@ namespace ShapeCorners
          * @brief Checks and marks maximized for all windows.
          */
         void checkMaximized();
-
-        /**
-         * @brief Returns the region of the screen excluding menu bars.
-         * @param screen_geometry The geometry of the screen.
-         * @return QRegion without menu bars.
-         */
-        [[nodiscard]]
-        QRegion getRegionWithoutMenus(const QRect &screen_geometry) const;
     };
 } // namespace ShapeCorners

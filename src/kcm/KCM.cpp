@@ -7,7 +7,6 @@ ShapeCorners::KCM::KCM(QObject *parent, const KPluginMetaData &args) : KCModule(
 {
     // Set up the UI for Qt 6
     ui->setupUi(KCModule::widget());
-    ui->widget->setFixedSize(800, 672);
     ui->currentWindowList->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     addConfig(&config, KCModule::widget());
 
@@ -87,6 +86,12 @@ ShapeCorners::KCM::KCM(QWidget *parent, const QVariantList &args) : KCModule(par
         ui->UseCustomShadows->setChecked(useCustomShadows);
         ui->activeShadowGroupBox->setEnabled(useCustomShadows);
         ui->inactiveShadowGroupBox->setEnabled(useCustomShadows);
+    });
+
+    // Enable/disable the squircleness control based on whether squircle corners are used
+    connect(ui->kcfg_UseSquircleShape, &QCheckBox::toggled, [=, this](bool useSquircle) {
+        ui->squirclenessLabel->setEnabled(useSquircle);
+        ui->kcfg_Squircleness->setEnabled(useSquircle);
     });
 
     // It was expected that the Apply button would get enabled automatically as the gradient sliders move, but it

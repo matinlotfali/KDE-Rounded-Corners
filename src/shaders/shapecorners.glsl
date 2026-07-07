@@ -7,6 +7,29 @@ bool is_within(vec2 point, vec2 corner_a, vec2 corner_b)
 }
 
 /*
+ *  \brief Distance from a point to a corner center, as a circular arc or a squircle curve.
+ *  \param point: The XY point being shaded.
+ *  \param center: The XY center of the corner roundness.
+ *  \param radius: The corner radius in pixels.
+ *  \return A field whose value equals `radius` on the corner boundary.
+ */
+float shape_distance(vec2 point, vec2 center, float radius)
+{
+    if (!useSquircleShape) {
+        return distance(point, center);
+    }
+
+    // Pure circle/superellipse blend: on a straight edge the offset is axis-aligned, so this
+    // equals distance(point, center) and leaves the edge undistorted; only the corners curve.
+    float dist = squircle_distance(point, center);
+
+    // Renormalize to ~unit gradient so the outline and antialiasing bands keep a uniform
+    // width at the corners, where the raw superellipse gradient would otherwise dip below 1.
+    float grad = squircle_gradient(point, center);
+    return radius + (dist - radius) / max(grad, 1e-4);
+}
+
+/*
  *  \brief This function is used to choose the pixel color based on its distance to the center input.
  *  \param coord0: The XY point
  *  \param tex: The RGBA color of the pixel in XY
@@ -24,7 +47,11 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle, vec4 coord_shad
     vec2  outlineStart         = start + outlineThickness * angle_vector * corner_length;
     vec2  secondOutlineStart   = start + (outlineThickness + secondOutlineThickness) * angle_vector * corner_length;
     vec2  outerOutlineEnd      = start - outerOutlineThickness * angle_vector * corner_length;
-    float distance_from_center = distance(coord0, roundness_center);
+    float distance_from_center = shape_distance(coord0, roundness_center, radius);
+    bool  inOutlineZone =
+            (hasPrimaryOutline() && outlineThickness >= radius && is_within(coord0, outlineStart, start)) ||
+            (hasSecondOutline() && outlineThickness + secondOutlineThickness >= radius &&
+             is_within(coord0, secondOutlineStart, start));
 
     if (hasOuterOutline()) {
         vec4 outerOutlineOverlay = mix(coord_shadowColor, outerOutlineColor, outerOutlineColor.a);
@@ -32,7 +59,7 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle, vec4 coord_shad
             // antialiasing for the outer outline to shadow
             float antialiasing = clamp(distance_from_center - radius - outerOutlineThickness + 0.5, 0.0, 1.0);
             return mix(outerOutlineOverlay, coord_shadowColor, antialiasing);
-        } else if (distance_from_center > radius - 0.5) {
+        } else if (!inOutlineZone && distance_from_center > radius - 0.5) {
             // antialiasing for the outer outline to the window edge
             float antialiasing = clamp(distance_from_center - radius + 0.5, 0.0, 1.0);
             if (hasPrimaryOutline()) {
@@ -49,7 +76,7 @@ vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle, vec4 coord_shad
             }
         }
     } else {
-        if (distance_from_center > radius - 0.5) {
+        if (!inOutlineZone && distance_from_center > radius - 0.5) {
             // antialiasing for the outer outline to the window edge
             float antialiasing = clamp(distance_from_center - radius + 0.5, 0.0, 1.0);
             if (hasPrimaryOutline()) {

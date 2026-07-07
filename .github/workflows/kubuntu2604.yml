@@ -1,4 +1,4 @@
-name: KDE Neon (Stable)
+name: Kubuntu 26.04
 
 on:
   push:
@@ -6,22 +6,22 @@ on:
     paths-ignore: [ '**.md', '**.png' ]
   pull_request:
     branches: [ master ]
-    paths: [ '**', '!**/**.md', '!**/**.png', '!**/**.yml', '**/neon.yml' ]
+    paths: [ '**/kubuntu2604.yml' ]
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * *"
+      - cron: "0 0 * * *"
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
   DEB_NAME: kwin4_effect_shapecorners
-  DISTRO_SUFFIX: neon
+  DISTRO_SUFFIX: kubuntu2604
 
 jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: invent-registry.kde.org/neon/docker-images/plasma:user
+      image: ubuntu:26.04
       options: --user root
 
     outputs:
@@ -34,13 +34,14 @@ jobs:
     - name: Refresh Ubuntu Packages
       # Switch to the Azure mirror — much faster than the default archive.ubuntu.com on GHA runners.
       run: |
-        sudo find /etc/apt -type f \( -name 'sources.list' -o -name '*.list' -o -name '*.sources' \) -exec sed -i 's|archive.ubuntu.com|azure.archive.ubuntu.com|g' {} +
-        sudo apt-get update
+        sed -i 's|archive.ubuntu.com|azure.archive.ubuntu.com|' /etc/apt/sources.list.d/ubuntu.sources
+        apt-get update
 
     - name: Install Dependencies
       run: |
-        sudo apt-get -y install --no-install-recommends cmake g++ gettext extra-cmake-modules qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev kwin-x11-dev
-        sudo apt-get -y install --no-install-recommends dpkg-dev file git curl jq
+        apt-get install -y --no-install-recommends cmake g++ gettext extra-cmake-modules qt6-base-private-dev qt6-base-dev-tools libkf6configwidgets-dev libkf6kcmutils-dev kwin-dev kwin-x11-dev libdrm-dev
+        apt-get install -y --no-install-recommends dpkg-dev file git ca-certificates curl jq
+        update-ca-certificates
         git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
     - name: Check out repository
@@ -88,8 +89,8 @@ jobs:
         PKG_VERSION: ${{ steps.version.outputs.pkg_version }}
       run: |
         VERSION_CHANGED=false
-        for pkg in kwin-effect-roundcorners-neon kwin-effect-roundcorners-x11-neon; do
-          if ! sh tools/upload-to-launchpad.sh --check "$pkg" "$PKG_VERSION" neon; then
+        for pkg in kwin-effect-roundcorners kwin-effect-roundcorners-x11; do
+          if ! sh tools/upload-to-launchpad.sh --check "$pkg" "$PKG_VERSION" kubuntu2604; then
             VERSION_CHANGED=true
           fi
         done
@@ -132,5 +133,5 @@ jobs:
         PKG_VERSION: ${{ needs.build.outputs.pkg_version }}
       run: |
         echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-        sh tools/upload-to-launchpad.sh "$DEB_FILE_WAYLAND" kwin-effect-roundcorners-neon "$PKG_VERSION" neon noble
-        sh tools/upload-to-launchpad.sh "$DEB_FILE_X11" kwin-effect-roundcorners-x11-neon "$PKG_VERSION" neon noble
+        sh tools/upload-to-launchpad.sh "$DEB_FILE_WAYLAND" kwin-effect-roundcorners "$PKG_VERSION" kubuntu2604 resolute
+        sh tools/upload-to-launchpad.sh "$DEB_FILE_X11" kwin-effect-roundcorners-x11 "$PKG_VERSION" kubuntu2604 resolute

@@ -1,3 +1,5 @@
+#!/bin/sh
+
 AUTOSTART_FILE=~/.config/autostart/test-install-kde-rounded-corners.desktop
 GIT_PATH="$(dirname "$(pwd)")"
 mkdir -p ~/.config/autostart

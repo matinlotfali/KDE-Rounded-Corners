@@ -82,10 +82,14 @@ namespace ShapeCorners
          */
         explicit Window(KWin::EffectWindow *kwindow);
 
-        // don't allow copying
-        Window(const Window &) = delete;
+        ~Window() = default;
 
-        Window &operator=(const Window &) = delete;
+        // don't allow copying
+        Window(const Window &)  = delete;
+        Window(const Window &&) = delete;
+
+        Window &operator=(const Window &)  = delete;
+        Window &operator=(const Window &&) = delete;
 
         /**
          * @brief Checks if the window is the currently active window.

@@ -1,3 +1,4 @@
+#include "squircles.glsl"
 #include "variables.glsl"
 
 uniform bool  usesNativeShadows;
@@ -20,10 +21,16 @@ float parametricBlend(float t)
  */
 vec4 getShadowByDistance(vec2 coord0, vec2 center)
 {
-    float distance_from_center = distance(coord0, center);
-    float percent              = 1.0 - distance_from_center / shadowSize;
-    percent                    = clamp(percent, 0.0, 1.0);
-    percent                    = parametricBlend(percent);
+    float distance_from_center;
+    if (useSquircleShape) {
+        distance_from_center = squircle_distance(coord0, center);
+    } else {
+        distance_from_center = distance(coord0, center);
+    }
+
+    float percent = 1.0 - distance_from_center / shadowSize;
+    percent       = clamp(percent, 0.0, 1.0);
+    percent       = parametricBlend(percent);
     if (percent < 0.0) {
         return vec4(0.0, 0.0, 0.0, 0.0);
     }
@@ -126,6 +133,12 @@ vec4 getNativeShadow(vec2 coord0, float r, vec4 default_tex)
 vec4 getShadow(vec2 coord0, float r, vec4 default_tex)
 {
     if (!isDrawingShadows()) {
+        if (hasExpandedSize()) {
+            // Preserve RGB so anti-aliasing only fades alpha (fix for #430)
+            return vec4(default_tex.rgb, 0.0);
+        }
+        // Windows without a shadow buffer (e.g. CSD XWayland apps like Steam)
+        // need premultiplied-valid output or the compositor brightens edge pixels (#491)
         return vec4(0.0, 0.0, 0.0, 0.0);
     } else if (usesNativeShadows) {
         return getNativeShadow(coord0, r, default_tex);

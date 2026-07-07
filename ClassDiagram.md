@@ -64,13 +64,11 @@ classDiagram
         }
         
         class Animation {
-            -lastAnimationDuration: long
-            -m_isAnimating: bool
-            -lastActiveWindowChangedTime: time_point
-            -setActiveWindowChanged()
-            +getFrameConfig()
-            +isAnimating()
-            +update()
+            -currentActiveWindow: QPointer~Window~
+            -lastActiveWindow: QPointer~Window~
+            -setActiveWindowChanged(window: Window*)
+            +Animation()
+            +update(window: Window&)
         }
         
         class WindowManager {
@@ -92,13 +90,16 @@ classDiagram
             shadowSize: float
             outlineSize: float
             secondOutlineSize: float
+            outerOutlineSize: float
             shadowColor: FloatColor
             outlineColor: FloatColor
             secondOutlineColor: FloatColor
+            outerOutlineColor: FloatColor
             activeWindowConfig()
             inactiveWindowConfig()
             operator+()
             operator-()
+            operator*()
             operator/()
             operator!()
             operator+=()

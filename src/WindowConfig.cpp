@@ -2,13 +2,8 @@
 #include <QWidget>
 #include "Config.h"
 
-namespace ShapeCorners
+namespace
 {
-    /**
-     * \brief Used only for its `palette()` function which holds the currently active highlight colors.
-     */
-    const static QWidget m_widget{};
-
     /**
      * @brief Clamps a value to the [0, config] range depending on the direction of delta.
      * @param value The value to clamp.
@@ -16,7 +11,7 @@ namespace ShapeCorners
      * @param config The configuration limit.
      * @return The clamped value.
      */
-    constexpr static float clamp(const float value, const float delta, const float config)
+    constexpr float clamp(const float value, const float delta, const float config)
     {
         if (delta > 0 && value > config) {
             return config;
@@ -32,11 +27,19 @@ namespace ShapeCorners
      * @param value The value to round.
      * @return The rounded value.
      */
-    constexpr static float round(const float value)
+    constexpr float round_two_decimal(const float value)
     {
         constexpr float ROUNDING_FACTOR = 100.0F; // Factor for rounding to two decimal places
         return std::round(value * ROUNDING_FACTOR) / ROUNDING_FACTOR;
     }
+} // namespace
+
+namespace ShapeCorners
+{
+    /**
+     * \brief Used only for its `palette()` function which holds the currently active highlight colors.
+     */
+    const static QWidget m_widget{};
 } // namespace ShapeCorners
 
 ShapeCorners::WindowConfig ShapeCorners::WindowConfig::activeWindowConfig()
@@ -186,11 +189,11 @@ void ShapeCorners::WindowConfig::operator+=(const WindowConfig &other)
 
 void ShapeCorners::WindowConfig::round()
 {
-    cornerRadius      = ShapeCorners::round(cornerRadius);
-    shadowSize        = ShapeCorners::round(shadowSize);
-    outlineSize       = ShapeCorners::round(outlineSize);
-    secondOutlineSize = ShapeCorners::round(secondOutlineSize);
-    outerOutlineSize  = ShapeCorners::round(outerOutlineSize);
+    cornerRadius      = ::round_two_decimal(cornerRadius);
+    shadowSize        = ::round_two_decimal(shadowSize);
+    outlineSize       = ::round_two_decimal(outlineSize);
+    secondOutlineSize = ::round_two_decimal(secondOutlineSize);
+    outerOutlineSize  = ::round_two_decimal(outerOutlineSize);
     shadowColor.round();
     outlineColor.round();
     secondOutlineColor.round();
@@ -199,12 +202,11 @@ void ShapeCorners::WindowConfig::round()
 
 void ShapeCorners::WindowConfig::clamp(const WindowConfig &direction, const WindowConfig &destination)
 {
-    cornerRadius = ShapeCorners::clamp(cornerRadius, direction.cornerRadius, destination.cornerRadius);
-    shadowSize   = ShapeCorners::clamp(shadowSize, direction.shadowSize, destination.shadowSize);
-    outlineSize  = ShapeCorners::clamp(outlineSize, direction.outlineSize, destination.outlineSize);
-    secondOutlineSize =
-            ShapeCorners::clamp(secondOutlineSize, direction.secondOutlineSize, destination.secondOutlineSize);
-    outerOutlineSize = ShapeCorners::clamp(outerOutlineSize, direction.outerOutlineSize, destination.outerOutlineSize);
+    cornerRadius      = ::clamp(cornerRadius, direction.cornerRadius, destination.cornerRadius);
+    shadowSize        = ::clamp(shadowSize, direction.shadowSize, destination.shadowSize);
+    outlineSize       = ::clamp(outlineSize, direction.outlineSize, destination.outlineSize);
+    secondOutlineSize = ::clamp(secondOutlineSize, direction.secondOutlineSize, destination.secondOutlineSize);
+    outerOutlineSize  = ::clamp(outerOutlineSize, direction.outerOutlineSize, destination.outerOutlineSize);
     shadowColor.clamp();
     outlineColor.clamp();
     secondOutlineColor.clamp();

@@ -14,7 +14,7 @@
 #include <kwinglutils.h>
 #endif
 
-namespace ShapeCorners
+namespace
 {
     /**
      * @brief Converts a QSizeF to a QVector2D.
@@ -25,17 +25,25 @@ namespace ShapeCorners
     {
         return {static_cast<float>(size.width()), static_cast<float>(size.height())};
     }
-} // namespace ShapeCorners
+} // namespace
 
 ShapeCorners::Shader::Shader()
 {
 
     qInfo() << "ShapeCorners: loading shaders...";
 
-#ifdef KWIN_X11
-    const QString shaderFileRelativePath = QStringLiteral("kwin-x11/shaders/shapecorners.frag");
+    // KWin 6.7 ports effect shaders to the GLSL version of the live context and stops back-porting
+    // modern syntax onto the legacy variant, so the core-profile shader is required from 6.7 onwards.
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 0)
+    const auto shaderFileName = QStringLiteral("shapecorners_core.frag");
 #else
-    const QString shaderFileRelativePath = QStringLiteral("kwin/shaders/shapecorners.frag");
+    const auto shaderFileName = QStringLiteral("shapecorners.frag");
+#endif
+
+#ifdef KWIN_X11
+    const QString shaderFileRelativePath = QStringLiteral("kwin-x11/shaders/") + shaderFileName;
+#else
+    const QString shaderFileRelativePath = QStringLiteral("kwin/shaders/") + shaderFileName;
 #endif
 
     // Locate the shader file in the standard data locations
@@ -43,7 +51,7 @@ ShapeCorners::Shader::Shader()
     // Generate the shader from file using the ShaderManager
     m_shader = KWin::ShaderManager::instance()->generateShaderFromFile(KWin::ShaderTrait::MapTexture, QString(),
                                                                        shaderFilePath);
-    if (!m_shader->isValid()) {
+    if (!IsValid()) {
         qCritical() << "ShapeCorners: no valid shaders found! effect will not work.";
         return;
     }
@@ -56,6 +64,8 @@ ShapeCorners::Shader::Shader()
     m_shader_shadowColor            = m_shader->uniformLocation("shadowColor");
     m_shader_shadowSize             = m_shader->uniformLocation("shadowSize");
     m_shader_radius                 = m_shader->uniformLocation("radius");
+    m_shader_useSquircleShape       = m_shader->uniformLocation("useSquircleShape");
+    m_shader_squircleBlend          = m_shader->uniformLocation("squircleBlend");
     m_shader_outlineColor           = m_shader->uniformLocation("outlineColor");
     m_shader_outlineThickness       = m_shader->uniformLocation("outlineThickness");
     m_shader_secondOutlineColor     = m_shader->uniformLocation("secondOutlineColor");
@@ -66,7 +76,14 @@ ShapeCorners::Shader::Shader()
     qInfo() << "ShapeCorners: shaders loaded.";
 }
 
-bool ShapeCorners::Shader::IsValid() const { return m_shader && m_shader->isValid(); }
+bool ShapeCorners::Shader::IsValid() const
+{
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
+    return m_shader != nullptr;
+#else
+    return m_shader != nullptr && m_shader->isValid();
+#endif
+}
 
 void ShapeCorners::Shader::Bind(const Window &window, const double scale) const
 {
@@ -89,6 +106,8 @@ void ShapeCorners::Shader::Bind(const Window &window, const double scale) const
     m_shader->setUniform(m_shader_windowExpandedSize, toVector2D(expandedGeometry.size()));
     m_shader->setUniform(m_shader_windowTopLeft, frameOffset);
     m_shader->setUniform(m_shader_usesNativeShadows, static_cast<int>(Config::useNativeDecorationShadows()));
+    m_shader->setUniform(m_shader_useSquircleShape, static_cast<int>(Config::useSquircleShape()));
+    m_shader->setUniform(m_shader_squircleBlend, static_cast<float>(Config::squircleness()));
     m_shader->setUniform(m_shader_front, 0);
     m_shader->setUniform(m_shader_outlineThickness, static_cast<float>(window.currentConfig.outlineSize * scale));
     m_shader->setUniform(m_shader_secondOutlineThickness,
