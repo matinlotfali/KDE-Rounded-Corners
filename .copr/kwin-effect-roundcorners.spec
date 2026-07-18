@@ -55,6 +55,12 @@ minimal impact on performance.
 %files
 %license LICENSE
 %doc README.md
+%dir %{_kf6_qtplugindir}/kwin
+%dir %{_kf6_qtplugindir}/kwin/effects
+%dir %{_kf6_qtplugindir}/kwin/effects/configs
+%dir %{_kf6_qtplugindir}/kwin/effects/plugins
+%dir %{_kf6_datadir}/kwin
+%dir %{_kf6_datadir}/kwin/shaders
 %{_kf6_qtplugindir}/kwin/effects/configs/kwin_shapecorners_config.so
 %{_kf6_qtplugindir}/kwin/effects/plugins/kwin4_effect_shapecorners.so
 %{_kf6_datadir}/kwin/shaders/shapecorners.frag
