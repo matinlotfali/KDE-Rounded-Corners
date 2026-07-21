@@ -7,6 +7,7 @@
 #include "Window.h"
 #include "WindowConfig.h"
 #if QT_VERSION_MAJOR >= 6
+#include <effect/effect.h>
 #include <effect/effectwindow.h>
 #include <opengl/glutils.h>
 #else
@@ -32,9 +33,9 @@ ShapeCorners::Shader::Shader()
 
     qInfo() << "ShapeCorners: loading shaders...";
 
-    // KWin 6.7 ports effect shaders to the GLSL version of the live context and stops back-porting
-    // modern syntax onto the legacy variant, so the core-profile shader is required from 6.7 onwards.
-#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 0)
+    // KWin 6.7 Wayland requires the core-profile shader directly. KWin X11 keeps the older
+    // effect API and still selects the _core variant itself based on the OpenGL context.
+#if KWIN_EFFECT_API_VERSION >= 237 && KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 0)
     const auto shaderFileName = QStringLiteral("shapecorners_core.frag");
 #else
     const auto shaderFileName = QStringLiteral("shapecorners.frag");
@@ -78,7 +79,7 @@ ShapeCorners::Shader::Shader()
 
 bool ShapeCorners::Shader::IsValid() const
 {
-#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
+#if KWIN_EFFECT_API_VERSION >= 237 && KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
     return m_shader != nullptr;
 #else
     return m_shader != nullptr && m_shader->isValid();
