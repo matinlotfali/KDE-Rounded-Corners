@@ -103,11 +103,11 @@ namespace ShapeCorners
          * @param region The paint region.
          * @param data The window paint data.
          */
-#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 80)
+#if KWIN_EFFECT_API_VERSION >= 237 && KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 80)
         bool drawWindow(
 #else
         void drawWindow(
-#endif // KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 80)
+#endif // KWIN_EFFECT_API_VERSION >= 237 && KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 80)
                         const KWin::RenderTarget &RenderTarget, const KWin::RenderViewport &viewport,
                         KWin::EffectWindow *w, int mask,
 #if KWIN_EFFECT_API_VERSION >= 237
