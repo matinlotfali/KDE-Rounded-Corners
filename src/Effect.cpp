@@ -215,7 +215,12 @@ bool ShapeCorners::Effect::supported()
 }
 
 #if QT_VERSION_MAJOR >= 6
-void ShapeCorners::Effect::drawWindow(const KWin::RenderTarget &renderTarget, const KWin::RenderViewport &viewport,
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 80)
+bool ShapeCorners::Effect::drawWindow(
+#else
+void ShapeCorners::Effect::drawWindow(
+#endif // KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 80)
+                                      const KWin::RenderTarget &renderTarget, const KWin::RenderViewport &viewport,
                                       KWin::EffectWindow *kwindow, int mask,
 #if KWIN_EFFECT_API_VERSION >= 237
                                       const KWin::Region &region,
@@ -236,12 +241,15 @@ void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *kwindow, int mask, con
     // drawing.
     if (!m_shaderManager.IsValid() || window == nullptr || !window->hasEffect()) {
         unredirect(kwindow);
-#if QT_VERSION_MAJOR >= 6
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 80)
+        return OffscreenEffect::drawWindow(renderTarget, viewport, kwindow, mask, region, data);
+#elif QT_VERSION_MAJOR >= 6
         OffscreenEffect::drawWindow(renderTarget, viewport, kwindow, mask, region, data);
+        return;
 #else
         OffscreenEffect::drawWindow(kwindow, mask, region, data);
-#endif
         return;
+#endif
     }
 
 #if QT_VERSION_MAJOR >= 6
@@ -262,13 +270,18 @@ void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *kwindow, int mask, con
     glActiveTexture(GL_TEXTURE0);
 
     // Call the base implementation to actually draw the window.
-#if QT_VERSION_MAJOR >= 6
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 80)
+    const bool result = OffscreenEffect::drawWindow(renderTarget, viewport, kwindow, mask, region, data);
+#elif QT_VERSION_MAJOR >= 6
     OffscreenEffect::drawWindow(renderTarget, viewport, kwindow, mask, region, data);
 #else
     OffscreenEffect::drawWindow(kwindow, mask, region, data);
 #endif
     // Unbind the shader after drawing.
     m_shaderManager.Unbind();
+#if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 80)
+    return result;
+#endif
 }
 
 void ShapeCorners::Effect::windowAdded(KWin::EffectWindow *kwindow)
