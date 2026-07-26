@@ -156,7 +156,21 @@ debsign -k"${GPG_KEY_ID}" "$CHANGES_FILE"
 # Upload to Launchpad. -u skips dput's local pre-upload GPG verification, which
 # fails on Ubuntu 24.04's GPG 2.4 with "SignatureVerifyError: 0" even when the
 # signature is valid. Launchpad re-verifies the signature on its end.
-dput -u "$PPA" "$CHANGES_FILE"
+# Launchpad's FTP intermittently rejects uploads with transient errors, so retry
+# a few times. dput only writes its .upload log on success, so a failed attempt
+# can be retried without -f.
+MAX_ATTEMPTS=3
+for attempt in $(seq 1 $MAX_ATTEMPTS); do
+    if dput -u "$PPA" "$CHANGES_FILE"; then
+        break
+    fi
+    if [ "$attempt" = "$MAX_ATTEMPTS" ]; then
+        echo "Upload failed after ${MAX_ATTEMPTS} attempts."
+        exit 1
+    fi
+    echo "Upload attempt ${attempt} failed. Retrying in 30 seconds..."
+    sleep 30
+done
 
 echo "Upload complete!"
 rm -rf "$WORK_DIR"
