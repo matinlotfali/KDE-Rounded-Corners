@@ -88,15 +88,27 @@ classDiagram
         class WindowConfig {
             cornerRadius: float
             shadowSize: float
-            outlineSize: float
-            secondOutlineSize: float
-            outerOutlineSize: float
             shadowColor: FloatColor
-            outlineColor: FloatColor
-            secondOutlineColor: FloatColor
-            outerOutlineColor: FloatColor
+            outline: OutlineConfig
+            secondOutline: OutlineConfig
+            outerOutline: OutlineConfig
             activeWindowConfig()
             inactiveWindowConfig()
+            operator+()
+            operator-()
+            operator*()
+            operator/()
+            operator!()
+            operator+=()
+            round()
+            clamp()
+        }
+
+        class OutlineConfig {
+            size: float
+            angle: float
+            color1: FloatColor
+            color2: FloatColor
             operator+()
             operator-()
             operator*()
@@ -192,7 +204,8 @@ classDiagram
     Window --> EffectWindow: Manages
     Window ..> WindowConfig: Uses
     Window ..> Config: Uses
-    WindowConfig o-- FloatColor: Contains
+    WindowConfig o-- OutlineConfig: Contains
+    OutlineConfig o-- FloatColor: Contains
     WindowConfig ..> Config: Uses
     WindowManager o-- Window: Contains
     QDBusConnection <.. WindowManager: Registers

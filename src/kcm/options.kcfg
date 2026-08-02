@@ -121,6 +121,31 @@
             <default>true</default>
         </entry>
 
+        <!-- Primary Outline Gradient (second stop is custom-color only) -->
+
+        <entry name="OutlineIsGradient" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="InactiveOutlineIsGradient" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="OutlineColor2" type="Color">
+            <default>black</default>
+        </entry>
+        <entry name="InactiveOutlineColor2" type="Color">
+            <default>black</default>
+        </entry>
+        <entry name="OutlineGradientAngle" type="Int">
+            <default>45</default>
+            <min>0</min>
+            <max>360</max>
+        </entry>
+        <entry name="InactiveOutlineGradientAngle" type="Int">
+            <default>45</default>
+            <min>0</min>
+            <max>360</max>
+        </entry>
+
         <!-- Second Outline Options -->
 
         <entry name="SecondOutlineThickness" type="Double">
@@ -168,6 +193,31 @@
             <default>true</default>
         </entry>
 
+        <!-- Second Outline Gradient (second stop is custom-color only) -->
+
+        <entry name="SecondOutlineIsGradient" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="InactiveSecondOutlineIsGradient" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="SecondOutlineColor2" type="Color">
+            <default>white</default>
+        </entry>
+        <entry name="InactiveSecondOutlineColor2" type="Color">
+            <default>white</default>
+        </entry>
+        <entry name="SecondOutlineGradientAngle" type="Int">
+            <default>45</default>
+            <min>0</min>
+            <max>360</max>
+        </entry>
+        <entry name="InactiveSecondOutlineGradientAngle" type="Int">
+            <default>45</default>
+            <min>0</min>
+            <max>360</max>
+        </entry>
+
         <!-- Outer Outline Options -->
 
         <entry name="OuterOutlineThickness" type="Double">
@@ -213,6 +263,31 @@
         </entry>
         <entry name="InactiveOuterOutlineUseCustom" type="Bool">
             <default>true</default>
+        </entry>
+
+        <!-- Outer Outline Gradient (second stop is custom-color only) -->
+
+        <entry name="OuterOutlineIsGradient" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="InactiveOuterOutlineIsGradient" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="OuterOutlineColor2" type="Color">
+            <default>black</default>
+        </entry>
+        <entry name="InactiveOuterOutlineColor2" type="Color">
+            <default>black</default>
+        </entry>
+        <entry name="OuterOutlineGradientAngle" type="Int">
+            <default>45</default>
+            <min>0</min>
+            <max>360</max>
+        </entry>
+        <entry name="InactiveOuterOutlineGradientAngle" type="Int">
+            <default>45</default>
+            <min>0</min>
+            <max>360</max>
         </entry>
 
         <!-- Inclusion and Exclusion Options -->

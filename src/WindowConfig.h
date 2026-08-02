@@ -1,9 +1,10 @@
 /**
  * @file WindowConfig.h
- * @brief Declares the ShapeCorners::WindowConfig struct for storing window appearance configuration.
+ * @brief Declares the ShapeCorners::WindowConfig and ShapeCorners::OutlineConfig structs.
  *
- * This struct holds all configurable properties for a window's appearance in the ShapeCorners KWin effect,
- * including corner radius, shadow, and outline settings.
+ * These structs hold all configurable properties for a window's appearance in the ShapeCorners KWin effect,
+ * including corner radius, shadow, and outline settings. OutlineConfig groups the per-outline properties
+ * (thickness and a two-stop linear gradient) so they can be reused for each of the three outlines.
  */
 
 #pragma once
@@ -13,10 +14,81 @@
 namespace ShapeCorners
 {
     /**
+     * @struct OutlineConfig
+     * @brief Stores one outline's thickness and its two-stop linear gradient.
+     *
+     * When the outline is a solid color, both gradient stops are equal. Provides the same
+     * arithmetic operators as WindowConfig so active/inactive states can be interpolated per outline.
+     */
+    struct OutlineConfig {
+        /**
+         * @brief Outline thickness in pixels.
+         */
+        float size{};
+
+        /**
+         * @brief Gradient angle in degrees. 0 = left to right, 90 = top to bottom.
+         */
+        float angle{};
+
+        /**
+         * @brief First gradient stop color.
+         */
+        FloatColor color1;
+
+        /**
+         * @brief Second gradient stop color. Equal to color1 when the outline is a solid color.
+         */
+        FloatColor color2;
+
+        /**
+         * @brief Adds two OutlineConfig objects.
+         */
+        OutlineConfig operator+(const OutlineConfig &other) const;
+
+        /**
+         * @brief Subtracts another OutlineConfig from this one.
+         */
+        OutlineConfig operator-(const OutlineConfig &other) const;
+
+        /**
+         * @brief Multiplies all fields by a scalar.
+         */
+        OutlineConfig operator*(float scalar) const;
+
+        /**
+         * @brief Divides all fields by a scalar.
+         */
+        OutlineConfig operator/(float scalar) const;
+
+        /**
+         * @brief Adds another OutlineConfig to this one in-place.
+         */
+        void operator+=(const OutlineConfig &other);
+
+        /**
+         * @brief Checks whether this outline draws nothing (zero size and transparent stops).
+         * @note The gradient angle is not considered; it does not affect whether anything is drawn.
+         */
+        [[nodiscard]]
+        bool operator!() const;
+
+        /**
+         * @brief Rounds all floating-point fields.
+         */
+        void round();
+
+        /**
+         * @brief Clamps all fields to the range defined by direction and destination configs.
+         */
+        void clamp(const OutlineConfig &direction, const OutlineConfig &destination);
+    };
+
+    /**
      * @struct WindowConfig
      * @brief Stores configuration for a window's appearance and animation.
      *
-     * Holds values for corner radius, shadow size/color, outline thickness/color, and second outline.
+     * Holds values for corner radius, shadow size/color, and the three outlines.
      * Provides arithmetic operators and utility methods for animation and value clamping.
      */
     struct WindowConfig {
@@ -31,39 +103,24 @@ namespace ShapeCorners
         float shadowSize{};
 
         /**
-         * @brief Current outline thickness.
-         */
-        float outlineSize{};
-
-        /**
-         * @brief Current second outline thickness.
-         */
-        float secondOutlineSize{};
-
-        /**
-         * @brief Current outer outline thickness.
-         */
-        float outerOutlineSize{};
-
-        /**
          * @brief Current shadow color.
          */
         FloatColor shadowColor;
 
         /**
-         * @brief Current outline color.
+         * @brief Current primary outline configuration.
          */
-        FloatColor outlineColor;
+        OutlineConfig outline;
 
         /**
-         * @brief Current second outline color.
+         * @brief Current second outline configuration.
          */
-        FloatColor secondOutlineColor;
+        OutlineConfig secondOutline;
 
         /**
-         * @brief Current outer outline color.
+         * @brief Current outer outline configuration.
          */
-        FloatColor outerOutlineColor;
+        OutlineConfig outerOutline;
 
         /**
          * @brief Returns the configuration for an active window.

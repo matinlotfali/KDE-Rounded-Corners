@@ -94,6 +94,34 @@ ShapeCorners::KCM::KCM(QWidget *parent, const QVariantList &args) : KCModule(par
         ui->kcfg_Squircleness->setEnabled(useSquircle);
     });
 
+    // Show each outline's gradient controls (second color + angle) only while its "Gradient" box is ticked.
+    const auto wireGradientDisclosure = [this](QAbstractButton *toggle, const QList<QWidget *> &widgets) {
+        const auto apply = [toggle, widgets] {
+            for (auto *const widget: widgets) {
+                widget->setVisible(toggle->isChecked());
+            }
+        };
+        connect(toggle, &QAbstractButton::toggled, this, apply);
+        apply();
+    };
+    wireGradientDisclosure(ui->kcfg_OutlineIsGradient, {ui->label_OutlineColor2, ui->kcfg_OutlineColor2,
+                                                        ui->label_OutlineAngle, ui->kcfg_OutlineGradientAngle});
+    wireGradientDisclosure(ui->kcfg_InactiveOutlineIsGradient,
+                           {ui->label_InactiveOutlineColor2, ui->kcfg_InactiveOutlineColor2,
+                            ui->label_InactiveOutlineAngle, ui->kcfg_InactiveOutlineGradientAngle});
+    wireGradientDisclosure(ui->kcfg_SecondOutlineIsGradient,
+                           {ui->label_SecondOutlineColor2, ui->kcfg_SecondOutlineColor2, ui->label_SecondOutlineAngle,
+                            ui->kcfg_SecondOutlineGradientAngle});
+    wireGradientDisclosure(ui->kcfg_InactiveSecondOutlineIsGradient,
+                           {ui->label_InactiveSecondOutlineColor2, ui->kcfg_InactiveSecondOutlineColor2,
+                            ui->label_InactiveSecondOutlineAngle, ui->kcfg_InactiveSecondOutlineGradientAngle});
+    wireGradientDisclosure(ui->kcfg_OuterOutlineIsGradient,
+                           {ui->label_OuterOutlineColor2, ui->kcfg_OuterOutlineColor2, ui->label_OuterOutlineAngle,
+                            ui->kcfg_OuterOutlineGradientAngle});
+    wireGradientDisclosure(ui->kcfg_InactiveOuterOutlineIsGradient,
+                           {ui->label_InactiveOuterOutlineColor2, ui->kcfg_InactiveOuterOutlineColor2,
+                            ui->label_InactiveOuterOutlineAngle, ui->kcfg_InactiveOuterOutlineGradientAngle});
+
     // It was expected that the Apply button would get enabled automatically as the gradient sliders move, but it
     // doesn't. Maybe it is a bug on the KCM side. Need to check and delete these lines later.
     connect(ui->kcfg_ActiveShadowAlpha, &KGradientSelector::sliderMoved, this, &KCM::markAsChanged);
