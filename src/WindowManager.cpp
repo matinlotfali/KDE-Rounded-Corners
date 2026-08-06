@@ -80,9 +80,8 @@ bool ShapeCorners::WindowManager::addWindow(KWin::EffectWindow *kwindow)
             QStringLiteral("kwin"),         QStringLiteral("kwin_x11"),
             QStringLiteral("kwin_wayland"), QStringLiteral("kscreenlocker_greet"),
             QStringLiteral("ksmserver"),    QStringLiteral("krunner"),
-            QStringLiteral("ksplashqml"),
-            // QStringLiteral("plasmashell"),        Note: Don't add it to exceptions,
-            // it involves widget config windows
+            QStringLiteral("ksplashqml"),   QStringLiteral("ksmserver-logout-greeter"),
+            // QStringLiteral("plasmashell")  Note: Don't add it to exceptions, it involves widget config windows.
     };
     const auto name = kwindow->windowClass().split(QChar::Space).first();
     if (hardExceptions.contains(name)) {
@@ -202,10 +201,10 @@ void ShapeCorners::WindowManager::checkMaximized(KWin::EffectWindow *kwindow) co
     const auto maxArea = KWin::effects->clientArea(KWin::MaximizeArea, kwindow);
 
     constexpr qreal tolerance = 1.0;
-    window->isMaximized = qAbs(frame.x() - maxArea.x()) <= tolerance
-                       && qAbs(frame.y() - maxArea.y()) <= tolerance
-                       && qAbs(frame.width() - maxArea.width()) <= tolerance
-                       && qAbs(frame.height() - maxArea.height()) <= tolerance;
+    window->isMaximized       = (qAbs(frame.x() - maxArea.x()) <= tolerance) &&
+                                (qAbs(frame.y() - maxArea.y()) <= tolerance) &&
+                                (qAbs(frame.width() - maxArea.width()) <= tolerance) &&
+                                (qAbs(frame.height() - maxArea.height()) <= tolerance);
 
 #ifdef DEBUG_MAXIMIZED
     qDebug() << "ShapeCorners: maximize area" << maxArea << "window" << kwindow->frameGeometry();
