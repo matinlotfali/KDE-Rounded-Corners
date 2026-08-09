@@ -37,7 +37,7 @@ This effect is maintained on KDE Plasma desktop versions 5.27 to 6.6+ in various
   [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Fdebian13?label=Download%20%5Bkwin4_effect_shapecorners_debian13.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/debian13/kwin4_effect_shapecorners_debian13.deb/download)
 - [![Debian Sid](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/debian-sid.yml?branch=master&label=Debian%20Sid%20(Unstable)&logo=debian)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/debian-sid.yml)
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  ![](https://img.shields.io/badge/Plasma-6.6-blue)
+  ![](https://img.shields.io/badge/Plasma-6.7-darkgreen)
 - [![openSUSE Leap 16](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/leap16.yml?branch=master&label=openSUSE%20Leap%2016&logo=opensuse&logoColor=white)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/leap16.yml)
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   ![](https://img.shields.io/badge/Plasma-6.4-lightgreen)
@@ -85,12 +85,23 @@ This effect is maintained on KDE Plasma desktop versions 5.27 to 6.6+ in various
 - Separate outline color for active and inactive windows - by [OrkenWhite](https://github.com/OrkenWhite)
 - Support for language translations - by [VictorR2007](https://github.com/VictorR2007) (See [How to add more translations?](#how-to-add-more-languages-to-the-translation))
 - Squircle corner shape - by [zxsleebu](https://github.com/zxsleebu) (See [#503](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/503))
+- Linear gradient outlines with two color stops and an adjustable angle (See [#522](https://github.com/matinlotfali/KDE-Rounded-Corners/issues/522))
 
 <a href="https://github.com/matinlotfali/KDE-Rounded-Corners/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=matinlotfali/KDE-Rounded-Corners" />
 </a>
 
 # How to install using unofficial repositories
+
+Launchpad PPA at [matinlotfali/kde-rounded-corners](https://launchpad.net/~matinlotfali/+archive/ubuntu/kde-rounded-corners) for Kubuntu, Ubuntu, and KDE Neon
+
+```bash
+sudo add-apt-repository ppa:matinlotfali/kde-rounded-corners
+sudo apt update
+sudo apt install kwin-effect-roundcorners
+```
+
+> For the X11 build, use `kwin-effect-roundcorners-x11`. On KDE Neon the packages carry a `-neon` suffix (`kwin-effect-roundcorners-neon`, `kwin-effect-roundcorners-x11-neon`).
 
 Copr package at [matinlotfali/KDE-Rounded-Corners](https://copr.fedorainfracloud.org/coprs/matinlotfali/KDE-Rounded-Corners)
 

@@ -126,10 +126,18 @@ namespace ShapeCorners
         int m_shader_shadowSize = 0;
 
         /**
-         * \brief Reference to `uniform vec4 outlineColor;`
-         *        Containing the RGBA of the outline color specified in settings.
+         * \brief Reference to `uniform vec4 outlineColor1;` and `uniform vec4 outlineColor2;`
+         *        Containing the RGBA of the outline's two gradient stops specified in settings.
+         *        The two stops are equal when the outline is a solid color.
          */
-        int m_shader_outlineColor = 0;
+        int m_shader_outlineColor1 = 0;
+        int m_shader_outlineColor2 = 0;
+
+        /**
+         * \brief Reference to `uniform float outlineAngle;`
+         *        Containing the outline gradient angle in degrees.
+         */
+        int m_shader_outlineAngle = 0;
 
         /**
          * \brief Reference to `uniform float outlineThickness;`
@@ -138,10 +146,18 @@ namespace ShapeCorners
         int m_shader_outlineThickness = 0;
 
         /**
-         * \brief Reference to `uniform vec4 secondOutlineColor;`
-         *        Containing the RGBA of the outline color specified in settings.
+         * \brief Reference to `uniform vec4 secondOutlineColor1;` and `uniform vec4 secondOutlineColor2;`
+         *        Containing the RGBA of the second outline's two gradient stops specified in settings.
+         *        The two stops are equal when the second outline is a solid color.
          */
-        int m_shader_secondOutlineColor = 0;
+        int m_shader_secondOutlineColor1 = 0;
+        int m_shader_secondOutlineColor2 = 0;
+
+        /**
+         * \brief Reference to `uniform float secondOutlineAngle;`
+         *        Containing the second outline gradient angle in degrees.
+         */
+        int m_shader_secondOutlineAngle = 0;
 
         /**
          * \brief Reference to `uniform float secondOutlineThickness;`
@@ -150,10 +166,18 @@ namespace ShapeCorners
         int m_shader_secondOutlineThickness = 0;
 
         /**
-         * \brief Reference to `uniform vec4 outerOutlineColor;`
-         *        Containing the RGBA of the outline color specified in settings.
+         * \brief Reference to `uniform vec4 outerOutlineColor1;` and `uniform vec4 outerOutlineColor2;`
+         *        Containing the RGBA of the outer outline's two gradient stops specified in settings.
+         *        The two stops are equal when the outer outline is a solid color.
          */
-        int m_shader_outerOutlineColor = 0;
+        int m_shader_outerOutlineColor1 = 0;
+        int m_shader_outerOutlineColor2 = 0;
+
+        /**
+         * \brief Reference to `uniform float outerOutlineAngle;`
+         *        Containing the outer outline gradient angle in degrees.
+         */
+        int m_shader_outerOutlineAngle = 0;
 
         /**
          * \brief Reference to `uniform float outerOutlineThickness;`

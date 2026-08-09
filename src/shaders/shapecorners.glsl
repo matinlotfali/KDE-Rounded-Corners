@@ -30,6 +30,21 @@ float shape_distance(vec2 point, vec2 center, float radius)
 }
 
 /*
+ *  \brief Linear gradient color sampled along an axis across the window frame.
+ *  \param c1: The color at the start of the gradient.
+ *  \param c2: The color at the end of the gradient. When equal to c1 this returns a solid color.
+ *  \param angleDeg: The gradient direction in degrees. 0 = left->right, 90 = top->bottom.
+ *  \param coord0: The XY pixel being shaded, in window-frame pixels (see tex_to_pixel).
+ *  \return The interpolated RGBA color at that pixel.
+ */
+vec4 gradientColor(vec4 c1, vec4 c2, float angleDeg, vec2 coord0)
+{
+    vec2  dir = vec2(cos(radians(angleDeg)), sin(radians(angleDeg)));
+    float t   = dot(coord0 / windowSize - 0.5, dir) + 0.5;
+    return mix(c1, c2, clamp(t, 0.0, 1.0));
+}
+
+/*
  *  \brief This function is used to choose the pixel color based on its distance to the center input.
  *  \param coord0: The XY point
  *  \param tex: The RGBA color of the pixel in XY
@@ -41,6 +56,12 @@ float shape_distance(vec2 point, vec2 center, float radius)
  */
 vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle, vec4 coord_shadowColor)
 {
+    // Resolve each outline's gradient once; the logic below then treats them as solid colors.
+    // When an outline is not a gradient its two stops are equal, so these collapse to plain solids.
+    vec4 outlineColor       = gradientColor(outlineColor1, outlineColor2, outlineAngle, coord0);
+    vec4 secondOutlineColor = gradientColor(secondOutlineColor1, secondOutlineColor2, secondOutlineAngle, coord0);
+    vec4 outerOutlineColor  = gradientColor(outerOutlineColor1, outerOutlineColor2, outerOutlineAngle, coord0);
+
     vec2  angle_vector         = vec2(cos(angle), sin(angle));
     float corner_length        = (abs(angle_vector.x) < 0.1 || abs(angle_vector.y) < 0.1) ? 1.0 : sqrt(2.0);
     vec2  roundness_center     = start + radius * angle_vector * corner_length;

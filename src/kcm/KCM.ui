@@ -10,12 +10,6 @@
     <height>700</height>
    </rect>
   </property>
-  <property name="maximumSize">
-   <size>
-    <width>16777215</width>
-    <height>700</height>
-   </size>
-  </property>
   <property name="windowTitle">
    <string>Rounded Corners (formerly ShapeCorners)</string>
   </property>
@@ -1028,6 +1022,47 @@
                    <item row="3" column="1">
                     <widget class="KColorButton" name="kcfg_OutlineColor"/>
                    </item>
+                   <item row="4" column="0">
+                    <widget class="QCheckBox" name="kcfg_OutlineIsGradient">
+                     <property name="text">
+                      <string>&amp;Gradient</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="0">
+                    <widget class="QLabel" name="label_OutlineColor2">
+                     <property name="text">
+                      <string>Second Color</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="1">
+                    <widget class="KColorButton" name="kcfg_OutlineColor2">
+                     <property name="alphaChannelEnabled">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="0">
+                    <widget class="QLabel" name="label_OutlineAngle">
+                     <property name="text">
+                      <string>Gradient Angle</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="1">
+                    <widget class="QSpinBox" name="kcfg_OutlineGradientAngle">
+                     <property name="suffix">
+                      <string>°</string>
+                     </property>
+                     <property name="maximum">
+                      <number>360</number>
+                     </property>
+                     <property name="wrapping">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
                    <item row="3" column="0">
                     <widget class="QRadioButton" name="kcfg_ActiveOutlineUseCustom">
                      <property name="text">
@@ -1257,6 +1292,47 @@
                    </item>
                    <item row="3" column="1">
                     <widget class="KColorButton" name="kcfg_InactiveOutlineColor"/>
+                   </item>
+                   <item row="4" column="0">
+                    <widget class="QCheckBox" name="kcfg_InactiveOutlineIsGradient">
+                     <property name="text">
+                      <string>&amp;Gradient</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="0">
+                    <widget class="QLabel" name="label_InactiveOutlineColor2">
+                     <property name="text">
+                      <string>Second Color</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="1">
+                    <widget class="KColorButton" name="kcfg_InactiveOutlineColor2">
+                     <property name="alphaChannelEnabled">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="0">
+                    <widget class="QLabel" name="label_InactiveOutlineAngle">
+                     <property name="text">
+                      <string>Gradient Angle</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="1">
+                    <widget class="QSpinBox" name="kcfg_InactiveOutlineGradientAngle">
+                     <property name="suffix">
+                      <string>°</string>
+                     </property>
+                     <property name="maximum">
+                      <number>360</number>
+                     </property>
+                     <property name="wrapping">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </item>
@@ -1496,6 +1572,47 @@
                    <item row="3" column="1">
                     <widget class="KColorButton" name="kcfg_SecondOutlineColor"/>
                    </item>
+                   <item row="4" column="0">
+                    <widget class="QCheckBox" name="kcfg_SecondOutlineIsGradient">
+                     <property name="text">
+                      <string>&amp;Gradient</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="0">
+                    <widget class="QLabel" name="label_SecondOutlineColor2">
+                     <property name="text">
+                      <string>Second Color</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="1">
+                    <widget class="KColorButton" name="kcfg_SecondOutlineColor2">
+                     <property name="alphaChannelEnabled">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="0">
+                    <widget class="QLabel" name="label_SecondOutlineAngle">
+                     <property name="text">
+                      <string>Gradient Angle</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="1">
+                    <widget class="QSpinBox" name="kcfg_SecondOutlineGradientAngle">
+                     <property name="suffix">
+                      <string>°</string>
+                     </property>
+                     <property name="maximum">
+                      <number>360</number>
+                     </property>
+                     <property name="wrapping">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </item>
                 </layout>
@@ -1718,6 +1835,47 @@
                    </item>
                    <item row="3" column="1">
                     <widget class="KColorButton" name="kcfg_InactiveSecondOutlineColor"/>
+                   </item>
+                   <item row="4" column="0">
+                    <widget class="QCheckBox" name="kcfg_InactiveSecondOutlineIsGradient">
+                     <property name="text">
+                      <string>&amp;Gradient</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="0">
+                    <widget class="QLabel" name="label_InactiveSecondOutlineColor2">
+                     <property name="text">
+                      <string>Second Color</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="1">
+                    <widget class="KColorButton" name="kcfg_InactiveSecondOutlineColor2">
+                     <property name="alphaChannelEnabled">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="0">
+                    <widget class="QLabel" name="label_InactiveSecondOutlineAngle">
+                     <property name="text">
+                      <string>Gradient Angle</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="1">
+                    <widget class="QSpinBox" name="kcfg_InactiveSecondOutlineGradientAngle">
+                     <property name="suffix">
+                      <string>°</string>
+                     </property>
+                     <property name="maximum">
+                      <number>360</number>
+                     </property>
+                     <property name="wrapping">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </item>
@@ -1957,6 +2115,47 @@
                    <item row="3" column="1">
                     <widget class="KColorButton" name="kcfg_OuterOutlineColor"/>
                    </item>
+                   <item row="4" column="0">
+                    <widget class="QCheckBox" name="kcfg_OuterOutlineIsGradient">
+                     <property name="text">
+                      <string>&amp;Gradient</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="0">
+                    <widget class="QLabel" name="label_OuterOutlineColor2">
+                     <property name="text">
+                      <string>Second Color</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="1">
+                    <widget class="KColorButton" name="kcfg_OuterOutlineColor2">
+                     <property name="alphaChannelEnabled">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="0">
+                    <widget class="QLabel" name="label_OuterOutlineAngle">
+                     <property name="text">
+                      <string>Gradient Angle</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="1">
+                    <widget class="QSpinBox" name="kcfg_OuterOutlineGradientAngle">
+                     <property name="suffix">
+                      <string>°</string>
+                     </property>
+                     <property name="maximum">
+                      <number>360</number>
+                     </property>
+                     <property name="wrapping">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </item>
                 </layout>
@@ -2179,6 +2378,47 @@
                    </item>
                    <item row="3" column="1">
                     <widget class="KColorButton" name="kcfg_InactiveOuterOutlineColor"/>
+                   </item>
+                   <item row="4" column="0">
+                    <widget class="QCheckBox" name="kcfg_InactiveOuterOutlineIsGradient">
+                     <property name="text">
+                      <string>&amp;Gradient</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="0">
+                    <widget class="QLabel" name="label_InactiveOuterOutlineColor2">
+                     <property name="text">
+                      <string>Second Color</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="1">
+                    <widget class="KColorButton" name="kcfg_InactiveOuterOutlineColor2">
+                     <property name="alphaChannelEnabled">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="0">
+                    <widget class="QLabel" name="label_InactiveOuterOutlineAngle">
+                     <property name="text">
+                      <string>Gradient Angle</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="1">
+                    <widget class="QSpinBox" name="kcfg_InactiveOuterOutlineGradientAngle">
+                     <property name="suffix">
+                      <string>°</string>
+                     </property>
+                     <property name="maximum">
+                      <number>360</number>
+                     </property>
+                     <property name="wrapping">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </item>

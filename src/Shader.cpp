@@ -67,11 +67,17 @@ ShapeCorners::Shader::Shader()
     m_shader_radius                 = m_shader->uniformLocation("radius");
     m_shader_useSquircleShape       = m_shader->uniformLocation("useSquircleShape");
     m_shader_squircleBlend          = m_shader->uniformLocation("squircleBlend");
-    m_shader_outlineColor           = m_shader->uniformLocation("outlineColor");
+    m_shader_outlineColor1          = m_shader->uniformLocation("outlineColor1");
+    m_shader_outlineColor2          = m_shader->uniformLocation("outlineColor2");
+    m_shader_outlineAngle           = m_shader->uniformLocation("outlineAngle");
     m_shader_outlineThickness       = m_shader->uniformLocation("outlineThickness");
-    m_shader_secondOutlineColor     = m_shader->uniformLocation("secondOutlineColor");
+    m_shader_secondOutlineColor1    = m_shader->uniformLocation("secondOutlineColor1");
+    m_shader_secondOutlineColor2    = m_shader->uniformLocation("secondOutlineColor2");
+    m_shader_secondOutlineAngle     = m_shader->uniformLocation("secondOutlineAngle");
     m_shader_secondOutlineThickness = m_shader->uniformLocation("secondOutlineThickness");
-    m_shader_outerOutlineColor      = m_shader->uniformLocation("outerOutlineColor");
+    m_shader_outerOutlineColor1     = m_shader->uniformLocation("outerOutlineColor1");
+    m_shader_outerOutlineColor2     = m_shader->uniformLocation("outerOutlineColor2");
+    m_shader_outerOutlineAngle      = m_shader->uniformLocation("outerOutlineAngle");
     m_shader_outerOutlineThickness  = m_shader->uniformLocation("outerOutlineThickness");
     m_shader_front                  = m_shader->uniformLocation("front");
     qInfo() << "ShapeCorners: shaders loaded.";
@@ -110,11 +116,11 @@ void ShapeCorners::Shader::Bind(const Window &window, const double scale) const
     m_shader->setUniform(m_shader_useSquircleShape, static_cast<int>(Config::useSquircleShape()));
     m_shader->setUniform(m_shader_squircleBlend, static_cast<float>(Config::squircleness()));
     m_shader->setUniform(m_shader_front, 0);
-    m_shader->setUniform(m_shader_outlineThickness, static_cast<float>(window.currentConfig.outlineSize * scale));
+    m_shader->setUniform(m_shader_outlineThickness, static_cast<float>(window.currentConfig.outline.size * scale));
     m_shader->setUniform(m_shader_secondOutlineThickness,
-                         static_cast<float>(window.currentConfig.secondOutlineSize * scale));
+                         static_cast<float>(window.currentConfig.secondOutline.size * scale));
     m_shader->setUniform(m_shader_outerOutlineThickness,
-                         static_cast<float>(window.currentConfig.outerOutlineSize * scale));
+                         static_cast<float>(window.currentConfig.outerOutline.size * scale));
     m_shader->setUniform(m_shader_shadowSize, static_cast<float>(shadowSize));
     m_shader->setUniform(m_shader_shadowColor, window.currentConfig.shadowColor.toQColor());
 
@@ -125,13 +131,30 @@ void ShapeCorners::Shader::Bind(const Window &window, const double scale) const
         m_shader->setUniform(m_shader_radius, 0.F);
     }
     if (window.hasOutline()) {
-        m_shader->setUniform(m_shader_outlineColor, window.currentConfig.outlineColor.toQColor());
-        m_shader->setUniform(m_shader_secondOutlineColor, window.currentConfig.secondOutlineColor.toQColor());
-        m_shader->setUniform(m_shader_outerOutlineColor, window.currentConfig.outerOutlineColor.toQColor());
+        const auto &outline       = window.currentConfig.outline;
+        const auto &secondOutline = window.currentConfig.secondOutline;
+        const auto &outerOutline  = window.currentConfig.outerOutline;
+        // color1 == color2 gives a solid outline; they differ only when a gradient is configured.
+        m_shader->setUniform(m_shader_outlineColor1, outline.color1.toQColor());
+        m_shader->setUniform(m_shader_outlineColor2, outline.color2.toQColor());
+        m_shader->setUniform(m_shader_outlineAngle, outline.angle);
+        m_shader->setUniform(m_shader_secondOutlineColor1, secondOutline.color1.toQColor());
+        m_shader->setUniform(m_shader_secondOutlineColor2, secondOutline.color2.toQColor());
+        m_shader->setUniform(m_shader_secondOutlineAngle, secondOutline.angle);
+        m_shader->setUniform(m_shader_outerOutlineColor1, outerOutline.color1.toQColor());
+        m_shader->setUniform(m_shader_outerOutlineColor2, outerOutline.color2.toQColor());
+        m_shader->setUniform(m_shader_outerOutlineAngle, outerOutline.angle);
     } else {
-        m_shader->setUniform(m_shader_outlineColor, QColor(0, 0, 0, 0));
-        m_shader->setUniform(m_shader_secondOutlineColor, QColor(0, 0, 0, 0));
-        m_shader->setUniform(m_shader_outerOutlineColor, QColor(0, 0, 0, 0));
+        const QColor transparent(0, 0, 0, 0);
+        m_shader->setUniform(m_shader_outlineColor1, transparent);
+        m_shader->setUniform(m_shader_outlineColor2, transparent);
+        m_shader->setUniform(m_shader_outlineAngle, 0.0F);
+        m_shader->setUniform(m_shader_secondOutlineColor1, transparent);
+        m_shader->setUniform(m_shader_secondOutlineColor2, transparent);
+        m_shader->setUniform(m_shader_secondOutlineAngle, 0.0F);
+        m_shader->setUniform(m_shader_outerOutlineColor1, transparent);
+        m_shader->setUniform(m_shader_outerOutlineColor2, transparent);
+        m_shader->setUniform(m_shader_outerOutlineAngle, 0.0F);
     }
 }
 
