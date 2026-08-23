@@ -4,10 +4,10 @@ This effect rounds the corners of your windows and adds an outline around them w
 
 This effect started as a fork of [shapecorners](https://sourceforge.net/projects/shapecorners/) with some additional contributions in [Alex47's project](https://github.com/alex47/KDE-Rounded-Corners), then optimized and reimplemented using shaders with influences from the [invert effect](https://github.com/KDE/kwin/tree/master/src/plugins/invert).
 
-This effect is maintained on KDE Plasma desktop versions 5.27 to 6.6+ in various Linux distros ([See tests](#tested-on)).
+This effect is maintained on KDE Plasma desktop versions 5.27 to 6.7+ in various Linux distros ([See tests](#tested-on)).
 <br>[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png)](https://www.buymeacoffee.com/matinlotfali)
 
-![before-after](https://github.com/user-attachments/assets/cbd98412-ee47-4f4b-8b80-297328dfb1f5)
+<img width="666" height="570" alt="image" src="https://github.com/user-attachments/assets/eb798ead-a8d7-43d1-88fa-24241aa5f33f" />
 
 ## Tested configurations + Download links (.deb, .rpm)
 * ![Wayland](https://img.shields.io/badge/Wayland-supported-green?logo=wayland) ![Wayland](https://img.shields.io/badge/X11-supported-green?logo=X.org)
