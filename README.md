@@ -7,7 +7,7 @@ This effect started as a fork of [shapecorners](https://sourceforge.net/projects
 This effect is maintained on KDE Plasma desktop versions 5.27 to 6.7+ in various Linux distros ([See tests](#tested-on)).
 <br>[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png)](https://www.buymeacoffee.com/matinlotfali)
 
-<img width="666" height="570" alt="image" src="https://github.com/user-attachments/assets/eb798ead-a8d7-43d1-88fa-24241aa5f33f" />
+<img width="666" alt="image" src="https://github.com/user-attachments/assets/eb798ead-a8d7-43d1-88fa-24241aa5f33f" />
 
 ## Tested configurations + Download links (.deb, .rpm)
 * ![Wayland](https://img.shields.io/badge/Wayland-supported-green?logo=wayland) ![Wayland](https://img.shields.io/badge/X11-supported-green?logo=X.org)
@@ -89,6 +89,14 @@ This effect is maintained on KDE Plasma desktop versions 5.27 to 6.7+ in various
 
 <a href="https://github.com/matinlotfali/KDE-Rounded-Corners/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=matinlotfali/KDE-Rounded-Corners" />
+</a>
+
+<a href="https://www.star-history.com/?repos=matinlotfali%2FKDE-Rounded-Corners&type=date&legend=bottom-right">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=matinlotfali/KDE-Rounded-Corners&type=date&theme=dark&legend=bottom-right&sealed_token=9DUsCWHAS0udGRkKebGxco0iQyQVvzr_x4NRLoE-2mmG4xcoo9dAUYq0noXHpWxG3_FKPTUM59KWUrErzQubEI31rn0PQfRrHKvuioUO--BBKd4IYRTdjQ" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=matinlotfali/KDE-Rounded-Corners&type=date&legend=bottom-right&sealed_token=9DUsCWHAS0udGRkKebGxco0iQyQVvzr_x4NRLoE-2mmG4xcoo9dAUYq0noXHpWxG3_FKPTUM59KWUrErzQubEI31rn0PQfRrHKvuioUO--BBKd4IYRTdjQ" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=matinlotfali/KDE-Rounded-Corners&type=date&legend=bottom-right&sealed_token=9DUsCWHAS0udGRkKebGxco0iQyQVvzr_x4NRLoE-2mmG4xcoo9dAUYq0noXHpWxG3_FKPTUM59KWUrErzQubEI31rn0PQfRrHKvuioUO--BBKd4IYRTdjQ" />
+ </picture>
 </a>
 
 # How to install using unofficial repositories
