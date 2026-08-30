@@ -24,7 +24,7 @@ jobs:
     steps:
     - name: Install CLI Dependencies
       run: |
-        dnf -y install git
+        dnf -y install --nogpgcheck git
         git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
     - name: Check out repository
@@ -32,7 +32,7 @@ jobs:
 
     - name: Install Build Dependencies
       run: |
-        dnf -y install cmake gcc-c++ extra-cmake-modules kwin-devel kf6-kconfigwidgets-devel libepoxy-devel kf6-kcmutils-devel kf6-ki18n-devel qt6-qtbase-private-devel wayland-devel libdrm-devel
+        dnf -y install --nogpgcheck cmake gcc-c++ extra-cmake-modules kwin-devel kf6-kconfigwidgets-devel libepoxy-devel kf6-kcmutils-devel kf6-ki18n-devel qt6-qtbase-private-devel wayland-devel libdrm-devel
 
     - name: Configure & Build For Wayland
       run: |
@@ -41,6 +41,6 @@ jobs:
 
     - name: Configure & Build For X11
       run: |
-        dnf -y install kwin-x11-devel
+        dnf -y install --nogpgcheck kwin-x11-devel
         cmake . -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DKWIN_X11=ON
         cmake --build . --config ${{env.BUILD_TYPE}} -j
