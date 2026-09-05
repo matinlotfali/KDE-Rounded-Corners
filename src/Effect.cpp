@@ -25,10 +25,10 @@
 
 #include "Animation.h"
 #include "Config.h"
-#include "Utils.h"
 #include "Window.h"
 #include "WindowManager.h"
 #if QT_VERSION_MAJOR >= 6
+#include <core/output.h>
 #include <core/renderviewport.h>
 #include <effect/effecthandler.h>
 #include <effect/effectwindow.h>
@@ -36,6 +36,7 @@
 #else
 #include <kwineffects.h>
 #include <kwinglutils.h>
+#include "Utils.h"
 #endif
 
 void ShapeCorners::Effect::WriteBreezeConfig(bool set_disabled)
@@ -220,14 +221,14 @@ bool ShapeCorners::Effect::drawWindow(
 #else
 void ShapeCorners::Effect::drawWindow(
 #endif // KWIN_EFFECT_API_VERSION >= 237 && KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 80)
-                                      const KWin::RenderTarget &renderTarget, const KWin::RenderViewport &viewport,
-                                      KWin::EffectWindow *kwindow, int mask,
+        const KWin::RenderTarget &renderTarget, const KWin::RenderViewport &viewport, KWin::EffectWindow *kwindow,
+        int mask,
 #if KWIN_EFFECT_API_VERSION >= 237
-                                      const KWin::Region &region,
+        const KWin::Region &region,
 #else
-                                      const QRegion &region,
+        const QRegion &region,
 #endif
-                                      KWin::WindowPaintData &data)
+        KWin::WindowPaintData &data)
 {
 #else
 void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *kwindow, int mask, const QRegion &region,
@@ -247,14 +248,16 @@ void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *kwindow, int mask, con
         OffscreenEffect::drawWindow(renderTarget, viewport, kwindow, mask, region, data);
         return;
 #else
-        OffscreenEffect::drawWindow(kwindow, mask, region, data);
-        return;
+    OffscreenEffect::drawWindow(kwindow, mask, region, data);
+    return;
 #endif
     }
 
 #if QT_VERSION_MAJOR >= 6
     // Get the scale factor for Qt6.
-    const auto scale = viewport.scale();
+    // KWin renders the offscreen texture at the scale of the screen the window belongs to,
+    // which is not the scale of the output being painted.
+    const auto scale = kwindow->screen()->scale();
 #else
     // Get the scale factor for Qt5.
     const auto scale = KWin::effects->renderTargetScale();
@@ -275,7 +278,7 @@ void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *kwindow, int mask, con
 #elif QT_VERSION_MAJOR >= 6
     OffscreenEffect::drawWindow(renderTarget, viewport, kwindow, mask, region, data);
 #else
-    OffscreenEffect::drawWindow(kwindow, mask, region, data);
+OffscreenEffect::drawWindow(kwindow, mask, region, data);
 #endif
     // Unbind the shader after drawing.
     m_shaderManager.Unbind();
