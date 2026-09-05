@@ -192,8 +192,11 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
 #endif // KWIN_EFFECT_API_VERSION >= 237
 #endif // KWIN_PLUGIN_VERSION_NUM < QT_VERSION_CHECK(6, 6, 80)
 
-        // Mark the window as having translucent regions.
-        data.setTranslucent();
+        // Reporting the window as translucent empties its opaque region, so KWin repaints
+        // everything behind it. Optional because that costs GPU time, see issue #207.
+        if (Config::markWindowsTranslucent()) {
+            data.setTranslucent();
+        }
     }
 
     // Call the base implementation.
