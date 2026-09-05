@@ -25,6 +25,9 @@
             <min>0</min>
             <max>2000</max>
         </entry>
+        <entry name="MarkWindowsTranslucent" type="Bool">
+            <default>true</default>
+        </entry>
 
         <!-- Shadow Options -->
 
