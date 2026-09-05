@@ -36,6 +36,7 @@
 #else
 #include <kwineffects.h>
 #include <kwinglutils.h>
+#include "Utils.h"
 #endif
 
 void ShapeCorners::Effect::WriteBreezeConfig(bool set_disabled)
