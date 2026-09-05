@@ -7,6 +7,7 @@
 #include "Window.h"
 #include "WindowConfig.h"
 #if QT_VERSION_MAJOR >= 6
+#include <core/pixelgrid.h>
 #include <effect/effect.h>
 #include <effect/effectwindow.h>
 #include <opengl/glutils.h>
@@ -99,8 +100,15 @@ void ShapeCorners::Shader::Bind(const Window &window, const double scale) const
     }
 
     // Calculate scaled geometries
+#if KWIN_EFFECT_API_VERSION >= 237 && KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 3, 4)
+    // KWin from 6.3.4 onwards snaps the offscreen texture's geometry to the device pixel grid,
+    // so the uniforms have to be derived the same way. KWin X11 does not snap.
+    const auto frameGeometry    = KWin::snapToPixels(window.w->frameGeometry(), scale) * scale;
+    const auto expandedGeometry = KWin::snapToPixels(window.w->expandedGeometry(), scale) * scale;
+#else
     const auto frameGeometry    = window.w->frameGeometry() * scale;
     const auto expandedGeometry = window.w->expandedGeometry() * scale;
+#endif
     // Calculate the offset between expanded and frame geometry
     const auto frameOffset = QVector2D(frameGeometry.topLeft() - expandedGeometry.topLeft());
     // Clamp the shadow size to the maximum allowed
