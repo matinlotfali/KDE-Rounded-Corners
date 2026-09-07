@@ -45,8 +45,16 @@ namespace ShapeCorners
          * \brief This function assigns the required variables to the shader.
          *        Then it pushes the shader to the stack of rendering.
          * \note  This needs to be called before each window is rendered.
+         * \note  Every geometry uniform describes the offscreen texture that the shader samples, so
+         *        all of them have to be derived exactly as KWin derives that texture. From KWin
+         *        6.3.4 onwards that means snapping the logical geometry onto the device pixel grid
+         *        first: raw geometry leaves the window frame up to a device pixel off inside the
+         *        texture, by an amount that varies with the window's sub-pixel position, which drags
+         *        the outline onto the window's own content as it moves on a fractionally scaled
+         *        screen. KWin X11 keeps the older effect API and does not snap.
          * \param window The window that the effect will be rendering on
-         * \param scale The scale of the screen
+         * \param scale The scale of the screen the window belongs to,
+         *        which is the scale KWin renders the offscreen texture at
          */
         void Bind(const Window &window, double scale) const;
 
