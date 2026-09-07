@@ -25,6 +25,7 @@
 
 #include "Animation.h"
 #include "Config.h"
+#include "Utils.h"
 #include "Window.h"
 #include "WindowManager.h"
 #if QT_VERSION_MAJOR >= 6
@@ -36,7 +37,6 @@
 #else
 #include <kwineffects.h>
 #include <kwinglutils.h>
-#include "Utils.h"
 #endif
 
 void ShapeCorners::Effect::WriteBreezeConfig(bool set_disabled)
