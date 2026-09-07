@@ -49,7 +49,23 @@ jobs:
         mv ${RPM_NAME}.rpm ${RPM_FILE}
         echo "RPM_FILE=${RPM_FILE}" >> $GITHUB_ENV
 
+    - name: Hash Package Contents
+      id: hash
+      run: |
+        HASH=$(sh tools/package-hash.sh ${RPM_FILE})
+        echo "${HASH}" > uploaded-hash
+        echo "hash=${HASH}" >> $GITHUB_OUTPUT
+
+    - name: Check If Package Contents Were Already Uploaded
+      id: hash_check
+      uses: actions/cache/restore@v6
+      with:
+        path: uploaded-hash
+        key: uploaded-${{ github.job }}-${{ steps.hash.outputs.hash }}
+        lookup-only: true
+
     - name: Upload Workflow Artifact
+      if: steps.hash_check.outputs.cache-hit != 'true'
       uses: actions/upload-artifact@v7
       with:
         name: ${{ env.RPM_NAME }}
@@ -58,7 +74,7 @@ jobs:
         if-no-files-found: error
 
     - name: Upload Release Asset
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/master' && steps.hash_check.outputs.cache-hit != 'true'
       uses: nicklasfrahm/scp-action@main
       with:
         direction: upload
@@ -68,3 +84,10 @@ jobs:
         fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
         source: ${{ env.RPM_FILE }}
         target: /home/frs/project/kde-rounded-corners/nightly/leap16/${{ env.RPM_NAME }}_${{ github.job }}.rpm
+
+    - name: Remember Uploaded Package Contents
+      if: github.ref == 'refs/heads/master' && steps.hash_check.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v6
+      with:
+        path: uploaded-hash
+        key: uploaded-${{ github.job }}-${{ steps.hash.outputs.hash }}

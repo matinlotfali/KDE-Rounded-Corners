@@ -25,6 +25,8 @@ jobs:
       pkg_version: ${{ steps.version.outputs.pkg_version }}
       deb_file: ${{ steps.package.outputs.deb_file }}
       version_changed: ${{ steps.lp_check.outputs.version_changed }}
+      package_hash: ${{ steps.hash.outputs.hash }}
+      content_changed: ${{ steps.hash_check.outputs.cache-hit != 'true' }}
 
     steps:
     - name: Check out repository
@@ -76,7 +78,22 @@ jobs:
           echo "version_changed=true" >> $GITHUB_OUTPUT
         fi
 
+    - name: Hash Package Contents
+      id: hash
+      run: |
+        HASH=$(sh tools/package-hash.sh artifacts/*.deb)
+        echo "hash=${HASH}" >> $GITHUB_OUTPUT
+
+    - name: Check If Package Contents Were Already Uploaded
+      id: hash_check
+      uses: actions/cache/restore@v6
+      with:
+        path: uploaded-hash
+        key: uploaded-${{ env.DISTRO_SUFFIX }}-${{ steps.hash.outputs.hash }}
+        lookup-only: true
+
     - name: Upload Workflow Artifact
+      if: steps.hash_check.outputs.cache-hit != 'true'
       uses: actions/upload-artifact@v7
       with:
         name: ${{ env.DEB_NAME }}
@@ -86,7 +103,7 @@ jobs:
 
   upload-launchpad:
     needs: build
-    if: needs.build.outputs.version_changed == 'true' && github.ref == 'refs/heads/master'
+    if: needs.build.outputs.version_changed == 'true' && needs.build.outputs.content_changed == 'true' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
 
     steps:
@@ -113,3 +130,11 @@ jobs:
       run: |
         echo "$GPG_PRIVATE_KEY" | gpg --batch --import
         sh tools/upload-to-launchpad.sh "$DEB_FILE" kwin-effect-roundcorners "$PKG_VERSION" kubuntu2404 noble
+
+    - name: Remember Uploaded Package Contents
+      run: echo "${{ needs.build.outputs.package_hash }}" > uploaded-hash
+
+    - uses: actions/cache/save@v6
+      with:
+        path: uploaded-hash
+        key: uploaded-${{ env.DISTRO_SUFFIX }}-${{ needs.build.outputs.package_hash }}

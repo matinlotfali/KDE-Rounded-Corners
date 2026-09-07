@@ -57,7 +57,23 @@ jobs:
         echo "USERNAME: $USERNAME"
         echo "HOST: $HOST"
 
+    - name: Hash Package Contents
+      id: hash
+      run: |
+        HASH=$(sh tools/package-hash.sh ${DEB_FILE})
+        echo "${HASH}" > uploaded-hash
+        echo "hash=${HASH}" >> $GITHUB_OUTPUT
+
+    - name: Check If Package Contents Were Already Uploaded
+      id: hash_check
+      uses: actions/cache/restore@v6
+      with:
+        path: uploaded-hash
+        key: uploaded-${{ github.job }}-${{ steps.hash.outputs.hash }}
+        lookup-only: true
+
     - name: Upload Package to Workflow Artifact
+      if: steps.hash_check.outputs.cache-hit != 'true'
       uses: actions/upload-artifact@v7
       with:
         name: ${{ env.DEB_NAME }}
@@ -66,7 +82,7 @@ jobs:
         if-no-files-found: error
 
     - name: Upload Package to SourceForge
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/master' && steps.hash_check.outputs.cache-hit != 'true'
       uses: nicklasfrahm/scp-action@main
       with:
         direction: upload
@@ -76,6 +92,13 @@ jobs:
         fingerprint: ${{ secrets.SOURCEFORGE_HOST_FINGERPRINT }}
         source: ${{ env.DEB_FILE }}
         target: /home/frs/project/kde-rounded-corners/nightly/debian/${{ env.DEB_NAME }}_${{ github.job }}.deb
+
+    - name: Remember Uploaded Package Contents
+      if: github.ref == 'refs/heads/master' && steps.hash_check.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v6
+      with:
+        path: uploaded-hash
+        key: uploaded-${{ github.job }}-${{ steps.hash.outputs.hash }}
 
 #     - name: Test
 #       working-directory: ${{github.workspace}}/build
