@@ -98,6 +98,13 @@ namespace ShapeCorners
         int m_shader_windowTopLeft = 0;
 
         /**
+         * \brief Reference to `uniform bool yInverted;`
+         *        Whether `texcoord0.y` grows downward from the top edge of the offscreen texture
+         *        rather than upward from its bottom edge.
+         */
+        int m_shader_yInverted = 0;
+
+        /**
          * \brief Reference to `uniform float radius;`
          *        Containing the corner radius in pixels specified in settings.
          */
