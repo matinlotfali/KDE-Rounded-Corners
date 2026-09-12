@@ -20,15 +20,18 @@ uniform vec4  outerOutlineColor2;     // The RGBA of the outer outline's second 
 uniform float outerOutlineAngle;      // The outer outline gradient angle in degrees.
 uniform float outerOutlineThickness;  // The thickness of the outer outline in pixels specified in settings.
 
+uniform bool yInverted; /* Whether `texcoord0.y` grows downward from the top edge of the offscreen
+                         * texture rather than upward from its bottom edge. */
+
 vec2 tex_to_pixel(vec2 texcoord)
 {
-    return vec2(texcoord.x * windowExpandedSize.x - windowTopLeft.x,
-                (1.0 - texcoord.y) * windowExpandedSize.y - windowTopLeft.y);
+    float y = yInverted ? texcoord.y : 1.0 - texcoord.y;
+    return vec2(texcoord.x * windowExpandedSize.x - windowTopLeft.x, y * windowExpandedSize.y - windowTopLeft.y);
 }
 vec2 pixel_to_tex(vec2 pixelcoord)
 {
-    return vec2((pixelcoord.x + windowTopLeft.x) / windowExpandedSize.x,
-                1.0 - (pixelcoord.y + windowTopLeft.y) / windowExpandedSize.y);
+    float y = (pixelcoord.y + windowTopLeft.y) / windowExpandedSize.y;
+    return vec2((pixelcoord.x + windowTopLeft.x) / windowExpandedSize.x, yInverted ? y : 1.0 - y);
 }
 bool hasExpandedSize() { return windowTopLeft.x >= 1.0 && windowTopLeft.y >= 1.0; }
 bool hasPrimaryOutline() { return outlineColor1.a > 0.0 && outlineThickness > 0.0; }

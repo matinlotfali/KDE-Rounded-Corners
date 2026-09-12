@@ -27,6 +27,20 @@ namespace
     {
         return {static_cast<float>(size.width()), static_cast<float>(size.height())};
     }
+
+    /**
+     * @brief Whether the offscreen texture's coordinates run top-down.
+     *
+     * KWin 6.7.90 backs the offscreen texture with an EglSwapchain instead of a plain GL texture.
+     * Its dmabuf-imported texture carries an `OutputTransform::FlipY`, which cancels the y flip
+     * KWin bakes into the texture matrix, so `texcoord0.y` grows downward from the top edge rather
+     * than upward from the bottom edge. KWin X11 keeps the older effect API and the plain texture.
+     */
+#if KWIN_EFFECT_API_VERSION >= 237 && KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 90)
+    constexpr bool kYInverted = true;
+#else
+    constexpr bool kYInverted = false;
+#endif
 } // namespace
 
 ShapeCorners::Shader::Shader()
@@ -62,6 +76,7 @@ ShapeCorners::Shader::Shader()
     m_shader_windowSize             = m_shader->uniformLocation("windowSize");
     m_shader_windowExpandedSize     = m_shader->uniformLocation("windowExpandedSize");
     m_shader_windowTopLeft          = m_shader->uniformLocation("windowTopLeft");
+    m_shader_yInverted              = m_shader->uniformLocation("yInverted");
     m_shader_usesNativeShadows      = m_shader->uniformLocation("usesNativeShadows");
     m_shader_shadowColor            = m_shader->uniformLocation("shadowColor");
     m_shader_shadowSize             = m_shader->uniformLocation("shadowSize");
@@ -120,6 +135,7 @@ void ShapeCorners::Shader::Bind(const Window &window, const double scale) const
     m_shader->setUniform(m_shader_windowSize, toVector2D(frameGeometry.size()));
     m_shader->setUniform(m_shader_windowExpandedSize, toVector2D(expandedGeometry.size()));
     m_shader->setUniform(m_shader_windowTopLeft, frameOffset);
+    m_shader->setUniform(m_shader_yInverted, static_cast<int>(kYInverted));
     m_shader->setUniform(m_shader_usesNativeShadows, static_cast<int>(Config::useNativeDecorationShadows()));
     m_shader->setUniform(m_shader_useSquircleShape, static_cast<int>(Config::useSquircleShape()));
     m_shader->setUniform(m_shader_squircleBlend, static_cast<float>(Config::squircleness()));
