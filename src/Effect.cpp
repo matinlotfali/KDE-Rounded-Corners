@@ -257,6 +257,17 @@ void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *kwindow, int mask, con
     // If the shader is not valid or the window is not managed or doesn't need the effect, unredirect and use default
     // drawing.
     if (!m_shaderManager.IsValid() || window == nullptr || !window->hasEffect()) {
+        // Flush pending rasterization before unredirecting. unredirect() destroys the
+        // OffscreenData and its EglSwapchain. In KWin 6.7.90, OffscreenData::paint()
+        // draws the offscreen texture onto the screen render target using the main
+        // compositor context, but creates its EGLNativeFence on the swapchain's
+        // context. On llvmpipe, the fence only flushes the swapchain context, leaving
+        // the main context's draw commands pending. Destroying the swapchain frees
+        // the texture memory on llvmpipe, so unflushed rasterization that still
+        // references it crashes in shade_quads. glFinish() flushes the main context.
+        if (m_lastExpandedSize.remove(kwindow) > 0) {
+            glFinish();
+        }
         unredirect(kwindow);
 #if KWIN_EFFECT_API_VERSION >= 237 && KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 80)
         return OffscreenEffect::drawWindow(renderTarget, viewport, kwindow, mask, region, data);
@@ -287,6 +298,23 @@ void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *kwindow, int mask, con
     m_shaderManager.Bind(*window, scale);
     // Activate the first texture unit which is the window content.
     glActiveTexture(GL_TEXTURE0);
+
+    // Flush pending rasterization if the window geometry changed since the last frame.
+    // In KWin 6.7.90, OffscreenData::maybeRender() reallocates the EglSwapchain when
+    // the texture size differs. The old swapchain is destroyed (m_swapchain
+    // reassignment), which frees the old GL textures and their backing dmabuf memory.
+    // On llvmpipe, this memory is freed immediately. However, the previous frame's
+    // OffscreenData::paint() drew the offscreen texture onto the screen using the
+    // main compositor context, and its EGLNativeFence was created on the swapchain's
+    // context — so the main context's draw commands were never flushed. Those
+    // commands still reference the old swapchain's textures. Calling glFinish() here
+    // flushes the main context and waits for all rasterization to complete, ensuring
+    // the old textures are no longer in use before maybeRender() destroys them.
+    const auto expandedSize = kwindow->expandedGeometry().size();
+    if (m_lastExpandedSize.value(kwindow) != expandedSize) {
+        glFinish();
+    }
+    m_lastExpandedSize.insert(kwindow, expandedSize);
 
     // Call the base implementation to actually draw the window.
     m_windowsBeingDrawn.insert(kwindow);

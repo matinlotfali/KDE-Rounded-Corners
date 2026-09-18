@@ -20,6 +20,8 @@
 #pragma once
 
 #include <QObject>
+#include <QHash>
+#include <QSizeF>
 #include <chrono>
 #include <unordered_set>
 #include "Shader.h"
@@ -195,6 +197,22 @@ namespace ShapeCorners
          * the same guard since commit b3e286c172, which is not part of the 6.7.90 release. See issue #532.
          */
         std::unordered_set<const KWin::EffectWindow *> m_windowsBeingDrawn;
+
+        /**
+         * @brief Tracks the last expanded geometry size for each redirected window.
+         *
+         * KWin 6.7.90's OffscreenData::maybeRender() reallocates the EglSwapchain when
+         * the window geometry changes. The old swapchain is destroyed, freeing the GL
+         * textures and their dmabuf backing store. On llvmpipe (software rendering),
+         * this memory is freed immediately. However, the previous frame's
+         * OffscreenData::paint() drew the offscreen texture using the main compositor
+         * context, while its EGLNativeFence was created on the swapchain's context —
+         * so the main context's draw commands were never flushed. Those commands still
+         * reference the old textures, so the rasterization threads crash in
+         * shade_quads when the textures are freed. By calling glFinish() before the
+         * reallocation, we flush the main context and ensure all rasterization is done.
+         */
+        QHash<const KWin::EffectWindow *, QSizeF> m_lastExpandedSize;
 
         void WriteBreezeConfig(bool set_disabled);
     };
