@@ -238,6 +238,19 @@ void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *kwindow, int mask, con
                                       KWin::WindowPaintData &data)
 {
 #endif
+    // Forward re-entrant draws to the rest of the chain, see the note on m_windowsBeingDrawn.
+    if (m_windowsBeingDrawn.contains(kwindow)) {
+#if KWIN_EFFECT_API_VERSION >= 237 && KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 80)
+        return KWin::effects->drawWindow(renderTarget, viewport, kwindow, mask, region, data);
+#elif QT_VERSION_MAJOR >= 6
+        KWin::effects->drawWindow(renderTarget, viewport, kwindow, mask, region, data);
+        return;
+#else
+        KWin::effects->drawWindow(kwindow, mask, region, data);
+        return;
+#endif
+    }
+
     // Find the managed window structure.
     const auto *window = m_windowManager->findWindow(kwindow);
 
@@ -276,6 +289,7 @@ void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *kwindow, int mask, con
     glActiveTexture(GL_TEXTURE0);
 
     // Call the base implementation to actually draw the window.
+    m_windowsBeingDrawn.insert(kwindow);
 #if KWIN_EFFECT_API_VERSION >= 237 && KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 80)
     const bool result = OffscreenEffect::drawWindow(renderTarget, viewport, kwindow, mask, region, data);
 #elif QT_VERSION_MAJOR >= 6
@@ -283,6 +297,7 @@ void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *kwindow, int mask, con
 #else
 OffscreenEffect::drawWindow(kwindow, mask, region, data);
 #endif
+    m_windowsBeingDrawn.erase(kwindow);
     // Unbind the shader after drawing.
     m_shaderManager.Unbind();
 #if KWIN_EFFECT_API_VERSION >= 237 && KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 80)

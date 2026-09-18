@@ -21,6 +21,7 @@
 
 #include <QObject>
 #include <chrono>
+#include <unordered_set>
 #include "Shader.h"
 #if QT_VERSION_MAJOR >= 6
 #include <effect/offscreeneffect.h>
@@ -184,6 +185,16 @@ namespace ShapeCorners
         std::unique_ptr<WindowManager> m_windowManager;
         /// Manages the animation state for window corner effects.
         std::unique_ptr<Animation> m_animation;
+        /**
+         * @brief Windows whose offscreen texture is currently being rendered.
+         *
+         * KWin renders an offscreen texture by running the effect chain again outside of a compositing
+         * cycle. The chain then restarts at its first effect, so this effect can be asked to draw a
+         * window it is already drawing. Rendering that window twice corrupts the offscreen render target
+         * and crashes KWin, so a nested call is forwarded to the rest of the chain untouched. KWin has
+         * the same guard since commit b3e286c172, which is not part of the 6.7.90 release. See issue #532.
+         */
+        std::unordered_set<const KWin::EffectWindow *> m_windowsBeingDrawn;
 
         void WriteBreezeConfig(bool set_disabled);
     };
