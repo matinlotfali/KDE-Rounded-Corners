@@ -163,7 +163,7 @@ namespace ShapeCorners
         /**
          * @brief Indicates which features this effect provides.
          * @param feature The feature to check.
-         * @return True if the feature is provided, false otherwise.
+         * @return True if the feature is provided.
          */
         [[nodiscard]]
         bool provides(const Feature feature) override
@@ -199,21 +199,20 @@ namespace ShapeCorners
         std::unordered_set<const KWin::EffectWindow *> m_windowsBeingDrawn;
 
         /**
-         * @brief Tracks the last expanded geometry size for each redirected window.
+         * @brief Tracks the offscreen texture size per redirected window.
          *
-         * KWin 6.7.90's OffscreenData::maybeRender() reallocates the EglSwapchain when
-         * the window geometry changes. The old swapchain is destroyed, freeing the GL
-         * textures and their dmabuf backing store. On llvmpipe (software rendering),
-         * this memory is freed immediately. However, the previous frame's
-         * OffscreenData::paint() drew the offscreen texture using the main compositor
-         * context, while its EGLNativeFence was created on the swapchain's context —
-         * so the main context's draw commands were never flushed. Those commands still
-         * reference the old textures, so the rasterization threads crash in
-         * shade_quads when the textures are freed. By calling glFinish() before the
-         * reallocation, we flush the main context and ensure all rasterization is done.
+         * KWin 6.7.90's OffscreenData::maybeRender() reallocates the EglSwapchain when the offscreen
+         * texture size changes. Reassigning the swapchain destroys the old slots, freeing the old GL
+         * textures and their backing dmabuf/software memory. On llvmpipe that memory is freed right
+         * away, while the previous frame's paint() still samples the old texture on the main compositor
+         * context (its EGLNativeFence does not reliably drain that context on Mesa/llvmpipe). The
+         * queued rasterization then dereferences freed memory and crashes kwin_wayland in shade_quads.
+         * By glFinish()-ing when the offscreen size changes, we drain llvmpipe before the old texture
+         * is torn down. The size is computed with the same snapToPixels()+scale formula KWin uses.
          */
-        QHash<const KWin::EffectWindow *, QSizeF> m_lastExpandedSize;
+        QHash<const KWin::EffectWindow *, QSizeF> m_lastOffscreenSize;
 
         void WriteBreezeConfig(bool set_disabled);
     };
 } // namespace ShapeCorners
+//（注：内容由AI生成）

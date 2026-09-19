@@ -30,6 +30,7 @@
 #include "WindowManager.h"
 #if QT_VERSION_MAJOR >= 6
 #include <core/output.h>
+#include <core/pixelgrid.h>
 #include <core/renderviewport.h>
 #include <effect/effecthandler.h>
 #include <effect/effectwindow.h>
@@ -65,7 +66,7 @@ void ShapeCorners::Effect::WriteBreezeConfig(bool set_disabled)
     const auto        valueOutlineEnabled     = set_disabled ? QStringLiteral("false") : defaultOutlineEnabled;
     const auto        entryOutlineIntensity   = cfgGroup.readEntry(keyOutlineIntensity, defaultOutlineIntensity);
     const auto        entryRoundedCorners     = cfgGroup.readEntry(keyRoundedCorners, defaultRoundedCorners);
-    const auto        entryOutlineEnabled     = cfgGroup.readEntry(keyOutlineEnabled, defaultOutlineIntensity);
+    const auto        entryOutlineEnabled     = cfgGroup.readEntry(keyOutlineEnabled, defaultOutlineEnabled);
 
     if (entryOutlineIntensity == valueOutlineIntensity && entryRoundedCorners == valueRoundedCorners &&
         entryOutlineEnabled == valueOutlineEnabled) {
@@ -257,15 +258,10 @@ void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *kwindow, int mask, con
     // If the shader is not valid or the window is not managed or doesn't need the effect, unredirect and use default
     // drawing.
     if (!m_shaderManager.IsValid() || window == nullptr || !window->hasEffect()) {
-        // Flush pending rasterization before unredirecting. unredirect() destroys the
-        // OffscreenData and its EglSwapchain. In KWin 6.7.90, OffscreenData::paint()
-        // draws the offscreen texture onto the screen render target using the main
-        // compositor context, but creates its EGLNativeFence on the swapchain's
-        // context. On llvmpipe, the fence only flushes the swapchain context, leaving
-        // the main context's draw commands pending. Destroying the swapchain frees
-        // the texture memory on llvmpipe, so unflushed rasterization that still
-        // references it crashes in shade_quads. glFinish() flushes the main context.
-        if (m_lastExpandedSize.remove(kwindow) > 0) {
+        // unredirect() destroys the OffscreenData and its EglSwapchain. If that offscreen texture was
+        // still being rasterized by llvmpipe (software rendering), freeing it out from under the
+        // rasterizer crashes kwin_wayland in shade_quads. Drain the GL pipeline before tearing it down.
+        if (m_lastOffscreenSize.remove(kwindow) > 0) {
             glFinish();
         }
         unredirect(kwindow);
@@ -299,22 +295,31 @@ void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *kwindow, int mask, con
     // Activate the first texture unit which is the window content.
     glActiveTexture(GL_TEXTURE0);
 
-    // Flush pending rasterization if the window geometry changed since the last frame.
-    // In KWin 6.7.90, OffscreenData::maybeRender() reallocates the EglSwapchain when
-    // the texture size differs. The old swapchain is destroyed (m_swapchain
-    // reassignment), which frees the old GL textures and their backing dmabuf memory.
-    // On llvmpipe, this memory is freed immediately. However, the previous frame's
-    // OffscreenData::paint() drew the offscreen texture onto the screen using the
-    // main compositor context, and its EGLNativeFence was created on the swapchain's
-    // context — so the main context's draw commands were never flushed. Those
-    // commands still reference the old swapchain's textures. Calling glFinish() here
-    // flushes the main context and waits for all rasterization to complete, ensuring
-    // the old textures are no longer in use before maybeRender() destroys them.
-    const auto expandedSize = kwindow->expandedGeometry().size();
-    if (m_lastExpandedSize.value(kwindow) != expandedSize) {
+    // In KWin 6.7.90, OffscreenData::maybeRender() reallocates the EglSwapchain when the offscreen
+    // texture size differs. Reassigning m_swapchain destroys the old swapchain and its slots, which
+    // frees the old GL textures and their backing dmabuf (software) memory. On llvmpipe that memory
+    // is freed immediately, but the previous frame's paint() drew the offscreen texture onto the
+    // screen on the main compositor context. Its EGLNativeFence is created on the swapchain's
+    // EGLDisplay, and on Mesa/llvmpipe it does not reliably drain the main context's queued draw
+    // commands. Those commands still sample the old offscreen texture, so when the swapchain is
+    // recreated the rasterization threads dereference freed memory and crash in shade_quads.
+    //
+    // We track the offscreen texture size with the exact same formula KWin uses in
+    // OffscreenData::maybeRender() (offscreeneffect.cpp):
+    //     snapToPixels(window->expandedGeometry(), scale).size() * scale
+    // and glFinish() the moment it changes. glFinish() drains the whole llvmpipe pipeline, so by
+    // the time maybeRender() destroys the old swapchain its texture is no longer in use. This only
+    // triggers when the window size actually changes (e.g. during a resize drag), not on every frame.
+#if QT_VERSION_MAJOR >= 6
+    const auto snappedSize = KWin::snapToPixels(kwindow->expandedGeometry(), scale).size() * scale;
+    const QSizeF offscreenSize(snappedSize.width(), snappedSize.height());
+#else
+    const QSizeF offscreenSize = kwindow->expandedGeometry().size();
+#endif
+    if (m_lastOffscreenSize.value(kwindow) != offscreenSize) {
         glFinish();
     }
-    m_lastExpandedSize.insert(kwindow, expandedSize);
+    m_lastOffscreenSize.insert(kwindow, offscreenSize);
 
     // Call the base implementation to actually draw the window.
     m_windowsBeingDrawn.insert(kwindow);
@@ -342,3 +347,4 @@ void ShapeCorners::Effect::windowAdded(KWin::EffectWindow *kwindow)
         setShader(kwindow, m_shaderManager.GetShader().get());
     }
 }
+//（注：内容由AI生成）
