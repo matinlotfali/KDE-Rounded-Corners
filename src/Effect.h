@@ -212,7 +212,19 @@ namespace ShapeCorners
          */
         QHash<const KWin::EffectWindow *, QSizeF> m_lastOffscreenSize;
 
+        /**
+         * @brief Whether the GL renderer is a broken software rasterizer (llvmpipe/softpipe).
+         *
+         * KWin 6.7.x offscreen rendering through EglSwapchain crashes kwin_wayland on llvmpipe when a
+         * window is resized: the faulting work is the *new* offscreen render itself (clear/draw into a
+         * freshly imported dmabuf buffer), so glFinish() cannot prevent it. Once detected, offscreen
+         * redirecting is skipped entirely so windows composite normally and the crashing path is never
+         * entered. Rounded corners are simply not applied on llvmpipe.
+         */
+        bool mutable m_brokenSoftwareRenderer = false;
+        bool mutable m_softwareRendererChecked = false;
+        bool isBrokenSoftwareRenderer() const;
+
         void WriteBreezeConfig(bool set_disabled);
     };
 } // namespace ShapeCorners
-//（注：内容由AI生成）

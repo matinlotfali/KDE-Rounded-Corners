@@ -252,6 +252,27 @@ void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *kwindow, int mask, con
 #endif
     }
 
+    // On llvmpipe/softpipe (software rasterization) with KWin 6.7.x, offscreen rendering through
+    // EglSwapchain crashes kwin_wayland whenever a window is resized: OffscreenData::maybeRender()
+    // reallocates the dmabuf-backed offscreen texture, and llvmpipe's async worker threads fault in
+    // shade_quads while clearing/drawing into the freshly imported buffer. glFinish() cannot help
+    // because the crashing work is the *new* offscreen render, not stale references to the old one.
+    // The reliable workaround on the effect side is to not redirect windows at all on a broken
+    // software renderer: they then composite normally and the buggy offscreen path is never entered.
+    // Rounded corners are simply not applied on llvmpipe; a hardware GL renderer is unaffected.
+    if (Q_UNLIKELY(isBrokenSoftwareRenderer())) {
+        unredirect(kwindow);
+#if KWIN_EFFECT_API_VERSION >= 237 && KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 80)
+        return OffscreenEffect::drawWindow(renderTarget, viewport, kwindow, mask, region, data);
+#elif QT_VERSION_MAJOR >= 6
+        OffscreenEffect::drawWindow(renderTarget, viewport, kwindow, mask, region, data);
+        return;
+#else
+    OffscreenEffect::drawWindow(kwindow, mask, region, data);
+    return;
+#endif
+    }
+
     // Find the managed window structure.
     const auto *window = m_windowManager->findWindow(kwindow);
 
@@ -340,6 +361,10 @@ OffscreenEffect::drawWindow(kwindow, mask, region, data);
 
 void ShapeCorners::Effect::windowAdded(KWin::EffectWindow *kwindow)
 {
+    // On a broken software renderer we never enter the offscreen path, so don't redirect either.
+    if (Q_UNLIKELY(isBrokenSoftwareRenderer())) {
+        return;
+    }
     // Add the new window to the manager.
     if (m_windowManager->addWindow(kwindow)) {
         // Redirect the window and set the shader if it was successfully added.
@@ -347,4 +372,27 @@ void ShapeCorners::Effect::windowAdded(KWin::EffectWindow *kwindow)
         setShader(kwindow, m_shaderManager.GetShader().get());
     }
 }
-//（注：内容由AI生成）
+
+bool ShapeCorners::Effect::isBrokenSoftwareRenderer() const
+{
+    // Query once; the renderer string cannot change during a session.
+    if (m_softwareRendererChecked) {
+        return m_brokenSoftwareRenderer;
+    }
+    m_softwareRendererChecked = true;
+
+#if QT_VERSION_MAJOR >= 6
+    // GL is guaranteed to be current here: drawWindow runs inside the compositing cycle.
+    const char *renderer = reinterpret_cast<const char *>(glGetString(GL_RENDERER));
+    if (renderer) {
+        const QString r = QString::fromUtf8(renderer).toLower();
+        // llvmpipe reports "llvmpipe (LLVM ..., N x86_64)"; softpipe is the older reference rasterizer.
+        m_brokenSoftwareRenderer = r.contains(QLatin1String("llvmpipe")) || r.contains(QLatin1String("softpipe"));
+    }
+    if (m_brokenSoftwareRenderer) {
+        qWarning() << "ShapeCorners: llvmpipe/software renderer detected; offscreen rounding disabled"
+                      "to avoid kwin_wayland crashes on resize (KWin 6.7.x).";
+    }
+#endif
+    return m_brokenSoftwareRenderer;
+}
