@@ -28,6 +28,11 @@ ShapeCorners::WindowManager::WindowManager()
     // Register D-Bus service and object for external communication
     registerDBus();
 
+#if QT_VERSION_MAJOR < 6
+    // Qt5 reports geometry changes globally, so connect only once for all windows.
+    connect(KWin::effects, &KWin::EffectsHandler::windowFrameGeometryChanged, this, &WindowManager::windowResized);
+#endif
+
     // Add all currently stacked windows
     for (const auto &kwindow: KWin::effects->stackingOrder()) {
         addWindow(kwindow);
@@ -100,11 +105,9 @@ bool ShapeCorners::WindowManager::addWindow(KWin::EffectWindow *kwindow)
         return false;
     }
 
-    // Connect geometry and config change signals
 #if QT_VERSION_MAJOR >= 6
+    // Qt6 reports geometry changes on each window.
     connect(kwindow, &KWin::EffectWindow::windowFrameGeometryChanged, this, &WindowManager::windowResized);
-#else
-    connect(KWin::effects, &KWin::EffectsHandler::windowFrameGeometryChanged, this, &WindowManager::windowResized);
 #endif
 
     // Update tiling and maximized state for the new window
