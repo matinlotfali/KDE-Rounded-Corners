@@ -2,10 +2,21 @@
 
 set -e
 
+SCRIPT_DIR="$(cd -- "$(dirname -- "$0")" && pwd)"
+SOURCE_DIR="$(dirname -- "$SCRIPT_DIR")"
+BUILD_DIR="$SOURCE_DIR/build"
+
 if [ -z "$KDE_SESSION_VERSION" ]; then
     echo "Not in a KDE Plasma environment to check the desktop effect \"KDE-Rounded-Corners\" support."
     exit 1;
 fi
+
+if [ ! -f "$BUILD_DIR/CMakeCache.txt" ]; then
+    echo "No configured build directory found at \"$BUILD_DIR\"."
+    exit 1
+fi
+
+cd -- "$BUILD_DIR"
 
 if ctest > /dev/null; then
     echo "Desktop effect \"KDE-Rounded-Corners\" is compatible with KWin and doesn't need re-installation."
@@ -24,13 +35,10 @@ else
     $QDBUS_BIN $p showCancelButton false
     $QDBUS_BIN $p Set "" maximum "26"
 
-    rm -rf ./*
-    $QDBUS_BIN $p Set "" value "1"
-
-    cmake .. --install-prefix /usr
+    cmake -S "$SOURCE_DIR" -B "$BUILD_DIR" --install-prefix /usr
     $QDBUS_BIN $p Set "" value "2"
 
-    cmake --build . -j &
+    cmake --build "$BUILD_DIR" --clean-first -j &
     pid=$!
     # Sleep for a short duration to let progress files to be created
     sleep 0.5
@@ -50,9 +58,9 @@ else
     $QDBUS_BIN $p close
 
 
-    kdialog --password "Enter password to install KDE-Rounded-Corners: " | sudo -S cmake --install .
+    kdialog --password "Enter password to install KDE-Rounded-Corners: " | sudo -S cmake --install "$BUILD_DIR"
 
-    sh ../tools/load.sh
+    sh "$SCRIPT_DIR/load.sh"
     if ctest > /dev/null; then
       kdialog --msgbox "Desktop effect \"KDE-Rounded-Corners\" is now installed and loaded."
     else
