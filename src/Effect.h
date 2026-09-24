@@ -20,7 +20,10 @@
 #pragma once
 
 #include <QObject>
+#include <QHash>
+#include <QSizeF>
 #include <chrono>
+#include <unordered_set>
 #include "Shader.h"
 #if QT_VERSION_MAJOR >= 6
 #include <effect/offscreeneffect.h>
@@ -160,7 +163,7 @@ namespace ShapeCorners
         /**
          * @brief Indicates which features this effect provides.
          * @param feature The feature to check.
-         * @return True if the feature is provided, false otherwise.
+         * @return True if the feature is provided.
          */
         [[nodiscard]]
         bool provides(const Feature feature) override
@@ -184,6 +187,43 @@ namespace ShapeCorners
         std::unique_ptr<WindowManager> m_windowManager;
         /// Manages the animation state for window corner effects.
         std::unique_ptr<Animation> m_animation;
+        /**
+         * @brief Windows whose offscreen texture is currently being rendered.
+         *
+         * KWin renders an offscreen texture by running the effect chain again outside of a compositing
+         * cycle. The chain then restarts at its first effect, so this effect can be asked to draw a
+         * window it is already drawing. Rendering that window twice corrupts the offscreen render target
+         * and crashes KWin, so a nested call is forwarded to the rest of the chain untouched. KWin has
+         * the same guard since commit b3e286c172, which is not part of the 6.7.90 release. See issue #532.
+         */
+        std::unordered_set<const KWin::EffectWindow *> m_windowsBeingDrawn;
+
+        /**
+         * @brief Tracks the offscreen texture size per redirected window.
+         *
+         * KWin 6.7.90's OffscreenData::maybeRender() reallocates the EglSwapchain when the offscreen
+         * texture size changes. Reassigning the swapchain destroys the old slots, freeing the old GL
+         * textures and their backing dmabuf/software memory. On llvmpipe that memory is freed right
+         * away, while the previous frame's paint() still samples the old texture on the main compositor
+         * context (its EGLNativeFence does not reliably drain that context on Mesa/llvmpipe). The
+         * queued rasterization then dereferences freed memory and crashes kwin_wayland in shade_quads.
+         * By glFinish()-ing when the offscreen size changes, we drain llvmpipe before the old texture
+         * is torn down. The size is computed with the same snapToPixels()+scale formula KWin uses.
+         */
+        QHash<const KWin::EffectWindow *, QSizeF> m_lastOffscreenSize;
+
+        /**
+         * @brief Whether the GL renderer is a broken software rasterizer (llvmpipe/softpipe).
+         *
+         * KWin 6.7.x offscreen rendering through EglSwapchain crashes kwin_wayland on llvmpipe when a
+         * window is resized: the faulting work is the *new* offscreen render itself (clear/draw into a
+         * freshly imported dmabuf buffer), so glFinish() cannot prevent it. Once detected, offscreen
+         * redirecting is skipped entirely so windows composite normally and the crashing path is never
+         * entered. Rounded corners are simply not applied on llvmpipe.
+         */
+        bool mutable m_brokenSoftwareRenderer = false;
+        bool mutable m_softwareRendererChecked = false;
+        bool isBrokenSoftwareRenderer() const;
 
         void WriteBreezeConfig(bool set_disabled);
     };
