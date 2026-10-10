@@ -1,211 +1,111 @@
 #include "shapecorners_shadows.glsl"
 
-bool is_within(float point, float a, float b) { return (point >= min(a, b) && point <= max(a, b)); }
-bool is_within(vec2 point, vec2 corner_a, vec2 corner_b)
-{
-    return is_within(point.x, corner_a.x, corner_b.x) && is_within(point.y, corner_a.y, corner_b.y);
-}
-
-/*
- *  \brief Distance from a point to a corner center, as a circular arc or a squircle curve.
- *  \param point: The XY point being shaded.
- *  \param center: The XY center of the corner roundness.
- *  \param radius: The corner radius in pixels.
- *  \return A field whose value equals `radius` on the corner boundary.
- */
-float shape_distance(vec2 point, vec2 center, float radius)
-{
-    if (!useSquircleShape) {
-        return distance(point, center);
-    }
-
-    // Pure circle/superellipse blend: on a straight edge the offset is axis-aligned, so this
-    // equals distance(point, center) and leaves the edge undistorted; only the corners curve.
-    float dist = squircle_distance(point, center);
-
-    // Renormalize to ~unit gradient so the outline and antialiasing bands keep a uniform
-    // width at the corners, where the raw superellipse gradient would otherwise dip below 1.
-    float grad = squircle_gradient(point, center);
-    return radius + (dist - radius) / max(grad, 1e-4);
-}
-
-/*
- *  \brief Linear gradient color sampled along an axis across the window frame.
- *  \param c1: The color at the start of the gradient.
- *  \param c2: The color at the end of the gradient. When equal to c1 this returns a solid color.
- *  \param angleDeg: The gradient direction in degrees. 0 = left->right, 90 = top->bottom.
- *  \param coord0: The XY pixel being shaded, in window-frame pixels (see tex_to_pixel).
- *  \return The interpolated RGBA color at that pixel.
- */
-vec4 gradientColor(vec4 c1, vec4 c2, float angleDeg, vec2 coord0)
-{
-    vec2  dir = vec2(cos(radians(angleDeg)), sin(radians(angleDeg)));
-    float t   = dot(coord0 / windowSize - 0.5, dir) + 0.5;
-    return mix(c1, c2, clamp(t, 0.0, 1.0));
-}
-
-/*
- *  \brief This function is used to choose the pixel color based on its distance to the center input.
- *  \param coord0: The XY point
- *  \param tex: The RGBA color of the pixel in XY
- *  \param start: The reference XY point to determine the center of the corner roundness.
- *  \param angle: The angle in radians to move away from the start point to determine the center of the corner roundness.
- *  \param is_corner: Boolean to know if its a corner or an edge
- *  \param coord_shadowColor: The RGBA color of the shadow of the pixel behind the window.
- *  \return The RGBA color to be used instead of tex input.
- */
-vec4 shapeCorner(vec2 coord0, vec4 tex, vec2 start, float angle, vec4 coord_shadowColor)
-{
-    // Resolve each outline's gradient once; the logic below then treats them as solid colors.
-    // When an outline is not a gradient its two stops are equal, so these collapse to plain solids.
-    vec4 outlineColor       = gradientColor(outlineColor1, outlineColor2, outlineAngle, coord0);
-    vec4 secondOutlineColor = gradientColor(secondOutlineColor1, secondOutlineColor2, secondOutlineAngle, coord0);
-    vec4 outerOutlineColor  = gradientColor(outerOutlineColor1, outerOutlineColor2, outerOutlineAngle, coord0);
-
-    vec2  angle_vector         = vec2(cos(angle), sin(angle));
-    float corner_length        = (abs(angle_vector.x) < 0.1 || abs(angle_vector.y) < 0.1) ? 1.0 : sqrt(2.0);
-    vec2  roundness_center     = start + radius * angle_vector * corner_length;
-    vec2  outlineStart         = start + outlineThickness * angle_vector * corner_length;
-    vec2  secondOutlineStart   = start + (outlineThickness + secondOutlineThickness) * angle_vector * corner_length;
-    vec2  outerOutlineEnd      = start - outerOutlineThickness * angle_vector * corner_length;
-    float distance_from_center = shape_distance(coord0, roundness_center, radius);
-    bool  inOutlineZone =
-            (hasPrimaryOutline() && outlineThickness >= radius && is_within(coord0, outlineStart, start)) ||
-            (hasSecondOutline() && outlineThickness + secondOutlineThickness >= radius &&
-             is_within(coord0, secondOutlineStart, start));
-
-    if (hasOuterOutline()) {
-        vec4 outerOutlineOverlay = mix(coord_shadowColor, outerOutlineColor, outerOutlineColor.a);
-        if (distance_from_center > radius + outerOutlineThickness - 0.5) {
-            // antialiasing for the outer outline to shadow
-            float antialiasing = clamp(distance_from_center - radius - outerOutlineThickness + 0.5, 0.0, 1.0);
-            return mix(outerOutlineOverlay, coord_shadowColor, antialiasing);
-        } else if (!inOutlineZone && distance_from_center > radius - 0.5) {
-            // antialiasing for the outer outline to the window edge
-            float antialiasing = clamp(distance_from_center - radius + 0.5, 0.0, 1.0);
-            if (hasPrimaryOutline()) {
-                // if the primary outline is present
-                vec4 outlineOverlay = vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), 1.0);
-                return mix(outlineOverlay, outerOutlineOverlay, antialiasing);
-            } else if (hasSecondOutline()) {
-                // if the second outline is present
-                vec4 secondOutlineOverlay = vec4(mix(tex.rgb, secondOutlineColor.rgb, secondOutlineColor.a), 1.0);
-                return mix(secondOutlineOverlay, outerOutlineOverlay, antialiasing);
-            } else {
-                // if the no other outline is not present
-                return mix(tex, outerOutlineOverlay, antialiasing);
-            }
-        }
+float window_sdf(vec2 coord, vec2 size, float r) {
+    vec2 p = coord - size * 0.5;
+    vec2 b = size * 0.5;
+    vec2 q = abs(p) - b + vec2(r);
+    vec2 q_pos = max(q, 0.0);
+    
+    float d_corner = 0.0;
+    if (q_pos.x > 0.0 && q_pos.y > 0.0 && useSquircleShape) {
+        float sq_d = squircle_distance(q_pos, vec2(0.0));
+        float grad = squircle_gradient(q_pos, vec2(0.0));
+        d_corner = (sq_d - r) / max(grad, 1e-4) + r;
     } else {
-        if (!inOutlineZone && distance_from_center > radius - 0.5) {
-            // antialiasing for the outer outline to the window edge
-            float antialiasing = clamp(distance_from_center - radius + 0.5, 0.0, 1.0);
-            if (hasPrimaryOutline()) {
-                // if the primary outline is present
-                vec4 outlineOverlay = vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), 1.0);
-                return mix(outlineOverlay, coord_shadowColor, antialiasing);
-            } else if (hasSecondOutline()) {
-                // if the second outline is present
-                vec4 secondOutlineOverlay = vec4(mix(tex.rgb, secondOutlineColor.rgb, secondOutlineColor.a), 1.0);
-                return mix(secondOutlineOverlay, coord_shadowColor, antialiasing);
-            } else {
-                // if the no other outline is not present
-                return mix(tex, coord_shadowColor, antialiasing);
-            }
-        }
+        d_corner = length(q_pos);
     }
-
-    if (hasPrimaryOutline()) {
-        vec4 outlineOverlay = vec4(mix(tex.rgb, outlineColor.rgb, outlineColor.a), 1.0);
-
-        if (outlineThickness >= radius && is_within(coord0, outlineStart, start)) {
-            // when the outline is bigger than the roundness radius
-            // from the window to the outline is sharp
-            // no antialiasing is needed because it is not round
-            return outlineOverlay;
-        } else if (distance_from_center > radius - outlineThickness - 0.5) {
-            // from the window to the outline
-            float antialiasing = clamp(distance_from_center - radius + outlineThickness + 0.5, 0.0, 1.0);
-            if (hasSecondOutline()) {
-                vec4 secondOutlineOverlay = vec4(mix(tex.rgb, secondOutlineColor.rgb, secondOutlineColor.a), 1.0);
-                return mix(secondOutlineOverlay, outlineOverlay, antialiasing);
-            } else {
-                return mix(tex, outlineOverlay, antialiasing);
-            }
-        }
-    }
-
-    if (hasSecondOutline()) {
-        vec4 secondOutlineOverlay = vec4(mix(tex.rgb, secondOutlineColor.rgb, secondOutlineColor.a), 1.0);
-
-        if (outlineThickness + secondOutlineThickness >= radius && is_within(coord0, secondOutlineStart, start)) {
-            // when the outline is bigger than the roundness radius
-            // from the window to the outline is sharp
-            // no antialiasing is needed because it is not round
-            return secondOutlineOverlay;
-        } else if (distance_from_center > radius - outlineThickness - secondOutlineThickness - 0.5) {
-            // from the window to the outline
-            float antialiasing =
-                    clamp(distance_from_center - radius + outlineThickness + secondOutlineThickness + 0.5, 0.0, 1.0);
-            return mix(tex, secondOutlineOverlay, antialiasing);
-        }
-    }
-
-    // if other conditions don't apply, just don't draw an outline, from the window to the shadow
-    float antialiasing = clamp(radius - distance_from_center + 0.5, 0.0, 1.0);
-    return mix(coord_shadowColor, tex, antialiasing);
+    
+    return min(max(q.x, q.y), 0.0) + d_corner - r;
 }
 
-vec4 run(vec2 texcoord0, vec4 tex)
-{
-    if (tex.a == 0.0) {
+vec4 getGradient(vec4 c1, vec4 c2, float angleDeg, vec2 coord0) {
+    if (c1 == c2) return c1;
+    vec2 dir = vec2(cos(radians(angleDeg)), sin(radians(angleDeg)));
+    float t = clamp(dot(coord0 / windowSize - 0.5, dir) + 0.5, 0.0, 1.0);
+    return mix(c1, c2, t);
+}
+
+vec4 getAutoOutlineColor(vec2 coord0, float r) {
+    float x = coord0.x;
+    float y = coord0.y;
+    
+    float safe_r = max(r, 2.0);
+    float sample_x = clamp(x, safe_r, max(windowSize.x - safe_r, safe_r));
+    float sample_y = clamp(y, safe_r, max(windowSize.y - safe_r, safe_r));
+    
+    float dist_x = min(x, windowSize.x - x);
+    float dist_y = min(y, windowSize.y - y);
+    
+    vec2 edge_coord;
+    if (dist_x < dist_y) {
+        float edge_x = (x < windowSize.x * 0.5) ? 0.5 : windowSize.x - 0.5;
+        edge_coord = vec2(edge_x, sample_y);
+    } else {
+        float edge_y = (y < windowSize.y * 0.5) ? 0.5 : windowSize.y - 0.5;
+        edge_coord = vec2(sample_x, edge_y);
+    }
+    
+    return texture2D(sampler, pixel_to_tex(edge_coord));
+}
+
+vec4 run(vec2 texcoord0, vec4 tex) {
+    // We cannot return early for tex.a == 0.0 because CSD apps (like RustRover)
+    // have transparent corners, and we still need to draw KWin's outline there!
+
+    vec2 coord0 = tex_to_pixel(texcoord0);
+    float r = max(radius, outlineThickness);
+    
+    // Quick exit for pixels deep inside the window to save GPU cycles
+    vec2 dist_edges = min(coord0, windowSize - coord0);
+    float max_dist = r + outlineThickness + secondOutlineThickness + outerOutlineThickness + 1.0;
+    if (dist_edges.x > max_dist && dist_edges.y > max_dist) {
         return tex;
     }
 
-    float r = max(radius, outlineThickness);
-
-    /* Since `texcoord0` is ranging from {0.0, 0.0} to {1.0, 1.0} is not pixel intuitive,
-     * I am changing the range to become from {0.0, 0.0} to {width, height}
-     * in a way that {0,0} is the top-left of the window and not its shadow.
-     * This means areas with negative numbers and areas beyond windowSize is considered part of the shadow. */
-    vec2 coord0 = tex_to_pixel(texcoord0);
-
     vec4 coord_shadowColor = getShadow(coord0, r, tex);
+    float d = window_sdf(coord0, windowSize, radius);
 
-    /*
-        Split the window into these sections below. They will have a different center of circle for rounding.
+    vec4 color = tex;
 
-        TL  T   T   TR
-        L   x   x   R
-        L   x   x   R
-        BL  B   B   BR
-    */
-    if (coord0.y < r) {
-        if (coord0.x < r) {
-            return shapeCorner(coord0, tex, vec2(0.0, 0.0), radians(45.0), coord_shadowColor); // Section TL
-        } else if (coord0.x > windowSize.x - r) {
-            return shapeCorner(coord0, tex, vec2(windowSize.x, 0.0), radians(135.0), coord_shadowColor); // Section TR
-        } else if (coord0.y < outlineThickness + secondOutlineThickness) {
-            return shapeCorner(coord0, tex, vec2(coord0.x, 0.0), radians(90.0), coord_shadowColor); // Section T
-        }
-    } else if (coord0.y > windowSize.y - r) {
-        if (coord0.x < r) {
-            return shapeCorner(coord0, tex, vec2(0.0, windowSize.y), radians(315.0), coord_shadowColor); // Section BL
-        } else if (coord0.x > windowSize.x - r) {
-            return shapeCorner(coord0, tex, vec2(windowSize.x, windowSize.y), radians(225.0),
-                               coord_shadowColor); // Section BR
-        } else if (coord0.y > windowSize.y - outlineThickness - secondOutlineThickness) {
-            return shapeCorner(coord0, tex, vec2(coord0.x, windowSize.y), radians(270.0),
-                               coord_shadowColor); // Section B
-        }
-    } else {
-        if (coord0.x < r) {
-            return shapeCorner(coord0, tex, vec2(0.0, coord0.y), radians(0.0), coord_shadowColor); // Section L
-        } else if (coord0.x > windowSize.x - r) {
-            return shapeCorner(coord0, tex, vec2(windowSize.x, coord0.y), radians(180.0),
-                               coord_shadowColor); // Section R
-        }
-        // For section x, the tex is not changing
+    if (hasSecondOutline()) {
+        vec4 grad2 = getGradient(secondOutlineColor1, secondOutlineColor2, secondOutlineAngle, coord0);
+        vec4 pre_grad2 = vec4(grad2.rgb * grad2.a, grad2.a);
+        vec4 outColor2 = pre_grad2 + tex * (1.0 - pre_grad2.a);
+        float t_in2 = clamp(d + outlineThickness + secondOutlineThickness + 0.5, 0.0, 1.0);
+        color = mix(color, outColor2, t_in2);
     }
-    return tex;
+
+    if (hasPrimaryOutline()) {
+        vec4 autoColor = getAutoOutlineColor(coord0, r);
+        vec4 outColor1;
+        
+        if (autoColor.a > 0.1) {
+            // Use the application's actual border color (forced opaque to avoid transparency holes)
+            outColor1 = vec4(autoColor.rgb / autoColor.a, 1.0);
+        } else {
+            // Fallback to configured settings
+            vec4 grad1 = getGradient(outlineColor1, outlineColor2, outlineAngle, coord0);
+            vec4 pre_grad1 = vec4(grad1.rgb * grad1.a, grad1.a);
+            outColor1 = pre_grad1 + tex * (1.0 - pre_grad1.a);
+        }
+        
+        float t_in1 = clamp(d + outlineThickness + 0.5, 0.0, 1.0);
+        color = mix(color, outColor1, t_in1);
+    }
+    
+    if (hasOuterOutline()) {
+        vec4 gradOuter = getGradient(outerOutlineColor1, outerOutlineColor2, outerOutlineAngle, coord0);
+        vec4 outColorOuter = mix(coord_shadowColor, gradOuter, gradOuter.a);
+        
+        float t_edge = clamp(d + 0.5, 0.0, 1.0);
+        color = mix(color, outColorOuter, t_edge);
+        
+        float t_out = clamp(d - outerOutlineThickness + 0.5, 0.0, 1.0);
+        color = mix(color, coord_shadowColor, t_out);
+    } else {
+        float t_edge = clamp(d + 0.5, 0.0, 1.0);
+        color = mix(color, coord_shadowColor, t_edge);
+    }
+
+    return color;
 }

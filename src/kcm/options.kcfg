@@ -7,16 +7,16 @@
 
     <group name="Round-Corners">
         <entry name="Size" type="UInt">
-            <default>20</default>
+            <default>14</default>
         </entry>
         <entry name="InactiveCornerRadius" type="UInt">
-            <default>20</default>
+            <default>14</default>
         </entry>
         <entry name="UseSquircleShape" type="Bool">
             <default>true</default>
         </entry>
         <entry name="Squircleness" type="Double">
-            <default>0.55</default>
+            <default>0.6</default>
             <min>0</min>
             <max>1</max>
         </entry>
@@ -96,12 +96,12 @@
             <default>black</default>
         </entry>
         <entry name="ActiveOutlineAlpha" type="Int">
-            <default>255</default>
+            <default>40</default>
             <min>0</min>
             <max>255</max>
         </entry>
         <entry name="InactiveOutlineAlpha" type="Int">
-            <default>255</default>
+            <default>40</default>
             <min>0</min>
             <max>255</max>
         </entry>
@@ -152,12 +152,12 @@
         <!-- Second Outline Options -->
 
         <entry name="SecondOutlineThickness" type="Double">
-            <default>1</default>
+            <default>0</default>
             <min>0</min>
             <max>20</max>
         </entry>
         <entry name="InactiveSecondOutlineThickness" type="Double">
-            <default>1</default>
+            <default>0</default>
             <min>0</min>
             <max>20</max>
         </entry>
@@ -313,7 +313,7 @@
             <default>true</default>
         </entry>
         <entry name="DisableRoundMaximize" type="Bool">
-            <default>true</default>
+            <default>false</default>
         </entry>
         <entry name="DisableOutlineMaximize" type="Bool">
             <default>true</default>
