@@ -62,6 +62,14 @@ vec4 run(vec2 texcoord0, vec4 tex) {
         return tex;
     }
 
+    // HEURISTIC: If the straight edge of the window is transparent, this is an invisible window
+    // (like a tooltip, OSD, or KWin invisible input area) or a window with huge transparent padding 
+    // (like some CSD/Electron apps). We MUST bypass the effect to avoid drawing floating outlines or shadows.
+    vec4 autoColor = getAutoOutlineColor(coord0, r);
+    if (autoColor.a <= 0.1) {
+        return tex;
+    }
+
     vec4 coord_shadowColor = getShadow(coord0, r, tex);
     float d = window_sdf(coord0, windowSize, radius);
 
@@ -76,19 +84,8 @@ vec4 run(vec2 texcoord0, vec4 tex) {
     }
 
     if (hasPrimaryOutline()) {
-        vec4 autoColor = getAutoOutlineColor(coord0, r);
-        vec4 outColor1;
-        
-        if (autoColor.a > 0.1) {
-            // Use the application's actual border color (forced opaque to avoid transparency holes)
-            outColor1 = vec4(autoColor.rgb / autoColor.a, 1.0);
-        } else {
-            // Fallback to configured settings
-            vec4 grad1 = getGradient(outlineColor1, outlineColor2, outlineAngle, coord0);
-            vec4 pre_grad1 = vec4(grad1.rgb * grad1.a, grad1.a);
-            outColor1 = pre_grad1 + tex * (1.0 - pre_grad1.a);
-        }
-        
+        // Use the application's actual border color (forced opaque to avoid transparency holes)
+        vec4 outColor1 = vec4(autoColor.rgb / autoColor.a, 1.0);
         float t_in1 = clamp(d + outlineThickness + 0.5, 0.0, 1.0);
         color = mix(color, outColor1, t_in1);
     }
