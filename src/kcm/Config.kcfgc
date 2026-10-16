@@ -3,3 +3,4 @@ NameSpace=ShapeCorners
 ClassName=Config
 Singleton=false
 Mutators=true
+DefaultValueGetters=true

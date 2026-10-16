@@ -86,13 +86,15 @@ void ShapeCorners::Animation::setActiveWindowChanged(Window *window)
     lastActiveWindow    = currentActiveWindow;
     currentActiveWindow = window;
 
-    // If animation is disabled, just set the config and skip animation settings
+    // If animation is disabled, set the final configs and repaint both windows in full.
     if (Config::animationDuration() == 0) {
         if (currentActiveWindow != nullptr) {
             currentActiveWindow->currentConfig = WindowConfig::activeWindowConfig();
+            currentActiveWindow->w->addRepaintFull();
         }
         if (lastActiveWindow != nullptr) {
             lastActiveWindow->currentConfig = WindowConfig::inactiveWindowConfig();
+            lastActiveWindow->w->addRepaintFull();
         }
         return;
     }
