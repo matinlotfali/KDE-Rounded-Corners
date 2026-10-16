@@ -73,7 +73,7 @@ ShapeCorners::KCM::KCM(QWidget *parent, const QVariantList &args) : KCModule(par
 
     connect(ui->kcfg_ActiveShadowPalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
             &KCM::update_colors);
-    connect(ui->kcfg_ActiveShadowPalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+    connect(ui->kcfg_InactiveShadowPalette, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
             &KCM::update_colors);
     connect(ui->kcfg_ShadowColor, &KColorButton::changed, this, &KCM::update_colors);
     connect(ui->kcfg_InactiveShadowColor, &KColorButton::changed, this, &KCM::update_colors);
@@ -170,8 +170,9 @@ ShapeCorners::KCM::KCM(QWidget *parent, const QVariantList &args) : KCModule(par
     });
 
     // Enable/disable animation
-    connect(ui->AnimationCheckbox, &QRadioButton::toggled, [=, this] {
-        ui->kcfg_AnimationDuration->setEnabled(ui->AnimationCheckbox->isChecked());
+    connect(ui->AnimationCheckbox, &QRadioButton::toggled, [=, this](const bool checked) {
+        ui->kcfg_AnimationDuration->setEnabled(checked);
+        ui->kcfg_AnimationDuration->setValue(checked ? config.defaultAnimationDurationValue() : 0);
         markAsChanged();
     });
 }
@@ -321,17 +322,22 @@ void ShapeCorners::KCM::update_windows() const
 
 void ShapeCorners::KCM::outline_group_toggled(const bool value) const
 {
-    constexpr float outlineThicknessMin = 0.75F;
+    // Ticking a group should restore its default thickness, or the minimum where the default is no outline.
+    const auto setThickness = [value](QDoubleSpinBox *box, const double defaultThickness) {
+        constexpr double outlineThicknessMin = 0.75;
+        box->setValue(value ? std::max(defaultThickness, outlineThicknessMin) : 0);
+    };
+
     // Enable or disable outline thickness based on group toggle
     if (sender() == ui->primaryOutline) {
-        ui->kcfg_OutlineThickness->setValue(value ? outlineThicknessMin : 0);
-        ui->kcfg_InactiveOutlineThickness->setValue(value ? outlineThicknessMin : 0);
+        setThickness(ui->kcfg_OutlineThickness, config.defaultOutlineThicknessValue());
+        setThickness(ui->kcfg_InactiveOutlineThickness, config.defaultInactiveOutlineThicknessValue());
     } else if (sender() == ui->secondaryOutline) {
-        ui->kcfg_SecondOutlineThickness->setValue(value ? outlineThicknessMin : 0);
-        ui->kcfg_InactiveSecondOutlineThickness->setValue(value ? outlineThicknessMin : 0);
+        setThickness(ui->kcfg_SecondOutlineThickness, config.defaultSecondOutlineThicknessValue());
+        setThickness(ui->kcfg_InactiveSecondOutlineThickness, config.defaultInactiveSecondOutlineThicknessValue());
     } else if (sender() == ui->outerOutline) {
-        ui->kcfg_OuterOutlineThickness->setValue(value ? outlineThicknessMin : 0);
-        ui->kcfg_InactiveOuterOutlineThickness->setValue(value ? outlineThicknessMin : 0);
+        setThickness(ui->kcfg_OuterOutlineThickness, config.defaultOuterOutlineThicknessValue());
+        setThickness(ui->kcfg_InactiveOuterOutlineThickness, config.defaultInactiveOuterOutlineThicknessValue());
     }
 }
 
@@ -345,9 +351,8 @@ void ShapeCorners::KCM::load()
 
 void ShapeCorners::KCM::defaults()
 {
-    // Reset settings to defaults and update UI
+    // Reset widgets to defaults, keeping the saved config as the baseline for Apply
     KCModule::defaults();
-    config.setDefaults();
     load_ui();
     markAsChanged();
 }
@@ -367,5 +372,5 @@ void ShapeCorners::KCM::load_ui() const
     ui->outerOutline->setChecked(ui->kcfg_OuterOutlineThickness->value() > 0);
 
     // Set animation checkboxes based on its duration
-    ui->AnimationCheckbox->setChecked(config.animationDuration() > 0);
+    ui->AnimationCheckbox->setChecked(ui->kcfg_AnimationDuration->value() > 0);
 }
