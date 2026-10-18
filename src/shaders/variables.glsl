@@ -20,8 +20,22 @@ uniform vec4  outerOutlineColor2;     // The RGBA of the outer outline's second 
 uniform float outerOutlineAngle;      // The outer outline gradient angle in degrees.
 uniform float outerOutlineThickness;  // The thickness of the outer outline in pixels specified in settings.
 
-uniform bool yInverted; /* Whether `texcoord0.y` grows downward from the top edge of the offscreen
-                         * texture rather than upward from its bottom edge. */
+#ifdef HAS_POSITION0
+bool yInverted = true; /* Whether `texcoord0.y` grows downward from the top edge of the offscreen
+                        * texture rather than upward from its bottom edge. Set by `main()`. */
+
+/*
+ *  \brief Measures which way `texcoord0.y` runs by comparing it with `position0.y`, which always grows downward.
+ *  \note  This uses derivatives, so `main()` has to call it before any branching.
+ *  \return Whether `texcoord0.y` grows downward.
+ */
+bool detect_y_inverted()
+{
+    return dFdx(texcoord0.y) * dFdx(position0.y) + dFdy(texcoord0.y) * dFdy(position0.y) > 0.0;
+}
+#else
+const bool yInverted = false; // Without `position0`, KWin hands over a plain texture whose `texcoord0.y` grows upward.
+#endif
 
 vec2 tex_to_pixel(vec2 texcoord)
 {
