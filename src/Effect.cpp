@@ -172,24 +172,30 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
         const auto size = (int) (window->currentConfig.cornerRadius * KWin::effects->renderTargetScale());
 #endif // QT_VERSION_MAJOR >= 6
 
-        // Create a region for each rounded corner.
+        if (window->cachedGeo != geo || window->cachedSize != size) {
+            window->cachedGeo = geo;
+            window->cachedSize = size;
+            
+            // Create a region for each rounded corner.
 #if KWIN_EFFECT_API_VERSION >= 237
-        KWin::Region reg{};
+            KWin::Region reg{};
 #else
-        QRegion reg{};
+            QRegion reg{};
 #endif // KWIN_EFFECT_API_VERSION >= 237
-        reg += QRect(geo.x(), geo.y(), size, size);
-        reg += QRect(geo.x() + geo.width() - size, geo.y(), size, size);
-        reg += QRect(geo.x(), geo.y() + geo.height() - size, size, size);
-        reg += QRect(geo.x() + geo.width() - size, geo.y() + geo.height() - size, size, size);
+            reg += QRect(geo.x(), geo.y(), size, size);
+            reg += QRect(geo.x() + geo.width() - size, geo.y(), size, size);
+            reg += QRect(geo.x(), geo.y() + geo.height() - size, size, size);
+            reg += QRect(geo.x() + geo.width() - size, geo.y() + geo.height() - size, size, size);
+            window->cachedReg = reg;
+        }
 
 // Remove the rounded corners from the opaque region and add them to the paint region.
 #if KWIN_EFFECT_API_VERSION >= 237
-        data.deviceOpaque -= reg;
-        data.devicePaint += reg;
+        data.deviceOpaque -= window->cachedReg;
+        data.devicePaint += window->cachedReg;
 #else
-        data.opaque -= reg;
-        data.paint += reg;
+        data.opaque -= window->cachedReg;
+        data.paint += window->cachedReg;
 #endif // KWIN_EFFECT_API_VERSION >= 237
 #endif // KWIN_PLUGIN_VERSION_NUM < QT_VERSION_CHECK(6, 6, 80)
 

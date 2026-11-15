@@ -42,86 +42,68 @@ vec4 getCustomShadow(vec2 coord0, float r)
     float shadowShiftX   = sqrt(shadowSize);
     float shadowShiftTop = sqrt(shadowSize);
 
-    /*
-        Split the window into these sections below. They will have a different center of circle for rounding.
-
-        TL  T   T   TR
-        L   x   x   R
-        L   x   x   R
-        BL  B   B   BR
-    */
-    if (coord0.y < r + shadowShiftTop) {
-        if (coord0.x < r + shadowShiftX) {
-            return getShadowByDistance(coord0, vec2(r + shadowShiftX, r + shadowShiftTop)); // Section TL
-        } else if (coord0.x > windowSize.x - r - shadowShiftX) {
-            return getShadowByDistance(coord0, vec2(windowSize.x - r - shadowShiftX, r + shadowShiftTop)); // Section TR
-        } else if (coord0.y < 0.0) {
-            return getShadowByDistance(coord0, vec2(coord0.x, r + shadowShiftTop)); // Section T
-        }
-    } else if (coord0.y > windowSize.y - r) {
-        if (coord0.x < r + shadowShiftX) {
-            return getShadowByDistance(coord0, vec2(r + shadowShiftX, windowSize.y - r)); // Section BL
-        } else if (coord0.x > windowSize.x - r - shadowShiftX) {
-            return getShadowByDistance(coord0, vec2(windowSize.x - r - shadowShiftX, windowSize.y - r)); // Section BR
-        } else if (coord0.y > windowSize.y) {
-            return getShadowByDistance(coord0, vec2(coord0.x, windowSize.y - r)); // Section B
-        }
-    } else {
-        if (coord0.x < 0.0) {
-            return getShadowByDistance(coord0, vec2(r + shadowShiftX, coord0.y)); // Section L
-        } else if (coord0.x > windowSize.x) {
-            return getShadowByDistance(coord0, vec2(windowSize.x - r - shadowShiftX, coord0.y)); // Section R
-        }
-        // For section x, the tex is not changing
-    }
-    return vec4(0.0, 0.0, 0.0, 0.0);
+    vec2 spine_min = vec2(r + shadowShiftX, r + shadowShiftTop);
+    vec2 spine_max = vec2(windowSize.x - r - shadowShiftX, windowSize.y - r);
+    
+    vec2 shadow_center = clamp(coord0, spine_min, spine_max);
+    
+    return getShadowByDistance(coord0, shadow_center);
 }
 
 vec4 getNativeShadow(vec2 coord0, float r, vec4 default_tex)
 {
-    float margin_edge  = 2.0;
-    float margin_point = margin_edge + 1.0;
-
-    /*
-        Split the window into these sections below. They will have a different center of circle for rounding.
-
-        TL  T   T   TR
-        L   x   x   R
-        L   x   x   R
-        BL  B   B   BR
-    */
-    if (coord0.y >= -margin_edge && coord0.y <= r) {
-        if (coord0.x >= -margin_edge && coord0.x <= r) {
-            vec2 a       = vec2(-margin_point, coord0.y + coord0.x + margin_point);
-            vec2 b       = vec2(coord0.x + coord0.y + margin_point, -margin_point);
-            vec4 a_color = texture2D(sampler, pixel_to_tex(a));
-            vec4 b_color = texture2D(sampler, pixel_to_tex(b));
-            return mix(a_color, b_color, distance(a, coord0) / distance(a, b)); // Section TL
-
-        } else if (coord0.x <= windowSize.x + margin_edge && coord0.x >= windowSize.x - r) {
-            vec2 a       = vec2(windowSize.x + margin_point, coord0.y + (windowSize.x - coord0.x) + margin_point);
-            vec2 b       = vec2(coord0.x - coord0.y - margin_point, -margin_point);
-            vec4 a_color = texture2D(sampler, pixel_to_tex(a));
-            vec4 b_color = texture2D(sampler, pixel_to_tex(b));
-            return mix(a_color, b_color, distance(a, coord0) / distance(a, b)); // Section TR
-        }
-    } else if (coord0.y <= windowSize.y + margin_edge && coord0.y >= windowSize.y - r) {
-        if (coord0.x >= -margin_edge && coord0.x <= r) {
-            vec2 a       = vec2(-margin_point, coord0.y - coord0.x - margin_point);
-            vec2 b       = vec2(coord0.x + (windowSize.y - coord0.y) + margin_point, windowSize.y + margin_point);
-            vec4 a_color = texture2D(sampler, pixel_to_tex(a));
-            vec4 b_color = texture2D(sampler, pixel_to_tex(b));
-            return mix(a_color, b_color, distance(a, coord0) / distance(a, b)); // Section BL
-
-        } else if (coord0.x <= windowSize.x + margin_edge && coord0.x >= windowSize.x - r) {
-            vec2 a       = vec2(windowSize.x + margin_point, coord0.y - (windowSize.x - coord0.x) - margin_point);
-            vec2 b       = vec2(coord0.x - (windowSize.y - coord0.y) - margin_point, windowSize.y + margin_point);
-            vec4 a_color = texture2D(sampler, pixel_to_tex(a));
-            vec4 b_color = texture2D(sampler, pixel_to_tex(b));
-            return mix(a_color, b_color, distance(a, coord0) / distance(a, b)); // Section BR
-        }
+    // If we are on the straight edges, we MUST NOT reconstruct the shadow.
+    // The native shadow on the straight edges is already perfect and must be preserved.
+    if ((coord0.x >= r && coord0.x <= windowSize.x - r) || (coord0.y >= r && coord0.y <= windowSize.y - r)) {
+        return default_tex;
     }
-    return default_tex;
+
+    // 1. Calculate exact continuous Euclidean distance field 'd'
+    vec2 p = coord0 - windowSize * 0.5;
+    vec2 b = windowSize * 0.5;
+    vec2 q = abs(p) - b + vec2(r);
+    vec2 q_pos = max(q, 0.0);
+    
+    float d_corner = 0.0;
+    if (q_pos.x > 0.0 && q_pos.y > 0.0 && useSquircleShape) {
+        float sq = squircle_distance(q_pos, vec2(0.0));
+        float grad = max(length(squircle_gradient(q_pos, vec2(0.0))), 1e-4);
+        d_corner = sq / grad;
+    } else {
+        d_corner = length(q_pos);
+    }
+    float d = min(max(q.x, q.y), 0.0) + d_corner - r;
+    
+    // If inside the window, just use the application's texture
+    if (d <= 0.0) {
+        return default_tex;
+    }
+    
+    // 2. Reconstruct shadow for ALL apps
+    // Clamp the sampling coordinates exactly to the start of the straight edges (r).
+    // This perfectly avoids the corner black square, while seamlessly blending into the straight edge.
+    float x_clamp = (coord0.x < windowSize.x * 0.5) ? max(coord0.x, r) : min(coord0.x, windowSize.x - r);
+    float y_clamp = (coord0.y < windowSize.y * 0.5) ? max(coord0.y, r) : min(coord0.y, windowSize.y - r);
+    
+    float sample_y = (coord0.y < windowSize.y * 0.5) ? -d : windowSize.y + d;
+    float sample_x = (coord0.x < windowSize.x * 0.5) ? -d : windowSize.x + d;
+    
+    vec2 p_horiz = vec2(x_clamp, sample_y);
+    vec2 p_vert = vec2(sample_x, y_clamp);
+    
+    vec4 color_horiz = texture2D(sampler, pixel_to_tex(p_horiz));
+    vec4 color_vert = texture2D(sampler, pixel_to_tex(p_vert));
+    
+    // 3. Radially mix based on nearest corner center
+    float center_x = (coord0.x < windowSize.x * 0.5) ? r : windowSize.x - r;
+    float center_y = (coord0.y < windowSize.y * 0.5) ? r : windowSize.y - r;
+    vec2 center = vec2(center_x, center_y);
+    
+    vec2 delta = abs(coord0 - center);
+    float angle_weight = delta.x / (delta.x + delta.y + 1e-4);
+    
+    // The mixture naturally becomes 100% color_horiz at the top edge and 100% color_vert at the left edge.
+    return mix(color_horiz, color_vert, angle_weight);
 }
 
 /*
