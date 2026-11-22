@@ -134,7 +134,7 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
     auto *window = m_windowManager->findWindow(kwindow);
 
     // If the shader is not valid or the window is not managed or doesn't need the effect, fall back to default.
-    if (!m_shaderManager.IsValid() || window == nullptr || !window->hasEffect()) {
+    if (!m_shaderManager.IsValid() || window == nullptr || !window->hasEffect(true)) {
 #if KWIN_EFFECT_API_VERSION >= 237
 #if KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 6, 80)
         OffscreenEffect::prePaintWindow(view, kwindow, data);
@@ -226,7 +226,7 @@ void ShapeCorners::Effect::drawWindow(
 
     // If the shader is not valid or the window is not managed or doesn't need the effect, unredirect and use default
     // drawing.
-    if (!m_shaderManager.IsValid() || window == nullptr || !window->hasEffect()) {
+    if (!m_shaderManager.IsValid() || window == nullptr || !window->hasEffect(true)) {
         unredirect(kwindow);
 #if KWIN_EFFECT_API_VERSION >= 237 && KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 80)
         return OffscreenEffect::drawWindow(renderTarget, viewport, kwindow, mask, region, data);

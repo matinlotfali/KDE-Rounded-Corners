@@ -24,6 +24,12 @@ ShapeCorners::WindowManager::WindowManager()
     // Register D-Bus service and object for external communication
     registerDBus();
 
+    // Desktop, activity, Show Desktop and activation changes update the tiled state.
+    connect(KWin::effects, &KWin::EffectsHandler::desktopChanged, this, &WindowManager::checkTiled);
+    connect(KWin::effects, &KWin::EffectsHandler::currentActivityChanged, this, &WindowManager::checkTiled);
+    connect(KWin::effects, &KWin::EffectsHandler::showingDesktopChanged, this, &WindowManager::checkTiled);
+    connect(KWin::effects, &KWin::EffectsHandler::windowActivated, this, &WindowManager::checkTiled);
+
     // Add all currently stacked windows
     for (const auto &kwindow: KWin::effects->stackingOrder()) {
         addWindow(kwindow);
@@ -54,8 +60,8 @@ bool ShapeCorners::WindowManager::addWindow(KWin::EffectWindow *kwindow)
         m_menuBars.push_back(kwindow);
 
         // Changes in menu bars can change the tiled and maximized state of all windows
-        checkTiled();
         checkMaximized();
+        checkTiled();
         return false;
     }
 
@@ -98,6 +104,9 @@ bool ShapeCorners::WindowManager::addWindow(KWin::EffectWindow *kwindow)
 
     // KWin reports geometry changes on each window.
     connect(kwindow, &KWin::EffectWindow::windowFrameGeometryChanged, this, &WindowManager::windowResized);
+    // Minimizing and desktop membership changes update the tiled state.
+    connect(kwindow, &KWin::EffectWindow::minimizedChanged, this, &WindowManager::checkTiled);
+    connect(kwindow, &KWin::EffectWindow::windowDesktopsChanged, this, &WindowManager::checkTiled);
 
     // Update tiling and maximized state for the new window
     windowResized(kwindow, QRectF());
@@ -210,8 +219,8 @@ void ShapeCorners::WindowManager::windowResized(KWin::EffectWindow *kwindow, con
 {
     Q_UNUSED(size);
 
-    checkTiled();
     checkMaximized(kwindow);
+    checkTiled();
 }
 
 void ShapeCorners::WindowManager::checkMaximized()
