@@ -6,15 +6,10 @@
 #include "Utils.h"
 #include "Window.h"
 #include "WindowConfig.h"
-#if QT_VERSION_MAJOR >= 6
 #include <core/pixelgrid.h>
 #include <effect/effect.h>
 #include <effect/effectwindow.h>
 #include <opengl/glutils.h>
-#else
-#include <kwineffects.h>
-#include <kwinglutils.h>
-#endif
 
 namespace
 {

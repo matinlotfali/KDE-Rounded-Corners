@@ -4,32 +4,17 @@ This effect rounds the corners of your windows and adds an outline around them w
 
 This effect started as a fork of [shapecorners](https://sourceforge.net/projects/shapecorners/) with some additional contributions in [Alex47's project](https://github.com/alex47/KDE-Rounded-Corners), then optimized and reimplemented using shaders with influences from the [invert effect](https://github.com/KDE/kwin/tree/master/src/plugins/invert).
 
-This effect is maintained on KDE Plasma desktop versions 5.27 to 6.8+ in various Linux distros ([See tests](#tested-on)).
+This effect is maintained on KDE Plasma 6 desktop in various Linux distros ([See tests](#tested-on)).
 <br>[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png)](https://www.buymeacoffee.com/matinlotfali)
 
 <img width="666" alt="image" src="https://github.com/user-attachments/assets/eb798ead-a8d7-43d1-88fa-24241aa5f33f" />
 
 ## Tested configurations + Download links (.deb, .rpm)
 * ![Wayland](https://img.shields.io/badge/Wayland-supported-green?logo=wayland) ![Wayland](https://img.shields.io/badge/X11-supported-green?logo=X.org)
-- ![Kubuntu 22.04 Jammy](https://img.shields.io/badge/-not_supported-red?label=Kubuntu%2022.04&logo=kubuntu&branch=master)
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  ![](https://img.shields.io/badge/Plasma-5.24-red)
-- [![Kubuntu 22.04 Jammy + Backports](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2204-backports.yml?label=Kubuntu%2022.04%20%2b%20Backports%20PPA&logo=kubuntu&branch=master)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/kubuntu2204-backports.yml)
-  ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)
-  [![](https://img.shields.io/badge/Launchpad%20PPA-orange?logo=launchpad&logoColor=white)](https://launchpad.net/~matinlotfali/+archive/ubuntu/kde-rounded-corners)
-- [![Kubuntu 24.04 Noble](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2404.yml?label=Kubuntu%2024.04&logo=kubuntu&branch=master)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/kubuntu2404.yml)
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)
-  [![](https://img.shields.io/badge/Launchpad%20PPA-orange?logo=launchpad&logoColor=white)](https://launchpad.net/~matinlotfali/+archive/ubuntu/kde-rounded-corners)
 - [![Kubuntu 26.04](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/kubuntu2604.yml?label=Kubuntu%2026.04&logo=kubuntu&branch=master)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/kubuntu2604.yml)
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   ![](https://img.shields.io/badge/Plasma-6.6-blue)
   [![](https://img.shields.io/badge/Launchpad%20PPA-orange?logo=launchpad&logoColor=white)](https://launchpad.net/~matinlotfali/+archive/ubuntu/kde-rounded-corners)
-- [![Debian 12 Bookworm](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/debian12.yml?branch=master&label=Debian%2012&logo=debian)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/debian12.yml)
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  ![](https://img.shields.io/badge/Plasma-5.27-lightgrey)
-  [![](https://img.shields.io/sourceforge/dm/kde-rounded-corners/nightly%2Fdebian?label=Download%20%5Bkwin4_effect_shapecorners_debian12.deb%5D)](https://sourceforge.net/projects/kde-rounded-corners/files/nightly/debian/kwin4_effect_shapecorners_debian12.deb/download)
 - [![Debian 13 Trixie](https://img.shields.io/github/actions/workflow/status/matinlotfali/KDE-Rounded-Corners/debian13.yml?branch=master&label=Debian%2013&logo=debian)](https://github.com/matinlotfali/KDE-Rounded-Corners/actions/workflows/debian13.yml)
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -74,7 +59,7 @@ This effect is maintained on KDE Plasma desktop versions 5.27 to 6.8+ in various
 # Contributions:
 
 - Compatibility of the effect with other effects like Wobbly windows
-- Compatibility with KWin for Plasma versions 5.27 to 6.8+
+- Compatibility with KWin for Plasma 6
 - Compatibility with HDR in Plasma 6.0
 - Compatibility with split KWin codebase dependency starting version 6.4 - see [#383](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/383)
 - Optimize the effect to render once instead of 5 times - see [#49](https://github.com/matinlotfali/KDE-Rounded-Corners/pull/49)
@@ -137,53 +122,32 @@ You need to install development packages for your distribution first:
 <details>
 <summary>Debian based (Ubuntu, Kubuntu, KDE Neon)</summary>
 
-- Plasma 6
-  ```bash
-  sudo apt install git cmake g++ extra-cmake-modules kwin-dev qt6-base-private-dev qt6-base-dev-tools libkf6kcmutils-dev libdrm-dev
-  ```
-- Plasma 5 - by [alex47](https://github.com/alex47):
-  ```bash
-  sudo apt install git cmake g++ extra-cmake-modules kwin-dev libkf5configwidgets-dev 
-  ```
+```bash
+sudo apt install git cmake g++ extra-cmake-modules kwin-dev qt6-base-private-dev qt6-base-dev-tools libkf6kcmutils-dev libdrm-dev
+```
 
 </details>
 <details>
 <summary>Fedora</summary>
 
-- Plasma 6 (Fedora 40 and later)
-   ```bash
-   sudo dnf install git cmake gcc-c++ extra-cmake-modules kwin-devel kf6-kconfigwidgets-devel libepoxy-devel kf6-kcmutils-devel kf6-ki18n-devel qt6-qtbase-private-devel wayland-devel libdrm-devel
-   ``` 
-- Plasma 5 (Fedora 39)
-   ```bash
-   sudo dnf install git cmake gcc-c++ extra-cmake-modules kwin-devel kf5-kconfigwidgets-devel kf5-ki18n-devel libepoxy-devel
-   ```
+```bash
+sudo dnf install git cmake gcc-c++ extra-cmake-modules kwin-devel kf6-kconfigwidgets-devel libepoxy-devel kf6-kcmutils-devel kf6-ki18n-devel qt6-qtbase-private-devel wayland-devel libdrm-devel
+```
 
 </details>
 <details>
 <summary>Arch - by <a href="https://github.com/hexa-one">hexa-one</a></summary>
 
-- Plasma 6
-  ```bash
-  sudo pacman -S git cmake extra-cmake-modules base-devel vulkan-headers
-  ```
-- Plasma 5
-  ```bash
-  sudo pacman -S git cmake extra-cmake-modules base-devel
-  yay -S qt5-tools
-  ```
+```bash
+sudo pacman -S git cmake extra-cmake-modules base-devel vulkan-headers
+```
 </details>
 <details>
-<summary>OpenSUSE</summary>
+<summary>OpenSUSE - by <a href="https://github.com/aaronkirschen">aaronkirschen</a></summary>
 
-- Plasma 6 (by [aaronkirschen](https://github.com/aaronkirschen))
-  ```bash
-  sudo zypper in git cmake gcc-c++ kf6-kconfigwidgets-devel kf6-kcmutils-devel kwin6-devel kf6-kwindowsystem-devel qt6-quick-devel qt6-core-private-devel
-  ``` 
-- Plasma 5 (by [mathiasgredal](https://github.com/mathiasgredal), [Richardsause](https://github.com/Richardsause))
-  ```bash
-  sudo zypper install git cmake gcc-c++ extra-cmake-modules libqt5-qttools-devel kconfigwidgets-devel kwindowsystem-devel kguiaddons-devel ki18n-devel knotifications-devel kwin5-devel libQt5Gui-devel libQt5OpenGL-devel libepoxy-devel libqt5-qtnetworkauth-devel
-  ```
+```bash
+sudo zypper in git cmake gcc-c++ kf6-kconfigwidgets-devel kf6-kcmutils-devel kwin6-devel kf6-kwindowsystem-devel qt6-quick-devel qt6-core-private-devel
+```
 
 </details>
 <details>
@@ -269,7 +233,7 @@ The command above adds a `.desktop` file inside the `autorun` directory which ch
 If it is incompatible, the script will automatically rebuild and reinstall the effect.
 
 > [!NOTE]
-> The script uses `qdbus` to show a progress bar. On Plasma 6, it is not installed by default. You need to manually install the package `qtchooser`.
+> The script uses `qdbus` to show a progress bar. `qdbus` is not installed by default. You need to manually install the package `qtchooser`.
 
 # How to adjust its settings
 

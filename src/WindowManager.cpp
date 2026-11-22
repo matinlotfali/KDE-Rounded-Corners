@@ -8,12 +8,8 @@
 #include "Config.h"
 #include "TileChecker.h"
 #include "Window.h"
-#if QT_VERSION_MAJOR >= 6
 #include <effect/effecthandler.h>
 #include <effect/effectwindow.h>
-#else
-#include <kwineffects.h>
-#endif
 
 /**
  * @brief Pointer to the singleton instance of WindowManager.
@@ -27,11 +23,6 @@ ShapeCorners::WindowManager::WindowManager()
 
     // Register D-Bus service and object for external communication
     registerDBus();
-
-#if QT_VERSION_MAJOR < 6
-    // Qt5 reports geometry changes globally, so connect only once for all windows.
-    connect(KWin::effects, &KWin::EffectsHandler::windowFrameGeometryChanged, this, &WindowManager::windowResized);
-#endif
 
     // Add all currently stacked windows
     for (const auto &kwindow: KWin::effects->stackingOrder()) {
@@ -105,10 +96,8 @@ bool ShapeCorners::WindowManager::addWindow(KWin::EffectWindow *kwindow)
         return false;
     }
 
-#if QT_VERSION_MAJOR >= 6
-    // Qt6 reports geometry changes on each window.
+    // KWin reports geometry changes on each window.
     connect(kwindow, &KWin::EffectWindow::windowFrameGeometryChanged, this, &WindowManager::windowResized);
-#endif
 
     // Update tiling and maximized state for the new window
     windowResized(kwindow, QRectF());

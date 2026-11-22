@@ -22,11 +22,7 @@
 #include <QObject>
 #include <chrono>
 #include "Shader.h"
-#if QT_VERSION_MAJOR >= 6
 #include <effect/offscreeneffect.h>
-#else
-#include <kwinoffscreeneffect.h>
-#endif
 
 namespace ShapeCorners
 {
@@ -93,9 +89,8 @@ namespace ShapeCorners
                             std::chrono::milliseconds time) override;
 #endif // KWIN_EFFECT_API_VERSION >= 237
 
-#if QT_VERSION_MAJOR >= 6
         /**
-         * @brief Draws the window with the effect applied (Qt6 version).
+         * @brief Draws the window with the effect applied.
          * @param RenderTarget The render target.
          * @param viewport The render viewport.
          * @param w The effect window.
@@ -116,16 +111,6 @@ namespace ShapeCorners
                         const QRegion &region,
 #endif
                         KWin::WindowPaintData &data) override;
-#else
-        /**
-         * @brief Draws the window with the effect applied (Qt5 version).
-         * @param w The effect window.
-         * @param mask The paint mask.
-         * @param region The paint region.
-         * @param data The window paint data.
-         */
-        void drawWindow(KWin::EffectWindow *w, int mask, const QRegion &region, KWin::WindowPaintData &data) override;
-#endif
 
         /**
          * @brief Returns the requested position in the effect chain.
