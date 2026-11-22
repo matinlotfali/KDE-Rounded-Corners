@@ -18,12 +18,32 @@ ShapeCorners::Window::Window(KWin::EffectWindow *kwindow) :
 
 bool ShapeCorners::Window::isActive() const { return KWin::effects->activeWindow() == w; }
 
-bool ShapeCorners::Window::hasEffect() const
+bool ShapeCorners::Window::hasEffect(const bool isPainting) const
 {
-    return (w->expandedGeometry().isValid() &&
-            ((w->isNormalWindow() && Config::includeNormalWindows()) || (w->isDialog() && Config::includeDialogs()) ||
-             isIncluded) &&
-            !isExcluded && (hasRoundCorners() || hasOutline()));
+    if (!w->expandedGeometry().isValid()) {
+        return false;
+    }
+    if (!(w->isNormalWindow() && Config::includeNormalWindows()) && !(w->isDialog() && Config::includeDialogs()) &&
+        !isIncluded) {
+        return false;
+    }
+    if (isExcluded) {
+        return false;
+    }
+    if (!hasRoundCorners() && !hasOutline()) {
+        return false;
+    }
+    // Paint passes keep windows KWin still draws while they animate out, such as a window being minimized.
+    if (!isPainting && !w->isVisible()) {
+        return false;
+    }
+#if QT_VERSION_MAJOR >= 6
+    // Outside paint passes, windows hidden by Show Desktop have no effect.
+    if (!isPainting && w->isHiddenByShowDesktop()) {
+        return false;
+    }
+#endif
+    return true;
 }
 
 bool ShapeCorners::Window::hasRoundCorners() const

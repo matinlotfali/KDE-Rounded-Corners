@@ -114,10 +114,12 @@ namespace ShapeCorners
 
         /**
          * @brief Checks if the window should have any ShapeCorners effect.
+         * @param isPainting Paint passes set it to true, so a window keeps its effect while KWin draws it animating out.
+         * The tile check sets it to false, so a window the user cannot see has no effect.
          * @return True if the window should be affected by the effect.
          */
         [[nodiscard]]
-        bool hasEffect() const;
+        bool hasEffect(bool isPainting) const;
 
         /**
          * @brief Serializes window information to JSON.

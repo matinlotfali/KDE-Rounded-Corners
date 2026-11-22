@@ -45,7 +45,7 @@ bool ShapeCorners::TileChecker::checkTiled_Recursive(double window_start, const 
     bool found_last_chain = false;
     for (const auto &[kwindow, window]: WindowManager::instance()->getWindows()) {
         // Skip windows without an effect
-        if (!window->hasEffect()) {
+        if (!window->hasEffect(false)) {
             continue;
         }
 
