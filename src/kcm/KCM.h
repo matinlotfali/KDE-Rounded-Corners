@@ -23,21 +23,12 @@ namespace ShapeCorners {
     Q_OBJECT
 
     public:
-#if (QT_VERSION_MAJOR >= 6)
         /**
-         * @brief Constructor for Qt 6 and above.
+         * @brief Constructor.
          * @param parent The parent object.
          * @param args Plugin metadata.
          */
         explicit KCM(QObject *parent, const KPluginMetaData &args);
-#else
-        /**
-         * @brief Constructor for Qt 5.
-         * @param parent The parent widget.
-         * @param args Additional arguments.
-         */
-        explicit KCM(QWidget* parent = nullptr, const QVariantList& args = QVariantList());
-#endif
 
     private Q_SLOTS:
         /**
@@ -87,12 +78,10 @@ namespace ShapeCorners {
          */
         void load_ui() const;
 
-#if (QT_VERSION_MAJOR >= 6)
         /**
          * @brief Returns the palette used by the widget.
          * @return Reference to the widget's palette.
          */
         const QPalette& palette() { return widget()->palette(); };
-#endif
     };
 }
