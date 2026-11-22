@@ -3,12 +3,8 @@
 #include <ranges>
 #include "Window.h"
 #include "WindowManager.h"
-#if QT_VERSION_MAJOR >= 6
 #include <effect/effecthandler.h>
 #include <utility>
-#else
-#include <kwineffects.h>
-#endif
 
 /**
  * @brief Maximum recursion depth for tile checking.

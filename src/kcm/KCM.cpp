@@ -2,21 +2,12 @@
 #include "kwineffects_interface.h"
 #include "ui_KCM.h"
 
-#if (QT_VERSION_MAJOR >= 6)
 ShapeCorners::KCM::KCM(QObject *parent, const KPluginMetaData &args) : KCModule(parent, args), ui(new Ui::Form)
 {
-    // Set up the UI for Qt 6
+    // Set up the UI
     ui->setupUi(KCModule::widget());
     ui->currentWindowList->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     addConfig(&config, KCModule::widget());
-
-#else
-ShapeCorners::KCM::KCM(QWidget *parent, const QVariantList &args) : KCModule(parent, args), ui(new Ui::Form)
-{
-    // Set up the UI for Qt 5
-    ui->setupUi(this);
-    addConfig(&config, this);
-#endif
 
     // Initialize color previews and window list
     update_colors();

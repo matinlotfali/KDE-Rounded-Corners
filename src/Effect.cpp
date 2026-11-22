@@ -28,16 +28,11 @@
 #include "Utils.h"
 #include "Window.h"
 #include "WindowManager.h"
-#if QT_VERSION_MAJOR >= 6
 #include <core/output.h>
 #include <core/renderviewport.h>
 #include <effect/effecthandler.h>
 #include <effect/effectwindow.h>
 #include <opengl/glutils.h>
-#else
-#include <kwineffects.h>
-#include <kwinglutils.h>
-#endif
 
 void ShapeCorners::Effect::WriteBreezeConfig(bool set_disabled)
 {
@@ -162,15 +157,9 @@ void ShapeCorners::Effect::prePaintWindow(KWin::EffectWindow *kwindow, KWin::Win
     if (window->hasRoundCorners()) {
 
 #if KWIN_PLUGIN_VERSION_NUM < QT_VERSION_CHECK(6, 6, 80)
-#if QT_VERSION_MAJOR >= 6
-        // Calculate geometry and corner size for Qt6.
+        // Calculate geometry and corner size.
         const auto geo  = (kwindow->frameGeometry() * kwindow->screen()->scale()).toRect();
         const auto size = (int) (window->currentConfig.cornerRadius * kwindow->screen()->scale());
-#else
-        // Calculate geometry and corner size for Qt5.
-        const auto geo  = (kwindow->frameGeometry() * KWin::effects->renderTargetScale()).toRect();
-        const auto size = (int) (window->currentConfig.cornerRadius * KWin::effects->renderTargetScale());
-#endif // QT_VERSION_MAJOR >= 6
 
         // Create a region for each rounded corner.
 #if KWIN_EFFECT_API_VERSION >= 237
@@ -218,7 +207,6 @@ bool ShapeCorners::Effect::supported()
     return KWin::effects->isOpenGLCompositing();
 }
 
-#if QT_VERSION_MAJOR >= 6
 #if KWIN_EFFECT_API_VERSION >= 237 && KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 80)
 bool ShapeCorners::Effect::drawWindow(
 #else
@@ -233,11 +221,6 @@ void ShapeCorners::Effect::drawWindow(
 #endif
         KWin::WindowPaintData &data)
 {
-#else
-void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *kwindow, int mask, const QRegion &region,
-                                      KWin::WindowPaintData &data)
-{
-#endif
     // Find the managed window structure.
     const auto *window = m_windowManager->findWindow(kwindow);
 
@@ -247,24 +230,16 @@ void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *kwindow, int mask, con
         unredirect(kwindow);
 #if KWIN_EFFECT_API_VERSION >= 237 && KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 80)
         return OffscreenEffect::drawWindow(renderTarget, viewport, kwindow, mask, region, data);
-#elif QT_VERSION_MAJOR >= 6
+#else
         OffscreenEffect::drawWindow(renderTarget, viewport, kwindow, mask, region, data);
         return;
-#else
-    OffscreenEffect::drawWindow(kwindow, mask, region, data);
-    return;
 #endif
     }
 
-#if QT_VERSION_MAJOR >= 6
-    // Get the scale factor for Qt6.
+    // Get the scale factor.
     // KWin renders the offscreen texture at the scale of the screen the window belongs to,
     // which is not the scale of the output being painted.
     const auto scale = kwindow->screen()->scale();
-#else
-    // Get the scale factor for Qt5.
-    const auto scale = KWin::effects->renderTargetScale();
-#endif
 
     // Redirect the window for offscreen rendering.
     redirect(kwindow);
@@ -278,10 +253,8 @@ void ShapeCorners::Effect::drawWindow(KWin::EffectWindow *kwindow, int mask, con
     // Call the base implementation to actually draw the window.
 #if KWIN_EFFECT_API_VERSION >= 237 && KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 80)
     const bool result = OffscreenEffect::drawWindow(renderTarget, viewport, kwindow, mask, region, data);
-#elif QT_VERSION_MAJOR >= 6
-    OffscreenEffect::drawWindow(renderTarget, viewport, kwindow, mask, region, data);
 #else
-OffscreenEffect::drawWindow(kwindow, mask, region, data);
+    OffscreenEffect::drawWindow(renderTarget, viewport, kwindow, mask, region, data);
 #endif
     // Unbind the shader after drawing.
     m_shaderManager.Unbind();

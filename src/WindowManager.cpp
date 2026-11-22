@@ -8,12 +8,8 @@
 #include "Config.h"
 #include "TileChecker.h"
 #include "Window.h"
-#if QT_VERSION_MAJOR >= 6
 #include <effect/effecthandler.h>
 #include <effect/effectwindow.h>
-#else
-#include <kwineffects.h>
-#endif
 
 /**
  * @brief Pointer to the singleton instance of WindowManager.
@@ -27,15 +23,6 @@ ShapeCorners::WindowManager::WindowManager()
 
     // Register D-Bus service and object for external communication
     registerDBus();
-
-#if QT_VERSION_MAJOR < 6
-    // Qt5 reports geometry changes globally, so connect only once for all windows.
-    connect(KWin::effects, &KWin::EffectsHandler::windowFrameGeometryChanged, this, &WindowManager::windowResized);
-    // Minimizing and desktop membership changes update the tiled state.
-    connect(KWin::effects, &KWin::EffectsHandler::windowMinimized, this, &WindowManager::checkTiled);
-    connect(KWin::effects, &KWin::EffectsHandler::windowUnminimized, this, &WindowManager::checkTiled);
-    connect(KWin::effects, &KWin::EffectsHandler::desktopPresenceChanged, this, &WindowManager::checkTiled);
-#endif
 
     // Desktop, activity, Show Desktop and activation changes update the tiled state.
     connect(KWin::effects, &KWin::EffectsHandler::desktopChanged, this, &WindowManager::checkTiled);
@@ -115,13 +102,11 @@ bool ShapeCorners::WindowManager::addWindow(KWin::EffectWindow *kwindow)
         return false;
     }
 
-#if QT_VERSION_MAJOR >= 6
-    // Qt6 reports geometry changes on each window.
+    // KWin reports geometry changes on each window.
     connect(kwindow, &KWin::EffectWindow::windowFrameGeometryChanged, this, &WindowManager::windowResized);
     // Minimizing and desktop membership changes update the tiled state.
     connect(kwindow, &KWin::EffectWindow::minimizedChanged, this, &WindowManager::checkTiled);
     connect(kwindow, &KWin::EffectWindow::windowDesktopsChanged, this, &WindowManager::checkTiled);
-#endif
 
     // Update tiling and maximized state for the new window
     windowResized(kwindow, QRectF());

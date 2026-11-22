@@ -3,11 +3,7 @@
 #include <WindowConfig.h>
 #include "Config.h"
 
-#if QT_VERSION_MAJOR >= 6
 #include <effect/effecthandler.h>
-#else
-#include <kwineffects.h>
-#endif
 
 ShapeCorners::Window::Window(KWin::EffectWindow *kwindow) :
     w(kwindow), lastAnimationDuration(Config::animationDuration()), currentConfig(WindowConfig::inactiveWindowConfig())
@@ -37,12 +33,10 @@ bool ShapeCorners::Window::hasEffect(const bool isPainting) const
     if (!isPainting && !w->isVisible()) {
         return false;
     }
-#if QT_VERSION_MAJOR >= 6
     // Outside paint passes, windows hidden by Show Desktop have no effect.
     if (!isPainting && w->isHiddenByShowDesktop()) {
         return false;
     }
-#endif
     return true;
 }
 

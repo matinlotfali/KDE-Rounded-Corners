@@ -1,8 +1,4 @@
-if(${KF_MIN_VERSION} EQUAL 6)
-    set(KWIN_EFFECT_INCLUDE_FILE "/usr/include/${KWIN_NAMESPACE_PREFIX}/effect/effect.h")
-else ()
-    set(KWIN_EFFECT_INCLUDE_FILE "/usr/include/kwineffects.h")
-endif ()
+set(KWIN_EFFECT_INCLUDE_FILE "/usr/include/${KWIN_NAMESPACE_PREFIX}/effect/effect.h")
 execute_process(
         COMMAND sh -c "grep '#define KWIN_EFFECT_API_VERSION_MINOR' ${KWIN_EFFECT_INCLUDE_FILE} | awk '{print \$NF}'"
         OUTPUT_VARIABLE KWIN_EFFECT_API_VERSION_MINOR OUTPUT_STRIP_TRAILING_WHITESPACE

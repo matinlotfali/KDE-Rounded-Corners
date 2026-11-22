@@ -41,5 +41,3 @@ jobs:
       run: |
         glslangValidator -l -d -I. -S frag --P "#extension GL_ARB_shading_language_include : enable" shapecorners_qt6.frag
         glslangValidator -l -d -I. -S frag --P "#extension GL_ARB_shading_language_include : enable" shapecorners_qt6_core.frag
-        glslangValidator -l -d -I. -S frag --P "#extension GL_ARB_shading_language_include : enable" shapecorners_qt5.frag
-        glslangValidator -l -d -I. -S frag --P "#extension GL_ARB_shading_language_include : enable" shapecorners_qt5_core.frag

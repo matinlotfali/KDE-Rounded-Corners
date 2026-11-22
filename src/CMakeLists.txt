@@ -23,18 +23,9 @@ kcoreaddons_add_plugin(kwin4_effect_shapecorners SOURCES ${effect_SRCS} INSTALL_
 target_link_libraries(kwin4_effect_shapecorners
     Qt${QT_MAJOR_VERSION}::DBus
     KF${QT_MAJOR_VERSION}::ConfigGui
+    ${KWIN_LIB_NAME}::kwin
+    Qt${QT_MAJOR_VERSION}::CorePrivate
 )
-if(${QT_MAJOR_VERSION} EQUAL 6)
-    target_link_libraries(kwin4_effect_shapecorners
-            ${KWIN_LIB_NAME}::kwin
-            Qt${QT_MAJOR_VERSION}::CorePrivate
-    )
-else()
-    target_link_libraries(kwin4_effect_shapecorners
-            KWinEffects::kwineffects
-            KWinEffects::kwinglutils
-    )
-endif()
 
 string(REPLACE "." ";" _kwin_ver_list "${KWIN_VERSION}")
 list(GET _kwin_ver_list 0 _kwin_ver_major)
