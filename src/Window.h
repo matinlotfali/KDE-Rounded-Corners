@@ -11,6 +11,13 @@
 #include <QObject>
 #include <QString>
 #include <chrono>
+#include <QRect>
+#include <QRegion>
+#if QT_VERSION_MAJOR >= 6
+#include <effect/effect.h>
+#else
+#include <kwineffects.h>
+#endif
 
 #include "WindowConfig.h"
 #ifdef QT_DEBUG
@@ -75,6 +82,15 @@ namespace ShapeCorners
          * @brief Current window configuration that may be animated.
          */
         WindowConfig currentConfig;
+        
+        // Cache for corner regions to avoid recalculating every frame
+        QRect cachedGeo;
+        int cachedSize = -1;
+#if KWIN_EFFECT_API_VERSION >= 237
+        KWin::Region cachedReg{};
+#else
+        QRegion cachedReg{};
+#endif
 
         /**
          * @brief Constructs a Window object for the given EffectWindow.
