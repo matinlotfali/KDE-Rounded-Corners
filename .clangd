@@ -27,6 +27,9 @@ Diagnostics:
       - cppcoreguidelines-pro-type-reinterpret-cast
       - cppcoreguidelines-pro-type-vararg
       - concurrency-mt-unsafe
+      - misc-non-private-member-variables-in-classes
+      - portability-avoid-pragma-once
+      - readability-trailing-comma
   UnusedIncludes: Strict
 
 InlayHints:

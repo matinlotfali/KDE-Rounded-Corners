@@ -1,10 +1,10 @@
 
 #include "TileChecker.h"
+#include <effect/effecthandler.h>
 #include <ranges>
+#include <utility>
 #include "Window.h"
 #include "WindowManager.h"
-#include <effect/effecthandler.h>
-#include <utility>
 
 /**
  * @brief Maximum recursion depth for tile checking.

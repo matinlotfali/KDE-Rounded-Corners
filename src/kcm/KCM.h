@@ -30,7 +30,6 @@ namespace ShapeCorners {
          */
         explicit KCM(QObject *parent, const KPluginMetaData &args);
 
-    private Q_SLOTS:
         /**
          * @brief Resets the settings to their default values.
          */
@@ -46,6 +45,7 @@ namespace ShapeCorners {
          */
         void save() override;
 
+    private Q_SLOTS:
         /**
          * @brief Updates the color-related UI elements.
          */

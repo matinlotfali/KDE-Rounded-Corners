@@ -5,8 +5,7 @@ project(kwin4_effect_shapecorners VERSION 0.7.2 LANGUAGES CXX)
 include(cmake/default-vars.cmake)
 
 find_package(ECM "5.100" REQUIRED NO_MODULE)
-set(CMAKE_MODULE_PATH
-        ${CMAKE_MODULE_PATH}
+list(APPEND CMAKE_MODULE_PATH
         ${ECM_MODULE_PATH}
         ${ECM_KDE_MODULE_DIR}
 )

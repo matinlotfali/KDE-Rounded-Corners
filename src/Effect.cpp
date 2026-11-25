@@ -18,21 +18,22 @@
  */
 
 #include "Effect.h"
-
 #include <QDBusConnection>
 #include <QDBusMessage>
 #include <QDebug>
-
-#include "Animation.h"
-#include "Config.h"
-#include "Utils.h"
-#include "Window.h"
-#include "WindowManager.h"
 #include <core/output.h>
 #include <core/renderviewport.h>
 #include <effect/effecthandler.h>
 #include <effect/effectwindow.h>
 #include <opengl/glutils.h>
+#include "Animation.h"
+#include "Config.h"
+#include "Window.h"
+#include "WindowManager.h"
+
+#if KWIN_PLUGIN_VERSION_NUM < QT_VERSION_CHECK(6, 6, 80)
+#include "Utils.h"
+#endif
 
 void ShapeCorners::Effect::WriteBreezeConfig(bool set_disabled)
 {
