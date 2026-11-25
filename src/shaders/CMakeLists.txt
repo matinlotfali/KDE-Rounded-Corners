@@ -6,8 +6,10 @@ set(SED_SHADOWS_COMMAND sed -i -e "/#include \"shapecorners_shadows.glsl\"/ { r 
 set(SED_SQUIRCLES_COMMAND sed -i -e "/#include \"squircles.glsl\"/ { r ${CMAKE_SOURCE_DIR}/src/shaders/squircles.glsl" -e "d" -e "}")
 set(SED_MERGE_GLSL_COMMAND sed -e "/#include \"shapecorners.glsl\"/ { r ${CMAKE_SOURCE_DIR}/src/shaders/shapecorners.glsl" -e "d" -e "}")
 
-add_custom_target(
-    shaders ALL
+add_custom_command(
+    OUTPUT
+        "${CMAKE_CURRENT_BINARY_DIR}/shapecorners.frag"
+        "${CMAKE_CURRENT_BINARY_DIR}/shapecorners_core.frag"
     COMMAND ${SED_MERGE_GLSL_COMMAND} "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_SHADER}" > "${CMAKE_CURRENT_BINARY_DIR}/shapecorners.frag"
     COMMAND ${SED_MERGE_GLSL_COMMAND} "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_SHADER_CORE}" > "${CMAKE_CURRENT_BINARY_DIR}/shapecorners_core.frag"
     COMMAND ${SED_SHADOWS_COMMAND} "${CMAKE_CURRENT_BINARY_DIR}/shapecorners.frag"
@@ -19,14 +21,22 @@ add_custom_target(
     DEPENDS
         "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_SHADER}"
         "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_SHADER_CORE}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/shapecorners.glsl"
+        "${CMAKE_CURRENT_SOURCE_DIR}/shapecorners_shadows.glsl"
+        "${CMAKE_CURRENT_SOURCE_DIR}/squircles.glsl"
+        "${CMAKE_CURRENT_SOURCE_DIR}/variables.glsl"
+    VERBATIM
+    COMMENT "Merging shapecorners.glsl: shapecorners.frag and shapecorners_core.frag"
+)
+
+add_custom_target(
+    shaders ALL
+    DEPENDS
+        "${CMAKE_CURRENT_BINARY_DIR}/shapecorners.frag"
+        "${CMAKE_CURRENT_BINARY_DIR}/shapecorners_core.frag"
     SOURCES
         "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_SHADER}"
         "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_SHADER_CORE}"
-    BYPRODUCTS
-        "${CMAKE_CURRENT_BINARY_DIR}/shapecorners.frag"
-        "${CMAKE_CURRENT_BINARY_DIR}/shapecorners_core.frag"
-    VERBATIM
-    COMMENT "Merging shapecorners.glsl: shapecorners.frag and shapecorners_core.frag"
 )
 
 install(

@@ -19,7 +19,7 @@ ShapeCorners::KCM::KCM(QObject *parent, const KPluginMetaData &args) : KCModule(
     for (int index = 0; index < ui->kcfg_ActiveOutlinePalette->count(); ++index) {
         auto color = palette().color(QPalette::Active, static_cast<QPalette::ColorRole>(index));
         pix.fill(color);
-        QIcon icon(pix);
+        const QIcon icon(pix);
         ui->kcfg_ActiveOutlinePalette->setItemIcon(index, icon);
         ui->kcfg_ActiveSecondOutlinePalette->setItemIcon(index, icon);
         ui->kcfg_ActiveOuterOutlinePalette->setItemIcon(index, icon);
@@ -27,7 +27,7 @@ ShapeCorners::KCM::KCM(QObject *parent, const KPluginMetaData &args) : KCModule(
 
         color = palette().color(QPalette::Inactive, static_cast<QPalette::ColorRole>(index));
         pix.fill(color);
-        QIcon icon2(pix);
+        const QIcon icon2(pix);
         ui->kcfg_InactiveOutlinePalette->setItemIcon(index, icon2);
         ui->kcfg_InactiveSecondOutlinePalette->setItemIcon(index, icon2);
         ui->kcfg_InactiveOuterOutlinePalette->setItemIcon(index, icon2);
@@ -72,7 +72,7 @@ ShapeCorners::KCM::KCM(QObject *parent, const KPluginMetaData &args) : KCModule(
     connect(ui->kcfg_InactiveShadowUsePalette, &QRadioButton::toggled, this, &KCM::update_colors);
 
     // Enable/disable shadow controls based on native decoration shadow usage
-    connect(ui->kcfg_UseNativeDecorationShadows, &QRadioButton::toggled, [=, this] {
+    connect(ui->kcfg_UseNativeDecorationShadows, &QRadioButton::toggled, [this] {
         const auto &useCustomShadows = !ui->kcfg_UseNativeDecorationShadows->isChecked();
         ui->UseCustomShadows->setChecked(useCustomShadows);
         ui->activeShadowGroupBox->setEnabled(useCustomShadows);
@@ -80,7 +80,7 @@ ShapeCorners::KCM::KCM(QObject *parent, const KPluginMetaData &args) : KCModule(
     });
 
     // Enable/disable the squircleness control based on whether squircle corners are used
-    connect(ui->kcfg_UseSquircleShape, &QCheckBox::toggled, [=, this](bool useSquircle) {
+    connect(ui->kcfg_UseSquircleShape, &QCheckBox::toggled, [this](bool useSquircle) {
         ui->squirclenessLabel->setEnabled(useSquircle);
         ui->kcfg_Squircleness->setEnabled(useSquircle);
     });
@@ -131,7 +131,7 @@ ShapeCorners::KCM::KCM(QObject *parent, const KPluginMetaData &args) : KCModule(
 
     // Connect window list and inclusion/exclusion controls
     connect(ui->refreshButton, &QPushButton::pressed, this, &KCM::update_windows);
-    connect(ui->includeButton, &QPushButton::pressed, [=, this]() {
+    connect(ui->includeButton, &QPushButton::pressed, [this] {
         // Add selected window to inclusion list if not already present
         if (const auto *const item = ui->currentWindowList->currentItem();
             item != nullptr && !item->text().isEmpty() &&
@@ -140,7 +140,7 @@ ShapeCorners::KCM::KCM(QObject *parent, const KPluginMetaData &args) : KCModule(
             markAsChanged();
         }
     });
-    connect(ui->excludeButton, &QPushButton::pressed, [=, this]() {
+    connect(ui->excludeButton, &QPushButton::pressed, [this] {
         // Add selected window to exclusion list if not already present
         if (const auto *const item = ui->currentWindowList->currentItem();
             item != nullptr && !item->text().isEmpty() &&
@@ -149,19 +149,19 @@ ShapeCorners::KCM::KCM(QObject *parent, const KPluginMetaData &args) : KCModule(
             markAsChanged();
         }
     });
-    connect(ui->deleteIncludeButton, &QPushButton::pressed, [=, this]() {
+    connect(ui->deleteIncludeButton, &QPushButton::pressed, [this] {
         // Remove selected item from inclusion list
         ui->InclusionList->takeItem(ui->InclusionList->currentRow());
         markAsChanged();
     });
-    connect(ui->deleteExcludeButton, &QPushButton::pressed, [=, this]() {
+    connect(ui->deleteExcludeButton, &QPushButton::pressed, [this] {
         // Remove selected item from exclusion list
         ui->ExclusionList->takeItem(ui->ExclusionList->currentRow());
         markAsChanged();
     });
 
     // Enable/disable animation
-    connect(ui->AnimationCheckbox, &QRadioButton::toggled, [=, this](const bool checked) {
+    connect(ui->AnimationCheckbox, &QRadioButton::toggled, [this](const bool checked) {
         ui->kcfg_AnimationDuration->setEnabled(checked);
         ui->kcfg_AnimationDuration->setValue(checked ? config.defaultAnimationDurationValue() : 0);
         markAsChanged();
@@ -212,8 +212,8 @@ void ShapeCorners::KCM::save()
 void ShapeCorners::KCM::update_colors()
 {
     QColor color;
-    bool   checked;
-    int    index;
+    bool   checked = false;
+    int    index   = 0;
 
     // Update active outline color preview
     checked = ui->kcfg_ActiveOutlineUsePalette->isChecked();

@@ -21,8 +21,8 @@
 
 #include <QObject>
 #include <chrono>
-#include "Shader.h"
 #include <effect/offscreeneffect.h>
+#include "Shader.h"
 
 namespace ShapeCorners
 {
@@ -103,14 +103,14 @@ namespace ShapeCorners
 #else
         void drawWindow(
 #endif // KWIN_EFFECT_API_VERSION >= 237 && KWIN_PLUGIN_VERSION_NUM >= QT_VERSION_CHECK(6, 7, 80)
-                        const KWin::RenderTarget &RenderTarget, const KWin::RenderViewport &viewport,
-                        KWin::EffectWindow *w, int mask,
+                const KWin::RenderTarget &RenderTarget, const KWin::RenderViewport &viewport, KWin::EffectWindow *w,
+                int mask,
 #if KWIN_EFFECT_API_VERSION >= 237
-                        const KWin::Region &region,
+                const KWin::Region &region,
 #else
-                        const QRegion &region,
+                const QRegion &region,
 #endif
-                        KWin::WindowPaintData &data) override;
+                KWin::WindowPaintData &data) override;
 
         /**
          * @brief Returns the requested position in the effect chain.

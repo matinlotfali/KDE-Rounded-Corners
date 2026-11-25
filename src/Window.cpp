@@ -1,9 +1,8 @@
 
 #include "Window.h"
-#include <WindowConfig.h>
-#include "Config.h"
-
 #include <effect/effecthandler.h>
+#include "Config.h"
+#include "WindowConfig.h"
 
 ShapeCorners::Window::Window(KWin::EffectWindow *kwindow) :
     w(kwindow), lastAnimationDuration(Config::animationDuration()), currentConfig(WindowConfig::inactiveWindowConfig())
@@ -82,7 +81,7 @@ void ShapeCorners::Window::configChanged()
 {
     isExcluded = false;
     isIncluded = false;
-    for (auto &exclusion: Config::exclusions()) {
+    for (const auto &exclusion: Config::exclusions()) {
         if (w->windowClass().contains(exclusion, Qt::CaseInsensitive) ||
             captionAfterDash().contains(exclusion, Qt::CaseInsensitive)) {
             isExcluded = true;
@@ -92,7 +91,7 @@ void ShapeCorners::Window::configChanged()
             return;
         }
     }
-    for (auto &inclusion: Config::inclusions()) {
+    for (const auto &inclusion: Config::inclusions()) {
         if (w->windowClass().contains(inclusion, Qt::CaseInsensitive) ||
             captionAfterDash().contains(inclusion, Qt::CaseInsensitive)) {
             isIncluded = true;
@@ -107,8 +106,8 @@ void ShapeCorners::Window::configChanged()
 QJsonObject ShapeCorners::Window::toJson() const
 {
     QJsonObject json;
-    json[QStringLiteral("class")]   = w->windowClass();
-    json[QStringLiteral("caption")] = w->caption();
+    json.insert(QStringLiteral("class"), w->windowClass());
+    json.insert(QStringLiteral("caption"), w->caption());
     return json;
 }
 

@@ -139,7 +139,7 @@ namespace ShapeCorners
         /**
          * @brief Checks and marks tiled windows using TileChecker for all screens.
          */
-        void checkTiled() const;
+        static void checkTiled();
 
         /**
          * @brief Checks and marks maximized for all windows.

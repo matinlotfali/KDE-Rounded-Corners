@@ -2,14 +2,17 @@
 #include "Shader.h"
 #include <QFile>
 #include <QStandardPaths>
-#include "Config.h"
-#include "Utils.h"
-#include "Window.h"
-#include "WindowConfig.h"
 #include <core/pixelgrid.h>
 #include <effect/effect.h>
 #include <effect/effectwindow.h>
 #include <opengl/glutils.h>
+#include "Config.h"
+#include "Window.h"
+#include "WindowConfig.h"
+
+#if KWIN_EFFECT_API_VERSION < 237 || KWIN_PLUGIN_VERSION_NUM < QT_VERSION_CHECK(6, 7, 90)
+#include "Utils.h"
+#endif
 
 namespace
 {

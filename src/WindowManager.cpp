@@ -3,13 +3,13 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QtDBus/QDBusConnection>
+#include <effect/effecthandler.h>
+#include <effect/effectwindow.h>
 #include <memory>
 #include <ranges>
 #include "Config.h"
 #include "TileChecker.h"
 #include "Window.h"
-#include <effect/effecthandler.h>
-#include <effect/effectwindow.h>
 
 /**
  * @brief Pointer to the singleton instance of WindowManager.
@@ -138,7 +138,7 @@ QString ShapeCorners::WindowManager::get_window_titles() const
 {
     QJsonArray array;
     for (const auto &window: m_managed | std::views::values) {
-        auto json = window->toJson();
+        const auto json = window->toJson();
         if (!array.contains(json)) {
             array.push_back(json);
         }
@@ -164,7 +164,7 @@ void ShapeCorners::WindowManager::registerDBus()
     }
 }
 
-void ShapeCorners::WindowManager::checkTiled() const
+void ShapeCorners::WindowManager::checkTiled()
 {
     TileChecker::clearTiles();
 

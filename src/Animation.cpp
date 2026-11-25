@@ -4,13 +4,11 @@
 
 #include "Animation.h"
 #include <QDebug>
-
-#include "WindowManager.h"
 #include <effect/effecthandler.h>
-
 #include "Config.h"
 #include "Window.h"
 #include "WindowConfig.h"
+#include "WindowManager.h"
 
 using namespace std::chrono;
 
@@ -19,9 +17,9 @@ ShapeCorners::Animation::Animation() = default;
 void ShapeCorners::Animation::update(Window &window)
 {
     // If the active window has changed, start a new animation cycle.
-    if (auto *const active = KWin::effects->activeWindow();
-        ((active != nullptr) && (currentActiveWindow == nullptr)) ||
-        ((currentActiveWindow != nullptr) && active != currentActiveWindow->w)) {
+    const auto *const active        = KWin::effects->activeWindow();
+    const auto *const currentActive = currentActiveWindow != nullptr ? currentActiveWindow->w : nullptr;
+    if (active != currentActive) {
         auto *const activeWindow = WindowManager::instance()->findWindow(active);
         setActiveWindowChanged(activeWindow);
     }
@@ -52,7 +50,7 @@ void ShapeCorners::Animation::update(Window &window)
     // If animation is over, set configs to their final values.
     if (window.lastAnimationDuration < 0) {
         window.lastAnimationDuration = 0;
-        window.currentConfig = window.isActive() ? activeConfig : inactiveConfig;
+        window.currentConfig         = window.isActive() ? activeConfig : inactiveConfig;
         return;
     }
 
